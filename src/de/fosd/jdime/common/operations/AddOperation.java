@@ -23,10 +23,7 @@
 package de.fosd.jdime.common.operations;
 
 import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 import de.fosd.jdime.common.ASTNodeArtifact;
 import de.fosd.jdime.common.Artifact;
@@ -48,8 +45,7 @@ import de.fosd.jdime.stats.StatsElement;
  */
 public class AddOperation<T extends Artifact<T>> extends Operation<T> {
 
-	private static final Logger LOG = Logger.getLogger(ClassUtils
-			.getShortClassName(AddOperation.class));
+	private static final Logger LOG = Logger.getLogger(AddOperation.class.getCanonicalName());
 
 	/**
 	 * The <code>Artifact</code> that is added by the operation.
@@ -89,9 +85,7 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
 		assert (artifact != null);
 		assert (artifact.exists()) : "Artifact does not exist: " + artifact;
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Applying: " + this);
-		}
+		LOG.fine(() -> "Applying: " + this);
 
 		if (artifact.isChoice()) {
 			target.addChild(artifact);
@@ -106,7 +100,7 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
 				assert (choice.isChoice());
 				target.addChild(choice);
 			} else {
-				LOG.debug("no conditions");
+				LOG.fine("no conditions");
 				target.addChild((T) artifact.clone());
 			}
 		}
@@ -126,9 +120,8 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
 					ASTNodeArtifact childAST = new ASTNodeArtifact(child);
 					ASTStats childStats = childAST.getStats(null,
 							LangElem.TOPLEVELNODE, false);
-					if (LOG.isDebugEnabled()) {
-						LOG.debug(childStats.toString());
-					}
+
+					LOG.fine(childStats::toString);
 
 					if (context.isConsecutive()) {
 						context.getStats().addRightStats(childStats);
