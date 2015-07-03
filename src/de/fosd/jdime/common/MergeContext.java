@@ -567,6 +567,9 @@ public class MergeContext implements Cloneable {
      * Whether merge inserts choice nodes instead of direct merging of artifact.
      */
     public boolean isConditionalMerge(Artifact artifact) {
+		System.out.println("mergecontext--conditionalMerge:" +conditionalMerge);
+		System.out.println("mergecontext--conditionalOutsideMethods:" +conditionalOutsideMethods);
+		
         return conditionalMerge && (conditionalOutsideMethods || artifact instanceof ASTNodeArtifact && ((ASTNodeArtifact) artifact).isWithinMethod());
     }
 

@@ -37,8 +37,9 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-//import de.fosd.jdime.common.ASTNodeArtifact;
+import de.fosd.jdime.common.ASTNodeArtifact;
 import de.fosd.jdime.common.ArtifactList;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
@@ -50,6 +51,7 @@ import de.fosd.jdime.stats.Statistics;
 import de.fosd.jdime.strategy.MergeStrategy;
 import de.fosd.jdime.strategy.StrategyNotFoundException;
 import de.uni_passau.fim.seibt.kvconfig.Config;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -65,7 +67,8 @@ import static de.fosd.jdime.JDimeConfig.*;
  */
 public final class Main {
 
-    private static final Logger LOG = Logger.getLogger(Main.class.getCanonicalName());
+	private static final Logger LOG = Logger.getLogger(Main.class
+			.getCanonicalName());
 
     private static final String TOOLNAME = "jdime";
     private static final String VERSION = "0.3.11-develop";
@@ -73,9 +76,11 @@ public final class Main {
     /**
      * Perform a merge operation on the input files or directories.
      *
-     * @param args command line arguments
+	 * @param args
+	 *            command line arguments
      */
-    public static void main(final String[] args) throws IOException, ParseException, InterruptedException {
+	public static void main(final String[] args) throws IOException,
+			ParseException, InterruptedException {
         MergeContext context = new MergeContext();
 
         if (!parseCommandLineArgs(context, args)) {
@@ -99,10 +104,12 @@ public final class Main {
         if (output != null && output.exists() && !output.isEmpty()) {
             System.err.println("Output directory is not empty!");
             System.err.println("Delete '" + output.getFullPath() + "'? [y/N]");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					System.in));
             String response = reader.readLine();
 
-            if (response.length() == 0 || response.toLowerCase().charAt(0) != 'y') {
+			if (response.length() == 0
+					|| response.toLowerCase().charAt(0) != 'y') {
                 String msg = "File exists and will not be overwritten.";
                 LOG.warning(msg);
                 throw new RuntimeException(msg);
@@ -272,7 +279,8 @@ public final class Main {
     private static boolean parseCommandLineArgs(final MergeContext context,
             final String[] args) throws IOException, ParseException {
         assert (context != null);
-        LOG.fine(() -> "Parsing command line arguments: " + Arrays.toString(args));
+		LOG.fine(() -> "Parsing command line arguments: "
+				+ Arrays.toString(args));
         boolean continueRun = true;
 
         Options options = new Options();
@@ -298,6 +306,7 @@ public final class Main {
                 "collects statistical data of the merge");
         options.addOption("p", false, "(print/pretend) prints the merge result to stdout instead of an output file");
         options.addOption("q", false, "quiet, do not print the merge result to stdout");
+
         options.addOption("version", false,
                 "print the version information and exit");
 
@@ -448,35 +457,38 @@ public final class Main {
                 return false;
             }
 
-            // prepare the list of input files
+			// ZSR
             ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
+//			ArtifactList<CppNodeArtifact> inputArtifacts = new ArtifactList<>();
 
             char cond = 'A';
             boolean targetIsFile = true;
 
             for (Object filename : cmd.getArgList()) {
-                try {
-                    FileArtifact newArtifact = new FileArtifact(new File((String) filename));
+
+				// ZSR
+//				CppNodeArtifact newArtifact = new CppNodeArtifact(
+//						(String) filename);
+
+				 FileArtifact newArtifact = new FileArtifact(new
+				 File((String) filename));
 
                     if (context.isConditionalMerge()) {
-                        newArtifact.setRevision(new Revision(String.valueOf(cond++)));
+					newArtifact
+							.setRevision(new Revision(String.valueOf(cond++)));
                     }
-
                     if (targetIsFile) {
                         targetIsFile = !newArtifact.isDirectory();
                     }
-
                     inputArtifacts.add(newArtifact);
-                } catch (FileNotFoundException e) {
-                    System.err.println("Input file not found: " + (String) filename);
-                }
+
             }
 
             context.setInputFiles(inputArtifacts);
 
             if (outputFileName != null) {
-                context.setOutputFile(new FileArtifact(new Revision("merge"), new File(outputFileName),
-                        true, targetIsFile));
+				context.setOutputFile(new FileArtifact(new Revision("merge"),
+						new File(outputFileName), true, targetIsFile));
                 context.setPretend(false);
             }
         } catch (ParseException e) {
@@ -489,6 +501,7 @@ public final class Main {
 
     /**
      * Print short information.
+	 * 
      *  @param context
      *            merge context
      *
@@ -496,7 +509,8 @@ public final class Main {
     private static void info(final MergeContext context) {
         version();
         System.out.println();
-        System.out.println("Run the program with the argument '--help' in order to retrieve information on its usage!");
+		System.out
+				.println("Run the program with the argument '--help' in order to retrieve information on its usage!");
     }
 
     /**
@@ -534,7 +548,8 @@ public final class Main {
      * </ul>
      *
      * @param logLevel
-     *             one of the valid log levels according to {@link Level#parse(String)}
+	 *            one of the valid log levels according to
+	 *            {@link Level#parse(String)}
      */
     private static void setLogLevel(String logLevel) {
         Level level;
@@ -547,6 +562,7 @@ public final class Main {
         }
 
         Logger root = Logger.getLogger(Main.class.getPackage().getName());
+
         root.setLevel(level);
 
         for (Handler handler : root.getHandlers()) {
@@ -591,7 +607,9 @@ public final class Main {
     public static void merge(final MergeContext context) throws IOException,
             InterruptedException {
         assert (context != null);
-        Operation<FileArtifact> merge = new MergeOperation<>(context.getInputFiles(), context.getOutputFile(), null, null, context.isConditionalMerge());
+		Operation<FileArtifact> merge = new MergeOperation<>(
+				context.getInputFiles(), context.getOutputFile(), null, null,
+				context.isConditionalMerge());
         merge.apply(context);
     }
 
@@ -604,11 +622,13 @@ public final class Main {
      *             If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
-    private static void dumpTrees(final MergeContext context) throws IOException {
+	private static void dumpTrees(final MergeContext context)
+			throws IOException {
         for (FileArtifact artifact : context.getInputFiles()) {
-            MergeStrategy<FileArtifact> strategy =
-                    (MergeStrategy<FileArtifact>) context.getMergeStrategy();
-            System.out.println(strategy.dumpTree(artifact, context.isGuiDump()));
+			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+					.getMergeStrategy();
+			System.out
+					.println(strategy.dumpTree(artifact, context.isGuiDump()));
         }
     }
 
@@ -621,11 +641,13 @@ public final class Main {
      *             If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
-    private static void dumpFiles(final MergeContext context) throws IOException {
+	private static void dumpFiles(final MergeContext context)
+			throws IOException {
         for (FileArtifact artifact : context.getInputFiles()) {
-            MergeStrategy<FileArtifact> strategy =
-                    (MergeStrategy<FileArtifact>) context.getMergeStrategy();
-            System.out.println(strategy.dumpFile(artifact, context.isGuiDump()));
+			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+					.getMergeStrategy();
+			System.out
+					.println(strategy.dumpFile(artifact, context.isGuiDump()));
         }
     }
 
@@ -643,9 +665,9 @@ public final class Main {
 
         for (FileArtifact artifact : context.getInputFiles()) {
             ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
-            // System.out.println(ast.getASTNode().dumpTree());
-            // System.out.println(ast.getASTNode());
-            // System.out.println(ast.prettyPrint());
+			 System.out.println(ast.getASTNode().dumpTree());
+			 System.out.println(ast.getASTNode());
+			 System.out.println(ast.prettyPrint());
             System.out.println(ast.dumpTree());
             System.out.println("--");
             //int[] s = ast.getStats();
