@@ -191,7 +191,7 @@ public class MergeScenario<T extends Artifact<T>> {
 		// FIXME: I think this could be done easier. It's just too fucking ugly.
 		//        We need the first element that was inserted and run the merge on it.
 		artifacts.get(artifacts.keySet().iterator().next()).merge(mergeOperation, context);
-	}
+	}          
 
 	/**
 	 * Sets the baseRev artifact.

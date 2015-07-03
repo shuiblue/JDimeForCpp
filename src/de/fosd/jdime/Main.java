@@ -40,8 +40,9 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-//import de.fosd.jdime.common.ASTNodeArtifact;
+import de.fosd.jdime.common.ASTNodeArtifact;
 import de.fosd.jdime.common.ArtifactList;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeType;
@@ -56,6 +57,7 @@ import de.fosd.jdime.strategy.StructuredStrategy;
 import de.uni_passau.fim.seibt.kvconfig.Config;
 import de.uni_passau.fim.seibt.kvconfig.PropFileConfigSource;
 import de.uni_passau.fim.seibt.kvconfig.SysEnvConfigSource;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -69,14 +71,16 @@ import org.apache.commons.cli.PosixParser;
  */
 public final class Main {
 
-	private static final Logger LOG = Logger.getLogger(Main.class.getCanonicalName());
+	private static final Logger LOG = Logger.getLogger(Main.class
+			.getCanonicalName());
 
 	private static final String TOOLNAME = "jdime";
 	private static final String VERSION = "0.3.11-develop";
 
 	private static final String LOGGING_CONFIG_FILE_NAME = "JDimeLogging.properties";
 	private static final String CONFIG_FILE_NAME = "JDime.properties";
-	private static final File LOGGING_CONFIG_FILE = new File(LOGGING_CONFIG_FILE_NAME);
+	private static final File LOGGING_CONFIG_FILE = new File(
+			LOGGING_CONFIG_FILE_NAME);
 	private static final File CONFIG_FILE = new File(CONFIG_FILE_NAME);
 	public static final Config config;
 
@@ -86,7 +90,8 @@ public final class Main {
 			try (InputStream is = new FileInputStream(LOGGING_CONFIG_FILE)) {
 				LogManager.getLogManager().readConfiguration(is);
 			} catch (IOException e) {
-				LOG.log(Level.WARNING, e, () -> "Could not read logging configuration.");
+				LOG.log(Level.WARNING, e,
+						() -> "Could not read logging configuration.");
 			}
 		}
 
@@ -98,7 +103,10 @@ public final class Main {
 			try {
 				config.addSource(new PropFileConfigSource(2, CONFIG_FILE));
 			} catch (IOException e) {
-				LOG.log(Level.WARNING, e, () -> "Could not add a ConfigSource for " + CONFIG_FILE.getAbsolutePath());
+				LOG.log(Level.WARNING,
+						e,
+						() -> "Could not add a ConfigSource for "
+								+ CONFIG_FILE.getAbsolutePath());
 			}
 		}
 	}
@@ -106,9 +114,11 @@ public final class Main {
 	/**
 	 * Perform a merge operation on the input files or directories.
 	 *
-	 * @param args command line arguments
+	 * @param args
+	 *            command line arguments
 	 */
-	public static void main(final String[] args) throws	IOException, ParseException, InterruptedException {
+	public static void main(final String[] args) throws IOException,
+			ParseException, InterruptedException {
 		MergeContext context = new MergeContext();
 
 		if (!parseCommandLineArgs(context, args)) {
@@ -132,10 +142,12 @@ public final class Main {
 		if (output != null && output.exists() && !output.isEmpty()) {
 			System.err.println("Output directory is not empty!");
 			System.err.println("Delete '" + output.getFullPath() + "'? [y/N]");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					System.in));
 			String response = reader.readLine();
 
-			if (response.length() == 0 || response.toLowerCase().charAt(0) != 'y') {
+			if (response.length() == 0
+					|| response.toLowerCase().charAt(0) != 'y') {
 				String msg = "File exists and will not be overwritten.";
 				LOG.warning(msg);
 				throw new RuntimeException(msg);
@@ -184,7 +196,8 @@ public final class Main {
 	private static boolean parseCommandLineArgs(final MergeContext context,
 			final String[] args) throws IOException, ParseException {
 		assert (context != null);
-		LOG.fine(() -> "Parsing command line arguments: " + Arrays.toString(args));
+		LOG.fine(() -> "Parsing command line arguments: "
+				+ Arrays.toString(args));
 		boolean continueRun = true;
 
 		Options options = new Options();
@@ -210,9 +223,12 @@ public final class Main {
 				"print configuration information");
 		options.addOption("stats", false,
 				"collects statistical data of the merge");
-		options.addOption("runLookAheadTests", false, "Run diffs with lookahead and print statistics");
-		options.addOption("p", false, "(print/pretend) prints the merge result to stdout instead of an output file");
-		options.addOption("q", false, "quiet, do not print the merge result to stdout");
+		options.addOption("runLookAheadTests", false,
+				"Run diffs with lookahead and print statistics");
+		options.addOption("p", false,
+				"(print/pretend) prints the merge result to stdout instead of an output file");
+		options.addOption("q", false,
+				"quiet, do not print the merge result to stdout");
 		options.addOption("version", false,
 				"print the version information and exit");
 
@@ -243,10 +259,10 @@ public final class Main {
 				if (!cmd.hasOption("debug")) {
 					setLogLevel("WARNING");
 				}
-				
+
 				String wd = null;
 				String path = null;
-				if (cmd.getArgs().length > 1){
+				if (cmd.getArgs().length > 1) {
 					wd = cmd.getArgs()[0];
 					path = cmd.getArgs()[1];
 				}
@@ -339,12 +355,12 @@ public final class Main {
 				try {
 					lookAhead = Integer.parseInt(lookAheadValue);
 				} catch (NumberFormatException e) {
-					switch(lookAheadValue) {
-						case "off":
-							break;
-						case "full":
-							lookAhead = MergeContext.LOOKAHEAD_FULL;
-							break;
+					switch (lookAheadValue) {
+					case "off":
+						break;
+					case "full":
+						lookAhead = MergeContext.LOOKAHEAD_FULL;
+						break;
 					}
 				}
 
@@ -357,14 +373,14 @@ public final class Main {
 			context.setBenchmark(cmd.hasOption("benchmark"));
 			context.setForceOverwriting(cmd.hasOption("f"));
 			context.setRecursive(cmd.hasOption("r"));
-			
+
 			if (cmd.hasOption("p")) {
 				context.setPretend(true);
 				context.setQuiet(false);
 			} else if (cmd.hasOption('q')) {
 				context.setQuiet(true);
 			}
-			
+
 			context.setKeepGoing(cmd.hasOption("keepgoing"));
 
 			if (cmd.hasOption("showconfig")) {
@@ -380,35 +396,38 @@ public final class Main {
 				return false;
 			}
 
-			// prepare the list of input files
-			ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
+			// ZSR
+			 ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
+//			ArtifactList<CppNodeArtifact> inputArtifacts = new ArtifactList<>();
 
 			char cond = 'A';
 			boolean targetIsFile = true;
 
 			for (Object filename : cmd.getArgList()) {
-				try {
-					FileArtifact newArtifact = new FileArtifact(new File((String) filename));
 
-					if (context.isConditionalMerge()) {
-						newArtifact.setRevision(new Revision(String.valueOf(cond++)));
-					}
+				// ZSR
+//				CppNodeArtifact newArtifact = new CppNodeArtifact(
+//						(String) filename);
 
-					if (targetIsFile) {
-						targetIsFile = !newArtifact.isDirectory();
-					}
+				 FileArtifact newArtifact = new FileArtifact(new
+				 File((String) filename));
 
-					inputArtifacts.add(newArtifact);
-				} catch (FileNotFoundException e) {
-					System.err.println("Input file not found: " + (String) filename);
+				if (context.isConditionalMerge()) {
+					newArtifact
+							.setRevision(new Revision(String.valueOf(cond++)));
 				}
+				 if (targetIsFile) {
+				 targetIsFile = !newArtifact.isDirectory();
+				 }
+				inputArtifacts.add(newArtifact);
+
 			}
 
 			context.setInputFiles(inputArtifacts);
 
 			if (outputFileName != null) {
-				context.setOutputFile(new FileArtifact(new Revision("merge"), new File(outputFileName),
-						true, targetIsFile));
+				context.setOutputFile(new FileArtifact(new Revision("merge"),
+						new File(outputFileName), true, targetIsFile));
 				context.setPretend(false);
 			}
 		} catch (ParseException e) {
@@ -421,14 +440,16 @@ public final class Main {
 
 	/**
 	 * Print short information.
-	 *  @param context
+	 * 
+	 * @param context
 	 *            merge context
 	 *
 	 */
 	private static void info(final MergeContext context) {
 		version();
 		System.out.println();
-		System.out.println("Run the program with the argument '--help' in order to retrieve information on its usage!");
+		System.out
+				.println("Run the program with the argument '--help' in order to retrieve information on its usage!");
 	}
 
 	/**
@@ -454,19 +475,20 @@ public final class Main {
 	 * Set the logging level. The levels in descending order are:<br>
 	 *
 	 * <ul>
-	 *  <li>ALL</li>
-	 *  <li>SEVERE (highest value)</li>
-	 *  <li>WARNING</li>
-	 *  <li>INFO</li>
-	 *  <li>CONFIG</li>
-	 *  <li>FINE</li>
-	 *  <li>FINER</li>
-	 *  <li>FINEST (lowest value)</li>
-	 *  <li>OFF</li>
+	 * <li>ALL</li>
+	 * <li>SEVERE (highest value)</li>
+	 * <li>WARNING</li>
+	 * <li>INFO</li>
+	 * <li>CONFIG</li>
+	 * <li>FINE</li>
+	 * <li>FINER</li>
+	 * <li>FINEST (lowest value)</li>
+	 * <li>OFF</li>
 	 * </ul>
 	 *
 	 * @param logLevel
-	 * 			one of the valid log levels according to {@link Level#parse(String)}
+	 *            one of the valid log levels according to
+	 *            {@link Level#parse(String)}
 	 */
 	private static void setLogLevel(String logLevel) {
 		Level level;
@@ -478,7 +500,8 @@ public final class Main {
 			return;
 		}
 
-		Logger root = LogManager.getLogManager().getLogger(Main.class.getPackage().getName());
+		Logger root = LogManager.getLogManager().getLogger(
+				Main.class.getPackage().getName());
 		root.setLevel(level);
 
 		for (Handler handler : root.getHandlers()) {
@@ -523,7 +546,9 @@ public final class Main {
 	public static void merge(final MergeContext context) throws IOException,
 			InterruptedException {
 		assert (context != null);
-		Operation<FileArtifact> merge = new MergeOperation<>(context.getInputFiles(), context.getOutputFile(), null, null, context.isConditionalMerge());
+		Operation<FileArtifact> merge = new MergeOperation<>(
+				context.getInputFiles(), context.getOutputFile(), null, null,
+				context.isConditionalMerge());
 		merge.apply(context);
 	}
 
@@ -536,11 +561,13 @@ public final class Main {
 	 *             If an input output exception occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private static void dumpTrees(final MergeContext context) throws IOException {
+	private static void dumpTrees(final MergeContext context)
+			throws IOException {
 		for (FileArtifact artifact : context.getInputFiles()) {
-			MergeStrategy<FileArtifact> strategy =
-					(MergeStrategy<FileArtifact>) context.getMergeStrategy();
-			System.out.println(strategy.dumpTree(artifact, context.isGuiDump()));
+			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+					.getMergeStrategy();
+			System.out
+					.println(strategy.dumpTree(artifact, context.isGuiDump()));
 		}
 	}
 
@@ -553,11 +580,13 @@ public final class Main {
 	 *             If an input output exception occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private static void dumpFiles(final MergeContext context) throws IOException {
+	private static void dumpFiles(final MergeContext context)
+			throws IOException {
 		for (FileArtifact artifact : context.getInputFiles()) {
-			MergeStrategy<FileArtifact> strategy =
-					(MergeStrategy<FileArtifact>) context.getMergeStrategy();
-			System.out.println(strategy.dumpFile(artifact, context.isGuiDump()));
+			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+					.getMergeStrategy();
+			System.out
+					.println(strategy.dumpFile(artifact, context.isGuiDump()));
 		}
 	}
 
@@ -574,32 +603,33 @@ public final class Main {
 		setLogLevel("FINEST");
 
 		for (FileArtifact artifact : context.getInputFiles()) {
-			ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
-			// System.out.println(ast.getASTNode().dumpTree());
-			// System.out.println(ast.getASTNode());
-			// System.out.println(ast.prettyPrint());
-			System.out.println(ast.dumpTree());
-			System.out.println("--");
-			int[] s = ast.getStats();
-			System.out.println("Number of nodes: " + s[0]);
-			System.out.println("Tree Depth: " + s[1]);
-			System.out.println("MaxChildren: " + s[2]);
+			 ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
+			 System.out.println(ast.getASTNode().dumpTree());
+			 System.out.println(ast.getASTNode());
+			 System.out.println(ast.prettyPrint());
+			 System.out.println(ast.dumpTree());
+			 System.out.println("--");
+			 int[] s = ast.getStats();
+			 System.out.println("Number of nodes: " + s[0]);
+			 System.out.println("Tree Depth: " + s[1]);
+			 System.out.println("MaxChildren: " + s[2]);
 			System.out.println("--------------------------------------------");
 		}
 	}
 
 	/**
-	 * This is only for debugging and messing around with the look-ahead feature.
-	 * TODO: remove this method when the feature is merged into develop.
+	 * This is only for debugging and messing around with the look-ahead
+	 * feature. TODO: remove this method when the feature is merged into
+	 * develop.
 	 */
 	private static void runLookAheadTests(String wd, String path) {
 		if (path == null) {
 			path = "lookahead";
 		}
-		
+
 		String[] files = new File(wd + "/left/" + path + "/").list();
-		int[] lookaheads = {MergeContext.LOOKAHEAD_OFF, (int)1, (int)2,
-			(int)3, (int)4, (int)5, MergeContext.LOOKAHEAD_FULL};
+		int[] lookaheads = { MergeContext.LOOKAHEAD_OFF, (int) 1, (int) 2,
+				(int) 3, (int) 4, (int) 5, MergeContext.LOOKAHEAD_FULL };
 		MergeContext context;
 		HashMap<String, Integer> allElements = new HashMap<>();
 		HashMap<String, HashMap<Integer, Integer>> matchedElements = new HashMap<>();
@@ -618,9 +648,9 @@ public final class Main {
 			try {
 				ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
 				inputArtifacts.add(new FileArtifact(new File(wd + "/left/"
-								+ path + "/" + file)));
+						+ path + "/" + file)));
 				inputArtifacts.add(new FileArtifact(new File(wd + "/right/"
-								+ path + "/" + file)));
+						+ path + "/" + file)));
 
 				for (FileArtifact artifact : inputArtifacts) {
 					if (!artifact.exists()) {
@@ -644,58 +674,66 @@ public final class Main {
 					curSkippedElements = context.getSkippedElements();
 
 					if (lookAhead == lookaheads[0]) {
-						HashMap<String, Integer> elements = context.getElements();
+						HashMap<String, Integer> elements = context
+								.getElements();
 						for (String key : elements.keySet()) {
 							Integer value = allElements.get(key);
-							value = value == null ? elements.get(key) : value + elements.get(key);
+							value = value == null ? elements.get(key) : value
+									+ elements.get(key);
 							allElements.put(key, value);
 						}
 					}
 
 					for (Tuple<String, Double> t : curSkippedElements) {
-						skippedElements.add(Tuple.of(t.x, Tuple.of(lookAhead, t.y)));
+						skippedElements.add(Tuple.of(t.x,
+								Tuple.of(lookAhead, t.y)));
 					}
 
 					for (String elem : curMatchedElements.keySet()) {
 						if (!matchedElements.containsKey(elem)) {
 							HashMap<Integer, Integer> lookAheadMap = new HashMap<>();
-							lookAheadMap.put(lookAhead, curMatchedElements.get(elem));
+							lookAheadMap.put(lookAhead,
+									curMatchedElements.get(elem));
 							matchedElements.put(elem, lookAheadMap);
 						} else {
 							tmpMatchedElements = matchedElements.get(elem);
-							int value =
-								tmpMatchedElements.containsKey(lookAhead) ?
-								tmpMatchedElements.get(lookAhead) : 0;
-							matchedElements.get(elem).put(lookAhead, value +
-									curMatchedElements.get(elem));
+							int value = tmpMatchedElements
+									.containsKey(lookAhead) ? tmpMatchedElements
+									.get(lookAhead) : 0;
+							matchedElements.get(elem).put(lookAhead,
+									value + curMatchedElements.get(elem));
 						}
 					}
 					for (String elem : curSkippedLeftElements.keySet()) {
 						if (!skippedLeftElements.containsKey(elem)) {
 							HashMap<Integer, Integer> lookAheadMap = new HashMap<>();
-							lookAheadMap.put(lookAhead, curSkippedLeftElements.get(elem));
+							lookAheadMap.put(lookAhead,
+									curSkippedLeftElements.get(elem));
 							skippedLeftElements.put(elem, lookAheadMap);
 						} else {
-							tmpSkippedLeftElements = skippedLeftElements.get(elem);
-							int value =
-								tmpSkippedLeftElements.containsKey(lookAhead) ?
-								tmpSkippedLeftElements.get(lookAhead) : 0;
-							skippedLeftElements.get(elem).put(lookAhead, value
-									+ curSkippedLeftElements.get(elem));
+							tmpSkippedLeftElements = skippedLeftElements
+									.get(elem);
+							int value = tmpSkippedLeftElements
+									.containsKey(lookAhead) ? tmpSkippedLeftElements
+									.get(lookAhead) : 0;
+							skippedLeftElements.get(elem).put(lookAhead,
+									value + curSkippedLeftElements.get(elem));
 						}
 					}
 					for (String elem : curSkippedRightElements.keySet()) {
 						if (!skippedRightElements.containsKey(elem)) {
 							HashMap<Integer, Integer> lookAheadMap = new HashMap<>();
-							lookAheadMap.put(lookAhead, curSkippedRightElements.get(elem));
+							lookAheadMap.put(lookAhead,
+									curSkippedRightElements.get(elem));
 							skippedRightElements.put(elem, lookAheadMap);
 						} else {
-							tmpSkippedRightElements = skippedRightElements.get(elem);
-							int value =
-								tmpSkippedRightElements.containsKey(lookAhead)
-								? tmpSkippedRightElements.get(lookAhead) : 0;
-							skippedRightElements.get(elem).put(lookAhead, value
-									+ curSkippedRightElements.get(elem));
+							tmpSkippedRightElements = skippedRightElements
+									.get(elem);
+							int value = tmpSkippedRightElements
+									.containsKey(lookAhead) ? tmpSkippedRightElements
+									.get(lookAhead) : 0;
+							skippedRightElements.get(elem).put(lookAhead,
+									value + curSkippedRightElements.get(elem));
 						}
 					}
 				}
@@ -723,8 +761,8 @@ public final class Main {
 			s.append(elem + ";");
 			tmpMatchedElements = matchedElements.get(elem);
 			for (int lookAhead : lookaheads) {
-				int value = tmpMatchedElements.containsKey(lookAhead) ?
-					tmpMatchedElements.get(lookAhead) : 0;
+				int value = tmpMatchedElements.containsKey(lookAhead) ? tmpMatchedElements
+						.get(lookAhead) : 0;
 				s.append(value + ";");
 			}
 			s.append("\n");
@@ -747,9 +785,11 @@ public final class Main {
 			s.append(elem + ";");
 			tmpMatchedElements = matchedElements.get(elem);
 			for (int lookAhead : lookaheads) {
-				int value = tmpMatchedElements.containsKey(lookAhead) ?
-					tmpMatchedElements.get(lookAhead) : 0;
-				s.append((double) Math.round(100 * (double) value / (double) allElements.get(elem)) / 100 + ";");
+				int value = tmpMatchedElements.containsKey(lookAhead) ? tmpMatchedElements
+						.get(lookAhead) : 0;
+				s.append((double) Math.round(100 * (double) value
+						/ (double) allElements.get(elem))
+						/ 100 + ";");
 			}
 			s.append("\n");
 		}
@@ -772,11 +812,12 @@ public final class Main {
 			tmpSkippedLeftElements = skippedLeftElements.get(elem);
 			tmpSkippedRightElements = skippedRightElements.get(elem);
 			for (int lookAhead : lookaheads) {
-				int value = tmpSkippedLeftElements.containsKey(lookAhead) ?
-					tmpSkippedLeftElements.get(lookAhead) : 0;
+				int value = tmpSkippedLeftElements.containsKey(lookAhead) ? tmpSkippedLeftElements
+						.get(lookAhead) : 0;
 				if (tmpSkippedRightElements != null) {
-					value = tmpSkippedRightElements.containsKey(lookAhead) ?
-						value + tmpSkippedRightElements.get(lookAhead) : value;
+					value = tmpSkippedRightElements.containsKey(lookAhead) ? value
+							+ tmpSkippedRightElements.get(lookAhead)
+							: value;
 				}
 				s.append(value + ";");
 			}

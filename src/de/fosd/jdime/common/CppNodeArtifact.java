@@ -54,7 +54,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		this.astnode = xmlDoc.getChildNodes().item(1);
 		renumberTree();
 	}
+	
+	public CppNodeArtifact(final FileArtifact artifact) {
+		setRevision(artifact.getRevision());
 
+		Node astnode;
+//		if (artifact.isEmpty()) {
+//			astnode = new Node();
+//		} else {
+//			Program p = initProgram();
+//			p.addSourceFile(artifact.getPath());
+//			astnode = p;
+			astnode = (Node) new CppNodeArtifact(artifact.getPath());
+//		}
+
+		this.astnode = astnode;
+		this.initializeChildren();
+		renumberTree();
+	}
 	public CppNodeArtifact(final Node astnode) {
 		this.astnode = astnode;
 		this.initializeChildren();
@@ -360,7 +377,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		Objects.requireNonNull(operation, "operation must not be null!");
 		Objects.requireNonNull(context, "context must not be null!");
 
-		MergeStrategy<CppNodeArtifact> strategy = new MergeStrategy<>();
+		MergeStrategy<CppNodeArtifact> strategy = null; // new MergeStrategy<>();
 		strategy.merge(operation, context);
 
 		if (!context.isQuiet() && context.hasOutput()) {
