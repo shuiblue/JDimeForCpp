@@ -52,7 +52,8 @@ import de.fosd.jdime.stats.StatsElement;
  */
 public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 
-	private static final Logger LOG = Logger.getLogger(StructuredStrategy.class.getCanonicalName());
+	private static final Logger LOG = Logger.getLogger(StructuredStrategy.class
+			.getCanonicalName());
 	private static final String CONFLICT_START = "<<<<<<<";
 	private static final String CONFLICT_DELIM = "=======";
 	private static final String CONFLICT_END = ">>>>>>>";
@@ -64,15 +65,19 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 	 * <code>ASTNodeArtifacts</code>.
 	 * <p>
 	 * A new <code>MergeOperation</code>, encapsulating
-	 * <code>ASTNodeArtifacts</code> as source and target nodes, is created and applied.
+	 * <code>ASTNodeArtifacts</code> as source and target nodes, is created and
+	 * applied.
 	 *
 	 * TODO: more high-level documentation.
 	 *
-	 * @param operation the <code>MergeOperation</code> to perform
-	 * @param context the <code>MergeContext</code>
+	 * @param operation
+	 *            the <code>MergeOperation</code> to perform
+	 * @param context
+	 *            the <code>MergeContext</code>
 	 */
 	@Override
-	public final void merge(MergeOperation<FileArtifact> operation, MergeContext context) {
+	public final void merge(MergeOperation<FileArtifact> operation,
+			MergeContext context) {
 
 		assert (operation != null);
 		assert (context != null);
@@ -88,24 +93,27 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 		String lPath = leftFile.getPath();
 		String bPath = baseFile.getPath();
 		String rPath = rightFile.getPath();
-		
+
 		assert (leftFile.exists() && !leftFile.isDirectory());
-		assert ((baseFile.exists() && !baseFile.isDirectory()) || baseFile.isEmpty());
+		assert ((baseFile.exists() && !baseFile.isDirectory()) || baseFile
+				.isEmpty());
 		assert (rightFile.exists() && !rightFile.isDirectory());
 
 		context.resetStreams();
 
 		FileArtifact target = operation.getTarget();
-
+System.out.println("StructuredSTR---target:"+target.dumpTree());
 		if (!context.isDiffOnly() && target != null) {
-			assert (!target.exists() || target.isEmpty()) : "Would be overwritten: " + target;
+			assert (!target.exists() || target.isEmpty()) : "Would be overwritten: "
+					+ target;
 		}
-		
-		/* ASTNodeArtifacts are created from the input files.
-		 * Then, a ASTNodeStrategy can be applied.
-		 * The result is pretty printed and can be written into the output file.
+
+		/*
+		 * ASTNodeArtifacts are created from the input files. Then, a
+		 * ASTNodeStrategy can be applied. The result is pretty printed and can
+		 * be written into the output file.
 		 */
-//		ASTNodeArtifact left, base, right;
+		// ASTNodeArtifact left, base, right;
 		CppNodeArtifact left, base, right;
 		ArrayList<Long> runtimes = new ArrayList<>();
 		MergeContext mergeContext;
@@ -116,7 +124,8 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 		ASTStats leftStats = null;
 		ASTStats rightStats = null;
 
-		LOG.fine(() -> String.format("Merging:%nLeft: %s%nBase: %s%nRight: %s", lPath, bPath, rPath));
+		LOG.fine(() -> String.format("Merging:%nLeft: %s%nBase: %s%nRight: %s",
+				lPath, bPath, rPath));
 
 		SecurityManager systemSecurityManager = System.getSecurityManager();
 		System.setSecurityManager(new SecurityManager() {
@@ -136,9 +145,10 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 				throw new SecurityException("Captured attempt to exit JVM.");
 			}
 		});
-		
+
 		try {
-			for (int i = 0; i < context.getBenchmarkRuns() + 1 && (i == 0 || context.isBenchmark()); i++) {
+			for (int i = 0; i < context.getBenchmarkRuns() + 1
+					&& (i == 0 || context.isBenchmark()); i++) {
 				if (i == 0 && (!context.isBenchmark() || context.hasStats())) {
 					mergeContext = context;
 				} else {
@@ -148,46 +158,66 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 				}
 
 				long cmdStart = System.currentTimeMillis();
-//
-//				left = new ASTNodeArtifact(leftFile);
-//				base = new ASTNodeArtifact(baseFile);
-//				right = new ASTNodeArtifact(rightFile);
-				
-				
+				//
+				 left = new CppNodeArtifact(leftFile);
+				 base = new CppNodeArtifact(baseFile);
+				 right = new CppNodeArtifact(rightFile);
+				 
+				 System.out.println("*******************************");
+				 System.out.println(left.dumpTree());
+				 System.out.println(left.prettyPrint());
+				 System.out.println("*******************************");
 
-				left = new CppNodeArtifact(lPath);
-//				base = new CppNodeArtifact(bPath);
-				base = new CppNodeArtifact();
-				right = new CppNodeArtifact(rPath);
+//				left = new CppNodeArtifact(leftFile);
+//				
+//				left = new CppNodeArtifact(lPath);
+//				// base = new CppNodeArtifact(bPath);
+//				// ---todo fix me----------
+//				base = new CppNodeArtifact();
+//				right = new CppNodeArtifact(rPath);
 
 				context.addElements(left);
 				if (!baseFile.isEmpty()) {
-//					context.addElements(base);
+					 context.addElements(base);
 				}
 				context.addElements(right);
-				CppNodeArtifact targetNode = CppNodeArtifact.createProgram(left);
-//				ASTNodeArtifact targetNode = ASTNodeArtifact.createProgram(left);
+				CppNodeArtifact targetNode = CppNodeArtifact
+						.createProgram(left);
+				
+				
+				
+				// ASTNodeArtifact targetNode =
+				// ASTNodeArtifact.createProgram(left);
 				targetNode.setRevision(left.getRevision());
 				targetNode.renumberTree();
 
 				if (LOG.isLoggable(Level.FINEST)) {
 					LOG.finest("target.dumpTree():");
-					System.out.println(targetNode.dumpTree());
+					
 				}
-
-//				MergeScenario<ASTNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeType(), left, base, right);
-MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeType(), left, base, right);
+				System.out.println("target.dumpTree():"+targetNode.dumpTree());
+				// MergeScenario<ASTNodeArtifact> nodeTriple = new
+				// MergeScenario<>(triple.getMergeType(), left, base, right);
+				MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(
+						triple.getMergeType(), left, base, right);
 				LOG.finest(nodeTriple.toString());
-				
-				System.out.println("structuredStrategy----merge(): targetNode"+ targetNode.prettyPrint());
-				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(nodeTriple, targetNode,
-						left.getRevision().getName(), right.getRevision().getName());
 
-//				MergeOperation<ASTNodeArtifact> astMergeOp = new MergeOperation<>(nodeTriple, targetNode,
-//						left.getRevision().getName(), right.getRevision().getName());
+				System.out.println("structuredStrategy----merge(): targetNode"
+						+ targetNode.prettyPrint());
+				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(
+						nodeTriple, targetNode, left.getRevision().getName(),
+						right.getRevision().getName());
+
+				// MergeOperation<ASTNodeArtifact> astMergeOp = new
+				// MergeOperation<>(nodeTriple, targetNode,
+				// left.getRevision().getName(), right.getRevision().getName());
 
 				LOG.finest("MergeOperation<ASTNodeArtifact>.apply(context)");
 				astMergeOp.apply(mergeContext);
+				
+				System.out.println("Have lunch");
+				System.out.println(targetNode.dumpTree());
+				System.out.println(targetNode.prettyPrint());
 
 				if (i == 0 && (!context.isBenchmark() || context.hasStats())) {
 					if (LOG.isLoggable(Level.FINEST)) {
@@ -211,8 +241,9 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 
 					if (!context.isDiffOnly()) {
 						try (
-								// process input stream
-						   BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
+						// process input stream
+						BufferedReader buf = new BufferedReader(
+								new StringReader(targetNode.prettyPrint()))) {
 							boolean conflict = false;
 							boolean afterconflict = false;
 							boolean inleft = false;
@@ -224,7 +255,8 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 							StringBuffer rightlines = null;
 
 							while ((line = buf.readLine()) != null) {
-								if (line.matches("^$") || line.matches("^\\s*$")) {
+								if (line.matches("^$")
+										|| line.matches("^\\s*$")) {
 									// skip empty lines
 									if (!conflict && !afterconflict) {
 										mergeContext.appendLine(line);
@@ -232,7 +264,8 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 									continue;
 								}
 
-								if (line.matches("^\\s*" + CONFLICT_START + ".*")) {
+								if (line.matches("^\\s*" + CONFLICT_START
+										+ ".*")) {
 									conflict = true;
 									tmp = cloc;
 									conflicts++;
@@ -248,10 +281,12 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 										// lets merge them
 										conflicts--;
 									}
-								} else if (line.matches("^\\s*" + CONFLICT_DELIM + ".*")) {
+								} else if (line.matches("^\\s*"
+										+ CONFLICT_DELIM + ".*")) {
 									inleft = false;
 									inright = true;
-								} else if (line.matches("^\\s*" + CONFLICT_END + ".*")) {
+								} else if (line.matches("^\\s*" + CONFLICT_END
+										+ ".*")) {
 									conflict = false;
 									afterconflict = true;
 									if (tmp == cloc) {
@@ -265,14 +300,18 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 										cloc++;
 										if (inleft) {
 											assert (leftlines != null);
-											leftlines.append(line).append(System.lineSeparator());
+											leftlines.append(line).append(
+													System.lineSeparator());
 										} else if (inright) {
 											assert (rightlines != null);
-											rightlines.append(line).append(System.lineSeparator());
+											rightlines.append(line).append(
+													System.lineSeparator());
 										}
 									} else {
 										if (afterconflict) {
-											printConflict(mergeContext, lPath, rPath, leftlines, rightlines);
+											printConflict(mergeContext, lPath,
+													rPath, leftlines,
+													rightlines);
 										}
 										afterconflict = false;
 										mergeContext.appendLine(line);
@@ -281,8 +320,10 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 							}
 
 							if (afterconflict) {
-								// last line of the buffer was a closing conflict
-								printConflict(mergeContext, lPath, rPath, leftlines, rightlines);
+								// last line of the buffer was a closing
+								// conflict
+								printConflict(mergeContext, lPath, rPath,
+										leftlines, rightlines);
 							}
 							afterconflict = false;
 						}
@@ -292,48 +333,68 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 				long runtime = System.currentTimeMillis() - cmdStart;
 				runtimes.add(runtime);
 
-//				if (LOG.isLoggable(Level.FINE)) {
-//					try (FileWriter file = new FileWriter(leftFile + ".dot")) {
-//						file.write(new ASTNodeStrategy().dumpTree(targetNode, true));
-//					}
-//				}
+				// if (LOG.isLoggable(Level.FINE)) {
+				// try (FileWriter file = new FileWriter(leftFile + ".dot")) {
+				// file.write(new ASTNodeStrategy().dumpTree(targetNode, true));
+				// }
+				// }
 
 				// collect stats
-//				leftStats = left.getStats(right.getRevision(), LangElem.TOPLEVELNODE, false);
-//				rightStats = right.getStats(left.getRevision(), LangElem.TOPLEVELNODE, false);
-//				ASTStats targetStats = targetNode.getStats(null, LangElem.TOPLEVELNODE, false);
+				// leftStats = left.getStats(right.getRevision(),
+				// LangElem.TOPLEVELNODE, false);
+				// rightStats = right.getStats(left.getRevision(),
+				// LangElem.TOPLEVELNODE, false);
+				// ASTStats targetStats = targetNode.getStats(null,
+				// LangElem.TOPLEVELNODE, false);
 
-//				assert (leftStats.getDiffStats(LangElem.NODE.toString()).getMatches() == rightStats
-//						.getDiffStats(LangElem.NODE.toString()).getMatches()) :
-//						"Number of matches should be equal in left and " + "right revision.";
-//
-//				astStats = ASTStats.add(leftStats, rightStats);
-//				astStats.setConflicts(targetStats);
-//
-//				if (LOG.isLoggable(Level.FINE) && context.hasStats()) {
-//					System.out.println("---------- left ----------");
-//					System.out.println(leftStats);
-//					System.out.println("---------- right ----------");
-//					System.out.println(rightStats);
-//					System.out.println("---------- target ----------");
-//					System.out.println(targetStats);
-//				}
+				// assert
+				// (leftStats.getDiffStats(LangElem.NODE.toString()).getMatches()
+				// == rightStats
+				// .getDiffStats(LangElem.NODE.toString()).getMatches()) :
+				// "Number of matches should be equal in left and " +
+				// "right revision.";
+				//
+				// astStats = ASTStats.add(leftStats, rightStats);
+				// astStats.setConflicts(targetStats);
+				//
+				// if (LOG.isLoggable(Level.FINE) && context.hasStats()) {
+				// System.out.println("---------- left ----------");
+				// System.out.println(leftStats);
+				// System.out.println("---------- right ----------");
+				// System.out.println(rightStats);
+				// System.out.println("---------- target ----------");
+				// System.out.println(targetStats);
+				// }
 
 				if (LOG.isLoggable(Level.FINE)) {
 					String sep = " / ";
-					int nodes = astStats.getDiffStats(LangElem.NODE.toString()).getElements();
-					int matches = astStats.getDiffStats(LangElem.NODE.toString()).getMatches();
-					int changes = astStats.getDiffStats(LangElem.NODE.toString()).getAdded();
-					int removals = astStats.getDiffStats(LangElem.NODE.toString()).getDeleted();
-					int conflictnodes = astStats.getDiffStats(LangElem.NODE.toString()).getConflicting();
+					int nodes = astStats.getDiffStats(LangElem.NODE.toString())
+							.getElements();
+					int matches = astStats.getDiffStats(
+							LangElem.NODE.toString()).getMatches();
+					int changes = astStats.getDiffStats(
+							LangElem.NODE.toString()).getAdded();
+					int removals = astStats.getDiffStats(
+							LangElem.NODE.toString()).getDeleted();
+					int conflictnodes = astStats.getDiffStats(
+							LangElem.NODE.toString()).getConflicting();
 
-					LOG.fine(String.format("Absolute (nodes%smatches%schanges%sremovals%sconflicts): ", sep, sep, sep, sep));
-					LOG.fine(String.format("%d%s%d%s%d%s%d%s%d", nodes, sep, matches, sep, changes, sep, removals, sep, conflictnodes));
+					LOG.fine(String
+							.format("Absolute (nodes%smatches%schanges%sremovals%sconflicts): ",
+									sep, sep, sep, sep));
+					LOG.fine(String.format("%d%s%d%s%d%s%d%s%d", nodes, sep,
+							matches, sep, changes, sep, removals, sep,
+							conflictnodes));
 
 					if (nodes > 0) {
-						LOG.fine(String.format("Relative (nodes%smatches%schanges%sremovals%sconflicts): ", sep, sep, sep, sep));
-						LOG.fine(String.format("%s%s%s%s%s%s%s%s%s", 100.0, sep, 100.0 * matches / nodes, sep,
-								100.0 * changes / nodes, sep, 100.0 * removals / nodes, sep, 100.0 * conflictnodes / nodes));
+						LOG.fine(String
+								.format("Relative (nodes%smatches%schanges%sremovals%sconflicts): ",
+										sep, sep, sep, sep));
+						LOG.fine(String.format("%s%s%s%s%s%s%s%s%s", 100.0,
+								sep, 100.0 * matches / nodes, sep, 100.0
+										* changes / nodes, sep, 100.0
+										* removals / nodes, sep, 100.0
+										* conflictnodes / nodes));
 					}
 				}
 
@@ -348,7 +409,8 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 					if (i == 0) {
 						LOG.fine(() -> "Initial run: " + runtime + " ms");
 					} else {
-						LOG.fine((String.format("Run %d of %d: %d ms", i, context.getBenchmarkRuns(), runtime)));
+						LOG.fine((String.format("Run %d of %d: %d ms", i,
+								context.getBenchmarkRuns(), runtime)));
 					}
 				}
 			}
@@ -367,7 +429,8 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 
 			// write output
 			if (!context.isPretend() && target != null) {
-				LOG.finest(() -> "Write output to file: " + target.getFullPath());
+				LOG.finest(() -> "Write output to file: "
+						+ target.getFullPath());
 				assert (target.exists());
 				target.write(context.getStdIn());
 			}
@@ -398,20 +461,24 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 				assert (leftStats != null);
 				assert (rightStats != null);
 
-				MergeTripleStats scenariostats =
-						new MergeTripleStats(triple, conflicts, cloc, loc, runtime, astStats, leftStats, rightStats);
+				MergeTripleStats scenariostats = new MergeTripleStats(triple,
+						conflicts, cloc, loc, runtime, astStats, leftStats,
+						rightStats);
 				stats.addScenarioStats(scenariostats);
 			}
 		} catch (SecurityException e) {
 			LOG.log(Level.SEVERE, e, () -> "SecurityException while merging.");
 		} catch (Throwable t) {
-			LOG.log(Level.SEVERE, t, () -> String.format("Exception while merging:%nLeft: %s%nBase: %s%nRight: %s", lPath, bPath, rPath));
-			
+			LOG.log(Level.SEVERE, t, () -> String.format(
+					"Exception while merging:%nLeft: %s%nBase: %s%nRight: %s",
+					lPath, bPath, rPath));
+
 			if (!context.isKeepGoing()) {
 				throw new Error(t);
 			} else {
 				if (context.hasStats()) {
-					MergeTripleStats scenarioStats = new MergeTripleStats(triple, t.toString());
+					MergeTripleStats scenarioStats = new MergeTripleStats(
+							triple, t.toString());
 					context.getStats().addScenarioStats(scenarioStats);
 				}
 			}
@@ -420,8 +487,8 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 		System.setSecurityManager(systemSecurityManager);
 	}
 
-	private static void printConflict(MergeContext mergeContext, String lPath, String rPath, StringBuffer leftlines,
-	                                  StringBuffer rightlines) {
+	private static void printConflict(MergeContext mergeContext, String lPath,
+			String rPath, StringBuffer leftlines, StringBuffer rightlines) {
 		assert (leftlines != null);
 		assert (rightlines != null);
 		mergeContext.appendLine(CONFLICT_START + " " + lPath);
@@ -438,22 +505,28 @@ MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeT
 
 	@Override
 	public final Stats createStats() {
-		return new Stats(new String[] {"directories", "files", "lines", "nodes"});
+		return new Stats(new String[] { "directories", "files", "lines",
+				"nodes" });
 	}
 
 	@Override
 	public final String getStatsKey(FileArtifact artifact) {
 		// FIXME: remove me when implementation is complete!
-		throw new NotYetImplementedException("StructuredStrategy: Implement me!");
+		throw new NotYetImplementedException(
+				"StructuredStrategy: Implement me!");
 	}
 
 	@Override
-	public final String dumpTree(FileArtifact artifact, boolean graphical) throws IOException {
-		return new ASTNodeStrategy().dumpTree(new ASTNodeArtifact(artifact), graphical);
+	public final String dumpTree(FileArtifact artifact, boolean graphical)
+			throws IOException {
+		return new ASTNodeStrategy().dumpTree(new ASTNodeArtifact(artifact),
+				graphical);
 	}
 
 	@Override
-	public String dumpFile(FileArtifact artifact, boolean graphical) throws IOException {
-		return new ASTNodeStrategy().dumpFile(new ASTNodeArtifact(artifact), graphical);
+	public String dumpFile(FileArtifact artifact, boolean graphical)
+			throws IOException {
+		return new ASTNodeStrategy().dumpFile(new ASTNodeArtifact(artifact),
+				graphical);
 	}
 }
