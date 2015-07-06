@@ -67,6 +67,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
             }
         };
 
+
     /**
      * The source <code>FileArtifacts</code> are extracted from the
      * <code>MergeOperation</code>, parsed by the <code>JastAddJ</code> parser
@@ -74,12 +75,15 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
      * <code>ASTNodeArtifacts</code>.
      * <p>
      * A new <code>MergeOperation</code>, encapsulating
-     * <code>ASTNodeArtifacts</code> as source and target nodes, is created and applied.
+	 * <code>ASTNodeArtifacts</code> as source and target nodes, is created and
+	 * applied.
      *
      * TODO: more high-level documentation.
      *
-     * @param operation the <code>MergeOperation</code> to perform
-     * @param context the <code>MergeContext</code>
+	 * @param operation
+	 *            the <code>MergeOperation</code> to perform
+	 * @param context
+	 *            the <code>MergeContext</code>
      */
     @Override
     public final void merge(MergeOperation<FileArtifact> operation, MergeContext context) throws IOException, InterruptedException {
@@ -87,6 +91,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
          * The method creates ASTNodeArtifacts from the input files. An ASTNodeStrategy is then applied.
          * The result is pretty printed and possibly written to the output file.
          */
+
 
         MergeScenario<FileArtifact> triple = operation.getMergeScenario();
 

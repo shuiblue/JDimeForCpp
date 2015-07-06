@@ -89,6 +89,7 @@ public class FileArtifact extends Artifact<FileArtifact> {
         } catch (IOException e) {
             throw new FileNotFoundException(e.getMessage());
         }
+//		file = new File("");
     }
 
     /**
@@ -586,6 +587,7 @@ public class FileArtifact extends Artifact<FileArtifact> {
         } else {
             return FileUtils.sizeOf(file) == 0;
         }
+	
     }
 
     /**
