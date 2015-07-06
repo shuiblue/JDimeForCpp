@@ -2,6 +2,7 @@ package de.fosd.jdime.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 
@@ -10,15 +11,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import AST.Program;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.common.operations.Operation;
 import de.fosd.jdime.matcher.Color;
 import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.strategy.ASTNodeStrategy;
+import de.fosd.jdime.strategy.CPPNodeStrategy;
 import de.fosd.jdime.strategy.MergeStrategy;
 import de.fosd.jdime.strategy.NWayStrategy;
 
@@ -44,6 +49,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 			xmlPath = getXmlFile(path);
 			xmlDoc = getXmlDom(xmlPath);
+			// System.out.println("-------------cppFile---------");
+			// printNote(xmlDoc.getChildNodes());
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
@@ -51,37 +59,41 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		} catch (SAXException e) {
 			e.printStackTrace();
 		}
-		this.astnode = xmlDoc.getChildNodes().item(1);
+		this.astnode = xmlDoc.getChildNodes().item(0);
+		this.initializeChildren();
 		renumberTree();
 	}
-	
+
 	public CppNodeArtifact(final FileArtifact artifact) {
+		if (artifact.isEmpty()) {
+			return;
+		}
 		setRevision(artifact.getRevision());
 
 		Node astnode;
-//		if (artifact.isEmpty()) {
-//			astnode = new Node();
-//		} else {
-//			Program p = initProgram();
-//			p.addSourceFile(artifact.getPath());
-//			astnode = p;
-			astnode = (Node) new CppNodeArtifact(artifact.getPath());
-//		}
+		// if (artifact.isEmpty()) {
+		// astnode = new Node();
+		// } else {
+		// Program p = initProgram();
+		// p.addSourceFile(artifact.getPath());
+		// astnode = p;
+		astnode = (Node) new CppNodeArtifact(artifact.getPath());
+		// }
 
 		this.astnode = astnode;
 		this.initializeChildren();
 		renumberTree();
 	}
+
 	public CppNodeArtifact(final Node astnode) {
 		this.astnode = astnode;
 		this.initializeChildren();
 	}
 
 	public CppNodeArtifact() {
-		// this.astnode = new NODE;
-		//
+		this.astnode = null;
 		// this.initializeChildren();
-		System.out.println("fix me");
+		// System.out.println("fix me CppNodeArtifact()");
 	}
 
 	private void initializeChildren() {
@@ -119,8 +131,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	public static String getXmlFile(String inputFile) throws IOException {
 		if (new File(inputFile).isFile()) {
 			String outXmlFile = inputFile + ".xml";
-			Process process = new ProcessBuilder("srcML/src2srcml", inputFile,
-					"-o", outXmlFile).start();
+			Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
+					inputFile, "-o", outXmlFile).start();
 			return outXmlFile;
 		} else {
 			System.out.println("File does not exist: " + inputFile);
@@ -155,6 +167,27 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			System.err.println("io+" + ex);
 		}
 		return null;
+	}
+
+	public HashMap<String, Integer> getLanguageElementStatistics() {
+		HashMap<String, Integer> elements = new HashMap<>();
+
+		String key = this.toString().split(" ")[0];
+		key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
+		elements.put(key, new Integer(1));
+
+		for (int i = 0; i < getNumChildren(); i++) {
+			HashMap<String, Integer> childElements = getChild(i)
+					.getLanguageElementStatistics();
+			for (String childKey : childElements.keySet()) {
+				Integer value = elements.get(childKey);
+				value = value == null ? childElements.get(childKey) : value
+						+ childElements.get(childKey);
+				elements.put(childKey, value);
+			}
+		}
+
+		return elements;
 	}
 
 	@Override
@@ -291,7 +324,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			}
 		} else {
 			sb.append(indent).append("(").append(getId()).append(") ");
-			sb.append(this);
+			// sb.append(this);
 
 			if (hasMatches()) {
 				assert (m != null);
@@ -303,6 +336,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 			// children
 			for (CppNodeArtifact child : getChildren()) {
+				if (child.getCppNode().getNodeName().equals("#text")) {
+					sb.append(" " + child.getCppNode().getTextContent());
+
+					sb.append(System.lineSeparator());
+				}
 				sb.append(child.dumpTree(indent + "  "));
 			}
 		}
@@ -337,7 +375,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	@Override
 	public boolean hasUniqueLabels() {
-		System.out.println("unique lables");
+		// return !astnode.getNodeName().equals("cpp:include");
 		return false;
 	}
 
@@ -354,11 +392,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	@Override
 	public boolean isOrdered() {
-		return !astnode.getNodeName().equals("cpp:include")
-				&& !astnode.getNodeName().equals("decl_stmt")
-				&& !astnode.getNodeName().equals("comment")
-				&& !astnode.getNodeName().equals("cpp:define")
-				&& !astnode.getNodeName().equals("function");
+		// return !astnode.getNodeName().equals("cpp:include")
+		// // && !astnode.getNodeName().equals("decl_stmt")
+		// // && !astnode.getNodeName().equals("comment")
+		// && !astnode.getNodeName().equals("cpp:define")
+		// && !astnode.getNodeName().equals("function");
+		return true;
 
 	}
 
@@ -367,8 +406,37 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		assert (astnode != null);
 		assert (other != null);
 		assert (other.astnode != null);
+		boolean nodeNameMatch = astnode.getNodeName().equals(
+				other.getCppNode().getNodeName());
+		boolean nodeTextContentMatch = astnode.getTextContent().equals(
+				other.getCppNode().getTextContent());
 
-		return astnode.isEqualNode(other.getCppNode());
+		System.out.println();
+
+		if (!astnode.getNodeName().equals("function_decl")) {
+			System.out.println("--CppNodeArtifact--match-astnode:"
+					+ astnode.getNodeName() + "-- textcontent --"
+					+ astnode.getTextContent());
+			System.out.println("~~CppNodeArtifact~~match~~other:"
+					+ other.getCppNode().getNodeName() + "~ textcontent ~"
+					+ other.getCppNode().getTextContent());
+			System.out.println(astnode.getNodeName().equals(
+					other.getCppNode().getNodeName()));
+			return astnode.getNodeName().equals(
+					other.getCppNode().getNodeName());
+
+		} else {
+			String signature = astnode.getNodeName() + "["
+					+ astnode.getTextContent() + "]";
+			String other_sig = other.getCppNode().getNodeName() + "["
+					+ other.getCppNode().getTextContent() + "]";
+			System.out.println(signature);
+			System.out.println(other_sig);
+			System.out.println(signature.equals(other_sig));
+			return signature.equals(other_sig);
+
+		}
+
 	}
 
 	@Override
@@ -377,7 +445,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		Objects.requireNonNull(operation, "operation must not be null!");
 		Objects.requireNonNull(context, "context must not be null!");
 
-		MergeStrategy<CppNodeArtifact> strategy = null; // new MergeStrategy<>();
+		MergeStrategy<CppNodeArtifact> strategy = new CPPNodeStrategy();
 		strategy.merge(operation, context);
 
 		if (!context.isQuiet() && context.hasOutput()) {
@@ -387,8 +455,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	@Override
 	public String toString() {
-		return astnode.getTextContent();
+		return astnode.getNodeName();
 	}
+
 	/**
 	 * Returns statistical data of the tree. stats[0]: number of nodes stats[1]:
 	 * tree depth stats[2]: maximum number of children
@@ -414,6 +483,86 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		}
 
 		return mystats;
+	}
+
+	/**
+	 * print AST TREE.
+	 * 
+	 * @param nodeList
+	 */
+	private String printNote(NodeList nodeList) {
+		StringBuilder sb = new StringBuilder();
+		for (int count = 0; count < nodeList.getLength(); count++) {
+
+			Node tempNode = nodeList.item(count);
+
+			// make sure it's element node.
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+				sb.append("\nNode Name =" + tempNode.getNodeName() + " [OPEN]"
+						+ "\n");
+				sb.append("Node Value =" + tempNode.getTextContent());
+				// get node name and value
+				// System.out.println("\nNode Name =" + tempNode.getNodeName() +
+				// " [OPEN]");
+				// System.out.println("Node Value =" +
+				// tempNode.getTextContent());
+
+				if (tempNode.hasAttributes()) {
+
+					// get attributes names and values
+					NamedNodeMap nodeMap = tempNode.getAttributes();
+
+					for (int i = 0; i < nodeMap.getLength(); i++) {
+
+						Node node = nodeMap.item(i);
+						sb.append("attr name : " + node.getNodeName() + "\n");
+						sb.append("attr value : " + node.getNodeValue() + "\n");
+						// System.out.println("attr name : " +
+						// node.getNodeName());
+						// System.out.println("attr value : " +
+						// node.getNodeValue());
+
+					}
+
+				}
+
+				if (tempNode.hasChildNodes()) {
+
+					// loop again if has child nodes
+					printNote(tempNode.getChildNodes());
+
+				}
+				sb.append("Node Name =" + tempNode.getNodeName() + " [CLOSE]\n");
+				// System.out.println("Node Name =" + tempNode.getNodeName() +
+				// " [CLOSE]");
+
+			}
+
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public String prettyPrint() {
+		return printNote(astnode.getChildNodes());
+		// System.out.println("astnode.prettyprint:"+astnode.getTextContent());
+		// return astnode.getTextContent();
+	}
+
+	public static CppNodeArtifact createProgram(CppNodeArtifact artifact) {
+		Node old = (Node) artifact.astnode;
+		Node program;
+		program = old.cloneNode(true);
+		CppNodeArtifact p = new CppNodeArtifact(program);
+		// ASTNodeArtifact p = new ASTNodeArtifact(program);
+		try {
+			p.deleteChildren();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return p;
 	}
 
 }

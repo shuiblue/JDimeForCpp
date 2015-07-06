@@ -48,6 +48,7 @@ import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.common.operations.Operation;
 import de.fosd.jdime.stats.Statistics;
+
 import de.fosd.jdime.strategy.MergeStrategy;
 import de.fosd.jdime.strategy.StrategyNotFoundException;
 import de.uni_passau.fim.seibt.kvconfig.Config;
@@ -342,6 +343,7 @@ public final class Main {
                     case "bugfixing":
                         context.setMergeStrategy(MergeStrategy
                                 .parse("structured"));
+						
                         context.setBugfixing();
                         break;
                     case "test":
@@ -354,6 +356,7 @@ public final class Main {
                         // User only wants to display the ASTs
                         context.setMergeStrategy(MergeStrategy
                                 .parse("structured"));
+				
                         context.setDumpTree(true);
                         context.setGuiDump(false);
                         break;
@@ -361,6 +364,7 @@ public final class Main {
                         // User only wants to display the ASTs
                         context.setMergeStrategy(MergeStrategy
                                 .parse("structured"));
+				
                         context.setDumpTree(true);
                         context.setGuiDump(true);
                         break;
@@ -374,6 +378,7 @@ public final class Main {
                         // User wants to parse and pretty-print file
                         context.setMergeStrategy(MergeStrategy
                                 .parse("structured"));
+				
                         context.setDumpFiles(true);
                         break;
                     default:
@@ -466,13 +471,14 @@ public final class Main {
 
             for (Object filename : cmd.getArgList()) {
 
-				// ZSR
+//				// ZSR
 //				CppNodeArtifact newArtifact = new CppNodeArtifact(
 //						(String) filename);
 
 				 FileArtifact newArtifact = new FileArtifact(new
 				 File((String) filename));
 
+				 
                     if (context.isConditionalMerge()) {
 					newArtifact
 							.setRevision(new Revision(String.valueOf(cond++)));

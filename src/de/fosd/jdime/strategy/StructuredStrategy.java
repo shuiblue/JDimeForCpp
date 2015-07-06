@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.fosd.jdime.common.ASTNodeArtifact;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
@@ -104,6 +105,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
             if (target.exists() && !target.isEmpty()) {
                 throw new AssertionError(String.format("Would be overwritten: %s", target));
             }
+
         }
 
         context.resetStreams();
@@ -112,6 +114,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
         LOG.fine(() -> String.format("Merging:%nLeft: %s%nBase: %s%nRight: %s", lPath, bPath, rPath));
 
         try {
+
             long startTime = System.currentTimeMillis();
 
             ASTNodeArtifact left = new ASTNodeArtifact(leftFile);
@@ -134,6 +137,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
             astMergeOp.apply(context);
 
             long runtime = System.currentTimeMillis() - startTime;
+
 
             LOG.fine("Structured merge finished.");
 
@@ -164,6 +168,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
                 LOG.fine("Writing output to: " + target.getFullPath());
                 target.write(context.getStdIn());
             }
+
 
             if (context.hasStatistics()) {
                 if (LOG.isLoggable(Level.FINE)) {

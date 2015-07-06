@@ -72,6 +72,7 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
      */
     public AddOperation(T artifact, T target, MergeScenario<T> mergeScenario, String condition) {
         this.artifact = artifact;
+		System.out.println("artifact.dumpTree():"+this.artifact.dumpTree());
         this.target = target;
         this.mergeScenario = mergeScenario;
 

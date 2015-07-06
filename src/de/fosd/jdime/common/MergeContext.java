@@ -567,9 +567,6 @@ public class MergeContext implements Cloneable {
      * Whether merge inserts choice nodes instead of direct merging of artifact.
      */
     public boolean isConditionalMerge(Artifact artifact) {
-		System.out.println("mergecontext--conditionalMerge:" +conditionalMerge);
-		System.out.println("mergecontext--conditionalOutsideMethods:" +conditionalOutsideMethods);
-		
         return conditionalMerge && (conditionalOutsideMethods || artifact instanceof ASTNodeArtifact && ((ASTNodeArtifact) artifact).isWithinMethod());
     }
 
@@ -614,6 +611,91 @@ public class MergeContext implements Cloneable {
         this.lookAhead = lookAhead;
     }
 
+<<<<<<< origin/develop
+=======
+	public boolean isLookAhead() {
+		return lookAhead != MergeContext.LOOKAHEAD_OFF;
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public HashMap<String, Integer> getElements() {
+		return elements;
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void addElements(ASTNodeArtifact element) {
+		HashMap<String, Integer> elementStats = element.getLanguageElementStatistics();
+
+		for (String key : elementStats.keySet()) {
+			Integer value = elements.get(key);
+			value = value == null ? elementStats.get(key) : value + elementStats.get(key);
+			elements.put(key, value);
+		}
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void addElements(CppNodeArtifact element) {
+		HashMap<String, Integer> elementStats = element.getLanguageElementStatistics();
+
+		for (String key : elementStats.keySet()) {
+			Integer value = elements.get(key);
+			value = value == null ? elementStats.get(key) : value + elementStats.get(key);
+			elements.put(key, value);
+		}
+	}
+	
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public HashMap<String, Integer> getMatchedElements() {
+		return matchedElements;
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void matchedElement(Artifact<?> element) {
+		String key = element.toString().split(" ")[0];
+		key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
+		Integer value = matchedElements.get(key);
+		value = value == null ? new Integer(1) : new Integer(value + 1);
+		matchedElements.put(key, value);
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public HashMap<String, Integer> getskippedLeftElements() {
+		return skippedLeftElements;
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void skippedLeftElement(Artifact<?> element, int score) {
+		String key = element.toString().split(" ")[0];
+		key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
+		Integer value = skippedLeftElements.get(key);
+		value = value == null ? new Integer(1) : new Integer(value + 1);
+		skippedLeftElements.put(key, value);
+
+		// subtreeSize should never be zero if this is a skipped element.
+		skippedElements.add(Tuple.of(key, (double) score / (double) element.getSubtreeSize()));
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public HashMap<String, Integer> getskippedRightElements() {
+		return skippedRightElements;
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void skippedRightElement(Artifact<?> element, int score) {
+		String key = element.toString().split(" ")[0];
+		key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
+		Integer value = skippedRightElements.get(key);
+		value = value == null ? new Integer(1) : new Integer(value + 1);
+		skippedRightElements.put(key, value);
+		skippedElements.add(Tuple.of(key, (double) score/(double) element.getSubtreeSize()));
+	}
+
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public List<Tuple<String, Double>> getSkippedElements() {
+		return skippedElements;
+	}
+
+>>>>>>> HEAD~155
     /**
      * Returns whether conditional merging is used outside of methods.
      *
