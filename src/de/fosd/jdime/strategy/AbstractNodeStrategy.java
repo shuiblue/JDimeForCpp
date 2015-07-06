@@ -34,7 +34,7 @@ public abstract class AbstractNodeStrategy<T extends Artifact<T>> extends MergeS
 	 * @throws InterruptedException
 	 */
 	@Override
-	public final void merge(MergeOperation<T> operation, MergeContext context) throws IOException,
+	public void merge(MergeOperation<T> operation, MergeContext context) throws IOException,
 			InterruptedException {
 		assert (operation != null);
 		assert (context != null);

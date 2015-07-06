@@ -542,21 +542,21 @@ public class FileArtifact extends Artifact<FileArtifact> {
 		@SuppressWarnings("unchecked")
 		MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context.getMergeStrategy();
 		
-		if (isDirectory()) {
-			strategy = new DirectoryStrategy();
-		} else {
-			String contentType = getContentType();
-			LOG.finest(() -> String.format("%s (%s) has content type: %s", getId(), this, contentType));
-
-			if (!MIME_JAVA_SOURCE.equals(contentType)) {
-				LOG.fine(() -> "Skipping non-java file " + this);
-				return;
-			}
-		}
+//		if (isDirectory()) {
+//			strategy = new DirectoryStrategy();
+//		} else {
+//			String contentType = getContentType();
+//			LOG.finest(() -> String.format("%s (%s) has content type: %s", getId(), this, contentType));
+//
+//			if (!MIME_JAVA_SOURCE.equals(contentType)) {
+//				LOG.fine(() -> "Skipping non-java file " + this);
+//				return;
+//			}
+//		}
 
 		LOG.fine("Using strategy: " + strategy);
 		LOG.finest(() -> "merge: " + this);
-		
+		System.out.println("CppNodeArtifact---merge( ):"+this);
 		strategy.merge(operation, context);
 		
 		if (!context.isQuiet() && context.hasOutput()) {

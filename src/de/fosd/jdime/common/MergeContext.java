@@ -664,9 +664,6 @@ public class MergeContext implements Cloneable {
 	 * Whether merge inserts choice nodes instead of direct merging of artifact.
 	 */
 	public boolean isConditionalMerge(Artifact artifact) {
-		System.out.println("mergecontext--conditionalMerge:" +conditionalMerge);
-		System.out.println("mergecontext--conditionalOutsideMethods:" +conditionalOutsideMethods);
-		
 		return conditionalMerge && (conditionalOutsideMethods || artifact instanceof ASTNodeArtifact && ((ASTNodeArtifact) artifact).isWithinMethod());
 	}
 
@@ -724,6 +721,17 @@ public class MergeContext implements Cloneable {
 		}
 	}
 
+	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
+	public void addElements(CppNodeArtifact element) {
+		HashMap<String, Integer> elementStats = element.getLanguageElementStatistics();
+
+		for (String key : elementStats.keySet()) {
+			Integer value = elements.get(key);
+			value = value == null ? elementStats.get(key) : value + elementStats.get(key);
+			elements.put(key, value);
+		}
+	}
+	
 	/** TODO: This is only for debugging and messing around with the look-ahead feature. */
 	public HashMap<String, Integer> getMatchedElements() {
 		return matchedElements;

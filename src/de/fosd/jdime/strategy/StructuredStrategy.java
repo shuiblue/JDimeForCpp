@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.fosd.jdime.common.ASTNodeArtifact;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.LangElem;
 import de.fosd.jdime.common.MergeContext;
@@ -104,7 +105,8 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 		 * Then, a ASTNodeStrategy can be applied.
 		 * The result is pretty printed and can be written into the output file.
 		 */
-		ASTNodeArtifact left, base, right;
+//		ASTNodeArtifact left, base, right;
+		CppNodeArtifact left, base, right;
 		ArrayList<Long> runtimes = new ArrayList<>();
 		MergeContext mergeContext;
 		int conflicts = 0;
@@ -146,18 +148,25 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 				}
 
 				long cmdStart = System.currentTimeMillis();
+//
+//				left = new ASTNodeArtifact(leftFile);
+//				base = new ASTNodeArtifact(baseFile);
+//				right = new ASTNodeArtifact(rightFile);
+				
+				
 
-				left = new ASTNodeArtifact(leftFile);
-				base = new ASTNodeArtifact(baseFile);
-				right = new ASTNodeArtifact(rightFile);
+				left = new CppNodeArtifact(lPath);
+//				base = new CppNodeArtifact(bPath);
+				base = new CppNodeArtifact();
+				right = new CppNodeArtifact(rPath);
 
 				context.addElements(left);
 				if (!baseFile.isEmpty()) {
-					context.addElements(base);
+//					context.addElements(base);
 				}
 				context.addElements(right);
-
-				ASTNodeArtifact targetNode = ASTNodeArtifact.createProgram(left);
+				CppNodeArtifact targetNode = CppNodeArtifact.createProgram(left);
+//				ASTNodeArtifact targetNode = ASTNodeArtifact.createProgram(left);
 				targetNode.setRevision(left.getRevision());
 				targetNode.renumberTree();
 
@@ -166,12 +175,16 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 					System.out.println(targetNode.dumpTree());
 				}
 
-				MergeScenario<ASTNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeType(), left, base, right);
-
+//				MergeScenario<ASTNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeType(), left, base, right);
+MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(triple.getMergeType(), left, base, right);
 				LOG.finest(nodeTriple.toString());
-
-				MergeOperation<ASTNodeArtifact> astMergeOp = new MergeOperation<>(nodeTriple, targetNode,
+				
+				System.out.println("structuredStrategy----merge(): targetNode"+ targetNode.prettyPrint());
+				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(nodeTriple, targetNode,
 						left.getRevision().getName(), right.getRevision().getName());
+
+//				MergeOperation<ASTNodeArtifact> astMergeOp = new MergeOperation<>(nodeTriple, targetNode,
+//						left.getRevision().getName(), right.getRevision().getName());
 
 				LOG.finest("MergeOperation<ASTNodeArtifact>.apply(context)");
 				astMergeOp.apply(mergeContext);
@@ -199,7 +212,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 					if (!context.isDiffOnly()) {
 						try (
 								// process input stream
-								BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
+						   BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
 							boolean conflict = false;
 							boolean afterconflict = false;
 							boolean inleft = false;
@@ -279,32 +292,32 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 				long runtime = System.currentTimeMillis() - cmdStart;
 				runtimes.add(runtime);
 
-				if (LOG.isLoggable(Level.FINE)) {
-					try (FileWriter file = new FileWriter(leftFile + ".dot")) {
-						file.write(new ASTNodeStrategy().dumpTree(targetNode, true));
-					}
-				}
+//				if (LOG.isLoggable(Level.FINE)) {
+//					try (FileWriter file = new FileWriter(leftFile + ".dot")) {
+//						file.write(new ASTNodeStrategy().dumpTree(targetNode, true));
+//					}
+//				}
 
 				// collect stats
-				leftStats = left.getStats(right.getRevision(), LangElem.TOPLEVELNODE, false);
-				rightStats = right.getStats(left.getRevision(), LangElem.TOPLEVELNODE, false);
-				ASTStats targetStats = targetNode.getStats(null, LangElem.TOPLEVELNODE, false);
+//				leftStats = left.getStats(right.getRevision(), LangElem.TOPLEVELNODE, false);
+//				rightStats = right.getStats(left.getRevision(), LangElem.TOPLEVELNODE, false);
+//				ASTStats targetStats = targetNode.getStats(null, LangElem.TOPLEVELNODE, false);
 
-				assert (leftStats.getDiffStats(LangElem.NODE.toString()).getMatches() == rightStats
-						.getDiffStats(LangElem.NODE.toString()).getMatches()) :
-						"Number of matches should be equal in left and " + "right revision.";
-
-				astStats = ASTStats.add(leftStats, rightStats);
-				astStats.setConflicts(targetStats);
-
-				if (LOG.isLoggable(Level.FINE) && context.hasStats()) {
-					System.out.println("---------- left ----------");
-					System.out.println(leftStats);
-					System.out.println("---------- right ----------");
-					System.out.println(rightStats);
-					System.out.println("---------- target ----------");
-					System.out.println(targetStats);
-				}
+//				assert (leftStats.getDiffStats(LangElem.NODE.toString()).getMatches() == rightStats
+//						.getDiffStats(LangElem.NODE.toString()).getMatches()) :
+//						"Number of matches should be equal in left and " + "right revision.";
+//
+//				astStats = ASTStats.add(leftStats, rightStats);
+//				astStats.setConflicts(targetStats);
+//
+//				if (LOG.isLoggable(Level.FINE) && context.hasStats()) {
+//					System.out.println("---------- left ----------");
+//					System.out.println(leftStats);
+//					System.out.println("---------- right ----------");
+//					System.out.println(rightStats);
+//					System.out.println("---------- target ----------");
+//					System.out.println(targetStats);
+//				}
 
 				if (LOG.isLoggable(Level.FINE)) {
 					String sep = " / ";
