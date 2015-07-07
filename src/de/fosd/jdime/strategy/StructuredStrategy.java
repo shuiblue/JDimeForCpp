@@ -109,6 +109,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 
             if (target.exists() && !target.isEmpty()) {
                 throw new AssertionError(String.format("Would be overwritten: %s", target));
+
             }
 
         }
@@ -138,6 +139,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
             LOG.finest(() -> String.format("Tree dump of target node:%n%s", targetNode.dumpTree()));
             LOG.finest(() -> String.format("MergeScenario:%n%s", nodeTriple.toString()));
             LOG.finest("Applying an ASTNodeArtifact MergeOperation.");
+
 
             astMergeOp.apply(context);
 

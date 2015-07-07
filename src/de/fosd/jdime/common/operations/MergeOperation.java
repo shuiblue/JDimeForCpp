@@ -160,7 +160,7 @@ public class MergeOperation<T extends Artifact<T>> extends Operation<T> {
 
         this.mergeScenario = mergeScenario;
         this.target = target;
-		System.out.println("MergeOperation---constructor: target:"+target.prettyPrint());
+//		System.out.println("MergeOperation---constructor: target:"+target.prettyPrint());
 
         if (leftCondition != null || rightCondition != null) {
             this.leftCondition = leftCondition;
