@@ -74,7 +74,7 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
 		T right = triple.getRight();
 		T target = operation.getTarget();
 		///
-System.out.println("Merge----merge():"+target.prettyPrint());
+//System.out.println("Merge----merge():"+target.prettyPrint());
 
 //
 		Revision l = left.getRevision();

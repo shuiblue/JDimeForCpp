@@ -70,8 +70,8 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
 		this.artifact = artifact;
 //		System.out.println("artifact.dumpTree():"+this.artifact.dumpTree());
 		this.target = target;
-System.out.println("-----------------addOper----target----Dumptree---------------------");
-System.out.println(target.dumpTree());		
+//System.out.println("-----------------addOper----target----Dumptree---------------------");
+//System.out.println(target.dumpTree());		
 if (condition != null) {
 			this.condition = condition;
 		}

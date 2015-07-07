@@ -102,7 +102,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 		context.resetStreams();
 
 		FileArtifact target = operation.getTarget();
-System.out.println("StructuredSTR---target:"+target.dumpTree());
+//System.out.println("StructuredSTR---target:"+target.dumpTree());
 		if (!context.isDiffOnly() && target != null) {
 			assert (!target.exists() || target.isEmpty()) : "Would be overwritten: "
 					+ target;
@@ -163,11 +163,14 @@ System.out.println("StructuredSTR---target:"+target.dumpTree());
 				 base = new CppNodeArtifact(baseFile);
 				 right = new CppNodeArtifact(rightFile);
 				 
-				 System.out.println("*******************************");
-				 System.out.println(left.dumpTree());
-				 System.out.println(left.prettyPrint());
-				 System.out.println("*******************************");
+//				 System.out.println("*************left******************");
+//				 System.out.println(left.dumpTree());
+//				 System.out.println(left.prettyPrint());
+//				 System.out.println(left.nodeToXml());
+//				 System.out.println("*************left******************");
 
+				 
+				 
 //				left = new CppNodeArtifact(leftFile);
 //				
 //				left = new CppNodeArtifact(lPath);
@@ -195,15 +198,15 @@ System.out.println("StructuredSTR---target:"+target.dumpTree());
 					LOG.finest("target.dumpTree():");
 					
 				}
-				System.out.println("target.dumpTree():"+targetNode.dumpTree());
+//				System.out.println("target.dumpTree():"+targetNode.dumpTree());
 				// MergeScenario<ASTNodeArtifact> nodeTriple = new
 				// MergeScenario<>(triple.getMergeType(), left, base, right);
 				MergeScenario<CppNodeArtifact> nodeTriple = new MergeScenario<>(
 						triple.getMergeType(), left, base, right);
 				LOG.finest(nodeTriple.toString());
 
-				System.out.println("structuredStrategy----merge(): targetNode"
-						+ targetNode.prettyPrint());
+//				System.out.println("structuredStrategy----merge(): targetNode  "
+//						+ targetNode.prettyPrint());
 				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(
 						nodeTriple, targetNode, left.getRevision().getName(),
 						right.getRevision().getName());
@@ -215,10 +218,12 @@ System.out.println("StructuredSTR---target:"+target.dumpTree());
 				LOG.finest("MergeOperation<ASTNodeArtifact>.apply(context)");
 				astMergeOp.apply(mergeContext);
 				
-				System.out.println("Have lunch");
+				System.out.println("************************************");
 				System.out.println(targetNode.dumpTree());
 				System.out.println(targetNode.prettyPrint());
-
+//				System.out.println(targetNode.nodeToXml());
+				System.out.println("************************************");
+				
 				if (i == 0 && (!context.isBenchmark() || context.hasStats())) {
 					if (LOG.isLoggable(Level.FINEST)) {
 						LOG.finest("Structured merge finished.");
