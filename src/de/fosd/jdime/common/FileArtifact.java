@@ -558,7 +558,6 @@ public class FileArtifact extends Artifact<FileArtifact> {
 
 		LOG.fine("Using strategy: " + strategy);
 		LOG.finest(() -> "merge: " + this);
-		System.out.println("CppNodeArtifact---merge( ):"+this);
 		strategy.merge(operation, context);
 		
 		if (!context.isQuiet() && context.hasOutput()) {
