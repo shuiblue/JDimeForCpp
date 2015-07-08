@@ -1,2 +1,2 @@
 void one();
-void base();
+void two();

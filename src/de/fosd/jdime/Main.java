@@ -141,18 +141,6 @@ public final class Main {
 		}
 
 		if (output != null && output.exists() && !output.isEmpty()) {
-			System.err.println("Output directory is not empty!");
-			System.err.println("Delete '" + output.getFullPath() + "'? [y/N]");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					System.in));
-			String response = reader.readLine();
-
-			if (response.length() == 0
-					|| response.toLowerCase().charAt(0) != 'y') {
-				String msg = "File exists and will not be overwritten.";
-				LOG.warning(msg);
-				throw new RuntimeException(msg);
-			} else {
 				LOG.warning("File exists and will be overwritten.");
 				boolean isDirectory = output.isDirectory();
 				output.remove();
@@ -161,8 +149,6 @@ public final class Main {
 					output.getFile().mkdir();
 				}
 			}
-
-		}
 
 		if (context.isBugfixing()) {
 			bugfixing(context);
@@ -205,8 +191,11 @@ public final class Main {
 		options.addOption("benchmark", false,
 				"benchmark with " + context.getBenchmarkRuns()
 						+ " runs per file");
-		options.addOption("debug", true, "set debug level"
-				+ " (OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL)");
+		options.addOption(
+				"debug",
+				true,
+				"set debug level"
+						+ " (OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL)");
 		options.addOption("consecutive", false,
 				"requires diffonly, treats versions"
 						+ " as consecutive versions");
@@ -281,7 +270,7 @@ public final class Main {
 					case "bugfixing":
 						context.setMergeStrategy(MergeStrategy
 								.parse("structured"));
-						
+
 						context.setBugfixing();
 						break;
 					case "test":
@@ -293,16 +282,16 @@ public final class Main {
 					case "dumptree":
 						// User only wants to display the ASTs
 						context.setMergeStrategy(MergeStrategy
-						.parse("structured"));
-				
+								.parse("structured"));
+
 						context.setDumpTree(true);
 						context.setGuiDump(false);
 						break;
 					case "dumpgraph":
 						// User only wants to display the ASTs
 						context.setMergeStrategy(MergeStrategy
-						.parse("structured"));
-				
+								.parse("structured"));
+
 						context.setDumpTree(true);
 						context.setGuiDump(true);
 						break;
@@ -315,8 +304,8 @@ public final class Main {
 					case "prettyprint":
 						// User wants to parse and pretty-print file
 						context.setMergeStrategy(MergeStrategy
-						.parse("structured"));
-				
+								.parse("structured"));
+
 						context.setDumpFiles(true);
 						break;
 					default:
@@ -402,30 +391,20 @@ public final class Main {
 				return false;
 			}
 
-			// ZSR
-			 ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
-//			ArtifactList<CppNodeArtifact> inputArtifacts = new ArtifactList<>();
-
+			ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
 			char cond = 'A';
 			boolean targetIsFile = true;
-
 			for (Object filename : cmd.getArgList()) {
+				FileArtifact newArtifact = new FileArtifact(new File(
+						(String) filename));
 
-//				// ZSR
-//				CppNodeArtifact newArtifact = new CppNodeArtifact(
-//						(String) filename);
-
-				 FileArtifact newArtifact = new FileArtifact(new
-				 File((String) filename));
-
-				 
 				if (context.isConditionalMerge()) {
 					newArtifact
 							.setRevision(new Revision(String.valueOf(cond++)));
 				}
-				 if (targetIsFile) {
-				 targetIsFile = !newArtifact.isDirectory();
-				 }
+				if (targetIsFile) {
+					targetIsFile = !newArtifact.isDirectory();
+				}
 				inputArtifacts.add(newArtifact);
 
 			}
@@ -610,16 +589,16 @@ public final class Main {
 		setLogLevel("FINEST");
 
 		for (FileArtifact artifact : context.getInputFiles()) {
-			 ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
-			 System.out.println(ast.getASTNode().dumpTree());
-			 System.out.println(ast.getASTNode());
-			 System.out.println(ast.prettyPrint());
-			 System.out.println(ast.dumpTree());
-			 System.out.println("--");
-			 int[] s = ast.getStats();
-			 System.out.println("Number of nodes: " + s[0]);
-			 System.out.println("Tree Depth: " + s[1]);
-			 System.out.println("MaxChildren: " + s[2]);
+			ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
+			System.out.println(ast.getASTNode().dumpTree());
+			System.out.println(ast.getASTNode());
+			System.out.println(ast.prettyPrint());
+			System.out.println(ast.dumpTree());
+			System.out.println("--");
+			int[] s = ast.getStats();
+			System.out.println("Number of nodes: " + s[0]);
+			System.out.println("Tree Depth: " + s[1]);
+			System.out.println("MaxChildren: " + s[2]);
 			System.out.println("--------------------------------------------");
 		}
 	}
@@ -838,7 +817,6 @@ public final class Main {
 			String lookAhead = t.y.x == -1 ? "full" : "" + t.y.x;
 			s.append(t.x + ";" + lookAhead + ";" + t.y.y + ";\n");
 		}
-
 		System.out.println(s);
 	}
 
