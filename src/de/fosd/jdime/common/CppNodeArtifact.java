@@ -1,11 +1,7 @@
 package de.fosd.jdime.common;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
@@ -19,11 +15,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import AST.ASTNode;
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Color;
 import de.fosd.jdime.matcher.Matching;
@@ -40,7 +39,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	private Node astnode = null;
 	private String xmlPath = null;
 	private Document xmlDoc = null;
-
+	  /**
+	   * @aspect JDime
+	   * @declaredat /local/ssd/lessenic/git/jastaddj/java4/frontend/JDime.jadd:47
+	   */
+	  public boolean isConflict = false;
 	/**
 	 * Constructor class call c++ parser and create the AST, using this instance
 	 * as the root node.
@@ -213,7 +216,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		child.setParent(this);
 		child.initializeChildren();
 		children.add(child);
-		// this.astnode.appendChild(child.astnode.cloneNode(true));
+//		 this.astnode.appendChild(child.astnode.cloneNode(true));
 		return child;
 	}
 
@@ -390,6 +393,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	}
 
+	
 	@Override
 	public boolean matches(CppNodeArtifact other) {
 		assert (astnode != null);
@@ -399,9 +403,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 				other.getCppNode().getNodeName());
 		boolean nodeTextContentMatch = astnode.getTextContent().equals(
 				other.getCppNode().getTextContent());
-//if(astnode.getNodeName().equals("unit")){
-//	return astnode.getTextContent().equals(other.getCppNode().getTextContent());
-//}
 		if (!astnode.getNodeName().equals("function_decl")) {
 			return astnode.getNodeName().equals(
 					other.getCppNode().getNodeName());
@@ -412,7 +413,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 					+ other.getCppNode().getTextContent() + "]";
 			return signature.equals(other_sig);
 		}
-//return false;
 
 	}
 
