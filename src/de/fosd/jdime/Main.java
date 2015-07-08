@@ -103,18 +103,6 @@ public final class Main {
         }
 
         if (output != null && output.exists() && !output.isEmpty()) {
-            System.err.println("Output directory is not empty!");
-            System.err.println("Delete '" + output.getFullPath() + "'? [y/N]");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					System.in));
-            String response = reader.readLine();
-
-			if (response.length() == 0
-					|| response.toLowerCase().charAt(0) != 'y') {
-                String msg = "File exists and will not be overwritten.";
-                LOG.warning(msg);
-                throw new RuntimeException(msg);
-            } else {
                 LOG.warning("File exists and will be overwritten.");
                 boolean isDirectory = output.isDirectory();
                 output.remove();
@@ -123,8 +111,6 @@ public final class Main {
                     output.getFile().mkdir();
                 }
             }
-
-        }
 
         if (context.isBugfixing()) {
             bugfixing(context);
@@ -286,6 +272,7 @@ public final class Main {
 
         Options options = new Options();
         options.addOption("debug", true, "set debug level"
+
                 + " (OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL)");
         options.addOption("consecutive", false,
                 "requires diffonly, treats versions"
@@ -462,22 +449,12 @@ public final class Main {
                 return false;
             }
 
-			// ZSR
             ArtifactList<FileArtifact> inputArtifacts = new ArtifactList<>();
-//			ArtifactList<CppNodeArtifact> inputArtifacts = new ArtifactList<>();
-
             char cond = 'A';
             boolean targetIsFile = true;
-
             for (Object filename : cmd.getArgList()) {
-
-//				// ZSR
-//				CppNodeArtifact newArtifact = new CppNodeArtifact(
-//						(String) filename);
-
-				 FileArtifact newArtifact = new FileArtifact(new
-				 File((String) filename));
-
+				FileArtifact newArtifact = new FileArtifact(new File(
+						(String) filename));
 				 
                     if (context.isConditionalMerge()) {
 					newArtifact

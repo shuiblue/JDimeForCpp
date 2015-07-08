@@ -1,2 +1,0 @@
-void one();
-void two();

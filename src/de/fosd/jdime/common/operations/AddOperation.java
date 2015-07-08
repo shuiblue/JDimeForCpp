@@ -72,8 +72,8 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
      */
     public AddOperation(T artifact, T target, MergeScenario<T> mergeScenario, String condition) {
         this.artifact = artifact;
-//		System.out.println("artifact.dumpTree():"+this.artifact.dumpTree());
         this.target = target;
+<<<<<<< origin/develop
 <<<<<<< origin/develop
 <<<<<<< origin/develop
         this.mergeScenario = mergeScenario;
@@ -86,6 +86,8 @@ System.out.println(target.dumpTree());
 //System.out.println("-----------------addOper----target----Dumptree---------------------");
 //System.out.println(target.dumpTree());		
 >>>>>>> HEAD~153
+=======
+>>>>>>> HEAD~152
         if (condition != null) {
             this.condition = condition;
         }

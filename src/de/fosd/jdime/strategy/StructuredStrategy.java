@@ -110,6 +110,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
             if (target.exists() && !target.isEmpty()) {
                 throw new AssertionError(String.format("Would be overwritten: %s", target));
 
+
             }
 
         }
@@ -148,6 +149,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 
             LOG.fine("Structured merge finished.");
 
+
             if (!context.isDiffOnly()) {
                 LOG.finest(() -> String.format("Tree dump of target node:%n%s", targetNode.dumpTree()));
             }
@@ -178,6 +180,7 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 
 
             if (context.hasStatistics()) {
+
                 if (LOG.isLoggable(Level.FINE)) {
                     String fileName = leftFile + ".dot";
                     LOG.fine("Dumping the target node tree to " + fileName);
