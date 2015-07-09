@@ -183,16 +183,16 @@ public class StructuredStrategy extends MergeStrategy<FileArtifact> {
 				LOG.finest("MergeOperation<ASTNodeArtifact>.apply(context)");
 				astMergeOp.apply(mergeContext);
 
-				System.out
-						.println("******************dumpTree******************");
-				System.out.println(targetNode.dumpTree());
-				System.out
-						.println("****************dumpTree********************");
-				System.out
-						.println("****************prettyPrint********************");
-				System.out.println(targetNode.prettyPrint());
-				System.out
-						.println("****************prettyPrint********************");
+//				System.out
+//						.println("******************dumpTree******************");
+//				System.out.println(targetNode.dumpTree());
+//				System.out
+//						.println("****************dumpTree********************");
+//				System.out
+//						.println("****************prettyPrint********************");
+//				System.out.println(targetNode.prettyPrint());
+//				System.out
+//						.println("****************prettyPrint********************");
 
 				if (i == 0 && (!context.isBenchmark() || context.hasStats())) {
 					if (LOG.isLoggable(Level.FINEST)) {

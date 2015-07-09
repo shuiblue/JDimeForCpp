@@ -10,19 +10,15 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.org.apache.xml.internal.security.Init;
+import de.fosd.jdime.Main;
 
-import de.fosd.jdime.*;
-
-;
-
-public class oneAndTwo {
-
+public class oneTwoThree {
+//
 //	@Before
 //	public void init() throws IOException {
 //		try {
 //			Main.main(new String[] { "-mode", "structured", "-output",
-//					"testcpp/1/12.cpp", "testcpp/1/1.cpp", "testcpp/1/2.cpp" });
+//					"testcpp/2/12.cpp", "testcpp/2/1.cpp", "testcpp/2/2.cpp" });
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		} catch (InterruptedException e) {
@@ -34,10 +30,9 @@ public class oneAndTwo {
 	public void test() throws IOException {
 //		init();
 		BufferedReader result_br = new BufferedReader(new FileReader(
-				"testcpp/1/12.cpp"));
+				"testcpp/2/12.cpp"));
 		BufferedReader exp_br = new BufferedReader(new FileReader(
-				"testcpp/1/expect.cpp"));
-		assertNotNull(result_br);
+				"testcpp/2/expect.cpp"));
 		String result, expect_result = "";
 
 		try {
@@ -50,6 +45,7 @@ public class oneAndTwo {
 				line = result_br.readLine();
 			}
 			result = sb.toString();
+//			System.out.print(result);
 		} finally {
 			result_br.close();
 		}
@@ -64,11 +60,11 @@ public class oneAndTwo {
 				line = exp_br.readLine();
 			}
 			expect_result = sb.toString();
+//			System.out.print(expect_result);
 		} finally {
 			exp_br.close();
 		}
-		// assertEquals(result, expect_result);
-		// assertNotNull(result);
+		 assertEquals(result, expect_result);
 	}
 
 }

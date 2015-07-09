@@ -1,0 +1,2 @@
+void one();
+void three();
