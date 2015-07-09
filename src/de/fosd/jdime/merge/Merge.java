@@ -144,8 +144,12 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
         LOG.finest(() -> String.format("%s -> (%s)", prefix(left), leftChildren));
         LOG.finest(() -> String.format("%s -> (%s)", prefix(right), rightChildren));
 
-        if ((base.isEmpty() || base.hasChildren()) && (leftChildren.isEmpty() || rightChildren.isEmpty())) {
-            if (leftChildren.isEmpty() && rightChildren.isEmpty()) {
+//		if ((base.isEmpty() || base.hasChildren()) && (leftChildren.isEmpty() || rightChildren.isEmpty())) {
+//					if (leftChildren.isEmpty() && rightChildren.isEmpty()) {
+
+			if ((base.isEmpty() || base.hasChildren()) && (leftChildren==null || rightChildren==null)) {
+
+				if (leftChildren==null && rightChildren==null) {
                 LOG.finest(() -> String.format("%s and [%s] have no children", prefix(left), right.getId()));
                 return;
             } else if (leftChildren.isEmpty()) {

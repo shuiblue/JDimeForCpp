@@ -1,4 +1,2 @@
-int one(){
-int a=2;
-};
+void one();
 void two();

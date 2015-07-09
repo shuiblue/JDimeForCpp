@@ -1,4 +1,2 @@
-void one () ; 
-; 
-
-void two () ; 
+void one();
+void two();

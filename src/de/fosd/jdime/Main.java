@@ -268,8 +268,8 @@ public final class Main {
         assert (context != null);
 		LOG.fine(() -> "Parsing command line arguments: "
 				+ Arrays.toString(args));
-        boolean continueRun = true;
 
+		boolean continueRun = true;
         Options options = new Options();
         options.addOption("debug", true, "set debug level"
 
