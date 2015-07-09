@@ -39,16 +39,17 @@ import de.fosd.jdime.matcher.Matchings;
  * TODO: This needs more explanation, I'll fix that soon.
  *
  * @param <T>
- * 		type of artifacts
+ *            type of artifacts
  * @author Olaf Lessenich
  */
 public class SimpleTreeMatcher<T extends Artifact<T>> extends OrderedMatcher<T> {
 
 	/**
-	 * Constructs a new <code>SimpleTreeMatcher</code> using the given <code>Matcher</code> for recursive calls.
+	 * Constructs a new <code>SimpleTreeMatcher</code> using the given
+	 * <code>Matcher</code> for recursive calls.
 	 *
 	 * @param matcher
-	 * 		the parent <code>Matcher</code>
+	 *            the parent <code>Matcher</code>
 	 */
 	public SimpleTreeMatcher(Matcher<T> matcher) {
 		super(matcher);
@@ -60,20 +61,23 @@ public class SimpleTreeMatcher<T extends Artifact<T>> extends OrderedMatcher<T> 
 	 * TODO: this really needs documentation. I'll soon take care of that.
 	 */
 	@Override
-	public Matchings<T> match(MergeContext context, T left, T right, int lookAhead) {
+	public Matchings<T> match(MergeContext context, T left, T right,
+			int lookAhead) {
 		String id = getClass().getSimpleName();
 		int rootMatching = left.matches(right) ? 1 : 0;
 
 		if (rootMatching == 0) {
 			if (lookAhead == 0) {
 				/*
-				 * The roots do not match and we cannot use the look-ahead feature.  We therefore ignore the rest of the
-				 * subtrees and return early to save time.
+				 * The roots do not match and we cannot use the look-ahead
+				 * feature. We therefore ignore the rest of the subtrees and
+				 * return early to save time.
 				 */
 
 				LOG.finest(() -> {
 					String format = "%s - early return while matching %s and %s (LookAhead = %d)";
-					return String.format(format, id, left.getId(), right.getId(), context.getLookAhead());
+					return String.format(format, id, left.getId(),
+							right.getId(), context.getLookAhead());
 				});
 
 				Matchings<T> m = Matchings.of(left, right, rootMatching);
@@ -113,23 +117,28 @@ public class SimpleTreeMatcher<T extends Artifact<T>> extends OrderedMatcher<T> 
 				T leftChild = left.getChild(i - 1);
 				T rightChild = right.getChild(j - 1);
 
-				Matchings<T> w = matcher.match(context, leftChild, rightChild, lookAhead);
+				Matchings<T> w = matcher.match(context, leftChild, rightChild,
+						lookAhead);
 				Matching<T> matching = w.get(leftChild, rightChild).get();
 
 				if (matrixM[i][j - 1] > matrixM[i - 1][j]) {
-					if (matrixM[i][j - 1] > matrixM[i - 1][j - 1] + matching.getScore()) {
+					if (matrixM[i][j - 1] > matrixM[i - 1][j - 1]
+							+ matching.getScore()) {
 						matrixM[i][j] = matrixM[i][j - 1];
 						matrixT[i][j] = new Entry<>(Direction.LEFT, w);
 					} else {
-						matrixM[i][j] = matrixM[i - 1][j - 1] + matching.getScore();
+						matrixM[i][j] = matrixM[i - 1][j - 1]
+								+ matching.getScore();
 						matrixT[i][j] = new Entry<>(Direction.DIAG, w);
 					}
 				} else {
-					if (matrixM[i - 1][j] > matrixM[i - 1][j - 1] + matching.getScore()) {
+					if (matrixM[i - 1][j] > matrixM[i - 1][j - 1]
+							+ matching.getScore()) {
 						matrixM[i][j] = matrixM[i - 1][j];
 						matrixT[i][j] = new Entry<>(Direction.TOP, w);
 					} else {
-						matrixM[i][j] = matrixM[i - 1][j - 1] + matching.getScore();
+						matrixM[i][j] = matrixM[i - 1][j - 1]
+								+ matching.getScore();
 						matrixT[i][j] = new Entry<>(Direction.DIAG, w);
 					}
 				}
@@ -138,30 +147,32 @@ public class SimpleTreeMatcher<T extends Artifact<T>> extends OrderedMatcher<T> 
 
 		int i = m;
 		int j = n;
-        List<Matchings<T>> children = new ArrayList<>();
+		List<Matchings<T>> children = new ArrayList<>();
 
 		while (i >= 1 && j >= 1) {
 			switch (matrixT[i][j].getDirection()) {
-				case TOP:
-					i--;
-					break;
-				case LEFT:
-					j--;
-					break;
-				case DIAG:
-					if (matrixM[i][j] > matrixM[i - 1][j - 1]) {
-						children.add(matrixT[i][j].getMatching());
-					}
-					i--;
-					j--;
-					break;
-				default:
-					break;
+			case TOP:
+				i--;
+				break;
+			case LEFT:
+				j--;
+				break;
+			case DIAG:
+				if (matrixM[i][j] > matrixM[i - 1][j - 1]) {
+					children.add(matrixT[i][j].getMatching());
+				}
+				i--;
+				j--;
+				break;
+			default:
+				break;
 			}
 		}
 
-		// total matching score for these trees is the score of the matched children + the matching of the root nodes
-		Matching<T> matching = new Matching<>(left, right, matrixM[m][n] + rootMatching);
+		// total matching score for these trees is the score of the matched
+		// children + the matching of the root nodes
+		Matching<T> matching = new Matching<>(left, right, matrixM[m][n]
+				+ rootMatching);
 		matching.setAlgorithm(id);
 
 		Matchings<T> matchings = new Matchings<>();

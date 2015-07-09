@@ -3,27 +3,19 @@ package de.fosd.jdime.common;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import AST.ASTNode;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
+import de.fosd.jdime.common.operations.Operation;
 import de.fosd.jdime.matcher.Color;
 import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.strategy.CPPNodeStrategy;
@@ -39,11 +31,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	private Node astnode = null;
 	private String xmlPath = null;
 	private Document xmlDoc = null;
-	  /**
-	   * @aspect JDime
-	   * @declaredat /local/ssd/lessenic/git/jastaddj/java4/frontend/JDime.jadd:47
-	   */
-	  public boolean isConflict = false;
+	/**
+	 * @aspect JDime
+	 * @declaredat /local/ssd/lessenic/git/jastaddj/java4/frontend/JDime.jadd:47
+	 */
+	public boolean isConflict = false;
+
 	/**
 	 * Constructor class call c++ parser and create the AST, using this instance
 	 * as the root node.
@@ -65,12 +58,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
 		}
-		this.astnode = xmlDoc.getChildNodes().item(0);
+		this.astnode = xmlDoc.getChild(0);
 		this.initializeChildren();
 		renumberTree();
 	}
@@ -83,8 +72,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 */
 	public CppNodeArtifact(final Node astnode) {
 		this.astnode = astnode;
-		this.initializeChildren();
+		// this.initializeChildren();
 		renumberTree();
+	}
+
+	public static String xmlToString(String inputFile) {
+		if (new File(inputFile).isFile()) {
+			String outXmlFile = inputFile + ".cpp";
+			try {
+				Process process = new ProcessBuilder("srcML/srcml2src",
+						inputFile, "-o", outXmlFile).start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return outXmlFile;
+		}
+		return null;
 	}
 
 	/**
@@ -99,14 +103,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 */
 	private void initializeChildren() {
 		ArtifactList<CppNodeArtifact> children = new ArtifactList<>();
-		for (int i = 0; i < astnode.getChildNodes().getLength(); i++) {
-			if (astnode != null) {
-				CppNodeArtifact child = new CppNodeArtifact(astnode
-						.getChildNodes().item(i));
-				child.setParent(this);
-				child.setRevision(getRevision());
-				children.add(child);
-				child.initializeChildren();
+		if (astnode != null) {
+			for (int i = 0; i < astnode.getChildCount(); i++) {
+				if (!astnode.getChild(i).getValue().equals("\n")) {
+
+					CppNodeArtifact child = new CppNodeArtifact(
+							astnode.getChild(i));
+					child.setParent(this);
+					child.setRevision(getRevision());
+					children.add(child);
+					// child.initializeChildren();
+				}
 			}
 		}
 		setChildren(children);
@@ -152,41 +159,41 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 * @throws SAXException
 	 *             e
 	 */
-	public static Document getXmlDom(String xmlFilePath)
-			throws ParserConfigurationException, SAXException {
+	public static Document getXmlDom(String xmlFilePath) {
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(xmlFilePath);
 
+			Builder builder = new Builder();
+			File file = new File(xmlFilePath);
+			Document doc = builder.build(file);
 			return doc;
-		}
-
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("io+" + ex);
+		} catch (ValidityException e) {
+			e.printStackTrace();
+		} catch (ParsingException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public HashMap<String, Integer> getLanguageElementStatistics() {
 		HashMap<String, Integer> elements = new HashMap<>();
-
-		String key = this.toString().split(" ")[0];
-		key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
-		elements.put(key, new Integer(1));
-
-		for (int i = 0; i < getNumChildren(); i++) {
-			HashMap<String, Integer> childElements = getChild(i)
-					.getLanguageElementStatistics();
-			for (String childKey : childElements.keySet()) {
-				Integer value = elements.get(childKey);
-				value = value == null ? childElements.get(childKey) : value
-						+ childElements.get(childKey);
-				elements.put(childKey, value);
-			}
-		}
+		//
+		// String key = this.toString().split(" ")[0];
+		// key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
+		// elements.put(key, new Integer(1));
+		//
+		// for (int i = 0; i < getNumChildren(); i++) {
+		// HashMap<String, Integer> childElements = getChild(i)
+		// .getLanguageElementStatistics();
+		// for (String childKey : childElements.keySet()) {
+		// Integer value = elements.get(childKey);
+		// value = value == null ? childElements.get(childKey) : value
+		// + childElements.get(childKey);
+		// elements.put(childKey, value);
+		// }
+		// }
 
 		return elements;
 	}
@@ -195,7 +202,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	public Object clone() {
 		assert (exists());
 		CppNodeArtifact clone = null;
-		clone = new CppNodeArtifact(astnode.cloneNode(astnode.hasChildNodes()));// --??
+		clone = new CppNodeArtifact(astnode.copy());// --??
 		clone.setRevision(getRevision());
 		clone.setNumber(getNumber());
 		clone.cloneMatches(this);
@@ -208,15 +215,19 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	@Override
 	public int compareTo(CppNodeArtifact o) {
-		return astnode.getNodeName().compareTo(o.astnode.getNodeName());
+		return astnode.getValue().compareTo(o.astnode.getValue());
 	}
 
 	@Override
 	public CppNodeArtifact addChild(CppNodeArtifact child) throws IOException {
 		child.setParent(this);
 		child.initializeChildren();
+		if (children == null) {
+			children = new ArtifactList<CppNodeArtifact>();
+		}
 		children.add(child);
-//		 this.astnode.appendChild(child.astnode.cloneNode(true));
+
+		// ((Element) this.astnode).insertChild(child.astnode.copy(), 0);
 		return child;
 	}
 
@@ -224,8 +235,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	public CppNodeArtifact createConflictArtifact(CppNodeArtifact left,
 			CppNodeArtifact right) {
 		CppNodeArtifact conflict = left != null ? new CppNodeArtifact(
-				left.astnode.cloneNode(true)) : new CppNodeArtifact(
-				right.astnode.cloneNode(true));
+				left.astnode.copy())
+				: new CppNodeArtifact(right.astnode.copy());
 
 		conflict.setRevision(new Revision("conflict"));
 		conflict.setNumber(virtualcount++);
@@ -239,7 +250,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			CppNodeArtifact artifact) throws IOException {
 		CppNodeArtifact choice;
 
-		choice = new CppNodeArtifact(artifact.astnode.cloneNode(true));
+		choice = new CppNodeArtifact(artifact.astnode.copy());
 		choice.setRevision(new Revision("choice"));
 		choice.setNumber(virtualcount++);
 		choice.setChoice(condition, artifact);
@@ -252,6 +263,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		emptyArtifact.setRevision(getRevision());
 		return emptyArtifact;
 	}
+
 
 	@Override
 	protected String dumpTree(String indent) {
@@ -323,23 +335,19 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 			}
 		} else {
-			sb.append(this);
-			sb.append(" " + astnode.getTextContent());
 
 			if (hasMatches()) {
 				assert (m != null);
 			}
-			sb.append(System.lineSeparator());
 
 			// children
-			for (CppNodeArtifact child : getChildren()) {
-				// if (child.getCppNode().getNodeName().equals("#text")) {
-				// sb.append(" " + child.getCppNode().getTextContent());
-				//
-				// sb.append(System.lineSeparator());
-				// }
-				// sb.append(" " + child.getCppNode().getTextContent());
-				sb.append(child.dumpTree(indent + "  "));
+			ArtifactList<CppNodeArtifact> children = getChildren();
+			if (children != null) {
+				for (CppNodeArtifact child : children) {
+					sb.append(System.lineSeparator());
+//					sb.append(child.dumpTree(indent + "  "));
+					sb.append(child.getCppNode().getValue());
+				}
 			}
 		}
 
@@ -358,6 +366,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			CppNodeArtifact child = getChild(0);
 			child.astnode = null;
 			children.remove(0);
+
 		}
 	}
 
@@ -393,25 +402,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	}
 
-	
 	@Override
 	public boolean matches(CppNodeArtifact other) {
 		assert (astnode != null);
 		assert (other != null);
 		assert (other.astnode != null);
-		boolean nodeNameMatch = astnode.getNodeName().equals(
-				other.getCppNode().getNodeName());
-		boolean nodeTextContentMatch = astnode.getTextContent().equals(
-				other.getCppNode().getTextContent());
-		if (!astnode.getNodeName().equals("function_decl")) {
-			return astnode.getNodeName().equals(
-					other.getCppNode().getNodeName());
+		if (((Element) astnode).getLocalName().equals("function_decl")) {
+			return astnode.getValue().equals((other.getCppNode()).getValue());
+		} else if (((Element) astnode).getLocalName().equals("unit")) {
+			return true;
 		} else {
-			String signature = astnode.getNodeName() + "["
-					+ astnode.getTextContent() + "]";
-			String other_sig = other.getCppNode().getNodeName() + "["
-					+ other.getCppNode().getTextContent() + "]";
-			return signature.equals(other_sig);
+			return false;
 		}
 
 	}
@@ -419,15 +420,79 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	@Override
 	public void merge(MergeOperation<CppNodeArtifact> operation,
 			MergeContext context) throws IOException, InterruptedException {
+
 		Objects.requireNonNull(operation, "operation must not be null!");
 		Objects.requireNonNull(context, "context must not be null!");
 
-		MergeStrategy<CppNodeArtifact> strategy = new CPPNodeStrategy();
-		strategy.merge(operation, context);
+		MergeStrategy<CppNodeArtifact> astNodeStrategy = new CPPNodeStrategy();
+
+		MergeScenario<CppNodeArtifact> triple = operation.getMergeScenario();
+		CppNodeArtifact left = triple.getLeft();
+		CppNodeArtifact right = triple.getRight();
+		CppNodeArtifact target = operation.getTarget();
+
+		boolean safeMerge = true;
+
+		// int numChildNoTransform;
+		// try {
+		// numChildNoTransform =
+		// target.astnode.getClass().newInstance().getNumChildNoTransform();
+		// } catch (InstantiationException | IllegalAccessException e) {
+		// throw new RuntimeException();
+		// }
+
+		if (!isRoot()) {
+
+			// this language element has a fixed number of children, we need to
+			// be careful with this one
+			boolean leftChanges = left.isChange();
+			boolean rightChanges = right.isChange();
+
+			for (int i = 0; !leftChanges && i < left.getNumChildren(); i++) {
+				leftChanges = left.getChild(i).isChange();
+			}
+
+			for (int i = 0; !rightChanges && i < right.getNumChildren(); i++) {
+				rightChanges = right.getChild(i).isChange();
+			}
+
+			if (leftChanges && rightChanges) {
+
+				safeMerge = false;
+
+				// to be safe, we will report a conflict instead of merging
+				CppNodeArtifact targetParent = target.getParent();
+				targetParent.removeChild(target);
+
+				Operation<CppNodeArtifact> conflictOp = new ConflictOperation<>(
+						left, right, targetParent,
+						left.getRevision().getName(), right.getRevision()
+								.getName());
+				conflictOp.apply(context);
+			}
+		}
+
+		if (safeMerge) {
+			astNodeStrategy.merge(operation, context);
+		}
 
 		if (!context.isQuiet() && context.hasOutput()) {
 			System.out.print(context.getStdIn());
 		}
+
+	}
+
+	private void removeChild(CppNodeArtifact child) {
+
+		Iterator<CppNodeArtifact> it = children.iterator();
+		CppNodeArtifact elem;
+		while (it.hasNext()) {
+			elem = it.next();
+			if (elem == child) {
+				it.remove();
+			}
+		}
+
 	}
 
 	@Override
@@ -435,7 +500,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		if (astnode == null) {
 			return "null";
 		}
-		return astnode.getNodeName();
+		return astnode.getValue();
 	}
 
 	/**
@@ -464,42 +529,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		return mystats;
 	}
 
-	/**
-	 * print AST TREE.
-	 * 
-	 * @param nodeList
-	 */
-	private String printNote(NodeList nodeList) {
-		StringBuilder sb = new StringBuilder();
-		for (int count = 0; count < nodeList.getLength(); count++) {
-			Node tempNode = nodeList.item(count);
-			// make sure it's element node.
-			if (tempNode.getNodeType() == Node.ELEMENT_NODE
-					|| tempNode.getNodeType() == Node.TEXT_NODE) {
-				if (!tempNode.getTextContent().equals(" ")) {
-					sb.append(tempNode.getTextContent() + " ");
-				}
-				if (tempNode.hasAttributes()) {
-					// get attributes names and values
-					NamedNodeMap nodeMap = tempNode.getAttributes();
-					for (int i = 0; i < nodeMap.getLength(); i++) {
-						Node node = nodeMap.item(i);
-					}
-				}
-				if (tempNode.hasChildNodes()) {
-					// loop again if has child nodes
-					printNote(tempNode.getChildNodes());
-				}
-			}
-		}
-		return sb.toString();
-	}
-
 	@Override
 	public String prettyPrint() {
 		String res = "";
 		for (CppNodeArtifact child : getChildren()) {
-			res += printNote(child.astnode.getChildNodes()) + "\n";
+			res += child.astnode.getValue() + "\n";
 		}
 		return res;
 	}
@@ -512,11 +546,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 * @return cloned
 	 */
 	public static CppNodeArtifact createProgram(CppNodeArtifact artifact) {
-		Node old = (Node) artifact.astnode;
+		Node old = artifact.astnode;
 		Node program;
-		program = old.cloneNode(true);
+		program = old.copy();
 		CppNodeArtifact p = new CppNodeArtifact(program);
 		try {
+			((Element) p.astnode).removeChildren();
 			p.deleteChildren();
 		} catch (IOException e) {
 			e.printStackTrace();
