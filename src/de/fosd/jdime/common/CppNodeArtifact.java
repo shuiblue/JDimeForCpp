@@ -264,7 +264,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		return emptyArtifact;
 	}
 
-
 	@Override
 	protected String dumpTree(String indent) {
 
@@ -345,14 +344,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 			if (children != null) {
 				for (CppNodeArtifact child : children) {
 					sb.append(System.lineSeparator());
-//					sb.append(child.dumpTree(indent + "  "));
 					sb.append(child.getCppNode().getValue());
 				}
 			}
 		}
-
 		return sb.toString();
-
 	}
 
 	@Override
