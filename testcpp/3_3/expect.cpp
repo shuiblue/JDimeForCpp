@@ -3,7 +3,7 @@ void x();
 void a();
 #endif
 #ifdef B
-void b();
+void a();
 #endif
 #ifdef C
 void c();

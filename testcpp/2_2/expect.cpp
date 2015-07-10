@@ -5,4 +5,3 @@ void x();
 #ifdef B
 void b();
 #endif
-

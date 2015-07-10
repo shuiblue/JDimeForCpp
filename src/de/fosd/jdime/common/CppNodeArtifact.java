@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Set;
-
-import AST.ASTNode;
 import nu.xom.*;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
@@ -144,21 +141,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @param xmlFilePath path of xml file
      */
     public static Document getXmlDom(String xmlFilePath) {
-        try {
 
             Builder builder = new Builder();
             File file = new File(xmlFilePath);
-            Document doc = builder.build(file);
-            return doc;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            System.err.println("io+" + ex);
-        } catch (ValidityException e) {
-            e.printStackTrace();
+        Document doc = null;
+        try {
+            doc = builder.build(file);
         } catch (ParsingException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
+        return doc;
     }
 
     public HashMap<String, Integer> getLanguageElementStatistics() {
@@ -525,7 +519,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 String str = child.variants.keySet().toArray()[i].toString();
                 res += "#ifdef " + str + "\n";
                 res += child.variants.get(str) + "\n";
-                res += "#endif" + "\n";
+                res += "#endif";
+//                if(i < (var_size - 1))
+                    res += "\n";
             }
 
 
