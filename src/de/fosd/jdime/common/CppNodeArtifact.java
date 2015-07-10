@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Set;
 
+import AST.ASTNode;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -72,7 +74,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 */
 	public CppNodeArtifact(final Node astnode) {
 		this.astnode = astnode;
-		// this.initializeChildren();
+		 this.initializeChildren();
 		renumberTree();
 	}
 
@@ -112,7 +114,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 					child.setParent(this);
 					child.setRevision(getRevision());
 					children.add(child);
-					// child.initializeChildren();
+					 child.initializeChildren();
 				}
 			}
 		}
@@ -153,11 +155,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	 * 
 	 * @param xmlFilePath
 	 *            path of xml file
-	 * @return dom
-	 * @throws ParserConfigurationException
-	 *             e
-	 * @throws SAXException
-	 *             e
 	 */
 	public static Document getXmlDom(String xmlFilePath) {
 		try {
@@ -227,7 +224,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 		}
 		children.add(child);
 
-		// ((Element) this.astnode).insertChild(child.astnode.copy(), 0);
+		 ((Element) this.astnode).insertChild(child.astnode.copy(), 0);
 		return child;
 	}
 
@@ -413,6 +410,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 	}
 
+	
 	@Override
 	public void merge(MergeOperation<CppNodeArtifact> operation,
 			MergeContext context) throws IOException, InterruptedException {
@@ -529,7 +527,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 	public String prettyPrint() {
 		String res = "";
 		for (CppNodeArtifact child : getChildren()) {
-			res += child.astnode.getValue() + "\n";
+			if(child.variants==null){
+				res += child.toString() + "\n";
+				continue;
+			}
+			int var_size = child.variants.size();
+
+			if (var_size > 1) {
+				Iterator it = child.variants.keySet().iterator();
+				while (it.hasNext()) {
+					String str = it.next().toString();
+					int i = 0;
+
+					res += "#ifdef " + str + "\n";
+					res += child.variants.get(str) + "\n";
+					res+= "#endif"+"\n";
+					res+="\n";
+				}
+			}else{
+				res += child.variants.get(child.variants.keySet().toArray()[0]) + "\n";
+			}
 		}
 		return res;
 	}

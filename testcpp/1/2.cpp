@@ -1,2 +1,1 @@
-void one();
-void two();
+void b();

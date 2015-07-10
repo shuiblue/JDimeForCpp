@@ -13,7 +13,7 @@ import org.junit.Test;
 import de.fosd.jdime.Main;
 
 public class oneTwoThree {
-//
+
 //	@Before
 //	public void init() throws IOException {
 //		try {
@@ -30,7 +30,7 @@ public class oneTwoThree {
 	public void test() throws IOException {
 //		init();
 		BufferedReader result_br = new BufferedReader(new FileReader(
-				"testcpp/2/12.cpp"));
+				"testcpp/2/AB.cpp"));
 		BufferedReader exp_br = new BufferedReader(new FileReader(
 				"testcpp/2/expect.cpp"));
 		String result, expect_result = "";

@@ -10,8 +10,6 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.org.apache.xml.internal.security.Init;
-
 import de.fosd.jdime.*;
 
 ;
@@ -19,15 +17,18 @@ import de.fosd.jdime.*;
 public class oneAndTwo {
 
 //	@Before
-//	public void init() throws IOException {
+//	public void init()  {
 //		try {
-//			Main.main(new String[] { "-mode", "structured", "-output",
+//			Main.main(new String[] { "-mode", "nway", "-output",
 //					"testcpp/1/12.cpp", "testcpp/1/1.cpp", "testcpp/1/2.cpp" });
+//		} catch (IOException e) {
+//			e.printStackTrace();
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
+//
 //	}
 
 	@Test
@@ -67,7 +68,7 @@ public class oneAndTwo {
 		} finally {
 			exp_br.close();
 		}
-		// assertEquals(result, expect_result);
+		 assertEquals(result, expect_result);
 		// assertNotNull(result);
 	}
 
