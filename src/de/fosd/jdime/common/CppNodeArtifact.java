@@ -516,25 +516,20 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public String prettyPrint() {
         String res = "";
         for (CppNodeArtifact child : getChildren()) {
-            if (child.variants == null) {
+            if (!child.isChoice()) {
                 res += child.toString() + "\n";
                 continue;
             }
             int var_size = child.variants.size();
-
-            if (var_size > 1) {
-                Iterator it = child.variants.keySet().iterator();
-                while (it.hasNext()) {
-                    String str = it.next().toString();
-                    int i = 0;
-
-                    res += "#ifdef " + str + "\n";
-                    res += child.variants.get(str) + "\n";
-                    res += "#endif" + "\n";
-                }
-            } else {
-                res += child.variants.get(child.variants.keySet().toArray()[0]) + "\n";
+            for(int i=0;i<var_size;i++){
+                String str = child.variants.keySet().toArray()[i].toString();
+                res += "#ifdef " + str + "\n";
+                res += child.variants.get(str) + "\n";
+                res += "#endif" + "\n";
             }
+
+
+
         }
         return res;
     }
