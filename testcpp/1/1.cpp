@@ -1,1 +1,1 @@
-void one();
+void a();

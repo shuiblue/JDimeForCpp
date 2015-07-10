@@ -1,8 +1,7 @@
 #ifdef A
-void a();
+void d();
 #endif
-
 #ifdef B
-void b();
+void c();
 #endif
-
+void e();

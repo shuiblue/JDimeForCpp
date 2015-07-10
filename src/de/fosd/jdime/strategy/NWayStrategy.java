@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.fosd.jdime.common.ASTNodeArtifact;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
@@ -91,7 +92,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 		 * Then, a ASTNodeStrategy can be applied.
 		 * The result is pretty printed and can be written into the output file.
 		 */
-		ASTNodeArtifact merged, next, targetNode;
+		CppNodeArtifact merged, next, targetNode;
 		MergeContext mergeContext;
 
 		if (LOG.isLoggable(Level.FINE)) {
@@ -102,13 +103,13 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 		}
 
 		Iterator it = variants.keySet().iterator();
-		targetNode = new ASTNodeArtifact(variants.get((Revision) it.next()));
-
+		targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
 		while (it.hasNext()) {
+			
 
 			merged = targetNode;
 
-			next = new ASTNodeArtifact(variants.get((Revision) it.next()));
+			next = new CppNodeArtifact(variants.get((Revision) it.next()));
 
 			try {
 				mergeContext = context;
@@ -116,18 +117,18 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 				long cmdStart = System.currentTimeMillis();
 
-				targetNode = ASTNodeArtifact.createProgram(merged);
+				targetNode = CppNodeArtifact.createProgram(merged);
 				targetNode.setRevision(merged.getRevision(), true);
 				targetNode.renumberTree();
-
+				
 				if (LOG.isLoggable(Level.FINEST)) {
 					LOG.finest("target.dumpTree(:");
 					System.out.println(targetNode.dumpTree());
 				}
 
-				MergeScenario<ASTNodeArtifact> astScenario = new MergeScenario<>(MergeType.TWOWAY, merged, merged.createEmptyArtifact(), next);
+				MergeScenario<CppNodeArtifact> astScenario = new MergeScenario<>(MergeType.TWOWAY, merged, merged.createEmptyArtifact(), next);
 
-				MergeOperation<ASTNodeArtifact> astMergeOp = new MergeOperation<>(astScenario, targetNode,
+				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(astScenario, targetNode,
 						merged.getRevision().getName(), next.getRevision().getName());
 
 				if (LOG.isLoggable(Level.FINEST)) {
@@ -166,7 +167,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 				if (LOG.isLoggable(Level.FINE)) {
 					FileWriter file = new FileWriter(merged + ".dot");
-					file.write(new ASTNodeStrategy().dumpTree(targetNode, true));
+					file.write(new CPPNodeStrategy().dumpTree(targetNode, true));
 					file.close();
 				}
 
