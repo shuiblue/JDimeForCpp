@@ -97,9 +97,21 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-
     @Test
     public void test3() {
+        String outputPath = "testcpp/2_1/AB.cpp";
+        String expectResultPath = "testcpp/2_1/expect.cpp";
+
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("testcpp/2_1/A.cpp");
+        inputFilePaths.add("testcpp/2_1/B.cpp");
+
+        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
+
+    @Test
+    public void test4() {
         String outputPath = "testcpp/2_2/AB.cpp";
         String expectResultPath = "testcpp/2_2/expect.cpp";
 
