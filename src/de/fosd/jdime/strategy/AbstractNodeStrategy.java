@@ -48,9 +48,9 @@ public abstract class AbstractNodeStrategy<T extends Artifact<T>> extends MergeS
 		T right = triple.getRight();
 		T target = operation.getTarget();
 
-		Arrays.asList(left, base, right).forEach(t -> {
-			assert t.exists();
-		});
+//		Arrays.asList(left, base, right).forEach(t -> {
+//			assert t.exists();
+//		});
 
 		assert (target != null);
 

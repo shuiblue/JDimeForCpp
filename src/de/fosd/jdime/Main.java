@@ -164,7 +164,7 @@ public final class Main {
 			StatsPrinter.print(context);
 		}
 
-		System.exit(0);
+//		System.exit(0);
 	}
 
 	/**
