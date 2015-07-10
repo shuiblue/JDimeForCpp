@@ -138,7 +138,7 @@ public final class Main {
             LOG.config(sb.toString());
         }
 
-        System.exit(0);
+//		System.exit(0);
     }
 
     /**

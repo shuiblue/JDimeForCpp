@@ -54,7 +54,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             e.printStackTrace();
         }
         this.astnode = xmlDoc.getChild(0);
-//        this.initializeChildren();
+        this.initializeChildren();
         renumberTree();
     }
 
@@ -391,8 +391,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return astnode.getValue().equals((other.getCppNode()).getValue());
         } else if (((Element) astnode).getLocalName().equals("unit")) {
             return true;
-        }
-        else {
+        }else {
             return false;
         }
 //        String astValue = astnode.getValue();
@@ -532,7 +531,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += "#ifdef " + str + "\n";
                     res += child.variants.get(str) + "\n";
                     res += "#endif" + "\n";
-                    res += "\n";
                 }
             } else {
                 res += child.variants.get(child.variants.keySet().toArray()[0]) + "\n";
