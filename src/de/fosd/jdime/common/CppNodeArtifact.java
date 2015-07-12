@@ -504,12 +504,36 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return mystats;
     }
 
+
+    //    @Override
+//    public String prettyPrint() {
+//        String res = "";
+//        for (CppNodeArtifact child : getChildren()) {
+//            if (!child.isChoice()) {
+//                res += child.toString() + "\n";
+//                continue;
+//            }
+//            int var_size = child.variants.size();
+//            for(int i=0;i<var_size;i++){
+//                String str = child.variants.keySet().toArray()[i].toString();
+//                res += "#ifdef " + str + "\n";
+//                res += child.variants.get(str) + "\n";
+//                res += "#endif";
+////                if(i < (var_size - 1))
+//                res += "\n";
+//            }
+//
+//
+//
+//        }
+//        return res;
+//    }
     @Override
     public String prettyPrint() {
         String res = "";
-        CppNodeArtifact child = getChildren().get(0);
-        if (getChildren().size() > 1) {
-            if (variants != null) {
+        for (CppNodeArtifact child : getChildren()) {
+            String revision = "";
+            if (child.variants != null) {
                 int var_size = child.variants.size();
                 for (int i = 0; i < var_size; i++) {
                     String str = child.variants.keySet().toArray()[i].toString();
@@ -517,26 +541,86 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += child.variants.get(str) + "\n";
                     res += "#endif\n";
                 }
-
-
             } else if (this.matches.size() > 0) {
                 Collection<Matching<CppNodeArtifact>> matcher = this.matches.values();
-                Matching<CppNodeArtifact> m1 = (Matching<CppNodeArtifact>) matcher.toArray()[0];
-                CppNodeArtifact x = m1.getMatchedArtifacts().getX();
-                CppNodeArtifact y = m1.getMatchedArtifacts().getY();
-                res += "#ifdef (" + x.getRevision() + " || " + y.getRevision() + ")\n";
-                res += x.toString() + "\n";
+                ArrayList<String> var = new ArrayList<>();
+                for (Matching<CppNodeArtifact> m : matcher) {
+                    String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
+                    if(r1.length()>1) {
+                        String[] condition = r1.split("||");
+
+                        for(String s:condition)
+                        if (!var.contains(s)&&(!s.equals("|"))) var.add(s);
+                    }else{
+                        if (!var.contains(r1)) var.add(r1);
+
+                    }
+                    String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
+                    if(r2.length()>1) {
+                        String[] condition = r2.split("||");
+                        for(String s:condition)
+                            if (!var.contains(s)&&(!s.equals("|"))) var.add(s);
+                    }else{
+                        if (!var.contains(r2)) var.add(r2);
+
+                    }
+                }
+
+
+                for (int s = 0; s < var.size(); s++) {
+                    revision+=var.get(s);
+                    if (s < var.size() - 1) {
+                        revision+="||";
+                    }
+                }
+                res += "#ifdef (" +revision;
+                res += ")\n";
+                res += child + "\n";
                 res += "#endif\n";
 
-            }
-        } else {
 
-            if (!child.isChoice()) {
-                res += child.toString() + "\n";
             }
+            this.setRevision(new Revision(revision));
+
         }
+
         return res;
     }
+
+
+//    @Override
+//    public String prettyPrint() {
+//        String res = "";
+//        CppNodeArtifact child = getChildren().get(0);
+//        if (getChildren().size() >=1) {
+//            if (child.variants != null) {
+//                int var_size = child.variants.size();
+//                for (int i = 0; i < var_size; i++) {
+//                    String str = child.variants.keySet().toArray()[i].toString();
+//                    res += "#ifdef " + str + "\n";
+//                    res += child.variants.get(str) + "\n";
+//                    res += "#endif\n";
+//                }
+//
+//
+//            } else if (this.matches.size() > 0) {
+//                Collection<Matching<CppNodeArtifact>> matcher = this.matches.values();
+//                Matching<CppNodeArtifact> m1 = (Matching<CppNodeArtifact>) matcher.toArray()[0];
+//                CppNodeArtifact x = m1.getMatchedArtifacts().getX();
+//                CppNodeArtifact y = m1.getMatchedArtifacts().getY();
+//                res += "#ifdef (" + x.getRevision() + " || " + y.getRevision() + ")\n";
+//                res += x.toString() + "\n";
+//                res += "#endif\n";
+//
+//            }
+//        } else {
+//
+//            if (!child.isChoice()) {
+//                res += child.toString() + "\n";
+//            }
+//        }
+//        return res;
+//    }
 
     /**
      * clone cppNodeArtifact

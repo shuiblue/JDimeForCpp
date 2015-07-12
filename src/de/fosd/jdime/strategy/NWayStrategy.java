@@ -27,6 +27,8 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -40,6 +42,7 @@ import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
+
 
 /**
  * Performs a structured merge on <code>FileArtifacts</code>.
@@ -115,7 +118,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 long cmdStart = System.currentTimeMillis();
 
 				targetNode = CppNodeArtifact.createProgram(merged);
+
+
                 targetNode.setRevision(merged.getRevision(), true);
+
                 targetNode.renumberTree();
 
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -152,6 +158,35 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.print(targetNode.prettyPrint());
                     }
                 }
+
+
+
+//                if (targetNode.matches!=null) {
+//
+//                    Collection<Matching<CppNodeArtifact>> matcher = targetNode.matches.values();
+//                    ArrayList<String> var = new ArrayList<>();
+//                    for (Matching<CppNodeArtifact> m : matcher) {
+//                        String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
+//                        String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
+//
+//                        if (!var.contains(r1)) var.add(r1);
+//                        if (!var.contains(r2)) var.add(r2);
+//                    }
+//
+//                    String revisions = "";
+//                    for (int s = 0; s < var.size(); s++) {
+//                        revisions += var.get(s);
+//                        if (s < var.size() - 1) {
+//                            revisions += "||";
+//                        }
+//                    }
+//                    Revision mergedRevision = new Revision(revisions);
+//
+//                    targetNode.setRevision(mergedRevision);
+//
+//                }
+
+
 
                 try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
                     String line;

@@ -105,12 +105,14 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * If the artifact is a choice node, it has variants (values of map) that are present under conditions (keys of map)
      */
-    protected HashMap<String, T> variants;
+//	protected HashMap<String, T> variants;
+	protected LinkedHashMap<String, T> variants;
+
 
     /**
      * Map to store matches.
      */
-    LinkedHashMap<Revision, Matching<T>> matches = null;
+	public LinkedHashMap<Revision, Matching<T>> matches = null;
 
     /**
      * Whether the artifact has been already merged.
@@ -750,7 +752,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
         LOG.fine("Add node " + artifact.getId() + " under condition " + condition);
 
         if (variants == null) {
-            variants = new HashMap<>();
+//			variants = new HashMap<>();
+			variants = new LinkedHashMap<>();
         }
 
         // merge conditions for same artifact
