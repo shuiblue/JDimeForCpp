@@ -1,10 +1,6 @@
-void x();
-#ifdef A
-void a();
+#ifdef (A || B)
+void a();void x();
 #endif
-#ifdef B
-void b();
-#endif
-#ifdef C
-void c();
+#ifdef (A || B)
+void a();void x();
 #endif

@@ -2,10 +2,8 @@ package de.fosd.jdime.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 import nu.xom.*;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
@@ -142,8 +140,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public static Document getXmlDom(String xmlFilePath) {
 
-            Builder builder = new Builder();
-            File file = new File(xmlFilePath);
+        Builder builder = new Builder();
+        File file = new File(xmlFilePath);
         Document doc = null;
         try {
             doc = builder.build(file);
@@ -385,7 +383,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return astnode.getValue().equals((other.getCppNode()).getValue());
         } else if (((Element) astnode).getLocalName().equals("unit")) {
             return true;
-        }else {
+        } else {
             return false;
         }
 //        String astValue = astnode.getValue();
@@ -509,23 +507,33 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
-        for (CppNodeArtifact child : getChildren()) {
+        CppNodeArtifact child = getChildren().get(0);
+        if (getChildren().size() > 1) {
+            if (variants != null) {
+                int var_size = child.variants.size();
+                for (int i = 0; i < var_size; i++) {
+                    String str = child.variants.keySet().toArray()[i].toString();
+                    res += "#ifdef " + str + "\n";
+                    res += child.variants.get(str) + "\n";
+                    res += "#endif\n";
+                }
+
+
+            } else if (this.matches.size() > 0) {
+                Collection<Matching<CppNodeArtifact>> matcher = this.matches.values();
+                Matching<CppNodeArtifact> m1 = (Matching<CppNodeArtifact>) matcher.toArray()[0];
+                CppNodeArtifact x = m1.getMatchedArtifacts().getX();
+                CppNodeArtifact y = m1.getMatchedArtifacts().getY();
+                res += "#ifdef (" + x.getRevision() + " || " + y.getRevision() + ")\n";
+                res += x.toString() + "\n";
+                res += "#endif\n";
+
+            }
+        } else {
+
             if (!child.isChoice()) {
                 res += child.toString() + "\n";
-                continue;
             }
-            int var_size = child.variants.size();
-            for(int i=0;i<var_size;i++){
-                String str = child.variants.keySet().toArray()[i].toString();
-                res += "#ifdef " + str + "\n";
-                res += child.variants.get(str) + "\n";
-                res += "#endif";
-//                if(i < (var_size - 1))
-                    res += "\n";
-            }
-
-
-
         }
         return res;
     }

@@ -2,6 +2,7 @@ package test;
 
 import de.fosd.jdime.Main;
 import org.apache.commons.cli.ParseException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -84,7 +85,7 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-    @Test
+   @Ignore @Test
         public void test2() {
         String outputPath = "testcpp/1_1/12.cpp";
         String expectResultPath = "testcpp/1_1/expect.cpp";
@@ -97,7 +98,7 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-    @Test
+    @Ignore@Test
     public void test3() {
         String outputPath = "testcpp/2/AB.cpp";
         String expectResultPath = "testcpp/2/expect.cpp";
@@ -109,7 +110,7 @@ public class FunctionNameOnly {
 
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
-    @Test
+    @Ignore@Test
     public void test4() {
         String outputPath = "testcpp/2_1/AB.cpp";
         String expectResultPath = "testcpp/2_1/expect.cpp";
@@ -122,7 +123,7 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-    @Test
+    @Ignore@Test
     public void test5() {
         String outputPath = "testcpp/2_2/AB.cpp";
         String expectResultPath = "testcpp/2_2/expect.cpp";
@@ -136,7 +137,7 @@ public class FunctionNameOnly {
     }
 
 //----------------3 WAY-----------------------------
-    @Test
+@Ignore@Test
     public void test6() {
         String outputPath = "testcpp/3/ABC.cpp";
         String expectResultPath = "testcpp/3/expect.cpp";
@@ -150,7 +151,7 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-    @Test
+    @Ignore @Test
     public void test7() {
         String outputPath = "testcpp/3_3/ABC.cpp";
         String expectResultPath = "testcpp/3_3/expect.cpp";
