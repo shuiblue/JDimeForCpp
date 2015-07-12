@@ -1,4 +1,6 @@
-void c();
-#ifdef A
-void a();
+#ifdef (A || B)
+void a();void c();
+#endif
+#ifdef (A || B)
+void a();void c();
 #endif

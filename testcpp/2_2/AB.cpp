@@ -1,7 +1,9 @@
-#ifdef A
-void a();
+#ifdef (A || B)
+void b();void x();void a();
 #endif
-void x();
-#ifdef B
-void b();
+#ifdef (A || B)
+void b();void x();void a();
+#endif
+#ifdef (A || B)
+void b();void x();void a();
 #endif
