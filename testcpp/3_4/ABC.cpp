@@ -1,12 +1,9 @@
-#ifdef (A||B||C)
+#ifdef (A||B)
 void x();
 #endif
 #ifdef A
-void a();
+void ac();
 #endif
 #ifdef B
 void b();
-#endif
-#ifdef C
-void c();
 #endif

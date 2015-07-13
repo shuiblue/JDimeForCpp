@@ -1,2 +1,2 @@
 void x();
-void a();
+void abc();

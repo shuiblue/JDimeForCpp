@@ -1,3 +1,6 @@
+#ifdef (A||B||C)
+void x();
+#endif
 #ifdef A||B
 void ab();
 #endif
