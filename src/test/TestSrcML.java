@@ -52,18 +52,42 @@ public class TestSrcML {
     @Test
     public void testSRCml() throws IOException {
 
-        List<String> paths = new ArrayList<>();
-        paths.add("testcpp/1/12.cpp");
-        paths.add("testcpp/1_1/12.cpp");
-        paths.add("testcpp/2/AB.cpp");
-        paths.add("testcpp/2_1/AB.cpp");
-        paths.add("testcpp/2_2/AB.cpp");
-        paths.add("testcpp/3/ABC.cpp");
-        paths.add("testcpp/3_1/ABC.cpp");
-        paths.add("testcpp/3_3/ABC.cpp");
-        paths.add("testcpp/4/ABCD.cpp");
+        List<String> inputFilePaths = new ArrayList<>();
 
-        for(String s :paths){
+        inputFilePaths.add("testcpp/1/1.cpp");
+        inputFilePaths.add("testcpp/1/2.cpp");
+
+        inputFilePaths.add("testcpp/1_1/1.cpp");
+        inputFilePaths.add("testcpp/1_1/2.cpp");
+
+        inputFilePaths.add("testcpp/2/A.cpp");
+        inputFilePaths.add("testcpp/2/B.cpp");
+
+        inputFilePaths.add("testcpp/2_1/A.cpp");
+        inputFilePaths.add("testcpp/2_1/B.cpp");
+
+        inputFilePaths.add("testcpp/2_2/A.cpp");
+        inputFilePaths.add("testcpp/2_2/B.cpp");
+
+        inputFilePaths.add("testcpp/3/A.cpp");
+        inputFilePaths.add("testcpp/3/B.cpp");
+        inputFilePaths.add("testcpp/3/C.cpp");
+
+        inputFilePaths.add("testcpp/3_1/A.cpp");
+        inputFilePaths.add("testcpp/3_1/B.cpp");
+        inputFilePaths.add("testcpp/3_1/C.cpp");
+
+        inputFilePaths.add("testcpp/3_3/A.cpp");
+        inputFilePaths.add("testcpp/3_3/B.cpp");
+        inputFilePaths.add("testcpp/3_3/C.cpp");
+
+        inputFilePaths.add("testcpp/4/A.cpp");
+        inputFilePaths.add("testcpp/4/B.cpp");
+        inputFilePaths.add("testcpp/4/C.cpp");
+        inputFilePaths.add("testcpp/4/D.cpp");
+
+
+        for(String s :inputFilePaths){
             assertNotNull( readResult( getXmlFile(s)));
         }
 

@@ -39,7 +39,6 @@ import java.util.stream.Stream;
 
 import de.fosd.jdime.common.ASTNodeArtifact;
 import de.fosd.jdime.common.ArtifactList;
-import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
@@ -64,7 +63,6 @@ import static de.fosd.jdime.JDimeConfig.*;
 
 /**
  * @author Olaf Lessenich
- *
  */
 public final class Main {
 
@@ -77,8 +75,7 @@ public final class Main {
     /**
      * Perform a merge operation on the input files or directories.
      *
-	 * @param args
-	 *            command line arguments
+     * @param args command line arguments
      */
 	public static void main(final String[] args) throws IOException,
 			ParseException, InterruptedException {
@@ -253,15 +250,11 @@ public final class Main {
     /**
      * Parses command line arguments and initializes program.
      *
-     * @param context
-     *            merge context
-     * @param args
-     *            command line arguments
+     * @param context merge context
+     * @param args    command line arguments
      * @return true if program should continue
-     * @throws IOException
-     *             If an input output exception occurs
-     * @throws ParseException
-     *             If arguments cannot be parsed
+     * @throws IOException    If an input output exception occurs
+     * @throws ParseException If arguments cannot be parsed
      */
     private static boolean parseCommandLineArgs(final MergeContext context,
             final String[] args) throws IOException, ParseException {
@@ -470,8 +463,12 @@ public final class Main {
             context.setInputFiles(inputArtifacts);
 
             if (outputFileName != null) {
+                File file = new File(outputFileName);
+                file.getParentFile().mkdirs();
+                new FileWriter(file);
+
 				context.setOutputFile(new FileArtifact(new Revision("merge"),
-						new File(outputFileName), true, targetIsFile));
+                        file, true, targetIsFile));
                 context.setPretend(false);
             }
         } catch (ParseException e) {
@@ -485,9 +482,7 @@ public final class Main {
     /**
      * Print short information.
 	 * 
-     *  @param context
-     *            merge context
-     *
+     * @param context merge context
      */
     private static void info(final MergeContext context) {
         version();
@@ -499,8 +494,7 @@ public final class Main {
     /**
      * Print help on usage.
      *
-     * @param options
-     *            Available command line options
+     * @param options Available command line options
      */
     private static void help(final Options options) {
         HelpFormatter formatter = new HelpFormatter();
@@ -509,7 +503,6 @@ public final class Main {
 
     /**
      * Print version information.
-     *
      */
     private static void version() {
         System.out.println(TOOLNAME + " VERSION " + VERSION);
@@ -517,7 +510,7 @@ public final class Main {
 
     /**
      * Set the logging level. The levels in descending order are:<br>
-     *
+     * <p>
      * <ul>
      *  <li>ALL</li>
      *  <li>SEVERE (highest value)</li>
@@ -530,8 +523,7 @@ public final class Main {
      *  <li>OFF</li>
      * </ul>
      *
-     * @param logLevel
-	 *            one of the valid log levels according to
+     * @param logLevel one of the valid log levels according to
 	 *            {@link Level#parse(String)}
      */
     private static void setLogLevel(String logLevel) {
@@ -556,8 +548,7 @@ public final class Main {
     /**
      * Prints configuration information.
      *
-     * @param context
-     *            merge context
+     * @param context merge context
      */
     private static void showConfig(final MergeContext context) {
         assert (context != null);
@@ -567,7 +558,6 @@ public final class Main {
 
     /**
      * Prints the available strategies.
-     *
      */
     private static void printStrategies() {
         System.out.println("Available merge strategies:");
@@ -580,12 +570,9 @@ public final class Main {
     /**
      * Merges the input files.
      *
-     * @param context
-     *            merge context
-     * @throws InterruptedException
-     *             If a thread is interrupted
-     * @throws IOException
-     *             If an input output exception occurs
+     * @param context merge context
+     * @throws InterruptedException If a thread is interrupted
+     * @throws IOException          If an input output exception occurs
      */
     public static void merge(final MergeContext context) throws IOException,
             InterruptedException {
@@ -599,10 +586,8 @@ public final class Main {
     /**
      * Mainly used for debugging purposes.
      *
-     * @param context
-     *            merge context
-     * @throws IOException
-     *             If an input output exception occurs
+     * @param context merge context
+     * @throws IOException If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
 	private static void dumpTrees(final MergeContext context)
@@ -618,10 +603,8 @@ public final class Main {
     /**
      * Mainly used for debugging purposes.
      *
-     * @param context
-     *            merge context
-     * @throws IOException
-     *             If an input output exception occurs
+     * @param context merge context
+     * @throws IOException If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
 	private static void dumpFiles(final MergeContext context)
@@ -637,9 +620,7 @@ public final class Main {
     /**
      * Only used for debugging purposes.
      *
-     * @param context
-     *            merge context
-     *
+     * @param context merge context
      */
     private static void bugfixing(final MergeContext context) throws IOException {
         context.setPretend(true);
