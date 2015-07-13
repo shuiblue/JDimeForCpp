@@ -1,3 +1,3 @@
-#ifdef (A || B)
+#ifdef (A||B)
 void a();
 #endif
