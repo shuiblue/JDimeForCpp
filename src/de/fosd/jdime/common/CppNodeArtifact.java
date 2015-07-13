@@ -19,7 +19,7 @@ import de.fosd.jdime.strategy.MergeStrategy;
 public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     private Node astnode = null;
-    private String xmlPath = null;
+//    private String xmlPath = null;
     private Document xmlDoc = null;
     /**
      * @aspect JDime
@@ -41,8 +41,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         setRevision(artifact.getRevision());
         String filePath = artifact.getPath();
         if (filePath.contains(".cpp")) {
-            xmlPath = getXmlFile(filePath);
-            xmlDoc = getXmlDom(xmlPath);
+//            xmlPath = getXmlFile(filePath);
+//            xmlDoc = getXmlDom(xmlPath);
+
+            xmlDoc = getXmlDom(filePath+".xml");
         }
         this.astnode = xmlDoc.getChild(0);
         this.initializeChildren();
