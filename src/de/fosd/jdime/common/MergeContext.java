@@ -667,6 +667,7 @@ public class MergeContext implements Cloneable {
 		return conditionalMerge && (conditionalOutsideMethods || artifact instanceof ASTNodeArtifact && ((ASTNodeArtifact) artifact).isWithinMethod());
 	}
 
+
 	public void setConditionalMerge(boolean conditionalMerge) {
 		this.conditionalMerge = conditionalMerge;
 	}

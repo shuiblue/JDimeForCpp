@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import AST.MethodDecl;
 import nu.xom.*;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
@@ -19,7 +20,7 @@ import de.fosd.jdime.strategy.MergeStrategy;
 public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     private Node astnode = null;
-//    private String xmlPath = null;
+    //    private String xmlPath = null;
     private Document xmlDoc = null;
     /**
      * @aspect JDime
@@ -44,7 +45,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 //            xmlPath = getXmlFile(filePath);
 //            xmlDoc = getXmlDom(xmlPath);
 
-            xmlDoc = getXmlDom(filePath+".xml");
+            xmlDoc = getXmlDom(filePath + ".xml");
         }
         this.astnode = xmlDoc.getChild(0);
         this.initializeChildren();
@@ -60,21 +61,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         this.astnode = astnode;
 //        this.initializeChildren();
         renumberTree();
-    }
-
-    public static String xmlToString(String inputFile) {
-        if (new File(inputFile).isFile()) {
-            String outXmlFile = inputFile + ".cpp";
-            try {
-                Process process = new ProcessBuilder("srcML/srcml2src",
-                        inputFile, "-o", outXmlFile).start();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return outXmlFile;
-        }
-        return null;
     }
 
     /**
@@ -119,7 +105,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @return path of XML file
      * @throws IOException e
      */
-    public static String getXmlFile(String inputFile)  {
+    public static String getXmlFile(String inputFile) {
         if (new File(inputFile).isFile()) {
             String outXmlFile = inputFile + ".xml";
             try {
@@ -157,22 +143,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public HashMap<String, Integer> getLanguageElementStatistics() {
         HashMap<String, Integer> elements = new HashMap<>();
-        //
-        // String key = this.toString().split(" ")[0];
-        // key = key.startsWith("AST.") ? key.replaceFirst("AST.", "") : key;
-        // elements.put(key, new Integer(1));
-        //
-        // for (int i = 0; i < getNumChildren(); i++) {
-        // HashMap<String, Integer> childElements = getChild(i)
-        // .getLanguageElementStatistics();
-        // for (String childKey : childElements.keySet()) {
-        // Integer value = elements.get(childKey);
-        // value = value == null ? childElements.get(childKey) : value
-        // + childElements.get(childKey);
-        // elements.put(childKey, value);
-        // }
-        // }
-
         return elements;
     }
 
@@ -573,5 +543,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         return p;
     }
+
 
 }
