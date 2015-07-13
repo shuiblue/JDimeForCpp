@@ -39,14 +39,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return;
         }
         setRevision(artifact.getRevision());
-        try {
-            String filePath = artifact.getPath();
-            if (filePath.contains(".cpp")) {
-                xmlPath = getXmlFile(filePath);
-                xmlDoc = getXmlDom(xmlPath);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String filePath = artifact.getPath();
+        if (filePath.contains(".cpp")) {
+            xmlPath = getXmlFile(filePath);
+            xmlDoc = getXmlDom(xmlPath);
         }
         this.astnode = xmlDoc.getChild(0);
         this.initializeChildren();
@@ -121,11 +117,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @return path of XML file
      * @throws IOException e
      */
-    public static String getXmlFile(String inputFile) throws IOException {
+    public static String getXmlFile(String inputFile)  {
         if (new File(inputFile).isFile()) {
             String outXmlFile = inputFile + ".xml";
-            Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
-                    inputFile, "-o", outXmlFile).start();
+            try {
+                Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
+                        inputFile, "-o", outXmlFile).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return outXmlFile;
         } else {
             System.out.println("File does not exist: " + inputFile);
@@ -386,9 +386,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else {
             return false;
         }
-//        String astValue = astnode.getValue();
-//        String otherValue = other.getCppNode().getValue();
-//        return astValue.equals(otherValue);
     }
 
 
@@ -407,14 +404,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         CppNodeArtifact target = operation.getTarget();
 
         boolean safeMerge = true;
-
-        // int numChildNoTransform;
-        // try {
-        // numChildNoTransform =
-        // target.astnode.getClass().newInstance().getNumChildNoTransform();
-        // } catch (InstantiationException | IllegalAccessException e) {
-        // throw new RuntimeException()
-        // }
 
         if (!isRoot()) {
 
@@ -504,30 +493,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return mystats;
     }
 
-
-    //    @Override
-//    public String prettyPrint() {
-//        String res = "";
-//        for (CppNodeArtifact child : getChildren()) {
-//            if (!child.isChoice()) {
-//                res += child.toString() + "\n";
-//                continue;
-//            }
-//            int var_size = child.variants.size();
-//            for(int i=0;i<var_size;i++){
-//                String str = child.variants.keySet().toArray()[i].toString();
-//                res += "#ifdef " + str + "\n";
-//                res += child.variants.get(str) + "\n";
-//                res += "#endif";
-////                if(i < (var_size - 1))
-//                res += "\n";
-//            }
-//
-//
-//
-//        }
-//        return res;
-//    }
     @Override
     public String prettyPrint() {
         String res = "";
@@ -546,21 +511,21 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 ArrayList<String> var = new ArrayList<>();
                 for (Matching<CppNodeArtifact> m : matcher) {
                     String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
-                    if(r1.length()>1) {
+                    if (r1.length() > 1) {
                         String[] condition = r1.split("||");
 
-                        for(String s:condition)
-                        if (!var.contains(s)&&(!s.equals("|"))) var.add(s);
-                    }else{
+                        for (String s : condition)
+                            if (!var.contains(s) && (!s.equals("|"))) var.add(s);
+                    } else {
                         if (!var.contains(r1)) var.add(r1);
 
                     }
                     String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
-                    if(r2.length()>1) {
+                    if (r2.length() > 1) {
                         String[] condition = r2.split("||");
-                        for(String s:condition)
-                            if (!var.contains(s)&&(!s.equals("|"))) var.add(s);
-                    }else{
+                        for (String s : condition)
+                            if (!var.contains(s) && (!s.equals("|"))) var.add(s);
+                    } else {
                         if (!var.contains(r2)) var.add(r2);
 
                     }
@@ -568,59 +533,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 
                 for (int s = 0; s < var.size(); s++) {
-                    revision+=var.get(s);
+                    revision += var.get(s);
                     if (s < var.size() - 1) {
-                        revision+="||";
+                        revision += "||";
                     }
                 }
-                res += "#ifdef (" +revision;
+                res += "#ifdef (" + revision;
                 res += ")\n";
                 res += child + "\n";
                 res += "#endif\n";
-
+                child.setRevision(new Revision(revision));
+                this.setRevision(new Revision(revision));
 
             }
-            this.setRevision(new Revision(revision));
 
         }
 
         return res;
     }
-
-
-//    @Override
-//    public String prettyPrint() {
-//        String res = "";
-//        CppNodeArtifact child = getChildren().get(0);
-//        if (getChildren().size() >=1) {
-//            if (child.variants != null) {
-//                int var_size = child.variants.size();
-//                for (int i = 0; i < var_size; i++) {
-//                    String str = child.variants.keySet().toArray()[i].toString();
-//                    res += "#ifdef " + str + "\n";
-//                    res += child.variants.get(str) + "\n";
-//                    res += "#endif\n";
-//                }
-//
-//
-//            } else if (this.matches.size() > 0) {
-//                Collection<Matching<CppNodeArtifact>> matcher = this.matches.values();
-//                Matching<CppNodeArtifact> m1 = (Matching<CppNodeArtifact>) matcher.toArray()[0];
-//                CppNodeArtifact x = m1.getMatchedArtifacts().getX();
-//                CppNodeArtifact y = m1.getMatchedArtifacts().getY();
-//                res += "#ifdef (" + x.getRevision() + " || " + y.getRevision() + ")\n";
-//                res += x.toString() + "\n";
-//                res += "#endif\n";
-//
-//            }
-//        } else {
-//
-//            if (!child.isChoice()) {
-//                res += child.toString() + "\n";
-//            }
-//        }
-//        return res;
-//    }
 
     /**
      * clone cppNodeArtifact
