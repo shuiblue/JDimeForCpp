@@ -83,7 +83,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             astnode.getChild(i));
                     child.setParent(this);
                     child.setRevision(getRevision());
-                    children.add(child);
+                    if (((Element) child.getParent().astnode).getLocalName().equals("unit")) {
+                        children.add(child);
+                    }
 //                    child.initializeChildren();
                 }
             }
@@ -468,60 +470,65 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
-        for (CppNodeArtifact child : getChildren()) {
-            String revision = "";
-            if (child.variants != null) {
-                int var_size = child.variants.size();
-                for (int i = 0; i < var_size; i++) {
-                    String str = child.variants.keySet().toArray()[i].toString();
-                    res += "#ifdef " + str + "\n";
-                    res += child.variants.get(str) + "\n";
-                    res += "#endif\n";
-                }
-            } else if (this.matches.size() > 0) {
-                Collection<Matching<CppNodeArtifact>> matcher = this.matches.values();
-                ArrayList<String> var = new ArrayList<>();
-                for (Matching<CppNodeArtifact> m : matcher) {
-                    String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
-                    if (r1.length() > 1) {
-                        String[] condition = r1.split("||");
-
-                        for (String s : condition)
-                            if (!var.contains(s) && (!s.equals("|"))) var.add(s);
-                    } else {
-                        if (!var.contains(r1)) var.add(r1);
-
+        if (this.children.size() > 0) {
+            Iterator<CppNodeArtifact> it = getChildren().iterator();
+            while (it.hasNext()) {
+                CppNodeArtifact child = it.next();
+                if (child.variants != null) {
+                    for (String key : child.variants.keySet()) {
+                        CppNodeArtifact var = child.getVariants().get(key);
+                        if (var.isChoice() || var.matches != null)
+                            res += var.prettyPrint();
                     }
-                    String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
-                    if (r2.length() > 1) {
-                        String[] condition = r2.split("||");
-                        for (String s : condition)
-                            if (!var.contains(s) && (!s.equals("|"))) var.add(s);
-                    } else {
-                        if (!var.contains(r2)) var.add(r2);
-
-                    }
+                        res += printChoice(child);
+                } else if (this.matches != null) {
+                    res += printMatch(this);
                 }
-
-
-                for (int s = 0; s < var.size(); s++) {
-                    revision += var.get(s);
-                    if (s < var.size() - 1) {
-                        revision += "||";
-                    }
-                }
-                res += "#ifdef (" + revision;
-                res += ")\n";
-                res += child + "\n";
-                res += "#endif\n";
-                child.setRevision(new Revision(revision));
-                this.setRevision(new Revision(revision));
-
             }
+        } else if (this.isChoice()) {
+            res += printChoice(this);
+        } else if (this.matches.size() > 0) {
+            res += printMatch(this);
+        }
+        return res;
+    }
+
+    public String printChoice(CppNodeArtifact c) {
+        String s = "";
+        int var_size = c.variants.size();
+        for (int i = 0; i < var_size; i++) {
+            String str = c.variants.keySet().toArray()[i].toString();
+            s += "#ifdef " + str + "\n";
+            s += c.variants.get(str) + "\n";
+            s += "#endif\n";
 
         }
+        return s;
+    }
 
-        return res;
+
+    public String printMatch(CppNodeArtifact c) {
+        String s = "";
+        String condition = "";
+        Collection<Matching<CppNodeArtifact>> matcher = c.matches.values();
+        ArrayList<String> var = new ArrayList<>();
+        for (Matching<CppNodeArtifact> m : matcher) {
+            String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
+            if (!var.contains(r1)) var.add(r1);
+            String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
+            if (!var.contains(r2)) var.add(r2);
+        }
+        for (int i = 0; i < var.size(); i++) {
+            condition += var.get(i);
+            if (i < var.size() - 1) {
+                condition += " || ";
+            }
+        }
+        s += "#ifdef " + condition + "\n";
+        s += c + "\n";
+        s += "#endif\n";
+        return s;
+
     }
 
     /**
