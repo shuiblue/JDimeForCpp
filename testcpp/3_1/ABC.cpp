@@ -1,3 +1,3 @@
 #ifdef A || B
-void a();
+void ab();
 #endif

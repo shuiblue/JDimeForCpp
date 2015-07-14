@@ -748,7 +748,6 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
 		LOG.fine("Add node " + artifact.getId() + " under condition " + condition);
 
 		if (variants == null) {
-//			variants = new HashMap<>();
 			variants = new LinkedHashMap<>();
 		}
 

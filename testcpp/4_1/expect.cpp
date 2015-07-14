@@ -1,7 +1,7 @@
-#ifdef (A||B||C||D)
+#ifdef A || B || C || D
 void x();
 #endif
-#ifdef A||B
+#ifdef A
 void ab();
 #endif
 #ifdef C

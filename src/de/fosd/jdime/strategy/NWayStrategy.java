@@ -191,12 +191,12 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 
 
-//                try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
-//                    String line;
-//                    while ((line = buf.readLine()) != null) {
-//                        context.appendLine(line);
-//                    }
-//                }
+                try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
+                    String line;
+                    while ((line = buf.readLine()) != null) {
+                        context.appendLine(line);
+                    }
+                }
 
                 long runtime = System.currentTimeMillis() - cmdStart;
 
@@ -235,7 +235,25 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
-        System.out.println(targetNode.prettyPrint());
+//        System.out.println(targetNode.prettyPrint());
+//
+//                try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
+//                    String line;
+//                    while ((line = buf.readLine()) != null) {
+//                        context.appendLine(line);
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//        // write output
+//        if (!context.isPretend() && target != null) {
+//            assert (target.exists());
+//            try {
+//                target.write(context.getStdIn());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     @Override

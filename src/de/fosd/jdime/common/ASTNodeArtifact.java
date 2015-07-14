@@ -80,7 +80,7 @@ public class ASTNodeArtifact extends Artifact<ASTNodeArtifact> {
 	 */
 	private static Program initProgram() {
 		Program program = new Program();
-		program.state().reset();
+//		program.state().reset();
 		program.initBytecodeReader(new BytecodeParser());
 		initParser(program);
 		return program;
