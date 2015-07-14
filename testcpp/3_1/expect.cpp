@@ -1,4 +1,4 @@
-#ifdef A||B
+#ifdef A || B
 void ab();
 #endif
 #ifdef C

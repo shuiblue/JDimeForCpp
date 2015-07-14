@@ -81,6 +81,10 @@ public class TestSrcML {
         inputFilePaths.add("testcpp/3_2/B.cpp");
         inputFilePaths.add("testcpp/3_2/C.cpp");
 
+        inputFilePaths.add("testcpp/3_2_1/A.cpp");
+        inputFilePaths.add("testcpp/3_2_1/B.cpp");
+        inputFilePaths.add("testcpp/3_2_1/C.cpp");
+
         inputFilePaths.add("testcpp/3_3/A.cpp");
         inputFilePaths.add("testcpp/3_3/B.cpp");
         inputFilePaths.add("testcpp/3_3/C.cpp");
@@ -95,6 +99,11 @@ public class TestSrcML {
         inputFilePaths.add("testcpp/4/D.cpp");
 
 
+        inputFilePaths.add("testcpp/4_1_1/A.cpp");
+        inputFilePaths.add("testcpp/4_1_1/B.cpp");
+        inputFilePaths.add("testcpp/4_1_1/C.cpp");
+        inputFilePaths.add("testcpp/4_1_1/D.cpp");
+
         inputFilePaths.add("testcpp/4_1/A.cpp");
         inputFilePaths.add("testcpp/4_1/B.cpp");
         inputFilePaths.add("testcpp/4_1/C.cpp");
@@ -104,6 +113,11 @@ public class TestSrcML {
         inputFilePaths.add("testcpp/4_2/B.cpp");
         inputFilePaths.add("testcpp/4_2/C.cpp");
         inputFilePaths.add("testcpp/4_2/D.cpp");
+
+        inputFilePaths.add("testcpp/4_3/A.cpp");
+        inputFilePaths.add("testcpp/4_3/B.cpp");
+        inputFilePaths.add("testcpp/4_3/C.cpp");
+        inputFilePaths.add("testcpp/4_3/D.cpp");
 
         inputFilePaths.add("testcpp/4_4/A.cpp");
         inputFilePaths.add("testcpp/4_4/B.cpp");
