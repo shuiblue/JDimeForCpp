@@ -29,9 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.strategy.StatisticsInterface;
@@ -39,10 +39,8 @@ import de.fosd.jdime.strategy.StatisticsInterface;
 /**
  * A generic <code>Artifact</code> that has a tree structure.
  *
+ * @param <T> type of artifact
  * @author Olaf Lessenich
- *
- * @param <T>
- *            type of artifact
  */
 public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, StatisticsInterface {
 
@@ -57,8 +55,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Recursively renumbers the tree.
      *
-     * @param artifact
-     *            root of the tree to renumber
+     * @param artifact root of the tree to renumber
      */
     private static void renumber(final Artifact<?> artifact) {
         artifact.number = count;
@@ -70,7 +67,6 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
 
     /**
      * Recursively renumbers the tree.
-     *
      */
     public void renumberTree() {
         Artifact.count = 1;
@@ -139,19 +135,16 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Adds a child.
      *
-     * @param child
-     *            child to add
+     * @param child child to add
      * @return added child
-     * @throws IOException
-     *             If an input output exception occurs
+     * @throws IOException If an input output exception occurs
      */
     public abstract T addChild(final T child) throws IOException;
 
     /**
      * Adds a matching.
      *
-     * @param matching
-     *         matching to be added
+     * @param matching matching to be added
      */
     public void addMatching(Matching<T> matching) {
         if (matches == null) {
@@ -164,8 +157,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Clones matches from another artifact.
      *
-     * @param other
-     *            artifact to clone matches from
+     * @param other artifact to clone matches from
      */
     @SuppressWarnings("unchecked")
     public void cloneMatches(T other) {
@@ -191,10 +183,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      * A conflict contains two alternative <code>Artifact</code> (left and right) and is handled in a special way
      * while pretty-printed.
      *
-     * @param left
-     *            left alternative <code>Artifact</code>
-     * @param right
-     *            right alternative <code>Artifact</code>
+     * @param left  left alternative <code>Artifact</code>
+     * @param right right alternative <code>Artifact</code>
      * @return conflict <code>Artifact</code>
      */
     public abstract T createConflictArtifact(T left, T right);
@@ -214,14 +204,13 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      * base <code>Artifact</code> is empty.
      *
      * @return empty <code>Artifact</code>
-     * @throws IOException
-     *             If a file is not found or cannot be created
+     * @throws IOException If a file is not found or cannot be created
      */
     public abstract T createEmptyArtifact() throws IOException;
 
     /**
      * Finds the root artifact and calls <code>dumpTree()</code> on it.
-     *
+     * <p>
      * This method is used for debugging JDime.
      *
      * @return <code>dumpTree()</code> of root artifact
@@ -236,7 +225,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
 
     /**
      * Returns the structure of the artifact as indented plain text.
-     *
+     * <p>
      * This method is used for debugging JDime.
      *
      * @return artifact structure as indented plain text
@@ -247,12 +236,10 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
 
     /**
      * Returns the structure of the artifact as indented plain text.
-     *
+     * <p>
      * This method is used for debugging JDime.
      *
-     * @param indent
-     *            String used to indent the current artifact
-     *
+     * @param indent String used to indent the current artifact
      * @return artifact structure as indented plain text
      */
     protected abstract String dumpTree(String indent);
@@ -260,8 +247,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns the AST in dot-format. {@link #toString()} will be used to label the nodes.
      *
-     * @param includeNumbers
-     *            include node number in label if true
+     * @param includeNumbers include node number in label if true
      * @return AST in dot-format.
      */
     public String dumpGraphvizTree(boolean includeNumbers, int virtualcount) {
@@ -354,8 +340,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Return child <code>Artifact</code> at position i.
      *
-     * @param i
-     *             position of child <code>Artifact</code>
+     * @param i position of child <code>Artifact</code>
      * @return child <code>Artifact</code> at position i
      */
     public T getChild(int i) {
@@ -381,7 +366,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns the identifier of the <code>Artifact</code>,
      * which contains the <code>Revision</code> name and a number.
-     *
+     * <p>
      * This method is basically useful for debugging JDime.
      *
      * @return identifier of the <code>Artifact</code>
@@ -392,12 +377,27 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      * Returns the <code>Matching</code> for a specific <code>Revision</code> or <code>null</code> if there is no such
      * <code>Matching</code>.
      *
-     * @param rev
-     *            <code>Revision</code>
+     * @param rev <code>Revision</code>
      * @return <code>Matching</code> with <code>Revision</code>
      */
     public Matching<T> getMatching(Revision rev) {
-        return matches == null ? null : matches.get(rev);
+//        return matches == null ? null : matches.get(rev);
+        Matching<T> res = matches == null ? null : matches.get(rev);
+
+        if (res == null){
+            if (rev.alternatives.size() > 0) {
+                Iterator<String> iter = rev.alternatives.iterator();
+                while (iter.hasNext()) {
+                    Revision tmpRev = new Revision(iter.next());
+                    if (matches.get(tmpRev) != null)
+                        return matches.get(tmpRev);
+                }
+            }
+            return null;
+        }
+        else{
+            return res;
+        }
     }
 
     /**
@@ -443,7 +443,12 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns the maximum depth of any node in the tree.
      *
+<<<<<<< origin/develop
      * @return the maximum depth
+=======
+     * @param context merge context
+     * @return key of statistical element
+>>>>>>> HEAD~134
      */
     public int getMaxDepth() {
         return 1 + children.parallelStream().map(Artifact::getMaxDepth).max(Integer::compare).orElse(0);
@@ -538,8 +543,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns whether this <code>Artifact</code> has a <code>Matching</code> for a specific <code>Revision</code>.
      *
-     * @param rev
-     *            <code>Revision</code>
+     * @param rev <code>Revision</code>
      * @return true if <code>Artifact</code> has a <code>Matching</code> with <code>Revision</code>
      */
     public final boolean hasMatching(Revision rev) {
@@ -573,8 +577,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns whether a <code>Matching</code> exists for a specific <code>Artifact</code>.
      *
-     * @param other
-     *            other <code>Artifact</code> to search <code>Matching</code>s for
+     * @param other other <code>Artifact</code> to search <code>Matching</code>s for
      * @return whether a <code>Matching</code> exists
      */
     public final boolean hasMatching(T other) {
@@ -647,6 +650,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
 
     /**
      * Returns true if the <code>Artifact</code> has already been merged.
+     *
      * @return true if the <code>Artifact</code> has already been merged
      */
     public boolean isMerged() {
@@ -672,8 +676,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns true, if this <code>Artifact</code> matches another <code>Artifact</code>.
      *
-     * @param other
-     *            other <code>Artifact</code>
+     * @param other other <code>Artifact</code>
      * @return true, if the <code>Artifact</code>s match
      */
     public abstract boolean matches(T other);
@@ -691,14 +694,10 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      * Performs a merge on the provided merge triple.
      * This method selects the <code>MergeStrategy</code> and triggers the merge.
      *
-     * @param operation
-     *            merge operation
-     * @param context
-     *            merge context
-     * @throws InterruptedException
-     *             If a thread is interrupted
-     * @throws IOException
-     *             If an input output exception occurs
+     * @param operation merge operation
+     * @param context   merge context
+     * @throws InterruptedException If a thread is interrupted
+     * @throws IOException          If an input output exception occurs
      */
     public abstract void merge(MergeOperation<T> operation, MergeContext context)
             throws IOException, InterruptedException;
@@ -706,8 +705,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Sets the children of the <code>Artifact</code>.
      *
-     * @param children
-     *            the new children to set
+     * @param children the new children to set
      */
     public void setChildren(ArtifactList<T> children) {
         this.children = children;
@@ -716,10 +714,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Marks this <code>Artifact</code> as a conflict.
      *
-     * @param left
-     *            left alternative
-     * @param right
-     *            right alternative
+     * @param left  left alternative
+     * @param right right alternative
      */
     void setConflict(T left, T right) {
         this.conflict = true;
@@ -779,8 +775,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
 
     /**
      * Sets the number of the <code>Artifact</code>
-     * @param number
-     *            the number to set
+     *
+     * @param number the number to set
      */
     public void setNumber(int number) {
         this.number = number;
@@ -789,8 +785,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Sets the parent <code>Artifact</code>.
      *
-     * @param parent
-     *            the parent to set
+     * @param parent the parent to set
      */
     void setParent(T parent) {
         this.parent = parent;
@@ -799,8 +794,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Sets the <code>Revision</code>.
      *
-     * @param revision
-     *            the <code>Revision</code> to set
+     * @param revision the <code>Revision</code> to set
      */
     public void setRevision(Revision revision) {
         setRevision(revision, false);
@@ -813,6 +807,25 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
             for (T child : children) {
                 child.setRevision(revision, recursive);
             }
+        }
+    }
+    public void fixRevision(HashSet<String> revSet) {
+        revision.alternatives = (HashSet<String>)revSet.clone();
+        for (T child : children) {
+            child.fixRevision(revSet);
+        }
+    }
+
+    public void getRevisions(HashSet<String> revSet){
+        if (variants != null) {
+            Iterator<String> iter = variants.keySet().iterator();
+            while (iter.hasNext()) {
+                String revStr = iter.next();
+                revSet.add(revStr);
+            }
+        }
+        for (T child : children) {
+            child.getRevisions(revSet);
         }
     }
 

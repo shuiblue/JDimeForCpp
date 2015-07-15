@@ -23,6 +23,8 @@
 package de.fosd.jdime.common;
 
 import java.util.Objects;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * This class represents a revision.
@@ -35,15 +37,24 @@ public class Revision {
      * Name of the revision.
      */
     private String name;
+    public HashSet<String> alternatives;
+
+    public boolean hasAlternatives() {
+        if (alternatives.size() > 0) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Constructs a new <code>Revision</code> with the given name.
      *
-     * @param name
-     *         name of the revision
+     * @param name name of the revision
      */
     public Revision(String name) {
         this.name = name;
+        alternatives = new HashSet<>();
+
     }
 
     /**
@@ -58,8 +69,7 @@ public class Revision {
     /**
      * Sets the name of the revision.
      *
-     * @param name
-     *         the name to set
+     * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -68,12 +78,19 @@ public class Revision {
     /**
      * Returns whether an artifact is contained in this revision.
      *
-     * @param artifact
-     *         artifact
+     * @param artifact artifact
      * @return true if the artifact is contained in this revision
      */
-    public boolean contains(Artifact<?> artifact) {
-        return artifact != null && artifact.hasMatching(this);
+
+    public final boolean contains(final Artifact<?> artifact) {
+        boolean result = artifact != null && artifact.hasMatching(this);
+        if (alternatives.size() != 0) {
+            Iterator<String> iter = alternatives.iterator();
+            while (iter.hasNext()) {
+                result |= artifact != null && artifact.hasMatching(new Revision(iter.next()));
+            }
+        }
+        return result;
     }
 
     @Override
