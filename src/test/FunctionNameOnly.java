@@ -371,6 +371,26 @@ test8_3
     }
 
     /*
+   test10_1
+   A: void x();  |  B: void x();  |  C: void x();  |  D: void x();
+      void ab(); |    void ab();  |     void c();  |     void d();
+   */
+    @Test
+    public void test10_1() {
+        String outputPath = "testcpp/4_1_1/ABCD.cpp";
+        String expectResultPath = "testcpp/4_1_1/expect.cpp";
+
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("testcpp/4_1_1/A.cpp");
+        inputFilePaths.add("testcpp/4_1_1/B.cpp");
+        inputFilePaths.add("testcpp/4_1_1/C.cpp");
+        inputFilePaths.add("testcpp/4_1_1/D.cpp");
+
+        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
+
+    /*
     test11
     A: void x();  |  B: void x();  |  C: void x();  |  D: void x();
        void ac(); |    void b();   |     void ac(); |     void d();
