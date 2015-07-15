@@ -92,8 +92,10 @@ task natives {
         glpk_java_name = "libglpk_java.dylib"
         glpk_name = "libglpk.dylib"
     } else {
-        glpk_java_name = "libglpk_java.so"
-        glpk_name = "libglpk.so"
+//        glpk_java_name = "libglpk_java.so"
+//        glpk_name = "libglpk.so"
+        glpk_java_name = "libglpk_java.dylib"
+        glpk_name = "libglpk.dylib"
     }
 
     if (!rootProject.hasProperty(glpk_java_prop_name)) {
