@@ -88,4 +88,22 @@ public class IncludeAndFunctionName {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
+
+    /*
+   test1
+   A: #include x.h | B:  #include x.h
+      void a();    |     void b();
+   */
+    @Test
+    public void test2() {
+        String outputPath = "testcpp/IFDEF/AB.cpp";
+        String expectResultPath = "testcpp/IFDEF/expect.cpp";
+
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("testcpp/IFDEF/A.cpp");
+        inputFilePaths.add("testcpp/IFDEF/B.cpp");
+
+        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
 }
