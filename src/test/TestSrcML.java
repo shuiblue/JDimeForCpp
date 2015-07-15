@@ -14,21 +14,21 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TestSrcML {
 
-    public static String getXmlFile(String inputFile)  {
-        if (new File(inputFile).isFile()) {
-            String outXmlFile = inputFile + ".xml";
-            try {
-                Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
-                        inputFile, "-o", outXmlFile).start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return outXmlFile;
-        } else {
-            System.out.println("File does not exist: " + inputFile);
-        }
-        return null;
-    }
+//    public static String getXmlFile(String inputFile)  {
+//        if (new File(inputFile).isFile()) {
+//            String outXmlFile = inputFile + ".xml";
+//            try {
+//                Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
+//                        inputFile, "-o", outXmlFile).start();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return outXmlFile;
+//        } else {
+//            System.out.println("File does not exist: " + inputFile);
+//        }
+//        return null;
+//    }
 
     public String readResult(String filePath) throws IOException {
 
@@ -93,6 +93,11 @@ public class TestSrcML {
         inputFilePaths.add("testcpp/3_4/B.cpp");
         inputFilePaths.add("testcpp/3_4/C.cpp");
 
+
+        inputFilePaths.add("testcpp/3_5/A.cpp");
+        inputFilePaths.add("testcpp/3_5/B.cpp");
+        inputFilePaths.add("testcpp/3_5/C.cpp");
+
         inputFilePaths.add("testcpp/4/A.cpp");
         inputFilePaths.add("testcpp/4/B.cpp");
         inputFilePaths.add("testcpp/4/C.cpp");
@@ -125,7 +130,7 @@ public class TestSrcML {
         inputFilePaths.add("testcpp/4_4/D.cpp");
 
         for(String s :inputFilePaths){
-            assertNotNull( readResult( getXmlFile(s)));
+            assertNotNull( readResult( s+".xml"));
         }
 
     }

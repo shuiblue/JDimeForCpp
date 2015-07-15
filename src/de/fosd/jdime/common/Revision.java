@@ -22,78 +22,93 @@
  */
 package de.fosd.jdime.common;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 /**
  * This class represents a revision.
  *
  * @author Olaf Lessenich
- *
  */
 public class Revision {
 
-	/**
-	 * Name of the revision.
-	 */
-	private String name;
+    /**
+     * Name of the revision.
+     */
+    private String name;
+    public HashSet<String> alternatives;
 
-	/**
-	 * Creates a new instance of revision.
-	 *
-	 * @param name
-	 *            name of the revision
-	 */
-	public Revision(final String name) {
-		this.name = name;
-	}
+    public boolean hasAlternatives() {
+        if (alternatives.size() > 0) {
+            return true;
+        }
+        return false;
+    }
 
-	/**
-	 * Returns the name of the revision.
-	 *
-	 * @return the name
-	 */
-	public final String getName() {
-		return name;
-	}
+    /**
+     * Creates a new instance of revision.
+     *
+     * @param name name of the revision
+     */
+    public Revision(final String name) {
+        this.name = name;
+        alternatives = new HashSet<>();
 
-	/**
-	 * Sets the name of the revision.
-	 *
-	 * @param name
-	 *            the name to set
-	 */
-	public final void setName(final String name) {
-		this.name = name;
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public final String toString() {
-		return name;
-	}
+    /**
+     * Returns the name of the revision.
+     *
+     * @return the name
+     */
+    public final String getName() {
+        return name;
+    }
 
-	/**
-	 * Returns whether an artifact is contained in this revision.
-	 *
-	 * @param artifact
-	 *            artifact
-	 * @return true if the artifact is contained in this revision
-	 */
-	public final boolean contains(final Artifact<?> artifact) {
-		boolean result = artifact != null && artifact.hasMatching(this);
-		return result;
-	}
+    /**
+     * Sets the name of the revision.
+     *
+     * @param name the name to set
+     */
+    public final void setName(final String name) {
+        this.name = name;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return name.equals(((Revision) obj).name);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public final String toString() {
+        return name;
+    }
 
-	@Override
-	public int hashCode() {
-		return name.hashCode();
-	}
+    /**
+     * Returns whether an artifact is contained in this revision.
+     *
+     * @param artifact artifact
+     * @return true if the artifact is contained in this revision
+     */
+    public final boolean contains(final Artifact<?> artifact) {
+        boolean result = artifact != null && artifact.hasMatching(this);
+        if (alternatives.size() != 0) {
+            Iterator<String> iter = alternatives.iterator();
+            while (iter.hasNext()) {
+                result |= artifact != null && artifact.hasMatching(new Revision(iter.next()));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return name.equals(((Revision) obj).name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 
 }

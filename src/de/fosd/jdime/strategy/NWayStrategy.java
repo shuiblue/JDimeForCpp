@@ -27,8 +27,7 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -92,7 +91,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         }
 
 		/* ASTNodeArtifacts are created from the input files.
-		 * Then, a ASTNodeStrategy can be applied.
+         * Then, a ASTNodeStrategy can be applied.
 		 * The result is pretty printed and can be written into the output file.
 		 */
         CppNodeArtifact merged, next, targetNode;
@@ -143,6 +142,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
                 astMergeOp.apply(mergeContext);
 
+                HashSet<String> revSet = new HashSet<>();
+                targetNode.getRevisions(revSet);
+                targetNode.fixRevision(revSet);
+
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.finest("Structured merge finished.");
 
@@ -161,7 +164,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.print(targetNode.prettyPrint());
                     }
                 }
-
 
 
 //                if (targetNode.matches!=null) {
@@ -188,7 +190,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 //                    targetNode.setRevision(mergedRevision);
 //
 //                }
-
 
 
                 try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {

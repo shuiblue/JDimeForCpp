@@ -1,6 +1,7 @@
 package de.fosd.jdime.common;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -20,7 +21,7 @@ import de.fosd.jdime.strategy.MergeStrategy;
 public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     private Node astnode = null;
-    //    private String xmlPath = null;
+    //        private String xmlPath = null;
     private Document xmlDoc = null;
     /**
      * @aspect JDime
@@ -40,12 +41,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return;
         }
         setRevision(artifact.getRevision());
+
         String filePath = artifact.getPath();
         if (filePath.contains(".cpp")) {
-//            xmlPath = getXmlFile(filePath);
+            ;
 //            xmlDoc = getXmlDom(xmlPath);
 
-            xmlDoc = getXmlDom(filePath + ".xml");
+            xmlDoc = getXmlDom(getXmlFile(filePath));
         }
         this.astnode = xmlDoc.getChild(0);
         this.initializeChildren();
@@ -120,11 +122,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return outXmlFile;
         } else {
             System.out.println("File does not exist: " + inputFile);
         }
-        return null;
+        return inputFile+".xml";
     }
 
     /**
@@ -134,16 +135,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public static Document getXmlDom(String xmlFilePath) {
 
-        Builder builder = new Builder();
-        File file = new File(xmlFilePath);
         Document doc = null;
         try {
+            Builder builder = new Builder();
+            File file = new File(xmlFilePath);
+            try {
+                Thread.sleep(10);                 //1000 milliseconds is one second.
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
             doc = builder.build(file);
         } catch (ParsingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return doc;
     }
 
@@ -357,10 +364,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         assert (astnode != null);
         assert (other != null);
         assert (other.astnode != null);
-        if (((Element) astnode).getLocalName().equals("function_decl")) {
+        if (((Element) astnode).getLocalName().equals("function_decl") || ((Element) astnode).getLocalName().equals("include")) {
             return astnode.getValue().equals((other.getCppNode()).getValue());
         } else if (((Element) astnode).getLocalName().equals("unit")) {
             return true;
+        } else if (((Element) astnode).getLocalName().equals("include")) {
+            return astnode.getValue().equals((other.getCppNode()).getValue());
         } else {
             return false;
         }
@@ -485,20 +494,21 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     }
                 } else if (this.matches != null) {
                     res += printMatch(this);
-                    res += child.toString() +"\n";
-                    res+="#endif\n";
-;                }
+                    res += child.toString() + "\n";
+                    res += "#endif\n";
+                    ;
+                }
             }
         } else if (this.isChoice()) {
             res += printChoice(this);
-        } else if (this.matches!=null) {
+        } else if (this.matches != null) {
             res += printMatch(this);
-            res += this.toString()+"\n";
-            res+="#endif\n";
+            res += this.toString() + "\n";
+            res += "#endif\n";
         } else {
             res += "#ifdef " + getRevision() + "\n";
-        res += this.toString()+"\n";
-            res+="#endif\n";
+            res += this.toString() + "\n";
+            res += "#endif\n";
         }
         return res;
     }

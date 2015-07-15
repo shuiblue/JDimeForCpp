@@ -272,28 +272,64 @@ public class FunctionNameOnly {
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
-    //----------------4 WAY-----------------------------    /*
-
     /*
-  test9_1
-  A:   void ac();| B:     void bd(); |  C:   void ac(); | D:  void bd();
+  test8_2
+  A:   void a(); | B:  void x(); |  C:  void x();
+       void x(); |     void bc();|      void bc();
   */
     @Test
-    public void test9_1() {
-        String outputPath = "testcpp/4_3/ABCD.cpp";
-        String expectResultPath = "testcpp/4_3/expect.cpp";
+    public void test8_2() {
+        String outputPath = "testcpp/3_5/ABC.cpp";
+        String expectResultPath = "testcpp/3_5/expect.cpp";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_3/A.cpp");
-        inputFilePaths.add("testcpp/4_3/B.cpp");
-        inputFilePaths.add("testcpp/4_3/C.cpp");
-        inputFilePaths.add("testcpp/4_3/D.cpp");
+        inputFilePaths.add("testcpp/3_5/A.cpp");
+        inputFilePaths.add("testcpp/3_5/B.cpp");
+        inputFilePaths.add("testcpp/3_5/C.cpp");
 
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
+    /*
+    test8_3
+        A:   void a(); | B:  void x(); |  C:  void bc();
+             void x(); |     void bc();|      void x();
+    */
+    @Test
+    public void test8_3() {
+        String outputPath = "testcpp/3_6/ABC.cpp";
+        String expectResultPath = "testcpp/3_6/expect.cpp";
 
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("testcpp/3_6/A.cpp");
+        inputFilePaths.add("testcpp/3_6/B.cpp");
+        inputFilePaths.add("testcpp/3_6/C.cpp");
+
+        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
+
+    /*
+test8_3
+    A:   void a(); | B:  void x(); |  C:  void bc();
+         void x(); |     void bc();|      void x();
+*/
+    @Test
+    public void test8_4() {
+        String outputPath = "testcpp/3_7/ABC.cpp";
+        String expectResultPath = "testcpp/3_7/expect.cpp";
+
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("testcpp/3_7/A.cpp");
+        inputFilePaths.add("testcpp/3_7/B.cpp");
+        inputFilePaths.add("testcpp/3_7/C.cpp");
+
+        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
+
+    //----------------4 WAY-----------------------------    /*
     /*
     test9
     A: void x();  |  B: void x();  |  C: void x();  |  D: void x();
@@ -313,6 +349,7 @@ public class FunctionNameOnly {
 
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
+
     /*
     test10
     A: void x();  |  B: void x();  |  C: void x();  |  D: void x();
@@ -352,6 +389,7 @@ public class FunctionNameOnly {
 
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
+
     /*
     test12
     A: void x();  |  B: void x();  |  C: void x();   |  D: void x();
