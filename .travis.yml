@@ -19,8 +19,3 @@ addons:
 before_install:
   - echo glpkJava=$(dpkg -L libglpk-java | egrep 'libglpk_java.so$') > gradle.properties
   - echo glpk=$(dpkg -L libglpk-dev | egrep 'libglpk.so$') >> gradle.properties
-=======
-language: java
-jdk:
-  - oraclejdk8
->>>>>>> HEAD~132
