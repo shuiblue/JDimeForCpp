@@ -80,7 +80,7 @@ task natives {
     def glpk_version = "4_55"
     def glpk_java_prop_name = "glpkJava"
     def glpk_prop_name = "glpk"
-    def glpk_java_name= "glpkJava"
+    def glpk_java_name
     def glpk_name
 
     def os = System.getProperty("os.name").toLowerCase()
@@ -92,10 +92,8 @@ task natives {
         glpk_java_name = "libglpk_java.dylib"
         glpk_name = "libglpk.dylib"
     } else {
-//        glpk_java_name = "libglpk_java.so"
-//        glpk_name = "libglpk.so"
-        glpk_java_name = "libglpk_java.dylib"
-        glpk_name = "libglpk.dylib"
+        glpk_java_name = "libglpk_java.so"
+        glpk_name = "libglpk.so"
     }
 
     if (!rootProject.hasProperty(glpk_java_prop_name)) {

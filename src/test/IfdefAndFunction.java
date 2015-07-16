@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by shuruiz on 7/14/15.
+ * Created by shuruiz on 7/15/15.
  */
-public class IncludeAndFunctionName {
+public class IfdefAndFunction {
     public String readResult(String filePath) throws IOException {
 
         BufferedReader result_br = new BufferedReader(new FileReader(filePath));
@@ -69,25 +69,26 @@ public class IncludeAndFunctionName {
         return result.equals(expect_result);
     }
 
-    //----------------2 WAY-----------------------------
     /*
-     test1
-     A: #include x.h | B:  #include x.h
-        void a();    |     void b();
-     */
+    test1
+    A:                      | B:
+    #include "x.h";         |   #include "x.h";
+    #ifdef X                |   void b();
+    void a();               |
+    #endif                  |
+    */
     @Test
     public void test1() {
-        String outputPath = "testcpp/Include_FuncName_1/AB.cpp";
-        String expectResultPath = "testcpp/5/2_1/expect.cpp";
+        String outputPath = "testcpp/IFDEF/AB.cpp";
+        String expectResultPath = "testcpp/IFDEF/expect.cpp";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/5/2_1/A.cpp");
-        inputFilePaths.add("testcpp/5/2_1/B.cpp");
+        inputFilePaths.add("testcpp/IFDEF/A.cpp");
+        inputFilePaths.add("testcpp/IFDEF/B.cpp");
 
         assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
-
 
 
 }

@@ -1,6 +1,7 @@
 #ifdef A || B
 #include "x.h";
 #endif
+
 #ifdef A
 void a();
 #endif

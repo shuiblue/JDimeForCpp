@@ -7,6 +7,9 @@ void c();
 #ifdef A || B || C
 void x();
 #endif
+#ifdef B
+void b();
+#endif
 #ifdef A || B
 void y();
 #endif
