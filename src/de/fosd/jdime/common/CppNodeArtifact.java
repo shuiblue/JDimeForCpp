@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import AST.MethodDecl;
 import nu.xom.*;
@@ -125,7 +126,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else {
             System.out.println("File does not exist: " + inputFile);
         }
-        return inputFile+".xml";
+        return inputFile + ".xml";
     }
 
     /**
@@ -141,7 +142,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             File file = new File(xmlFilePath);
             try {
                 Thread.sleep(10);                 //1000 milliseconds is one second.
-            } catch(InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
             doc = builder.build(file);
@@ -152,6 +153,31 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
 
         return doc;
+    }
+
+    Stack<String> conditionStack = new Stack<>();
+
+    /**
+     * this function is trying to parse ifdef blocks and add the revision of the child with ifdef condition.
+     */
+    public void parseCondition() {
+        ArtifactList<CppNodeArtifact> children = this.children;
+        if (children != null) {
+            for (CppNodeArtifact c : children) {
+                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
+                    String condition = c.astnode.getValue().split(" ")[1];
+
+                    conditionStack.push(condition);
+
+                    continue;
+                } else if (((Element) c.astnode).getLocalName().equals("endif")) {
+                    conditionStack.pop();
+                }
+                if (conditionStack.size() > 0) {
+                    c.getRevision().alternatives.addAll(conditionStack.stream().collect(Collectors.toList()));
+                }
+            }
+        }
     }
 
     public HashMap<String, Integer> getLanguageElementStatistics() {

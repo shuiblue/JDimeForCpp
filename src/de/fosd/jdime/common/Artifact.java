@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.strategy.StatisticsInterface;
@@ -394,8 +395,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
                 }
             }
             return null;
-        }
-        else{
+        } else {
             return res;
         }
     }
@@ -808,7 +808,13 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
                 child.setRevision(revision, recursive);
             }
         }
+
+
     }
+
+    /**
+     * @param revSet
+     */
     public void fixRevision(HashSet<String> revSet) {
         revision.alternatives = (HashSet<String>)revSet.clone();
         for (T child : children) {
@@ -816,6 +822,11 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
         }
     }
 
+    /**
+     * get variants' revision and combined as root's revision
+     *
+     * @param revSet
+     */
     public void getRevisions(HashSet<String> revSet){
         if (variants != null) {
             Iterator<String> iter = variants.keySet().iterator();
