@@ -1,4 +1,11 @@
-#include "x.h";
+#include <iostream>
+  int main()
+{
 #ifdef X
-void a();
+	std::cout << "Hello X!" << std::endl;
 #endif
+#ifdef Y
+	std::cout << "Hello Y!" << std::endl;
+#endif
+return 0;
+}
