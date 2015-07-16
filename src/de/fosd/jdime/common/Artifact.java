@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Matching;
 
@@ -377,7 +378,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
 //        return matches == null ? null : matches.get(rev);
         Matching<T> res = matches == null ? null : matches.get(rev);
 
-        if (res == null){
+        if (res == null) {
             if (rev.alternatives.size() > 0) {
                 Iterator<String> iter = rev.alternatives.iterator();
                 while (iter.hasNext()) {
@@ -387,8 +388,7 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
                 }
             }
             return null;
-        }
-        else{
+        } else {
             return res;
         }
     }
@@ -793,15 +793,26 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
                 child.setRevision(revision, recursive);
             }
         }
+
+
     }
+
+    /**
+     * @param revSet
+     */
     public void fixRevision(HashSet<String> revSet) {
-        revision.alternatives = (HashSet<String>)revSet.clone();
+        revision.alternatives = (HashSet<String>) revSet.clone();
         for (T child : children) {
             child.fixRevision(revSet);
         }
     }
 
-    public void getRevisions(HashSet<String> revSet){
+    /**
+     * get variants' revision and combined as root's revision
+     *
+     * @param revSet
+     */
+    public void getRevisions(HashSet<String> revSet) {
         if (variants != null) {
             Iterator<String> iter = variants.keySet().iterator();
             while (iter.hasNext()) {

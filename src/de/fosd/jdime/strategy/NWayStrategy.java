@@ -106,6 +106,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
         Iterator it = variants.keySet().iterator();
         targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
+        targetNode.parseCondition();
         while (it.hasNext()) {
 
 
@@ -145,6 +146,8 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 HashSet<String> revSet = new HashSet<>();
                 targetNode.getRevisions(revSet);
                 targetNode.fixRevision(revSet);
+
+
 
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.finest("Structured merge finished.");
