@@ -37,6 +37,8 @@ public class Revision {
      */
     private String name;
     public HashSet<String> alternatives;
+    public HashSet<String> conditions;
+
 
     public boolean hasAlternatives() {
         if (alternatives.size() > 0) {
@@ -53,7 +55,7 @@ public class Revision {
     public Revision(final String name) {
         this.name = name;
         alternatives = new HashSet<>();
-
+        conditions = new HashSet<>();
     }
 
     /**

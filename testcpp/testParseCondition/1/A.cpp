@@ -1,3 +1,3 @@
 #ifdef X
-void a();
+void x();
 #endif

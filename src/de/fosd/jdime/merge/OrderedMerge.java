@@ -102,6 +102,8 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
 
 		while (!leftdone || !rightdone)
 		{
+			l = leftChild.getRevision();
+			r = rightChild.getRevision();
 			if (!leftdone && !r.contains(leftChild)) {
 				assert (leftChild != null);
 				final T finalLeftChild = leftChild;
