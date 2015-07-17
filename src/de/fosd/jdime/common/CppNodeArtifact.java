@@ -89,7 +89,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         CppNodeArtifact child = new CppNodeArtifact(
                                 astnode.getChild(i));
                         child.setParent(this);
-                        child.setRevision(getRevision());
+                        child.setRevision(new Revision(getRevision().getName()));
 
                         children.add(child);
                     }
@@ -164,18 +164,20 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         ArtifactList<CppNodeArtifact> children = this.children;
         if (children != null) {
             for (CppNodeArtifact c : children) {
-                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
-                    String condition = c.astnode.getValue().split(" ")[1];
-
-                    conditionStack.push(condition);
-
-                    continue;
-                } else if (((Element) c.astnode).getLocalName().equals("endif")) {
+                if (((Element) c.astnode).getLocalName().equals("endif")) {
                     conditionStack.pop();
+                    continue;
                 }
                 if (conditionStack.size() > 0) {
-                    c.getRevision().alternatives.addAll(conditionStack.stream().collect(Collectors.toList()));
+                    c.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                    continue;
                 }
+                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
+                    String condition = c.astnode.getValue().substring(7);
+                    conditionStack.push(condition);
+                    continue;
+                }
+
             }
         }
     }
@@ -518,8 +520,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         CppNodeArtifact var = child.getVariants().get(key);
                         res += var.prettyPrint();
                     }
-                } else if (this.matches != null) {
-                    res += printMatch(this);
+                } else if (child.matches != null) {
+                    res += printMatch(child);
                     res += child.toString() + "\n";
                     res += "#endif\n";
                     ;
@@ -532,9 +534,20 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += this.toString() + "\n";
             res += "#endif\n";
         } else {
-            res += "#ifdef " + getRevision() + "\n";
-            res += this.toString() + "\n";
+            res += "#ifdef " + getRevision();
+            res += printCondition(getRevision());
+            res += "\n" + this.toString() + "\n";
             res += "#endif\n";
+        }
+        return res;
+    }
+
+    public String printCondition(Revision r) {
+        String res = "";
+        if (r.conditions.size() > 0) {
+            for (String s : r.conditions) {
+                res += " && " + s;
+            }
         }
         return res;
     }
@@ -545,8 +558,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         for (int i = 0; i < var_size; i++) {
             String str = c.variants.keySet().toArray()[i].toString();
             s += "#ifdef " + str + "\n";
-            s += c.variants.get(str) + "\n";
-            s += "#endif\n";
+            s += c.variants.get(str);
+            s += printCondition(c.getRevision());
+            s += "\n#endif\n";
 
         }
         return s;
@@ -559,9 +573,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         Collection<Matching<CppNodeArtifact>> matcher = c.matches.values();
         ArrayList<String> var = new ArrayList<>();
         for (Matching<CppNodeArtifact> m : matcher) {
-            String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
+            Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
+            String r1 = revision_1.toString();
+            if (revision_1.conditions.size() > 0) {
+                r1 += printCondition(revision_1);
+            }
             if (!var.contains(r1)) var.add(r1);
-            String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
+
+            Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
+            String r2 = revision_2.toString();
+            if (revision_2.conditions.size() > 0) {
+                r2 +=printCondition(revision_2);
+            }
             if (!var.contains(r2)) var.add(r2);
         }
         for (int i = 0; i < var.size(); i++) {

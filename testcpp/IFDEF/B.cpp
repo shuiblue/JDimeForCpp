@@ -1,1 +1,2 @@
+void a();
 void b();
