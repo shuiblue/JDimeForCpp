@@ -78,8 +78,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         MergeScenario<FileArtifact> scenario = operation.getMergeScenario();
         Map<Revision, FileArtifact> variants = scenario.getArtifacts();
 
-        FileArtifact nextFile;
-
         assert (variants.size() > 1);
 
         context.resetStreams();
@@ -106,7 +104,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
         Iterator it = variants.keySet().iterator();
         targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
-//        targetNode.parseCondition();
         while (it.hasNext()) {
 
 
@@ -148,7 +145,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 targetNode.fixRevision(revSet);
 
 
-
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.finest("Structured merge finished.");
 
@@ -167,33 +163,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.print(targetNode.prettyPrint());
                     }
                 }
-
-
-//                if (targetNode.matches!=null) {
-//
-//                    Collection<Matching<CppNodeArtifact>> matcher = targetNode.matches.values();
-//                    ArrayList<String> var = new ArrayList<>();
-//                    for (Matching<CppNodeArtifact> m : matcher) {
-//                        String r1 = m.getMatchedArtifacts().getX().getRevision().toString();
-//                        String r2 = m.getMatchedArtifacts().getY().getRevision().toString();
-//
-//                        if (!var.contains(r1)) var.add(r1);
-//                        if (!var.contains(r2)) var.add(r2);
-//                    }
-//
-//                    String revisions = "";
-//                    for (int s = 0; s < var.size(); s++) {
-//                        revisions += var.get(s);
-//                        if (s < var.size() - 1) {
-//                            revisions += "||";
-//                        }
-//                    }
-//                    Revision mergedRevision = new Revision(revisions);
-//
-//                    targetNode.setRevision(mergedRevision);
-//
-//                }
-
 
                 try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
                     String line;
@@ -239,25 +208,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
-//        System.out.println(targetNode.prettyPrint());
-//
-//                try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
-//                    String line;
-//                    while ((line = buf.readLine()) != null) {
-//                        context.appendLine(line);
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//        // write output
-//        if (!context.isPretend() && target != null) {
-//            assert (target.exists());
-//            try {
-//                target.write(context.getStdIn());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     @Override

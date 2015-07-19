@@ -45,9 +45,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         String filePath = artifact.getPath();
         if (filePath.contains(".cpp")) {
-            ;
-//            xmlDoc = getXmlDom(xmlPath);
-
             xmlDoc = getXmlDom(getXmlFile(filePath));
         }
         this.astnode = xmlDoc.getChild(0);
@@ -96,16 +93,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             conditionStack.push(condition);
                             continue;
                         }
-                            CppNodeArtifact child = new CppNodeArtifact(
-                                    astnode.getChild(i));
-                            child.setParent(this);
-                            child.setRevision(new Revision(getRevision().getName()));
-                        if (conditionStack!=null) {
+                        CppNodeArtifact child = new CppNodeArtifact(
+                                astnode.getChild(i));
+                        child.setParent(this);
+                        child.setRevision(new Revision(getRevision().getName()));
+                        if (conditionStack != null) {
                             child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                         }
-                            children.add(child);
-
-
+                        children.add(child);
 
 
                     }
@@ -131,8 +126,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @throws IOException e
      */
     public static String getXmlFile(String inputFile) {
+        String outXmlFile =inputFile + ".xml";
+
         if (new File(inputFile).isFile()) {
-            String outXmlFile = inputFile + ".xml";
             try {
                 Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
                         inputFile, "-o", outXmlFile).start();
@@ -142,7 +138,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else {
             System.out.println("File does not exist: " + inputFile);
         }
-        return inputFile + ".xml";
+        return outXmlFile;
     }
 
     /**
@@ -538,7 +534,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += printMatch(child);
                     res += child.toString() + "\n";
                     res += "#endif\n";
-                    ;
+
                 }
             }
         } else if (this.isChoice()) {

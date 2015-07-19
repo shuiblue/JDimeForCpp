@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/IFDEF/4/B.cpp"><cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>X</name></cpp:ifdef>
+<function_decl><type><name>void</name></type> <name>b</name><parameter_list>()</parameter_list>;</function_decl>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+</unit>

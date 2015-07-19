@@ -14,12 +14,15 @@ import java.util.ArrayList;
 public class TestInitial {
     public String prefix = "";
     public String suffix = ".cpp";
+    public String output_prefix = "";
+
+
 
     TestInitial(String p) {
         this.prefix = p;
+        output_prefix = prefix + "Result/";
     }
 
-    public String output_prefix = prefix + "Result";
 
     public String readResult(String filePath) throws IOException {
 
@@ -42,7 +45,7 @@ public class TestInitial {
     }
 
     public void runMain(ArrayList<String> inputFilePaths, String outputPath) {
-        String commandLine = "-mode,nway,-output," + output_prefix  + outputPath + suffix + ",";
+        String commandLine = "-mode,nway,-output," + prefix  + outputPath + suffix + ",";
         for (int i = 0; i < inputFilePaths.size(); i++) {
 
             commandLine += prefix + inputFilePaths.get(i) + suffix;
@@ -67,7 +70,7 @@ public class TestInitial {
         String result = "";
         String expect_result = "";
         try {
-            result = readResult(output_prefix +outputPath + suffix);
+            result = readResult(prefix +outputPath + suffix);
             expect_result = readResult(prefix + expectResultPath + suffix);
         } catch (IOException e) {
             e.printStackTrace();
