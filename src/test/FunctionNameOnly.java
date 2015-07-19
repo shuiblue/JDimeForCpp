@@ -15,59 +15,7 @@ import static org.junit.Assert.assertTrue;
  * Created by shuruiz on 7/10/15.
  */
 public class FunctionNameOnly {
-    public String readResult(String filePath) throws IOException {
-
-        BufferedReader result_br = new BufferedReader(new FileReader(filePath));
-        String result = "";
-        try {
-            StringBuilder sb = new StringBuilder();
-            String line = result_br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = result_br.readLine();
-            }
-            result = sb.toString();
-        } finally {
-            result_br.close();
-        }
-        return result;
-    }
-
-    public void runMain(ArrayList<String> inputFilePaths, String outputPath) {
-        String commandLine = "-mode,nway,-output," + outputPath + ",";
-        for (int i = 0; i < inputFilePaths.size(); i++) {
-
-            commandLine += inputFilePaths.get(i);
-            if (i < inputFilePaths.size() - 1) {
-                commandLine += ",";
-            }
-        }
-        String[] arg = commandLine.split(",");
-        try {
-            Main.main(arg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean checkMerge(ArrayList<String> inputFilePaths, String outputPath, String expectResultPath) {
-        runMain(inputFilePaths, outputPath);
-        String result = "";
-        String expect_result = "";
-        try {
-            result = readResult(outputPath);
-            expect_result = readResult(expectResultPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result.equals(expect_result);
-    }
+    TestInitial testInitial = new TestInitial("testcpp/functionNameOnly/");
 
     //----------------2 WAY-----------------------------
     /*
@@ -77,15 +25,15 @@ public class FunctionNameOnly {
      */
     @Test
     public void test1() {
-        String outputPath = "testcpp/1/12.cpp";
-        String expectResultPath = "testcpp/1/expect.cpp";
+        String outputPath = "1/12";
+        String expectResultPath = "1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/1/1.cpp");
-        inputFilePaths.add("testcpp/1/2.cpp");
+        inputFilePaths.add("1/1");
+        inputFilePaths.add("1/2");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -95,15 +43,15 @@ public class FunctionNameOnly {
     */
     @Test
     public void test2() {
-        String outputPath = "testcpp/1_1/12.cpp";
-        String expectResultPath = "testcpp/1_1/expect.cpp";
+        String outputPath = "1_1/12";
+        String expectResultPath = "1_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/1_1/1.cpp");
-        inputFilePaths.add("testcpp/1_1/2.cpp");
+        inputFilePaths.add("1_1/1");
+        inputFilePaths.add("1_1/2");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -113,15 +61,15 @@ public class FunctionNameOnly {
     */
     @Test
     public void test3() {
-        String outputPath = "testcpp/2/AB.cpp";
-        String expectResultPath = "testcpp/2/expect.cpp";
+        String outputPath = "2/AB";
+        String expectResultPath = "2/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/2/A.cpp");
-        inputFilePaths.add("testcpp/2/B.cpp");
+        inputFilePaths.add("2/A");
+        inputFilePaths.add("2/B");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -131,15 +79,15 @@ public class FunctionNameOnly {
     */
     @Test
     public void test4() {
-        String outputPath = "testcpp/2_1/AB.cpp";
-        String expectResultPath = "testcpp/2_1/expect.cpp";
+        String outputPath = "2_1/AB";
+        String expectResultPath = "2_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/2_1/A.cpp");
-        inputFilePaths.add("testcpp/2_1/B.cpp");
+        inputFilePaths.add("2_1/A");
+        inputFilePaths.add("2_1/B");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -149,15 +97,15 @@ public class FunctionNameOnly {
     */
     @Test
     public void test5() {
-        String outputPath = "testcpp/2_2/AB.cpp";
-        String expectResultPath = "testcpp/2_2/expect.cpp";
+        String outputPath = "2_2/AB";
+        String expectResultPath = "2_2/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/2_2/A.cpp");
-        inputFilePaths.add("testcpp/2_2/B.cpp");
+        inputFilePaths.add("2_2/A");
+        inputFilePaths.add("2_2/B");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     //----------------3 WAY-----------------------------
@@ -168,16 +116,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test6() {
-        String outputPath = "testcpp/3/ABC.cpp";
-        String expectResultPath = "testcpp/3/expect.cpp";
+        String outputPath = "3/ABC";
+        String expectResultPath = "3/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3/A.cpp");
-        inputFilePaths.add("testcpp/3/B.cpp");
-        inputFilePaths.add("testcpp/3/C.cpp");
+        inputFilePaths.add("3/A");
+        inputFilePaths.add("3/B");
+        inputFilePaths.add("3/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -186,16 +134,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test7() {
-        String outputPath = "testcpp/3_1/ABC.cpp";
-        String expectResultPath = "testcpp/3_1/expect.cpp";
+        String outputPath = "3_1/ABC";
+        String expectResultPath = "3_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_1/A.cpp");
-        inputFilePaths.add("testcpp/3_1/B.cpp");
-        inputFilePaths.add("testcpp/3_1/C.cpp");
+        inputFilePaths.add("3_1/A");
+        inputFilePaths.add("3_1/B");
+        inputFilePaths.add("3_1/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -204,16 +152,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test7_1() {
-        String outputPath = "testcpp/3_2/ABC.cpp";
-        String expectResultPath = "testcpp/3_2/expect.cpp";
+        String outputPath = "3_2/ABC";
+        String expectResultPath = "3_2/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_2/A.cpp");
-        inputFilePaths.add("testcpp/3_2/B.cpp");
-        inputFilePaths.add("testcpp/3_2/C.cpp");
+        inputFilePaths.add("3_2/A");
+        inputFilePaths.add("3_2/B");
+        inputFilePaths.add("3_2/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -222,16 +170,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test7_2() {
-        String outputPath = "testcpp/3_2_1/ABC.cpp";
-        String expectResultPath = "testcpp/3_2_1/expect.cpp";
+        String outputPath = "3_2_1/ABC";
+        String expectResultPath = "3_2_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_2_1/A.cpp");
-        inputFilePaths.add("testcpp/3_2_1/B.cpp");
-        inputFilePaths.add("testcpp/3_2_1/C.cpp");
+        inputFilePaths.add("3_2_1/A");
+        inputFilePaths.add("3_2_1/B");
+        inputFilePaths.add("3_2_1/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -241,16 +189,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test8() {
-        String outputPath = "testcpp/3_3/ABC.cpp";
-        String expectResultPath = "testcpp/3_3/expect.cpp";
+        String outputPath = "3_3/ABC";
+        String expectResultPath = "3_3/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_3/A.cpp");
-        inputFilePaths.add("testcpp/3_3/B.cpp");
-        inputFilePaths.add("testcpp/3_3/C.cpp");
+        inputFilePaths.add("3_3/A");
+        inputFilePaths.add("3_3/B");
+        inputFilePaths.add("3_3/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -260,16 +208,16 @@ public class FunctionNameOnly {
 */
     @Test
     public void test8_1() {
-        String outputPath = "testcpp/3_4/ABC.cpp";
-        String expectResultPath = "testcpp/3_4/expect.cpp";
+        String outputPath = "3_4/ABC";
+        String expectResultPath = "3_4/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_4/A.cpp");
-        inputFilePaths.add("testcpp/3_4/B.cpp");
-        inputFilePaths.add("testcpp/3_4/C.cpp");
+        inputFilePaths.add("3_4/A");
+        inputFilePaths.add("3_4/B");
+        inputFilePaths.add("3_4/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -279,16 +227,16 @@ public class FunctionNameOnly {
   */
     @Test
     public void test8_2() {
-        String outputPath = "testcpp/3_5/ABC.cpp";
-        String expectResultPath = "testcpp/3_5/expect.cpp";
+        String outputPath = "3_5/ABC";
+        String expectResultPath = "3_5/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_5/A.cpp");
-        inputFilePaths.add("testcpp/3_5/B.cpp");
-        inputFilePaths.add("testcpp/3_5/C.cpp");
+        inputFilePaths.add("3_5/A");
+        inputFilePaths.add("3_5/B");
+        inputFilePaths.add("3_5/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -298,16 +246,16 @@ public class FunctionNameOnly {
     */
     @Test
     public void test8_3() {
-        String outputPath = "testcpp/3_6/ABC.cpp";
-        String expectResultPath = "testcpp/3_6/expect.cpp";
+        String outputPath = "3_6/ABC";
+        String expectResultPath = "3_6/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_6/A.cpp");
-        inputFilePaths.add("testcpp/3_6/B.cpp");
-        inputFilePaths.add("testcpp/3_6/C.cpp");
+        inputFilePaths.add("3_6/A");
+        inputFilePaths.add("3_6/B");
+        inputFilePaths.add("3_6/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -317,16 +265,16 @@ test8_3
 */
     @Test
     public void test8_4() {
-        String outputPath = "testcpp/3_7/ABC.cpp";
-        String expectResultPath = "testcpp/3_7/expect.cpp";
+        String outputPath = "3_7/ABC";
+        String expectResultPath = "3_7/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/3_7/A.cpp");
-        inputFilePaths.add("testcpp/3_7/B.cpp");
-        inputFilePaths.add("testcpp/3_7/C.cpp");
+        inputFilePaths.add("3_7/A");
+        inputFilePaths.add("3_7/B");
+        inputFilePaths.add("3_7/C");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     //----------------4 WAY-----------------------------    /*
@@ -337,17 +285,17 @@ test8_3
     */
     @Test
     public void test9() {
-        String outputPath = "testcpp/4/ABCD.cpp";
-        String expectResultPath = "testcpp/4/expect.cpp";
+        String outputPath = "4/ABCD";
+        String expectResultPath = "4/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4/A.cpp");
-        inputFilePaths.add("testcpp/4/B.cpp");
-        inputFilePaths.add("testcpp/4/C.cpp");
-        inputFilePaths.add("testcpp/4/D.cpp");
+        inputFilePaths.add("4/A");
+        inputFilePaths.add("4/B");
+        inputFilePaths.add("4/C");
+        inputFilePaths.add("4/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -357,17 +305,17 @@ test8_3
     */
     @Test
     public void test10() {
-        String outputPath = "testcpp/4_1/ABCD.cpp";
-        String expectResultPath = "testcpp/4_1/expect.cpp";
+        String outputPath = "4_1/ABCD";
+        String expectResultPath = "4_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_1/A.cpp");
-        inputFilePaths.add("testcpp/4_1/B.cpp");
-        inputFilePaths.add("testcpp/4_1/C.cpp");
-        inputFilePaths.add("testcpp/4_1/D.cpp");
+        inputFilePaths.add("4_1/A");
+        inputFilePaths.add("4_1/B");
+        inputFilePaths.add("4_1/C");
+        inputFilePaths.add("4_1/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -377,17 +325,17 @@ test8_3
    */
     @Test
     public void test10_1() {
-        String outputPath = "testcpp/4_1_1/ABCD.cpp";
-        String expectResultPath = "testcpp/4_1_1/expect.cpp";
+        String outputPath = "4_1_1/ABCD";
+        String expectResultPath = "4_1_1/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_1_1/A.cpp");
-        inputFilePaths.add("testcpp/4_1_1/B.cpp");
-        inputFilePaths.add("testcpp/4_1_1/C.cpp");
-        inputFilePaths.add("testcpp/4_1_1/D.cpp");
+        inputFilePaths.add("4_1_1/A");
+        inputFilePaths.add("4_1_1/B");
+        inputFilePaths.add("4_1_1/C");
+        inputFilePaths.add("4_1_1/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -397,17 +345,17 @@ test8_3
     */
     @Test
     public void test11() {
-        String outputPath = "testcpp/4_2/ABCD.cpp";
-        String expectResultPath = "testcpp/4_2/expect.cpp";
+        String outputPath = "4_2/ABCD";
+        String expectResultPath = "4_2/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_2/A.cpp");
-        inputFilePaths.add("testcpp/4_2/B.cpp");
-        inputFilePaths.add("testcpp/4_2/C.cpp");
-        inputFilePaths.add("testcpp/4_2/D.cpp");
+        inputFilePaths.add("4_2/A");
+        inputFilePaths.add("4_2/B");
+        inputFilePaths.add("4_2/C");
+        inputFilePaths.add("4_2/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -417,17 +365,17 @@ test8_3
     */
     @Test
     public void test12() {
-        String outputPath = "testcpp/4_3/ABCD.cpp";
-        String expectResultPath = "testcpp/4_3/expect.cpp";
+        String outputPath = "4_3/ABCD";
+        String expectResultPath = "4_3/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_3/A.cpp");
-        inputFilePaths.add("testcpp/4_3/B.cpp");
-        inputFilePaths.add("testcpp/4_3/C.cpp");
-        inputFilePaths.add("testcpp/4_3/D.cpp");
+        inputFilePaths.add("4_3/A");
+        inputFilePaths.add("4_3/B");
+        inputFilePaths.add("4_3/C");
+        inputFilePaths.add("4_3/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 
     /*
@@ -437,16 +385,17 @@ test8_3
     */
     @Test
     public void test13() {
-        String outputPath = "testcpp/4_4/ABCD.cpp";
-        String expectResultPath = "testcpp/4_4/expect.cpp";
+        String outputPath = "4_4/ABCD";
+        String expectResultPath = "4_4/expect";
 
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
-        inputFilePaths.add("testcpp/4_4/A.cpp");
-        inputFilePaths.add("testcpp/4_4/B.cpp");
-        inputFilePaths.add("testcpp/4_4/C.cpp");
-        inputFilePaths.add("testcpp/4_4/D.cpp");
+        inputFilePaths.add("4_4/A");
+        inputFilePaths.add("4_4/B");
+        inputFilePaths.add("4_4/C");
+        inputFilePaths.add("4_4/D");
 
-        assertTrue(checkMerge(inputFilePaths, outputPath, expectResultPath));
+
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
 }

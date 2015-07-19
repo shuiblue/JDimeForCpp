@@ -74,6 +74,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         this.astnode = null;
     }
 
+    Stack<String> conditionStack = new Stack<>();
+
     /**
      * This function initialize children
      */
@@ -83,15 +85,29 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             for (int i = 0; i < astnode.getChildCount(); i++) {
                 if (((Element) astnode).getLocalName().equals("unit")) {
-
                     if (!astnode.getChild(i).getValue().equals("\n")) {
+                        if (((Element) astnode.getChild(i)).getLocalName().equals("endif")) {
+                            conditionStack.pop();
+                            continue;
+                        }
 
-                        CppNodeArtifact child = new CppNodeArtifact(
-                                astnode.getChild(i));
-                        child.setParent(this);
-                        child.setRevision(new Revision(getRevision().getName()));
+                        if (((Element) astnode.getChild(i)).getLocalName().equals("ifdef")) {
+                            String condition = astnode.getChild(i).getValue().substring(7);
+                            conditionStack.push(condition);
+                            continue;
+                        }
+                            CppNodeArtifact child = new CppNodeArtifact(
+                                    astnode.getChild(i));
+                            child.setParent(this);
+                            child.setRevision(new Revision(getRevision().getName()));
+                        if (conditionStack!=null) {
+                            child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                        }
+                            children.add(child);
 
-                        children.add(child);
+
+
+
                     }
 //                    child.initializeChildren();
                 }
@@ -155,33 +171,31 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return doc;
     }
 
-    Stack<String> conditionStack = new Stack<>();
 
     /**
      * this function is trying to parse ifdef blocks and add the revision of the child with ifdef condition.
      */
-    public void parseCondition() {
-        ArtifactList<CppNodeArtifact> children = this.children;
-        if (children != null) {
-            for (CppNodeArtifact c : children) {
-                if (((Element) c.astnode).getLocalName().equals("endif")) {
-                    conditionStack.pop();
-                    continue;
-                }
-                if (conditionStack.size() > 0) {
-                    c.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-                    continue;
-                }
-                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
-                    String condition = c.astnode.getValue().substring(7);
-                    conditionStack.push(condition);
-                    continue;
-                }
-
-            }
-        }
-    }
-
+//    public void parseCondition() {
+//        ArtifactList<CppNodeArtifact> children = this.children;
+//        if (children != null) {
+//            for (CppNodeArtifact c : children) {
+//                if (((Element) c.astnode).getLocalName().equals("endif")) {
+//                    conditionStack.pop();
+//                    continue;
+//                }
+//                if (conditionStack.size() > 0) {
+//                    c.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+//                    continue;
+//                }
+//                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
+//                    String condition = c.astnode.getValue().substring(7);
+//                    conditionStack.push(condition);
+//                    continue;
+//                }
+//
+//            }
+//        }
+//    }
     public HashMap<String, Integer> getLanguageElementStatistics() {
         HashMap<String, Integer> elements = new HashMap<>();
         return elements;
@@ -583,7 +597,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
             String r2 = revision_2.toString();
             if (revision_2.conditions.size() > 0) {
-                r2 +=printCondition(revision_2);
+                r2 += printCondition(revision_2);
             }
             if (!var.contains(r2)) var.add(r2);
         }
