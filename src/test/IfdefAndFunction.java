@@ -1,14 +1,7 @@
 package test;
 
-import de.fosd.jdime.Main;
-import org.apache.commons.cli.ParseException;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -16,6 +9,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class IfdefAndFunction {
     TestInitial testInitial = new TestInitial("testcpp/IFDEF/");
+    //----------------2 WAY-----------------------------
 
     /*
     test1
@@ -59,7 +53,7 @@ public class IfdefAndFunction {
 
 
     /*
-    test2
+    test3
     A:                      | B:
     #ifdef X                |   void b();
     void a();               |   void a();
@@ -77,4 +71,26 @@ public class IfdefAndFunction {
 
         assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
     }
+
+    /*
+ test4
+ A:                      | B:
+ #ifdef X                |  #ifdef X
+ void a();               |  void b();
+ #endif                  |  #endif
+ */
+    @Test
+    public void test4() {
+        String outputPath = "4/AB";
+        String expectResultPath = "4/expect";
+
+        //set input file paths
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        inputFilePaths.add("4/A");
+        inputFilePaths.add("4/B");
+
+        assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
+    }
+
+
 }

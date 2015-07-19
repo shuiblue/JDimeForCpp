@@ -1,6 +1,6 @@
-#ifdef B
-void b();
+#ifdef A || B
+void ab();
 #endif
-#ifdef A || C
-void ac();
+#ifdef C
+void c();
 #endif
