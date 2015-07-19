@@ -103,7 +103,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
         Iterator it = variants.keySet().iterator();
 		targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
-        targetNode.parseCondition();
+//        targetNode.parseCondition();
         while (it.hasNext()) {
 
 

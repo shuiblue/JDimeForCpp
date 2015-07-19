@@ -25,7 +25,7 @@ public class TestParseCondition {
             e.printStackTrace();
         }
         CppNodeArtifact c = new CppNodeArtifact(fileArtifact);
-        c.parseCondition();
+//        c.parseCondition();
         return c;
 
     }
