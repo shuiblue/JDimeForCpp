@@ -16,7 +16,7 @@ public class TestInitial {
     public String prefix = "";
     public String suffix = ".cpp";
     public String output_prefix = "";
-
+    String compile_path = "compiled/";
 
     TestInitial(String p) {
         this.prefix = p;
@@ -33,11 +33,11 @@ public class TestInitial {
             String line = result_br.readLine();
 
             while (line != null) {
-                if(!line.isEmpty()) {
+                if (!line.isEmpty()) {
                     sb.append(line);
                     sb.append(System.lineSeparator());
                 }
-                    line = result_br.readLine();
+                line = result_br.readLine();
             }
             result = sb.toString();
         } finally {
@@ -80,25 +80,51 @@ public class TestInitial {
         return result.equals(expect_result);
     }
 
-    public String checkCompiledResult(String config, String outputPath) {
-        String testConfig = "g++,-E,-P," + config + suffix + ",-o," + outputPath + suffix + "";
+    public boolean checkProprocessResult(String[] config, String merged, String origin, String path, String testNum) {
+        String filePath = path + testNum;
+        String compiledFilePath = filePath + compile_path;
+        String compiled_Merged = compiledFilePath + merged;
 
+        String compiled_Origin = compiledFilePath + origin;
+
+
+        String r1= compileCpp(config, merged, filePath);
+        String r2=compileCpp(config, origin, filePath);
         try {
-            File file = new File(outputPath + suffix);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            ProcessBuilder process = new ProcessBuilder();
-            String[] s = testConfig.split(",");
-            process.command(s);
-            Process p = process.start();
-
-
-            return readResult(outputPath + suffix);
+            return readResult(r1).equals(readResult(r2));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "";
-
+        return false;
     }
 
+    public String  compileCpp(String[] config, String file, String filePath) {
+        String originPath = filePath + file + suffix;
+        String compiledPath = filePath + compile_path + file+"_";
+        for (int i = 0; i < config.length; i++) {
+            compiledPath += config[i];
+        }
+        compiledPath += suffix;
+
+        String cmd_compiling = "g++,-E,-P";
+        for (int i = 0; i < config.length; i++) {
+            cmd_compiling += ",-D" + config[i];
+        }
+
+        cmd_compiling += "," + originPath + ",-o," + compiledPath;
+
+
+        File f = new File(compiledPath);
+        f.getParentFile().mkdirs();
+        try {
+            f.createNewFile();
+            ProcessBuilder process = new ProcessBuilder();
+            process.command(cmd_compiling.split(","));
+            Process p = process.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return compiledPath;
+    }
 }
