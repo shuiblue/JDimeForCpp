@@ -3,10 +3,9 @@ package test;
 import de.fosd.jdime.Main;
 import org.apache.commons.cli.ParseException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,12 +19,23 @@ public class TestInitial {
     public String output_prefix = "";
     String compile_path = "compiled/";
 
+    /**
+     * constructor
+     *
+     * @param p prefix
+     */
     TestInitial(String p) {
         this.prefix = p;
         output_prefix = prefix + "Result/";
     }
 
-
+    /**
+     * this function read the content of the file from filePath, and ready for comparing
+     *
+     * @param filePath file path
+     * @return content of the file
+     * @throws IOException e
+     */
     public String readResult(String filePath) throws IOException {
 
         BufferedReader result_br = new BufferedReader(new FileReader(filePath));
@@ -48,6 +58,12 @@ public class TestInitial {
         return result;
     }
 
+    /**
+     * run main()
+     *
+     * @param inputFilePaths input files
+     * @param outputPath     output merged file
+     */
     public void runMain(ArrayList<String> inputFilePaths, String outputPath) {
         String commandLine = "-mode,nway,-output," + prefix + outputPath + suffix + ",";
         for (int i = 0; i < inputFilePaths.size(); i++) {
@@ -69,6 +85,14 @@ public class TestInitial {
         }
     }
 
+    /**
+     * check merged file is equal to expect result
+     *
+     * @param inputFilePaths
+     * @param outputPath
+     * @param expectResultPath
+     * @return true/false
+     */
     public boolean checkMerge(ArrayList<String> inputFilePaths, String outputPath, String expectResultPath) {
         runMain(inputFilePaths, outputPath);
         String result = "";
@@ -82,6 +106,32 @@ public class TestInitial {
         return result.equals(expect_result);
     }
 
+    /**
+     * wrapper for check Merge-- for new test cases
+     * @return
+     */
+    public boolean checkMerge_wrapper( HashSet<String> fileName, String testNum, String output){
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+
+        for(String s: fileName) {
+            inputFilePaths.add(testNum + s);
+        }
+
+        String outputPath = testNum + output;
+        String expectResultPath = testNum + "expect";
+
+       return checkMerge(inputFilePaths,outputPath,expectResultPath);
+    }
+    /**
+     * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
+     *
+     * @param config
+     * @param merged
+     * @param origin
+     * @param path
+     * @param testNum
+     * @return
+     */
     public boolean checkProprocessResult(HashSet<String> config, String merged, String origin, String path, String testNum) {
         String filePath = path + testNum;
 
@@ -95,6 +145,14 @@ public class TestInitial {
         return false;
     }
 
+    /**
+     * preprocess cpp file
+     *
+     * @param config   configuration
+     * @param file
+     * @param filePath input file
+     * @return output path
+     */
     public String compileCpp(HashSet<String> config, String file, String filePath) {
         String originPath = filePath + file + suffix;
         String compiledPath = filePath + compile_path + file + "_";
@@ -128,6 +186,63 @@ public class TestInitial {
         }
 
         return compiledPath;
+    }
+
+    /**
+     * test every possible configuration set
+     *
+     * @param config
+     * @param fileName
+     * @param output
+     * @param path
+     * @param testNum
+     * @return true if all the comparation are true
+     */
+    public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileName, String output, String path, String testNum) {
+        boolean result = true;
+        config.add("");
+        for (String file : fileName) {
+            Set<String> feature = new HashSet<>();
+            for (String c : config) {
+                feature.add(file);
+                if (c != "") {
+                    feature.add(c);
+                }
+                System.out.println("## running config " + feature + "--" + file);
+                System.out.println(checkProprocessResult((HashSet<String>) feature, output, file, path, testNum));
+                result = result && checkProprocessResult((HashSet<String>) feature, output, file, path, testNum);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * clean temp file ".xml" and compiled folders
+     */
+    public void clearTmpFile() {
+        Path directory = Paths.get("testcpp/");
+        try {
+            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (file.getFileName().toString().endsWith("xml") || file.getFileName().toString().contains("_")) {
+                        Files.delete(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if (dir.getFileName().toString().equals("compiled")) {
+                        Files.delete(dir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
