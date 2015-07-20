@@ -1,2 +1,0 @@
-void bc();
-void x();
