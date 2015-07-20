@@ -108,20 +108,22 @@ public class TestInitial {
 
     /**
      * wrapper for check Merge-- for new test cases
+     *
      * @return
      */
-    public boolean checkMerge_wrapper( HashSet<String> fileName, String testNum, String output){
+    public boolean checkMerge_wrapper(HashSet<String> fileName, String testNum, String output) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
 
-        for(String s: fileName) {
+        for (String s : fileName) {
             inputFilePaths.add(testNum + s);
         }
 
         String outputPath = testNum + output;
         String expectResultPath = testNum + "expect";
 
-       return checkMerge(inputFilePaths,outputPath,expectResultPath);
+        return checkMerge(inputFilePaths, outputPath, expectResultPath);
     }
+
     /**
      * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
      *
@@ -198,22 +200,53 @@ public class TestInitial {
      * @param testNum
      * @return true if all the comparation are true
      */
-    public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileName, String output, String path, String testNum) {
-        boolean result = true;
-        config.add("");
-        for (String file : fileName) {
-            Set<String> feature = new HashSet<>();
-            for (String c : config) {
+    boolean result = true;
+
+    public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileNameSet, String output, String path, String testNum) {
+//        config.add("");
+//        for (String file : fileName) {
+//            HashSet<String> feature = new HashSet<>();
+//            for (String c : config) {
+//                feature.add(file);
+//                if (c != "") {
+//                    feature.add(c);
+//                }
+//                System.out.println("## running config " + feature + "--" + file);
+//                System.out.println(checkProprocessResult(feature, output, file, path, testNum));
+//                result = result && checkProprocessResult(feature, output, file, path, testNum);
+//            }
+//        }
+        Set<Set<String>> configuration = getAllConfigurations(config);
+        Set<String> feature = new HashSet<>();
+        for (String file : fileNameSet) {
+            for (Set<String> c : configuration) {
+
+                feature.addAll(c);
                 feature.add(file);
-                if (c != "") {
-                    feature.add(c);
-                }
-                System.out.println("## running config " + feature + "--" + file);
+                System.out.println("## running config " + feature.toString());
                 System.out.println(checkProprocessResult((HashSet<String>) feature, output, file, path, testNum));
                 result = result && checkProprocessResult((HashSet<String>) feature, output, file, path, testNum);
+                feature = new HashSet<>();
             }
         }
         return result;
+    }
+
+
+    private Set<Set<String>> getAllConfigurations(HashSet<String> features) {
+        Set<Set<String>> configurations = new HashSet<Set<String>>();
+        configurations.add(new HashSet());
+        for (String feature : features) {
+            Set<Set<String>> newconfigurations = new HashSet<Set<String>>();
+            for (Set<String> c : configurations) {
+                HashSet<String> newConfig = new HashSet<String>(c);
+                newConfig.add(feature);
+                newconfigurations.add(newConfig);
+            }
+            configurations.addAll(newconfigurations);
+        }
+
+        return configurations;
     }
 
     /**
@@ -243,6 +276,7 @@ public class TestInitial {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
 }
