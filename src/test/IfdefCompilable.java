@@ -33,26 +33,22 @@ public class IfdefCompilable {
         String outputPath = testNum + output;
         String expectResultPath = testNum + "expect";
 
-        String prefix = "compiled/";
-        String mixedPath_prefix = path + testNum + prefix;
-
         //set input file paths
         ArrayList<String> inputFilePaths = new ArrayList<>();
         inputFilePaths.add(input_A);
         inputFilePaths.add(input_B);
-        // check Merged result
+        // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge(inputFilePaths, outputPath, expectResultPath));
 
+        // ----------------check preprocessed Merged result equal to origin
+        String[] config_1 = {"A", "X"};
+        assertTrue(testInitial.checkProprocessResult(config_1, output, A, path, testNum));
 
-        String compiledMergedResult_AX = testInitial.checkCompiledResult("-DA,-DX," + path + outputPath, mixedPath_prefix + "AX");
-        String compiledMergedResult_B = testInitial.checkCompiledResult("-DB," + path + outputPath, mixedPath_prefix + "B");
+        String[] config_2 = {"A"};
+        assertTrue(testInitial.checkProprocessResult(config_2, output, A, path, testNum));
 
-        String compiled_A = testInitial.checkCompiledResult("-DA,-DX," + path + input_A, mixedPath_prefix + "Ori_A");
-        String compiled_B = testInitial.checkCompiledResult("-DB," + path + input_B, mixedPath_prefix + "Ori_B");
-
-
-        assertTrue(compiledMergedResult_AX.equals(compiled_A));
-        assertTrue(compiledMergedResult_B.equals(compiled_B));
+        String[] config_3 = {"B"};
+        assertTrue(testInitial.checkProprocessResult(config_3, output, B, path, testNum));
 
     }
 }
