@@ -544,7 +544,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += this.toString() + "\n";
             res += "#endif\n";
         } else {
-            res += "#ifdef " + getRevision();
+            res += "#if " +  "defined ("+getRevision()+")";
             res += printCondition(getRevision());
             res += "\n" + this.toString() + "\n";
             res += "#endif\n";
@@ -556,7 +556,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String res = "";
         if (r.conditions.size() > 0) {
             for (String s : r.conditions) {
-                res += " && " + s;
+                res += " && defined (" + s+")";
             }
         }
         return res;
@@ -567,7 +567,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         int var_size = c.variants.size();
         for (int i = 0; i < var_size; i++) {
             String str = c.variants.keySet().toArray()[i].toString();
-            s += "#ifdef " + str + "\n";
+            s += "#if defined (" + str + ")\n";
             s += c.variants.get(str);
             s += printCondition(c.getRevision());
             s += "\n#endif\n";
