@@ -125,7 +125,7 @@ System.out.println("------test 1-----------");
     }
 
     /*
-         test5
+         test6
          A:                      | B:
          #ifdef X                |
          void a();               |   void b();
@@ -138,6 +138,25 @@ System.out.println("------test 1-----------");
         config.add("X");
         String testNum = "6/";
         System.out.println("------test 6-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+         test7
+         A:                      | B:
+         #ifdef X                |   #ifdef X
+         void a();               |    void a();
+         #endif                  |    void b();
+         void b();               |   #endif
+         */
+    @Test
+    public void test7() {
+        twoWay_inputFileInit();
+        config.add("X");
+        String testNum = "7/";
+        System.out.println("------test 7-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
