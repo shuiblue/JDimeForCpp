@@ -584,14 +584,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         ArrayList<String> var = new ArrayList<>();
         for (Matching<CppNodeArtifact> m : matcher) {
             Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
-            String r1 = revision_1.toString();
+            String r1 = "defined ("+revision_1.toString()+")";
             if (revision_1.conditions.size() > 0) {
                 r1 += printCondition(revision_1);
             }
             if (!var.contains(r1)) var.add(r1);
 
             Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
-            String r2 = revision_2.toString();
+            String r2 = "defined ("+revision_2.toString() +")";
             if (revision_2.conditions.size() > 0) {
                 r2 += printCondition(revision_2);
             }
@@ -603,7 +603,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 condition += " || ";
             }
         }
-        s += "#ifdef " + condition + "\n";
+        s += "#if " + condition + "\n";
         return s;
 
     }

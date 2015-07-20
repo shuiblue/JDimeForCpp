@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by shuruiz on 7/19/15.
@@ -80,16 +82,11 @@ public class TestInitial {
         return result.equals(expect_result);
     }
 
-    public boolean checkProprocessResult(String[] config, String merged, String origin, String path, String testNum) {
+    public boolean checkProprocessResult(HashSet<String> config, String merged, String origin, String path, String testNum) {
         String filePath = path + testNum;
-        String compiledFilePath = filePath + compile_path;
-        String compiled_Merged = compiledFilePath + merged;
 
-        String compiled_Origin = compiledFilePath + origin;
-
-
-        String r1= compileCpp(config, merged, filePath);
-        String r2=compileCpp(config, origin, filePath);
+        String r1 = compileCpp(config, merged, filePath);
+        String r2 = compileCpp(config, origin, filePath);
         try {
             return readResult(r1).equals(readResult(r2));
         } catch (IOException e) {
@@ -98,26 +95,31 @@ public class TestInitial {
         return false;
     }
 
-    public String  compileCpp(String[] config, String file, String filePath) {
+    public String compileCpp(HashSet<String> config, String file, String filePath) {
         String originPath = filePath + file + suffix;
-        String compiledPath = filePath + compile_path + file+"_";
-        for (int i = 0; i < config.length; i++) {
-            compiledPath += config[i];
-        }
-        compiledPath += suffix;
+        String compiledPath = filePath + compile_path + file + "_";
 
         String cmd_compiling = "g++,-E,-P";
-        for (int i = 0; i < config.length; i++) {
-            cmd_compiling += ",-D" + config[i];
+
+        if (config != null) {
+            for (String s : config) {
+                compiledPath += s;
+                cmd_compiling += ",-D" + s;
+
+            }
         }
-
+        compiledPath += suffix;
         cmd_compiling += "," + originPath + ",-o," + compiledPath;
-
 
         File f = new File(compiledPath);
         f.getParentFile().mkdirs();
         try {
             f.createNewFile();
+            try {
+                Thread.sleep(10);                 //1000 milliseconds is one second.
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
             ProcessBuilder process = new ProcessBuilder();
             process.command(cmd_compiling.split(","));
             Process p = process.start();
@@ -127,4 +129,5 @@ public class TestInitial {
 
         return compiledPath;
     }
+
 }
