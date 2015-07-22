@@ -29,6 +29,7 @@ public class TestInitial {
         output_prefix = prefix + "Result/";
     }
 
+
     /**
      * this function read the content of the file from filePath, and ready for comparing
      *
@@ -175,11 +176,7 @@ public class TestInitial {
         f.getParentFile().mkdirs();
         try {
             f.createNewFile();
-            try {
-                Thread.sleep(10);                 //1000 milliseconds is one second.
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
+
             ProcessBuilder process = new ProcessBuilder();
             process.command(cmd_compiling.split(","));
             Process p = process.start();
@@ -203,19 +200,6 @@ public class TestInitial {
     boolean result = true;
 
     public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileNameSet, String output, String path, String testNum) {
-//        config.add("");
-//        for (String file : fileName) {
-//            HashSet<String> feature = new HashSet<>();
-//            for (String c : config) {
-//                feature.add(file);
-//                if (c != "") {
-//                    feature.add(c);
-//                }
-//                System.out.println("## running config " + feature + "--" + file);
-//                System.out.println(checkProprocessResult(feature, output, file, path, testNum));
-//                result = result && checkProprocessResult(feature, output, file, path, testNum);
-//            }
-//        }
         Set<Set<String>> configuration = getAllConfigurations(config);
         Set<String> feature = new HashSet<>();
         for (String file : fileNameSet) {
@@ -232,7 +216,11 @@ public class TestInitial {
         return result;
     }
 
-
+    /**
+     * get all the configuration
+     * @param features
+     * @return
+     */
     private Set<Set<String>> getAllConfigurations(HashSet<String> features) {
         Set<Set<String>> configurations = new HashSet<Set<String>>();
         configurations.add(new HashSet());

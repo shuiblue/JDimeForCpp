@@ -167,31 +167,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return doc;
     }
 
-
-    /**
-     * this function is trying to parse ifdef blocks and add the revision of the child with ifdef condition.
-     */
-//    public void parseCondition() {
-//        ArtifactList<CppNodeArtifact> children = this.children;
-//        if (children != null) {
-//            for (CppNodeArtifact c : children) {
-//                if (((Element) c.astnode).getLocalName().equals("endif")) {
-//                    conditionStack.pop();
-//                    continue;
-//                }
-//                if (conditionStack.size() > 0) {
-//                    c.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-//                    continue;
-//                }
-//                if (((Element) c.astnode).getLocalName().equals("ifdef")) {
-//                    String condition = c.astnode.getValue().substring(7);
-//                    conditionStack.push(condition);
-//                    continue;
-//                }
-//
-//            }
-//        }
-//    }
     public HashMap<String, Integer> getLanguageElementStatistics() {
         HashMap<String, Integer> elements = new HashMap<>();
         return elements;
