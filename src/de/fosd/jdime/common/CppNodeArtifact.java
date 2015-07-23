@@ -73,22 +73,59 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     Stack<String> conditionStack = new Stack<>();
 
+    public void getCondFromDefined(String[] defined_expr) {
+        for (String cond : defined_expr) {
+            if (cond.startsWith("!")) {
+                conditionStack.add("!" + cond.substring(9, cond.length() - 1));
+
+            } else {
+                conditionStack.add(cond.substring(8, cond.length() - 1));
+            }
+        }
+    }
+
     /**
      * This function initialize children
      */
+
     private void initializeChildren() {
         ArtifactList<CppNodeArtifact> children = new ArtifactList<>();
         if (astnode != null) {
 
             for (int i = 0; i < astnode.getChildCount(); i++) {
                 if (((Element) astnode).getLocalName().equals("unit")) {
-                    if (!astnode.getChild(i).getValue().equals("\n")) {
+                    Node node = astnode.getChild(i);
+
+                    if (!node.getValue().equals("\n")) {
                         if (((Element) astnode.getChild(i)).getLocalName().equals("endif")) {
                             conditionStack.pop();
                             continue;
                         }
 
-                        if (((Element) astnode.getChild(i)).getLocalName().equals("ifdef")) {
+                        if (((Element) node).getLocalName().equals("if")) {
+                            if (((Element) node).getNamespacePrefix().equals("cpp"))
+                                if (node.getValue().substring(4).contains("defined")) {
+                                    String[] expr;
+                                    if (node.getValue().contains("&&")) {
+                                        expr = node.getValue().substring(4).split(" && ");
+                                    } else if (node.getValue().contains("||")) {
+                                        expr = node.getValue().substring(4).split(" ");
+
+                                    } else {
+                                        expr = node.getValue().substring(4).split(" ");
+                                    }
+                                    getCondFromDefined(expr);
+                                }
+                            continue;
+                        }
+
+
+                        if (((Element) node).getLocalName().equals("ifndef")) {
+                            String condition = astnode.getChild(i).getValue().substring(8);
+                            conditionStack.push("!" + condition);
+                            continue;
+                        }
+                        if (((Element) node).getLocalName().equals("ifdef")) {
                             String condition = astnode.getChild(i).getValue().substring(7);
                             conditionStack.push(condition);
                             continue;
@@ -108,7 +145,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
             }
         }
+
         setChildren(children);
+
     }
 
     /**
@@ -126,7 +165,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @throws IOException e
      */
     public static String getXmlFile(String inputFile) {
-        String outXmlFile =inputFile + ".xml";
+        String outXmlFile = inputFile + ".xml";
 
         if (new File(inputFile).isFile()) {
             try {
@@ -519,7 +558,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += this.toString() + "\n";
             res += "#endif\n";
         } else {
-            res += "#if " +  "defined ("+getRevision()+")";
+            res += "#if " + "defined (" + getRevision() + ")";
             res += printCondition(getRevision());
             res += "\n" + this.toString() + "\n";
             res += "#endif\n";
@@ -531,7 +570,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String res = "";
         if (r.conditions.size() > 0) {
             for (String s : r.conditions) {
-                res += " && defined (" + s+")";
+                if (s.startsWith("!")) {
+                    res += " && !defined (" + s.substring(1) + ")";
+                } else {
+                    res += " && defined (" + s + ")";
+                }
             }
         }
         return res;
@@ -559,14 +602,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         ArrayList<String> var = new ArrayList<>();
         for (Matching<CppNodeArtifact> m : matcher) {
             Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
-            String r1 = "defined ("+revision_1.toString()+")";
+            String r1 = "defined (" + revision_1.toString() + ")";
             if (revision_1.conditions.size() > 0) {
                 r1 += printCondition(revision_1);
             }
             if (!var.contains(r1)) var.add(r1);
 
             Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
-            String r2 = "defined ("+revision_2.toString() +")";
+            String r2 = "defined (" + revision_2.toString() + ")";
             if (revision_2.conditions.size() > 0) {
                 r2 += printCondition(revision_2);
             }

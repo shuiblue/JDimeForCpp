@@ -1,3 +1,3 @@
-#ifdef Y
+#if defined(Z)
 void b();
 #endif
