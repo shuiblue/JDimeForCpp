@@ -414,7 +414,7 @@ void a();                           |   void b();
     /*
 test16
 A:                                  | B:
-#if defined (X) && defined(Y)       |
+#if defined (X) || defined(Y)       |
 void a();                           |   void b();
 #endif                              |
 */

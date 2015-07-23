@@ -73,13 +73,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     Stack<String> conditionStack = new Stack<>();
 
-    public void getCondFromDefined(String[] defined_expr) {
+
+    public void getCondFromDefined(String[] defined_expr, String relation) {
         for (String cond : defined_expr) {
             if (cond.startsWith("!")) {
-                conditionStack.add("!" + cond.substring(9, cond.length() - 1));
-
+                String c = "!" + cond.substring(9, cond.length() - 1);
+                if (relation.equals("and")) {
+                    conditionStack.add("&" + c);
+                } else if (relation.equals("or")) {
+                    conditionStack.add("|" + c);
+                }
             } else {
-                conditionStack.add(cond.substring(8, cond.length() - 1));
+                String c = cond.substring(8, cond.length() - 1);
+
+                if (relation.equals("and")) {
+                    conditionStack.add("&" + c);
+                } else if (relation.equals("or")) {
+                    conditionStack.add("|" + c);
+                }
             }
         }
     }
@@ -98,6 +109,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     if (!node.getValue().equals("\n")) {
                         if (((Element) astnode.getChild(i)).getLocalName().equals("endif")) {
+
                             conditionStack.pop();
                             continue;
                         }
@@ -108,13 +120,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     String[] expr;
                                     if (node.getValue().contains("&&")) {
                                         expr = node.getValue().substring(4).split(" && ");
+                                        getCondFromDefined(expr, "and");
                                     } else if (node.getValue().contains("||")) {
-                                        expr = node.getValue().substring(4).split(" ");
-
+                                        expr = node.getValue().substring(4).split(" \\|\\| ");
+                                        getCondFromDefined(expr, "or");
                                     } else {
                                         expr = node.getValue().substring(4).split(" ");
+                                        getCondFromDefined(expr, "and");
                                     }
-                                    getCondFromDefined(expr);
+
                                 }
                             continue;
                         }
@@ -122,12 +136,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                         if (((Element) node).getLocalName().equals("ifndef")) {
                             String condition = astnode.getChild(i).getValue().substring(8);
-                            conditionStack.push("!" + condition);
+                            conditionStack.push("&!" + condition);
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("ifdef")) {
                             String condition = astnode.getChild(i).getValue().substring(7);
-                            conditionStack.push(condition);
+                            conditionStack.push("&" + condition);
                             continue;
                         }
                         CppNodeArtifact child = new CppNodeArtifact(
@@ -559,6 +573,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += "#endif\n";
         } else {
             res += "#if " + "defined (" + getRevision() + ")";
+            if(getRevision().conditions.size()>0){
+                res+=" &&";
+            }
             res += printCondition(getRevision());
             res += "\n" + this.toString() + "\n";
             res += "#endif\n";
@@ -567,15 +584,39 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
     public String printCondition(Revision r) {
+
         String res = "";
+        if (r.conditions.size() > 1) {
+            res = " (";
+        }
         if (r.conditions.size() > 0) {
+
             for (String s : r.conditions) {
-                if (s.startsWith("!")) {
-                    res += " && !defined (" + s.substring(1) + ")";
-                } else {
-                    res += " && defined (" + s + ")";
+                if (s.startsWith("&")) {
+                    if (s.contains("!")) {
+                        res += " !defined (" + s.substring(2) + ")";
+                    } else {
+                        res += " defined (" + s.substring(1) + ") &&";
+                    }
+
+
+                } else if (s.startsWith("|")) {
+                    if (s.contains("!")) {
+                        res += " !defined (" + s.substring(2) + ")";
+                    } else {
+                        res += " defined (" + s.substring(1) + ") ||";
+                    }
+
                 }
+
             }
+        }
+        if (res.endsWith("&&") || res.endsWith("||")) {
+            res = res.substring(0, res.length() - 3);
+
+        }
+        if (r.conditions.size() > 1) {
+            res += " )";
         }
         return res;
     }
@@ -604,14 +645,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
             String r1 = "defined (" + revision_1.toString() + ")";
             if (revision_1.conditions.size() > 0) {
-                r1 += printCondition(revision_1);
+                r1 += " &&"+printCondition(revision_1);
             }
             if (!var.contains(r1)) var.add(r1);
 
             Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
             String r2 = "defined (" + revision_2.toString() + ")";
             if (revision_2.conditions.size() > 0) {
-                r2 += printCondition(revision_2);
+                r2 +=  " &&"+printCondition(revision_2);
             }
             if (!var.contains(r2)) var.add(r2);
         }
