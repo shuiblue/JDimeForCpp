@@ -516,5 +516,70 @@ void a();                           |   void b();
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+    /*
+         test24
+         A:                                  | B:
+         #ifdef X                            |   #ifdef Y
+         void a();                           |   void b();
+         #else                               |   #else
+         void t();                           |   void s();
+         #endif                              |   #endif
+         */
+    @Test
+    public void test24() {
+        inputFileInit(2);
+        config.add("X");
+        config.add("Y");
+
+        String testNum = "24/";
+        System.out.println("------test 24-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
+    //----------------＃if ----------------------------
+      /*
+         test25
+         A:                                  | B:
+         #if （X > 0）                       |
+          a = 1;                             | a = 3;
+         #else                               |
+          a = 2 ;                            |
+         #endif                              |
+         */
+    @Test
+    public void test25() {
+        inputFileInit(2);
+
+        String testNum = "25/";
+        System.out.println("------test 25-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+            test26
+            A:                                  | B:
+            #if （X > 0）                       |
+             a = 1;                             | a = 3;
+            #else                               |
+             a = 2 ;                            |
+            #endif                              |
+            */
+    @Test
+    public void test26() {
+        inputFileInit(2);
+
+        String testNum = "26/";
+        System.out.println("------test 26-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
 
 }

@@ -1,6 +1,6 @@
-#ifdef B
+#if defined (B)
 void b();
 #endif
-#ifdef A && X || B
+#if defined (A) && defined (X) || defined (B)
 void a();
 #endif
