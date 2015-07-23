@@ -36,9 +36,12 @@ public class Revision {
      * Name of the revision.
      */
     private String name;
+    // for choice node, different variants' revision
     public HashSet<String> alternatives;
+    // for a node, ifdef or if defined , AND relation '&&'
     public HashSet<String> conditions;
-
+    // for OR relation, '||'
+    public HashSet<String> or_Conditions;
 
     public boolean hasAlternatives() {
         if (alternatives.size() > 0) {
@@ -56,6 +59,7 @@ public class Revision {
         this.name = name;
         alternatives = new HashSet<>();
         conditions = new HashSet<>();
+        or_Conditions = new HashSet<>();
     }
 
     /**
