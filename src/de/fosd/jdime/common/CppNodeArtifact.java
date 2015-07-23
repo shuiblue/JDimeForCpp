@@ -114,6 +114,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             continue;
                         }
 
+
                         if (((Element) node).getLocalName().equals("if")) {
                             if (((Element) node).getNamespacePrefix().equals("cpp"))
                                 if (node.getValue().substring(4).contains("defined")) {
@@ -144,6 +145,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             conditionStack.push("&" + condition);
                             continue;
                         }
+                        if (((Element) node).getLocalName().equals("else")) {
+                            if (((Element) node).getNamespacePrefix().equals("cpp")) {
+                                String condition = conditionStack.pop();
+                                if (condition.contains("!")) {
+                                    conditionStack.push("&" + condition.substring(2));
+                                } else {
+                                    conditionStack.push("&!" + condition.substring(1));
+                                }
+                                continue;
+                            }
+                        }
+
                         CppNodeArtifact child = new CppNodeArtifact(
                                 astnode.getChild(i));
                         child.setParent(this);
@@ -573,8 +586,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += "#endif\n";
         } else {
             res += "#if " + "defined (" + getRevision() + ")";
-            if(getRevision().conditions.size()>0){
-                res+=" &&";
+            if (getRevision().conditions.size() > 0) {
+                res += " &&";
             }
             res += printCondition(getRevision());
             res += "\n" + this.toString() + "\n";
@@ -594,7 +607,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             for (String s : r.conditions) {
                 if (s.startsWith("&")) {
                     if (s.contains("!")) {
-                        res += " !defined (" + s.substring(2) + ")";
+                        res += " !defined (" + s.substring(2) + ") &&";
                     } else {
                         res += " defined (" + s.substring(1) + ") &&";
                     }
@@ -602,7 +615,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                 } else if (s.startsWith("|")) {
                     if (s.contains("!")) {
-                        res += " !defined (" + s.substring(2) + ")";
+                        res += " !defined (" + s.substring(2) + ") ||";
                     } else {
                         res += " defined (" + s.substring(1) + ") ||";
                     }
@@ -645,14 +658,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
             String r1 = "defined (" + revision_1.toString() + ")";
             if (revision_1.conditions.size() > 0) {
-                r1 += " &&"+printCondition(revision_1);
+                r1 += " &&" + printCondition(revision_1);
             }
             if (!var.contains(r1)) var.add(r1);
 
             Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
             String r2 = "defined (" + revision_2.toString() + ")";
             if (revision_2.conditions.size() > 0) {
-                r2 +=  " &&"+printCondition(revision_2);
+                r2 += " &&" + printCondition(revision_2);
             }
             if (!var.contains(r2)) var.add(r2);
         }
