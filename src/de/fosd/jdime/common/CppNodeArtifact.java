@@ -74,23 +74,41 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     Stack<String> conditionStack = new Stack<>();
 
 
-    public void getCondFromDefined(String[] defined_expr, String relation) {
-        for (String cond : defined_expr) {
-            if (cond.startsWith("!")) {
-                String c = "!" + cond.substring(9, cond.length() - 1);
-                if (relation.equals("and")) {
-                    conditionStack.add("&" + c);
-                } else if (relation.equals("or")) {
-                    conditionStack.add("|" + c);
+    public void getCondFromDefined(String[] expr, String relation) {
+        for (String cond : expr) {
+            if (cond.contains("defined")) {
+
+                if (cond.startsWith("!")) {
+                    String c = "!" + cond.substring(9, cond.length() - 1);
+                    if (relation.equals("and")) {
+                        conditionStack.add("&" + c);
+                    } else if (relation.equals("or")) {
+                        conditionStack.add("|" + c);
+                    }
+                } else {
+                    String c = cond.substring(8, cond.length() - 1);
+
+                    if (relation.equals("and")) {
+                        conditionStack.add("&" + c);
+                    } else if (relation.equals("or")) {
+                        conditionStack.add("|" + c);
+                    }
                 }
             } else {
-                String c = cond.substring(8, cond.length() - 1);
-
-                if (relation.equals("and")) {
-                    conditionStack.add("&" + c);
-                } else if (relation.equals("or")) {
-                    conditionStack.add("|" + c);
+                if(relation.equals("and")){
+                    if (cond.startsWith("(")) {
+                        conditionStack.add("c&"+cond);
+                    } else {
+                        conditionStack.add("c&(" + cond + ")");
+                    }
+                }else if(relation.equals("or")){
+                    if (cond.startsWith("(")) {
+                        conditionStack.add("c|"+cond);
+                    } else {
+                        conditionStack.add("c|(" + cond + ")");
+                    }
                 }
+
             }
         }
     }
@@ -106,31 +124,27 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             for (int i = 0; i < astnode.getChildCount(); i++) {
                 if (((Element) astnode).getLocalName().equals("unit")) {
                     Node node = astnode.getChild(i);
-
                     if (!node.getValue().equals("\n")) {
                         if (((Element) astnode.getChild(i)).getLocalName().equals("endif")) {
-
                             conditionStack.pop();
                             continue;
                         }
-
-
                         if (((Element) node).getLocalName().equals("if")) {
-                            if (((Element) node).getNamespacePrefix().equals("cpp"))
-                                if (node.getValue().substring(4).contains("defined")) {
-                                    String[] expr;
-                                    if (node.getValue().contains("&&")) {
-                                        expr = node.getValue().substring(4).split(" && ");
-                                        getCondFromDefined(expr, "and");
-                                    } else if (node.getValue().contains("||")) {
-                                        expr = node.getValue().substring(4).split(" \\|\\| ");
-                                        getCondFromDefined(expr, "or");
-                                    } else {
-                                        expr = node.getValue().substring(4).split(" ");
-                                        getCondFromDefined(expr, "and");
-                                    }
+                            if (((Element) node).getNamespacePrefix().equals("cpp")) {
+                                String condition = node.getValue().substring(4);
+                                String[] expr;
+                                if (node.getValue().contains("&&")) {
+                                    expr = condition.split(" && ");
+                                    getCondFromDefined(expr, "and");
 
+                                } else if (node.getValue().contains("||")) {
+                                    expr = condition.split(" \\|\\| ");
+                                    getCondFromDefined(expr, "or");
+                                } else {
+                                    expr = condition.split(" ");
+                                    getCondFromDefined(expr, "and");
                                 }
+                            }
                             continue;
                         }
 
@@ -620,6 +634,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         res += " defined (" + s.substring(1) + ") ||";
                     }
 
+                }else if(s.startsWith("c&(")){
+                    res +=" " +s.substring(2) + " || ";
+                }else if(s.startsWith("c|(")){
+                    res +=" " +s.substring(2) + " || ";
                 }
 
             }
