@@ -1,3 +1,3 @@
-#ifdef Y
+#ifdef X
 void b();
 #endif

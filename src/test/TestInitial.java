@@ -164,9 +164,14 @@ public class TestInitial {
 
         if (config != null) {
             for (String s : config) {
-                compiledPath += s;
-                cmd_compiling += ",-D" + s;
+                if (s.startsWith("!")) {
+                    compiledPath += "not" + s.substring(1);
+                    cmd_compiling += ",-U" + s.substring(1);
 
+                } else {
+                    compiledPath += s;
+                    cmd_compiling += ",-D" + s;
+                }
             }
         }
         compiledPath += suffix;
@@ -218,6 +223,7 @@ public class TestInitial {
 
     /**
      * get all the configuration
+     *
      * @param features
      * @return
      */
