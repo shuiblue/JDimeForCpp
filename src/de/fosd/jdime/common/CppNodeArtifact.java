@@ -539,7 +539,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += printMatch(child);
                     res += child.toString() + "\n";
                     res += "#endif\n";
-
                 }
             }
 
