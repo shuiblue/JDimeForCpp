@@ -226,14 +226,16 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         x += s.split("\n")[i];
                     }
                     s = x;
+
                 } else {
                     conditionStack.pop();
                     conditionStack.push(s.split("\n")[0]);
+                    newResult += "#endif\n";
                 }
             } else {
                 conditionStack.push(s.split("\n")[0]);
             }
-            newResult += s;
+            newResult +=s;
             if (!s.endsWith("\n")) {
                 newResult += "\n";
             }
