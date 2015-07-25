@@ -72,7 +72,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     Stack<String> conditionStack = new Stack<>();
 
 
-
     /**
      * This function initialize children
      */
@@ -85,14 +84,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (((Element) astnode).getLocalName().equals("unit")) {
                     Node node = astnode.getChild(i);
 
-                    if (!node.getValue().replace("\n", "").replace(" ","").equals("")) {
+                    if (!node.getValue().replace("\n", "").replace(" ", "").equals("")) {
                         if (((Element) node).getLocalName().equals("endif")) {
                             conditionStack.pop();
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("if")) {
-                                String cond = node.getValue().substring(4);
-                                    conditionStack.push(cond);
+                            String cond = node.getValue().substring(4);
+                            conditionStack.push(cond);
                             continue;
                         }
 
@@ -405,12 +404,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         assert (astnode != null);
         assert (other != null);
         assert (other.astnode != null);
-        if (((Element) astnode).getLocalName().equals("function_decl") || ((Element) astnode).getLocalName().equals("include")) {
+        if (((Element) astnode).getLocalName().equals("function_decl")
+                || ((Element) astnode).getLocalName().equals("include")
+                | ((Element) astnode).getLocalName().equals("comment")) {
             return astnode.getValue().equals((other.getCppNode()).getValue());
         } else if (((Element) astnode).getLocalName().equals("unit")) {
             return true;
-        } else if (((Element) astnode).getLocalName().equals("include")) {
-            return astnode.getValue().equals((other.getCppNode()).getValue());
         } else {
             return false;
         }
@@ -522,7 +521,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
 
-
     @Override
     public String prettyPrint() {
         String res = "";
@@ -559,7 +557,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         return res;
     }
-
 
 
     public String printCondition(Revision r) {
