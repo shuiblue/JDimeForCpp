@@ -164,16 +164,24 @@ public class TestInitial {
 
         if (config != null) {
             for (String s : config) {
+            if (s.contains(">")||s.contains("<")||s.contains("=")) {
+                   s= s.replace('<','l');
+                   s= s.replace('>','b');
+                   s= s.replace('=','e');
+
+                }
+
                 if (s.startsWith("!")) {
                     compiledPath += "not" + s.substring(1);
                     cmd_compiling += ",-U" + s.substring(1);
 
-                } else {
+                } else{
                     compiledPath += s;
                     cmd_compiling += ",-D" + s;
                 }
             }
         }
+
         compiledPath += suffix;
         cmd_compiling += "," + originPath + ",-o," + compiledPath;
 
@@ -206,6 +214,7 @@ public class TestInitial {
 
     /**
      * test every possible configuration
+     *
      * @param config
      * @param fileNameSet
      * @param output

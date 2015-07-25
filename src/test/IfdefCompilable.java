@@ -214,8 +214,9 @@ public class IfdefCompilable {
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
-        afterTest();
+//        afterTest();
     }
+
 
     //----------------3 WAY-----------------------------
     String output_3way = "ABC";
@@ -543,7 +544,7 @@ void a();                           |   void b();
       /*
          test25
          A:                                  | B:
-         #if （X > 0）                       |
+         #if （X > 0）&& defined(Y)
           a = 1;                             | a = 3;
          #else                               |
           a = 2 ;                            |
@@ -552,6 +553,8 @@ void a();                           |   void b();
     @Test
     public void test25() {
         inputFileInit(2);
+        config.add("Y");
+        config.add("X>0");
 
         String testNum = "25/";
         System.out.println("------test 25-----------");
@@ -563,7 +566,7 @@ void a();                           |   void b();
     /*
             test26
             A:                                  | B:
-            #if （X > 0）                       |
+            #if （X > 0）|| defined(Y)           |
              a = 1;                             | a = 3;
             #else                               |
              a = 2 ;                            |
@@ -572,7 +575,8 @@ void a();                           |   void b();
     @Test
     public void test26() {
         inputFileInit(2);
-
+        config.add("Y");
+        config.add("X>0");
         String testNum = "26/";
         System.out.println("------test 26-----------");
         // ----------------check Merged result equal to expect result
@@ -581,5 +585,54 @@ void a();                           |   void b();
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
+    /*
+               test27
+               A:                                  | B:
+   #if (X>0 && defined(X)) || (Y>0 && defined(Y))  |
+                a = 1;                             | a = 3;
+               #else                               |
+                a = 2 ;                            |
+               #endif                              |
+               */
+    @Test
+    public void test27() {
+        inputFileInit(2);
+
+        config.add("X");
+        config.add("Y");
+        config.add("X>0");
+        config.add("Y>0");
+        String testNum = "27/";
+        System.out.println("------test 27-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+ test28
+A:                                       | B:
+#if （X > 0）|| defined(Y)) &&\           |
+     (Z > 0）|| defined(S))              |
+ a = 1;                                  | a = 3;
+#else                                    |
+a = 2 ;                                  |
+#endif                                   |
+ */
+    @Test
+    public void test28() {
+        inputFileInit(2);
+
+        config.add("X");
+        config.add("Y");
+        config.add("X>0");
+        config.add("Y>0");
+        String testNum = "28/";
+        System.out.println("------test 28-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
 
 }

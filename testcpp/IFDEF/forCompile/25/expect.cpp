@@ -1,12 +1,6 @@
-#if defined (A) && defined (X)
-void a();
+#if defined (A) && ((X>0) && defined(Y))
+a = 1;
 #endif
-#if defined (B) && defined (Y)
-void b();
-#endif
-#if defined (A) && !defined (X)
-void t();
-#endif
-#if defined (B) && !defined (Y)
-void s();
+#if defined (B)
+a=3;
 #endif
