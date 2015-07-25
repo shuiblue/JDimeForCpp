@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/1/AB_pre.cpp"><cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>A</name></expr></argument>)</argument_list></call> || <call><name>defined</name> <argument_list>(<argument><expr><name>B</name></expr></argument>)</argument_list></call></expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>A</name></expr></argument>)</argument_list></call> || <call><name>defined</name> <argument_list>(<argument><expr><name>B</name></expr></argument>)</argument_list></call></expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"cardreader.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+</unit>

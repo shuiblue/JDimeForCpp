@@ -4,6 +4,6 @@
 #if defined (B)
 void b();
 #endif
-#if defined (A) && defined (X)
+#if defined (A) && defined(X)
 void a();
 #endif

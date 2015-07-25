@@ -23,13 +23,11 @@
  */
 package de.fosd.jdime.strategy;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +39,9 @@ import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
+
+import de.fosd.jdime.matcher.Matching;
+import nu.xom.Document;
 
 
 /**
@@ -161,7 +162,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     }
                 }
 
-                try (BufferedReader buf = new BufferedReader(new StringReader(targetNode.prettyPrint()))) {
+                String prettyPrint = targetNode.prettyPrint();
+                prettyPrint = presicePrettyprint(prettyPrint);
+                try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
+
                     String line;
                     while ((line = buf.readLine()) != null) {
                         context.appendLine(line);
@@ -202,6 +206,35 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
+    }
+
+
+    public String presicePrettyprint(String res) {
+        String newResult = "";
+        Stack<String> conditionStack = new Stack<>();
+        String[] tmp = res.split("#endif\n");
+        for (String s : tmp) {
+            if (conditionStack.size() > 0) {
+                String lastCon = conditionStack.lastElement();
+                if (lastCon.equals(s.split("\n")[0])) {
+                    String x = "";
+                    for (int i = 1; i < s.split("\n").length; i++) {
+                        x += s.split("\n")[i];
+                    }
+                    s = x;
+                } else {
+                    conditionStack.pop();
+                    conditionStack.push(s.split("\n")[0]);
+                }
+            } else {
+                conditionStack.push(s.split("\n")[0]);
+            }
+            newResult += s;
+            if (!s.endsWith("\n")) {
+                newResult += "\n";
+            }
+        }
+        return newResult+"#endif";
     }
 
     @Override
