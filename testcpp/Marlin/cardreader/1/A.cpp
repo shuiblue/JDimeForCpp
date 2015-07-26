@@ -1,2 +1,4 @@
-//SDSUPPORT
-//aaa
+CardReader::CardReader()
+{
+   filesize = 0;
+}
