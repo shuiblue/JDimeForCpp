@@ -1,4 +1,4 @@
 CardReader::CardReader()
 {
-   filesize = 0;
+a=0;
 }
