@@ -1,3 +1,4 @@
+<<<<<<< origin/develop
 void CardReader::write_command(char *buf)
 {
   char* begin = buf;
@@ -19,4 +20,9 @@ void CardReader::write_command(char *buf)
     SERIAL_ERROR_START;
     SERIAL_ERRORLNPGM(MSG_SD_ERR_WRITE_TO_FILE);
   }
+=======
+CardReader::CardReader()
+{
+   filesize = 0;
+>>>>>>> HEAD~103
 }

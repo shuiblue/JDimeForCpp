@@ -1,3 +1,4 @@
+<<<<<<< origin/develop
 #if defined (A) || defined (B)
 void CardReader::write_command(char *buf)
 {
@@ -22,3 +23,5 @@ void CardReader::write_command(char *buf)
   }
 }
 #endif
+=======
+>>>>>>> HEAD~103

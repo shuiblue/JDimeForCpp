@@ -59,6 +59,20 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public CppNodeArtifact(final Node astnode) {
         this.astnode = astnode;
 //        this.initializeChildren();
+
+        if (astnode.getClass().getName().contains("Element")) {
+            if (!((Element)astnode).getLocalName().equals("name")
+                    && !((Element) astnode).getLocalName().equals("parameter_list")
+                    && !((Element) astnode).getLocalName().equals("expr_stmt")) {
+                this.initializeChildren();
+            }
+
+
+        } else if (astnode.getClass().getName().contains("Text")) {
+            if (astnode.getValue().equals("{")) {
+                this.initializeChildren();
+            }
+        }
         renumberTree();
     }
 
@@ -81,10 +95,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (astnode != null) {
 
             for (int i = 0; i < astnode.getChildCount(); i++) {
-                if (((Element) astnode).getLocalName().equals("unit")) {
+//                if (((Element) astnode).getLocalName().equals("unit")) {
                 Node node = astnode.getChild(i);
 
                 if (!node.getValue().replace("\n", "").replace(" ", "").equals("")) {
+                    if (node.getClass().getName().contains("Element")) {
+
                     if (((Element) node).getLocalName().equals("endif")) {
                         conditionStack.pop();
                         continue;
@@ -117,6 +133,37 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             continue;
                         }
                     }
+                    }
+//                    CppNodeArtifact child = new CppNodeArtifact(
+//                            astnode.getChild(i));
+//                    child.setParent(this);
+//                    child.setRevision(new Revision(getRevision().getName()));
+//                    if (conditionStack != null) {
+//                        child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+//                    }
+//                    children.add(child);
+
+                    if (node.getClass().getName().contains("Element")) {
+                        if (!((Element) node).getLocalName().equals("name")
+                                && !((Element) node).getLocalName().equals("parameter_list")
+                                && !((Element) node).getLocalName().equals("expr_stmt")) {
+
+                            CppNodeArtifact child = new CppNodeArtifact(
+                            node);
+                    child.setParent(this);
+                    child.setRevision(new Revision(getRevision().getName()));
+                    if (conditionStack != null) {
+                        child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                    }
+                    children.add(child);
+
+                            child.initializeChildren();
+                        }
+
+
+                    } else if (node.getClass().getName().contains("Text")) {
+                        if (node.getValue().equals("{")) {
+
 
                     CppNodeArtifact child = new CppNodeArtifact(node);
                     child.setParent(this);
@@ -125,12 +172,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                     }
                     children.add(child);
+                            child.initializeChildren();
+                        }
+                    }
 
 
 //                        child.initializeChildren();
                     }
                 }
-            }
         }
 
         setChildren(children);
