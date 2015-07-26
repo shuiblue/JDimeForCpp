@@ -23,6 +23,10 @@ void CardReader::write_command(char *buf)
 =======
 CardReader::CardReader()
 {
+<<<<<<< origin/develop
    filesize = 0;
 >>>>>>> HEAD~103
+=======
+a=0;
+>>>>>>> HEAD~102
 }
