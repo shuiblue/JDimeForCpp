@@ -82,54 +82,53 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             for (int i = 0; i < astnode.getChildCount(); i++) {
                 if (((Element) astnode).getLocalName().equals("unit")) {
-                    Node node = astnode.getChild(i);
+                Node node = astnode.getChild(i);
 
-                    if (!node.getValue().replace("\n", "").replace(" ", "").equals("")) {
-                        if (((Element) node).getLocalName().equals("endif")) {
-                            conditionStack.pop();
-                            continue;
-                        }
-                        if (((Element) node).getLocalName().equals("if")) {
-                            String cond = node.getValue().substring(4);
-                            conditionStack.push(cond);
-                            continue;
-                        }
-
-
-                        if (((Element) node).getLocalName().equals("ifndef")) {
-                            String condition = astnode.getChild(i).getValue().substring(8);
-                            conditionStack.push("!defined (" + condition + ")");
-                            continue;
-                        }
-                        if (((Element) node).getLocalName().equals("ifdef")) {
-                            String condition = astnode.getChild(i).getValue().substring(7);
-                            conditionStack.push("defined (" + condition + ")");
-                            continue;
-                        }
-                        if (((Element) node).getLocalName().equals("else")) {
-                            if (((Element) node).getNamespacePrefix().equals("cpp")) {
-                                String condition = conditionStack.pop();
-                                if (condition.contains("!")) {
-                                    conditionStack.push(condition.substring(1));
-                                } else {
-                                    conditionStack.push("!" + condition);
-                                }
-                                continue;
-                            }
-                        }
-
-                        CppNodeArtifact child = new CppNodeArtifact(
-                                astnode.getChild(i));
-                        child.setParent(this);
-                        child.setRevision(new Revision(getRevision().getName()));
-                        if (conditionStack != null) {
-                            child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-                        }
-                        children.add(child);
-
-
+                if (!node.getValue().replace("\n", "").replace(" ", "").equals("")) {
+                    if (((Element) node).getLocalName().equals("endif")) {
+                        conditionStack.pop();
+                        continue;
                     }
-//                    child.initializeChildren();
+                    if (((Element) node).getLocalName().equals("if")) {
+                        String cond = node.getValue().substring(4);
+                        conditionStack.push(cond);
+                        continue;
+                    }
+
+
+                    if (((Element) node).getLocalName().equals("ifndef")) {
+                        String condition = astnode.getChild(i).getValue().substring(8);
+                        conditionStack.push("!defined (" + condition + ")");
+                        continue;
+                    }
+                    if (((Element) node).getLocalName().equals("ifdef")) {
+                        String condition = astnode.getChild(i).getValue().substring(7);
+                        conditionStack.push("defined (" + condition + ")");
+                        continue;
+                    }
+                    if (((Element) node).getLocalName().equals("else")) {
+                        if (((Element) node).getNamespacePrefix().equals("cpp")) {
+                            String condition = conditionStack.pop();
+                            if (condition.contains("!")) {
+                                conditionStack.push(condition.substring(1));
+                            } else {
+                                conditionStack.push("!" + condition);
+                            }
+                            continue;
+                        }
+                    }
+
+                    CppNodeArtifact child = new CppNodeArtifact(node);
+                    child.setParent(this);
+                    child.setRevision(new Revision(getRevision().getName()));
+                    if (conditionStack != null) {
+                        child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                    }
+                    children.add(child);
+
+
+//                        child.initializeChildren();
+                    }
                 }
             }
         }
@@ -406,8 +405,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         assert (other.astnode != null);
         if (((Element) astnode).getLocalName().equals("function_decl")
                 || ((Element) astnode).getLocalName().equals("include")
-                | ((Element) astnode).getLocalName().equals("comment")) {
-            return astnode.getValue().equals((other.getCppNode()).getValue());
+                || ((Element) astnode).getLocalName().equals("comment")
+                || ((Element) astnode).getLocalName().equals("constructor")
+                || ((Element) astnode).getLocalName().equals("function")
+                ) {
+
+            String clearASTnode = astnode.getValue().replace("\n", "").replace(" ", "").replace("\t","");
+            String clearOther = other.getCppNode().getValue().replace("\n", "").replace(" ", "").replace("\t","");
+
+
+            return clearASTnode.equals(clearOther);
         } else if (((Element) astnode).getLocalName().equals("unit")) {
             return true;
         } else {
