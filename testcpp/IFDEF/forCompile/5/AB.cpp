@@ -1,6 +1,3 @@
-#if defined (A) && defined (X)
-void a();
-#endif
-#if defined (B) && defined (Y)
-void b();
+#if defined (A) && defined (X) || defined (B) && defined (Y)
+()avoidvoid a();
 #endif

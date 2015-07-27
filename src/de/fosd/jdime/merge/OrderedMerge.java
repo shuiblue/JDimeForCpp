@@ -337,6 +337,7 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
 							: MergeType.THREEWAY;
 					T baseChild = mBase == null ? leftChild.createEmptyArtifact()
 							: mBase.getMatchingArtifact(leftChild);
+
 					T targetChild = target == null ? null : target.addChild((T) leftChild.clone());
 
 					if (targetChild != null) {
