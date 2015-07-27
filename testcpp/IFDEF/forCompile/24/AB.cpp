@@ -1,12 +1,6 @@
-#if defined (A) && defined (X)
-void a();
+#if defined (A) && defined (X) || defined (B) && defined (Y)
+()avoidvoid a();
 #endif
-#if defined (B) && defined (Y)
-void b();
-#endif
-#if defined (A) && !defined (X)
-void t();
-#endif
-#if defined (B) && !defined (Y)
-void s();
+#if defined (A) && !defined (X) || defined (B) && !defined (Y)
+()tvoidvoid t();
 #endif

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/1/B.cpp"><constructor><name><name>CardReader</name>::<name>CardReader</name></name><parameter_list>()</parameter_list>
-<block>{
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/1/B.cpp"><name><name>CardReader</name>::<name>CardReader</name></name><parameter_list>()</parameter_list>
+
 <expr_stmt><expr><name>a</name>=0</expr>;</expr_stmt>
-}</block></constructor></unit>
+</unit>

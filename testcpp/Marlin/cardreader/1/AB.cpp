@@ -28,11 +28,8 @@ void CardReader::write_command(char *buf)
 >>>>>>> HEAD~103
 =======
 #if defined (A) || defined (B)
-{
+CardReader::CardReader
+()
 a=0;
-}CardReader::CardReader()
-{
-a=0;
-}
 #endif
 >>>>>>> HEAD~102
