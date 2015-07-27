@@ -189,7 +189,6 @@ public class TestInitial {
         f.getParentFile().mkdirs();
         try {
             f.createNewFile();
-
             ProcessBuilder process = new ProcessBuilder();
             process.command(cmd_compiling.split(","));
             Process p = process.start();

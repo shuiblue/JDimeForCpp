@@ -1,6 +1,3 @@
-<<<<<<< origin/develop
-<<<<<<< origin/develop
-=======
 #include "Marlin.h"
 #include "cardreader.h"
 #include "ultralcd.h"
@@ -471,7 +468,6 @@ void CardReader::getStatus()
     SERIAL_PROTOCOLLNPGM(MSG_SD_NOT_PRINTING);
   }
 }
->>>>>>> HEAD~100
 void CardReader::write_command(char *buf)
 {
   char* begin = buf;
@@ -493,16 +489,8 @@ void CardReader::write_command(char *buf)
     SERIAL_ERROR_START;
     SERIAL_ERRORLNPGM(MSG_SD_ERR_WRITE_TO_FILE);
   }
-=======
-CardReader::CardReader()
-{
-<<<<<<< origin/develop
-   filesize = 0;
->>>>>>> HEAD~103
-=======
-a=0;
->>>>>>> HEAD~102
 }
+
 
 void CardReader::checkautostart(bool force)
 {

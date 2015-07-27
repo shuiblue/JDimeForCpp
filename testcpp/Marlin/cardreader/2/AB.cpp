@@ -1,5 +1,3 @@
-<<<<<<< origin/develop
-<<<<<<< origin/develop
 #if defined (A) || defined (B)
 #include "Marlin.h"
 #include "cardreader.h"
@@ -158,7 +156,7 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
       
     }
     else
-{
+    {
       if (p.name[0] == DIR_NAME_FREE) break;
       if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
       if (longFilename[0] != '\0' &&
@@ -168,7 +166,7 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
         if ( p.name[1] != '.')
         continue;
       }
-
+      
       if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
       filenameIsDir=DIR_IS_SUBDIR(&p);
       
@@ -181,10 +179,10 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
       //if(cnt++!=nr) continue;
       createFilename(filename,p);
       if(lsAction==LS_SerialPrint)
-  {
+      {
         SERIAL_PROTOCOL(prepend);
         SERIAL_PROTOCOLLN(filename);
-  }
+      }
       else if(lsAction==LS_Count)
       {
         nrFiles++;
@@ -263,17 +261,6 @@ void CardReader::initsd()
   
 }
 #endif
-<<<<<<< origin/develop
-=======
->>>>>>> HEAD~103
-=======
-#if defined (A) || defined (B)
-CardReader::CardReader
-()
-a=0;
-#endif
->>>>>>> HEAD~102
-=======
 #if defined (B) && defined (SDSUPPORT)
 void CardReader::initsd()
 {
@@ -727,4 +714,3 @@ void CardReader::printingHasFinished(){    st_synchronize();    if(file_subcall_
 #if defined (A) || defined (B)
 //SDSUPPORT
 #endif
->>>>>>> HEAD~100

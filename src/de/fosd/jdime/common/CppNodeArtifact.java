@@ -237,7 +237,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             Builder builder = new Builder();
             File file = new File(xmlFilePath);
             try {
-                Thread.sleep(10);                 //1000 milliseconds is one second.
+                Thread.sleep(30);                 //1000 milliseconds is one second.
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
@@ -303,17 +303,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return conflict;
     }
 
-    @Override
-    public CppNodeArtifact createChoiceDummy(String condition,
-                                             CppNodeArtifact artifact) throws IOException {
-        CppNodeArtifact choice;
-
-        choice = new CppNodeArtifact(artifact.astnode.copy(), getRevision());
-        choice.setRevision(new Revision("choice"));
-        choice.setNumber(virtualcount++);
-        choice.setChoice(condition, artifact);
-        return choice;
-    }
 
     @Override
     public CppNodeArtifact createEmptyArtifact() throws IOException {
@@ -429,10 +418,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return getRevision() + "-" + getNumber();
     }
 
-    @Override
-    public String getStatsKey(MergeContext context) {
-        return "nodes";
-    }
+
 
     @Override
     public boolean hasUniqueLabels() {
