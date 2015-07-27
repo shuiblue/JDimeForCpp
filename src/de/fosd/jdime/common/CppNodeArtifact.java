@@ -179,7 +179,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             Builder builder = new Builder();
             File file = new File(xmlFilePath);
             try {
-                Thread.sleep(10);                 //1000 milliseconds is one second.
+                Thread.sleep(30);                 //1000 milliseconds is one second.
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
