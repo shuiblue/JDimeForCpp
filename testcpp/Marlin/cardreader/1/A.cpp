@@ -1,4 +1,3 @@
-CardReader::CardReader()
-{
-a=0;
+void a(){
+i=0;
 }

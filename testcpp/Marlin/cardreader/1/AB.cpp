@@ -1,5 +1,14 @@
 #if defined (A) || defined (B)
-CardReader::CardReader
+void
+a
 ()
-a=0;
+#endif
+{
+#if defined (A) || defined (B)
+i=0;
+#endif
+#if defined (B)
+j=0;
+#endif
+}
 #endif

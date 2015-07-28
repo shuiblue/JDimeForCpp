@@ -802,8 +802,10 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
      */
     public void fixRevision(HashSet<String> revSet) {
         revision.alternatives = (HashSet<String>) revSet.clone();
-        for (T child : children) {
-            child.fixRevision(revSet);
+        if (children != null) {
+            for (T child : children) {
+                child.fixRevision(revSet);
+            }
         }
     }
 
@@ -820,8 +822,10 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
                 revSet.add(revStr);
             }
         }
-        for (T child : children) {
-            child.getRevisions(revSet);
+        if (children != null) {
+            for (T child : children) {
+                child.getRevisions(revSet);
+            }
         }
     }
 
