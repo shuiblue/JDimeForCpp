@@ -648,12 +648,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return res;
     }
 
-//    private String printBlock(CppNodeArtifact c) {
-//        String res = "";
-//        System.out.print("4444");
-//        return res;
-//    }
-
 
     public String printCondition(Revision r) {
         String res = "";
