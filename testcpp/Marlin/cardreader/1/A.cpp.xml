@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit><name><name>CardReader</name>::<name>CardReader</name></name><parameter_list>()</parameter_list>
-
-<expr_stmt><expr><name>a</name>=0</expr>;</expr_stmt>
-</unit>

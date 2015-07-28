@@ -817,9 +817,11 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      */
     public void fixRevision(HashSet<String> revSet) {
         revision.alternatives = (HashSet<String>)revSet.clone();
+        if (children != null) {
         for (T child : children) {
             child.fixRevision(revSet);
         }
+    }
     }
 
     /**
@@ -835,9 +837,11 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
                 revSet.add(revStr);
             }
         }
+        if (children != null) {
         for (T child : children) {
             child.getRevisions(revSet);
         }
+    }
     }
 
     @Override
