@@ -65,6 +65,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (!((Element) astnode).getLocalName().equals("name")
                     && !((Element) astnode).getLocalName().equals("parameter_list")
                     && !((Element) astnode).getLocalName().equals("type")
+                    && !((Element) astnode).getLocalName().equals("decl_stmt")
                     && !((Element) astnode).getLocalName().equals("expr_stmt")) {
                 this.initializeChildren();
             }
@@ -80,6 +81,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (!((Element) astnode).getLocalName().equals("name")
                     && !((Element) astnode).getLocalName().equals("parameter_list")
                     && !((Element) astnode).getLocalName().equals("type")
+                    && !((Element) astnode).getLocalName().equals("decl_stmt")
                     && !((Element) astnode).getLocalName().equals("expr_stmt")) {
                 this.initializeChildren();
             }
@@ -143,57 +145,36 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             }
                         }
                     }
-//                    CppNodeArtifact child = new CppNodeArtifact(
-//                            astnode.getChild(i));
-//                    child.setParent(this);
-//                    child.setRevision(new Revision(getRevision().getName()));
-//                    if (conditionStack != null) {
-//                        child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-//                    }
-//                    children.add(child);
+
                     String clearNodeValue = node.getValue().replace("\n", "").replace(" ", "").replace("\t", "");
                     if (node.getClass().getName().contains("Element")) {
-
-                        CppNodeArtifact child = new CppNodeArtifact(node, getRevision());
-//                            CppNodeArtifact child = new CppNodeArtifact(node);
-                        child.setParent(this);
-
-                        child.setRevision(new Revision(getRevision().getName()));
-
-
-                        if (conditionStack != null) {
-                            child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-                        }
-                        children.add(child);
-
                         if (!((Element) node).getLocalName().equals("name")
-                                && !((Element) node).getLocalName().equals("parameter_list")
-                                && !((Element) node).getLocalName().equals("type")
-                                && !((Element) node).getLocalName().equals("expr_stmt")) {
+                                && !((Element) node).getLocalName().equals("type")) {
+                            CppNodeArtifact child = new CppNodeArtifact(node, getRevision());
+                            child.setParent(this);
 
-                            child.initializeChildren();
+                            child.setRevision(new Revision(getRevision().getName()));
+
+
+                            if (conditionStack != null) {
+                                child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                            }
+                            children.add(child);
+
+                            if (!((Element) node).getLocalName().equals("name")
+                                    && !((Element) node).getLocalName().equals("parameter_list")
+                                    && !((Element) node).getLocalName().equals("type")
+                                    && !((Element) node).getLocalName().equals("decl_stmt")
+                                    && !((Element) node).getLocalName().equals("expr_stmt")) {
+
+                                child.initializeChildren();
+                            }
                         }
-
-
                     }
-//                    else if (clearNodeValue.equals("{") || clearNodeValue.equals("}")) {
-//                        CppNodeArtifact child = new CppNodeArtifact(node, getRevision());
-//                        child.setParent(this);
-//                        child.setRevision(new Revision(getRevision().getName()));
-//                        if (conditionStack != null) {
-//                            child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-//                        }
-//                        children.add(child);
-////                        child.initializeChildren();
-//                    }
+
                 }
-
-
             }
-//                    child.initializeChildren();
         }
-//        }
-//        }
 
         setChildren(children);
 
@@ -474,7 +455,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     ) {
                 return true;
             } else if (((Element) astnode).getLocalName().equals("function")) {
-                System.out.print("####");
                 String astnode_type = ((Element) astnode).getChild(0).getValue();
                 String astnode_func_name = ((Element) astnode).getChild(2).getValue();
 
@@ -601,18 +581,39 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
+        HashMap<Integer, String> function_head = new HashMap<>();
+
         if (this.children != null && this.children.size() > 0) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
                 if (((Element) child.astnode).getLocalName().equals("function")) {
-                   res+= child.prettyPrint();
+//                    if (((Element) this.astnode).getLocalName().equals("function")) {
+
+                        for (int i = 0; i < child.astnode.getChildCount(); i++) {
+                            if (child.astnode.getChild(i).getClass().getName().contains("Element")) {
+                                if (((Element) child.astnode.getChild(i)).getLocalName().equals("type")) {
+                                    function_head.put(1, ((Element) child.astnode.getChild(i)).getValue());
+                                }
+                                if (((Element) child.astnode.getChild(i)).getLocalName().equals("name")) {
+                                    function_head.put(2, ((Element) child.astnode.getChild(i)).getValue());
+                                }
+                            }
+
+                        }
+                        res += function_head.get(1) + " " + function_head.get(2);
+//                    }
+                    res += child.prettyPrint();
                     break;
                 }
                 if (((Element) child.astnode).getLocalName().equals("block")) {
-                    res += "{\n";
-                    res += child.prettyPrint();
-                    res += "}\n";
+                    if (child.isChoice()) {
+                        res += printChoice(child);
+                    } else {
+                        res += "{\n";
+                        res += child.prettyPrint();
+                        res += "}\n";
+                    }
                     break;
                 }
                 if (child.variants != null) {
@@ -627,14 +628,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
             }
 
-        } else if (this.isChoice()&&!((Element)this.astnode).getLocalName().equals("function")) {
+        } else if (this.isChoice() && !((Element) this.astnode).getLocalName().equals("function")) {
             res += printChoice(this);
-        } else if (this.matches != null&&!((Element)this.astnode).getLocalName().equals("function")) {
+        } else if (this.matches != null && !((Element) this.astnode).getLocalName().equals("function")) {
             res += printMatch(this);
             res += this.toString() + "\n";
             res += "#endif\n";
         } else {
             res += "#if " + "defined (" + getRevision() + ")";
+
+
+
+
             if (getRevision().conditions.size() > 0) {
                 res += " && ";
             }
