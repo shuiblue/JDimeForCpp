@@ -1,10 +1,9 @@
-#if defined (A)
+#if defined (A) || defined (B)
 void a(){
-a= 0;
-}
-#endif
+i=0;
+
 #if defined (B)
-void b(){
-b = 0;
+j=0;
+#endif
 }
 #endif

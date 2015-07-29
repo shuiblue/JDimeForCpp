@@ -164,7 +164,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
 
                 String prettyPrint = targetNode.prettyPrint();
-                prettyPrint = presicePrettyprint(prettyPrint);
+//                prettyPrint = presicePrettyprint(prettyPrint);
                 try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
 
                     String line;
@@ -213,38 +213,54 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
     }
 
 
-    public String presicePrettyprint(String res) {
-        String newResult = "";
-        Stack<String> conditionStack = new Stack<>();
-        String[] tmp = res.split("#endif\n");
-        for (String s : tmp) {
-            if (conditionStack.size() > 0) {
-                String lastCon = conditionStack.lastElement();
-                if (lastCon.equals(s.split("\n")[0])) {
-                    String x = "";
-                    for (int i = 1; i < s.split("\n").length; i++) {
-                        x += s.split("\n")[i];
-                    }
-                    s = x;
-
-                } else {
-                    conditionStack.pop();
-                    conditionStack.push(s.split("\n")[0]);
-                    newResult += "#endif\n";
-                }
-            } else {
-                conditionStack.push(s.split("\n")[0]);
-            }
-            newResult +=s;
-            if (!s.endsWith("\n")) {
-                newResult += "\n";
-            }
-
-
-
-        }
-        return newResult+"#endif";
-    }
+//    public String presicePrettyprint(String res) {
+//        String newResult = "";
+//        Stack<String> conditionStack = new Stack<>();
+//        String[] tmp = res.split("\n#endif\n");
+//        for (String s : tmp) {
+//            if (conditionStack.size() > 0) {
+//                String lastCon = conditionStack.lastElement();
+//
+//
+//                if (lastCon.equals(s.split("\n")[0])) {
+//
+//                    String x = "";
+//                    for (int i = 1; i < s.split("\n").length; i++) {
+//                        x += s.split("\n")[i];
+//                    }
+//                    s = x;
+//
+//                }else if(s.split("\n")[0].equals("{")){
+//                    s=s.substring(2);
+//
+//                    if (lastCon.equals(s.split("\n")[0])) {
+//
+//                        String x = "{\n";
+//                        for (int i = 1; i < s.split("\n").length; i++) {
+//                            x += s.split("\n")[i];
+//                        }
+//                        s = x;
+//                    }
+//                }
+//                else if(s.split("\n")[0].equals("}")){
+//                    newResult +="#endif";
+//                }
+//                else {
+//                    conditionStack.pop();
+//                    conditionStack.push(s.split("\n")[0]);
+//
+//                }
+//            } else {
+//                conditionStack.push(s.split("\n")[0]);
+//            }
+//            newResult +=s;
+//
+//
+//
+//
+//        }
+//        return newResult;
+//    }
 
     @Override
     public final String toString() {
