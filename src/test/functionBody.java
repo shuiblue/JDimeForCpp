@@ -99,8 +99,8 @@ public class functionBody {
  A:                      | B:
  int x=0;                |
  void a() {              |   void a(){
- i=0;                    |     i=2;
-  }                      |     j=0;
+ i=0;                    |     i=1;
+  }                      |
                          |  }
 */
     @Test
@@ -112,6 +112,99 @@ public class functionBody {
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+ test5
+ A:                      | B:
+ int x=0;                |
+ void a() {              |   void a(){
+ #ifdef X                |
+ i=0;                    |     i=1;
+ #endif                  |
+ j=2            ;        |   }
+
+*/
+    @Test
+    public void test5() {
+        inputFileInit(2);
+        config.add("X");
+        String testNum = "5/";
+        System.out.println("------test 5-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+ test6
+ A:                      | B:
+ int x=0;                |
+ int y=0;
+ void a() {              |   void a(){
+ #ifdef X                |
+ i=0;                    |     i=1;
+ #endif                  |
+ j=2            ;        |   }
+
+*/
+    @Test
+    public void test6() {
+        inputFileInit(2);
+        config.add("X");
+        String testNum = "6/";
+        System.out.println("------test6-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+test7
+A:                      | B:
+int x=0;                |
+int y=0;
+void a() {              |   void a(){
+i=0;                    |     i=1;
+}                       |   }
+void aa(){              |
+j=1 ;                   |
+}
+
+*/
+    @Test
+    public void test7() {
+        inputFileInit(2);
+        String testNum = "7/";
+        System.out.println("------test7-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    /*
+test8
+A:                      | B:
+int x=0;                |
+int y=0;
+void a() {              |   void a(){
+i=0;                    |     i=1;
+}                       |   }
+int z=0;
+void aa(){              |
+j=1 ;                   |
+}
+
+*/
+    @Test
+    public void test8() {
+        inputFileInit(2);
+        String testNum = "8/";
+        System.out.println("------test8-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+        afterTest();
     }
 
 }

@@ -228,9 +228,7 @@ public class IfdefCompilable {
           void a();               |    void a();    |
           #endif                  |   #endif        |
           void b();               |                 |
-                                  |                 |
-                                  |                 |
-          */
+     */
     @Test
     public void test10() {
         inputFileInit(3);

@@ -1,6 +1,6 @@
 #if defined (A) && defined (X) || defined (B) && defined (X)
-void a();
+()void a();
 #endif
 #if defined (A) || defined (B) && defined (Y)
-void b();
+()void b();
 #endif
