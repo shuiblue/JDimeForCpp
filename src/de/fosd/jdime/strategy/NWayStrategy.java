@@ -164,7 +164,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
 
                 String prettyPrint = targetNode.prettyPrint();
-//                prettyPrint = presicePrettyprint(prettyPrint);
+                prettyPrint = presicePrettyprint(prettyPrint);
                 try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
 
                     String line;
@@ -213,54 +213,63 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
     }
 
 
-//    public String presicePrettyprint(String res) {
-//        String newResult = "";
-//        Stack<String> conditionStack = new Stack<>();
-//        String[] tmp = res.split("\n#endif\n");
-//        for (String s : tmp) {
+    public String presicePrettyprint(String res) {
+        String newResult = "";
+        Stack<String> conditionStack = new Stack<>();
+        String[] elements = res.split("----\n");
+        String s = "";
+        for (String e : elements) {
+            String[] tmp = e.split("\n");
+            if (conditionStack.size() > 0) {
+                String lastCon = conditionStack.lastElement();
+                if (lastCon.equals(tmp[0])) {
+                    String x = "";
+                    for (int i = 1; i < tmp.length - 1; i++) {
+                        x += tmp[i]+"\n";
+                    }
+                    newResult += x;
+                    continue;
+                } else {
+                    conditionStack.pop();
+                    conditionStack.push(tmp[0]);
+                    newResult +="#endif\n";
+                }
+            }
+            conditionStack.push(tmp[0]);
+            newResult += tmp[0] + "\n";
+            for (int i = 1; i < tmp.length - 1; i++) {
+                newResult += tmp[i] + "\n";
+            }
+        }
+//        {
+//            String[] tmp = e.split("\n");
 //            if (conditionStack.size() > 0) {
 //                String lastCon = conditionStack.lastElement();
-//
-//
-//                if (lastCon.equals(s.split("\n")[0])) {
-//
+//                if (lastCon.equals(tmp[0])) {
 //                    String x = "";
-//                    for (int i = 1; i < s.split("\n").length; i++) {
-//                        x += s.split("\n")[i];
+//                    for (int i = 1; i < tmp.length - 1; i++) {
+//                        x += tmp[i];
 //                    }
-//                    s = x;
-//
-//                }else if(s.split("\n")[0].equals("{")){
-//                    s=s.substring(2);
-//
-//                    if (lastCon.equals(s.split("\n")[0])) {
-//
-//                        String x = "{\n";
-//                        for (int i = 1; i < s.split("\n").length; i++) {
-//                            x += s.split("\n")[i];
-//                        }
-//                        s = x;
-//                    }
-//                }
-//                else if(s.split("\n")[0].equals("}")){
-//                    newResult +="#endif";
-//                }
-//                else {
+//                    newResult += x;
+//                } else {
 //                    conditionStack.pop();
-//                    conditionStack.push(s.split("\n")[0]);
-//
+//                    conditionStack.push(tmp[0]);
+//                    newResult += "\n#endif\n" + tmp[0] + "\n";
+//                    for (int i = 1; i < tmp.length - 1; i++) {
+//                        newResult += tmp[i] + "\n";
+//                    }
+//                    newResult += s + "\n#endif\n";
 //                }
 //            } else {
-//                conditionStack.push(s.split("\n")[0]);
+//                conditionStack.push(tmp[0]);
+//                newResult += tmp[0] + "\n";
+//                for (int i = 1; i < tmp.length - 1; i++) {
+//                    newResult += tmp[i] + "\n";
+//                }
 //            }
-//            newResult +=s;
-//
-//
-//
-//
 //        }
-//        return newResult;
-//    }
+        return newResult+"#endif\n";
+    }
 
     @Override
     public final String toString() {

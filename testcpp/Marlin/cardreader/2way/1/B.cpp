@@ -32,3 +32,4 @@ CardReader::CardReader()
   
   autostart_atmillis=millis()+5000;
 }
+#endif

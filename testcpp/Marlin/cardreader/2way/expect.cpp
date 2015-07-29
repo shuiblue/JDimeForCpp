@@ -49,8 +49,11 @@ char *createFilename(char *buffer,const dir_t &p) //buffer>12characters
   return buffer;
 }
 
-
+>>>>>>>>>>>>>>>>>>>>>#ifdef ut7/Marlin/ut7
 void  CardReader::lsDive(const char *prepend,SdFile parent)
+>>>>>>>>>>>>>>>>>>>>>#else
+void CardReader::lsDive(const char *prepend, SdFile parent, const char * const match/*=NULL*/)
+>>>>>>>>>>>>>>>>>>>>>#endif
 {
   dir_t p;
  uint8_t cnt=0;
@@ -90,9 +93,13 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
 
       
     }
+
+
+
     else
     {
-      if (p.name[0] == DIR_NAME_FREE) break;
+>>>>>>>>>>>>>>>>>>>>>#ifdef ut7/Marlin/ut7
+  if (p.name[0] == DIR_NAME_FREE) break;
       if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
       if (longFilename[0] != '\0' &&
           (longFilename[0] == '.' || longFilename[0] == '_')) continue;
@@ -101,7 +108,14 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
         if ( p.name[1] != '.')
         continue;
       }
-      
+>>>>>>>>>>>>>>>>>>>>>#else
+      char pn0 = p.name[0];
+      if (pn0 == DIR_NAME_FREE) break;
+      if (pn0 == DIR_NAME_DELETED || pn0 == '.' || pn0 == '_') continue;
+      char lf0 = longFilename[0];
+      if (lf0 == '.' || lf0 == '_') continue;
+>>>>>>>>>>>>>>>>>>>>>#endif
+
       if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
       filenameIsDir=DIR_IS_SUBDIR(&p);
       
@@ -124,7 +138,13 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
       } 
       else if(lsAction==LS_GetFilename)
       {
-        if(cnt==nrFiles)
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+     if (match != NULL) {
+          if (strcasecmp(match, filename) == 0) return;
+        }
+        else 
+>>>>>>>>>>>>>>>>>>>>>#endif
+      if (cnt == nrFiles) 
           return;
         cnt++;
         
@@ -150,9 +170,23 @@ void CardReader::initsd()
   if(root.isOpen())
     root.close();
 #ifdef SDSLOW
-  if (!card.init(SPI_HALF_SPEED,SDSS))
+  if (!card.init(SPI_HALF_SPEED,SDSS)
+
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+  #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
+    && !card.init(SPI_HALF_SPEED,LCD_SDSS)
+  #endif
+>>>>>>>>>>>>>>>>>>>>>#endif
+    )
 #else
-  if (!card.init(SPI_FULL_SPEED,SDSS))
+  if (!card.init(SPI_FULL_SPEED,SDSS)
+
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+  #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
+    && !card.init(SPI_FULL_SPEED,LCD_SDSS)
+  #endif
+>>>>>>>>>>>>>>>>>>>>>#endif 
+    )
 #endif
   {
     //if (!card.init(SPI_HALF_SPEED,SDSS))
@@ -350,7 +384,19 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
       sdpos = 0;
       
       SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
-      lcd_setstatus(fname);
+
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+      getfilename(0, fname);
+>>>>>>>>>>>>>>>>>>>>>#endif
+
+
+      lcd_setstatus(
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+        longFilename[0] ? longFilename : 
+>>>>>>>>>>>>>>>>>>>>>#endif
+        fname);
+
+
     }
     else
     {
@@ -437,7 +483,7 @@ void CardReader::removeFile(char* name)
     if (file.remove(curDir, fname)) 
     {
       SERIAL_PROTOCOLPGM("File deleted:");
-      SERIAL_PROTOCOL(fname);
+      SERIAL_PROTOCOLLN(fname);
       sdpos = 0;
     }
     else
@@ -552,13 +598,25 @@ void CardReader::closefile(bool store_location)
   
 }
 
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+void CardReader::getfilename(uint16_t nr, const char * const match/*=NULL*/)
+>>>>>>>>>>>>>>>>>>>>>#else
 void CardReader::getfilename(const uint8_t nr)
+>>>>>>>>>>>>>>>>>>>>>#endif
+
 {
   curDir=&workDir;
   lsAction=LS_GetFilename;
   nrFiles=nr;
   curDir->rewind();
-  lsDive("",*curDir);
+
+>>>>>>>>>>>>>>>>>>>>>#ifndef ut7/Marlin/ut7
+lsDive("",*curDir,match);
+>>>>>>>>>>>>>>>>>>>>>#else
+lsDive("",*curDir);
+>>>>>>>>>>>>>>>>>>>>>#endif
+
+
   
 }
 

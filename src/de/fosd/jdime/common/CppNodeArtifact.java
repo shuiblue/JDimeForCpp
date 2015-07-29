@@ -48,7 +48,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         this.astnode = xmlDoc.getChild(0);
         this.initializeChildren();
-
         renumberTree();
     }
 
@@ -114,31 +113,31 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     if (node.getClass().getName().contains("Element")) {
 
                         if (((Element) node).getLocalName().equals("endif")) {
-                            conditionStack.pop();
+                            func_condStack.pop();
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("if")) {
                             String cond = node.getValue().substring(4);
-                            conditionStack.push(cond);
+                            func_condStack.push(cond);
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("ifndef")) {
                             String condition = astnode.getChild(i).getValue().substring(8);
-                            conditionStack.push("!defined (" + condition + ")");
+                            func_condStack.push("!defined (" + condition + ")");
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("ifdef")) {
                             String condition = astnode.getChild(i).getValue().substring(7);
-                            conditionStack.push("defined (" + condition + ")");
+                            func_condStack.push("defined (" + condition + ")");
                             continue;
                         }
                         if (((Element) node).getLocalName().equals("else")) {
                             if (((Element) node).getNamespacePrefix().equals("cpp")) {
-                                String condition = conditionStack.pop();
+                                String condition = func_condStack.pop();
                                 if (condition.contains("!")) {
-                                    conditionStack.push(condition.substring(1));
+                                    func_condStack.push(condition.substring(1));
                                 } else {
-                                    conditionStack.push("!" + condition);
+                                    func_condStack.push("!" + condition);
                                 }
                                 continue;
                             }
@@ -149,15 +148,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     if (node.getClass().getName().contains("Element")) {
                         if (!((Element) node).getLocalName().equals("name")
                                 && !((Element) node).getLocalName().equals("type")
-                                &&!((Element)node.getParent()).getLocalName().equals("function_decl")) {
+                                && !((Element) node.getParent()).getLocalName().equals("function_decl")) {
                             CppNodeArtifact child = new CppNodeArtifact(node, getRevision());
                             child.setParent(this);
 
                             child.setRevision(new Revision(getRevision().getName()));
 
 
-                            if (conditionStack != null) {
-                                child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+                            if (func_condStack != null) {
+                                child.getRevision().conditions.addAll(func_condStack.stream().collect(Collectors.toList()));
                             }
                             children.add(child);
 
@@ -487,7 +486,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         CppNodeArtifact left = triple.getLeft();
         CppNodeArtifact right = triple.getRight();
         CppNodeArtifact target = operation.getTarget();
-
         boolean safeMerge = true;
 
         if (!isRoot()) {
@@ -578,31 +576,25 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return mystats;
     }
 
-    Stack<String> conditionStack = new Stack<>();
+    Stack<String> func_condStack = new Stack<>();
+
 
     @Override
     public String prettyPrint() {
         String res = "";
-
         if (this.children != null && this.children.size() > 0) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
                 if (((Element) child.astnode).getLocalName().equals("function")) {
+
                     if (child.hasMatches()) {
                         res += printBlock(child);
+                    }else if(child.isChoice()){
+                        res+=printChoice(child);
                     }
-                    break;
-                }
-                if (((Element) child.astnode).getLocalName().equals("block")) {
-                    if (child.isChoice()) {
-                        res += printChoice(child);
-                    } else {
-                        res += "{\n";
-                        res += child.prettyPrint();
-                        res += "}\n";
-                    }
-                    break;
+res+="----\n";
+                    continue;
                 }
                 if (child.variants != null) {
                     for (String key : child.variants.keySet()) {
@@ -623,22 +615,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += this.toString() + "\n";
             res += "#endif\n";
         } else {
-            res += "#if " + "defined (" + getRevision() + ")";
+            String tmpCondition = "";
+            tmpCondition += "#if " + "defined (" + getRevision() + ")";
             if (getRevision().conditions.size() > 0) {
-                res += " && ";
+                tmpCondition += " && ";
             }
-            res += printCondition(getRevision());
+            tmpCondition += printCondition(getRevision());
+            res += tmpCondition;
             res += "\n" + this.toString() + "\n";
             res += "#endif\n";
+
         }
-        return res;
+
+        return res+"----\n";
     }
 
     private String printBlock(CppNodeArtifact child) {
         String res = "";
         HashMap<Integer, String> function_head = new HashMap<>();
         res += printMatch(child);
-        conditionStack.add(printMatch(child));
+        func_condStack.add(printMatch(child));
         for (int i = 0; i < child.astnode.getChildCount(); i++) {
             if (child.astnode.getChild(i).getClass().getName().contains("Element")) {
                 if (((Element) child.astnode.getChild(i)).getLocalName().equals("type")) {
@@ -665,7 +661,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
                 if (((Element) c.astnode).getLocalName().equals("block")) {
                     res += "{\n";
-                    if (c.children.size() == 1 && c.isChoice()) {
+                    if (c.isChoice()) {
                         res += printChoice(c);
                     } else {
                         if (c.children != null && c.children.size() > 0) {
@@ -673,7 +669,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             while (it4Block.hasNext()) {
                                 CppNodeArtifact c_block = it4Block.next();
 
-                                if (c_block.hasMatches() && printMatch(c_block).equals(conditionStack.lastElement())) {
+                                if (c_block.hasMatches() && printMatch(c_block).equals(func_condStack.lastElement())) {
 
                                     res += c_block.astnode.getValue() + "\n";
                                 } else if (c_block.isChoice()) {
@@ -691,7 +687,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             }
                         }
                     }
-                    res += "}\n#endif";
+                    res += "}\n#endif\n";
                 }
             }
         }
