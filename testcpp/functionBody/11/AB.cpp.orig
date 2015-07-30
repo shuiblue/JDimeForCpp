@@ -7,6 +7,7 @@ while
 #endif
 #if defined (B)
     string1[j] = string2[j];
+
     
 #endif
 }

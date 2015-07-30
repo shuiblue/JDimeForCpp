@@ -436,8 +436,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         if (astnode_Class.contains("Element")) {
             if (localEqual) {
-//                if (ast_localName.equals("unit")
-//                        || ast_localName.equals("block")) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
                     return true;
                 } else if (ast_localName.equals("function")
@@ -462,8 +460,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     String ast_condition = clearBlank(((Element) astnode).getChild(3).getValue());
                     String other_condition= clearBlank(((Element) other.getCppNode()).getChild(3).getValue());
 
-                    String ast_incr = clearBlank(((Element) astnode).getChild(4).getValue());
-                    String other_incr = clearBlank(((Element) other.getCppNode()).getChild(4).getValue());
+                    String ast_incr = clearBlank(((Element) astnode).getChild(5).getValue());
+                    String other_incr = clearBlank(((Element) other.getCppNode()).getChild(5).getValue());
 
 
                     return (ast_init+ast_condition+ast_incr).equals(other_init+other_condition+other_incr);
@@ -646,16 +644,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }else if(nodeLocalName.equals("for")){
             String ast_init =  clearBlank(((Element)cppNoArt. astnode).getChild(1).getValue());
             String ast_condition = clearBlank(((Element)cppNoArt. astnode).getChild(3).getValue());
-
-            String ast_incr = clearBlank(((Element) cppNoArt.astnode).getChild(4).getValue());
-
-
+            String ast_incr = clearBlank(((Element) cppNoArt.astnode).getChild(5).getValue());
             res +="for("+ast_init+ast_condition+ast_incr+")\n";
 
         }
-
-
-
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
         while (it.hasNext()) {
@@ -670,7 +662,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += "\n" + printChoice(c) + "#endif\n";
                 }
             }}
-//            if (((Element) c.astnode).getLocalName().equals("block")) {
             if (entity.getBlockEntity().contains(c_localName)) {
                 res += "{\n";
                 if (c.isChoice()) {
@@ -804,7 +795,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             String str = c.variants.keySet().toArray()[i].toString();
             s += "#if defined (" + str + ")";
             if (((Element) c.astnode).getLocalName().equals("block")) {
-                s += c.variants.get(str).toString().replace("{", "").replace("}", "");
+                for(int t=1;t<c.variants.get(str).astnode.getValue().split("\n").length-1;t++){
+                    s+="\n"+c.variants.get(str).astnode.getValue().split("\n")[t]+"\n";
+                }
+
             } else {
                 s += "\n" + c.variants.get(str) + "\n";
             }

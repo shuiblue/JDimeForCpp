@@ -3,8 +3,7 @@
 
 
 
-void a()
-{
+void a() {
 
 
 

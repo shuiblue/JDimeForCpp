@@ -2,8 +2,7 @@
 
 
 
-void a()
-{
+void a() {
 
 
 

@@ -1,12 +1,14 @@
 #if defined (A) || defined (B)
 void a(){
 #if defined (A)
-i=0;
+do {x--;} while ( x > 0 );
 #endif
 #if defined (B)
-i=2;
+do {
 
-j=0;
+	y--;
+
+s++;} while ( x > 0 );
 #endif
 }
 #endif

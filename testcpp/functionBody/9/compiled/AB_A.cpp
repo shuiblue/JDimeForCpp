@@ -5,8 +5,7 @@ int x=0;
 int y=0;
 
 
-void a()
-{
+void a() {
 
     i=0;
 
@@ -17,7 +16,6 @@ void a()
 
 
 int z=0;
-void aa()
-{
+void aa() {
     j=0;
 }

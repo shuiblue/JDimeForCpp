@@ -3,8 +3,7 @@ int x=0;
 int y=0;
 
 
-void a()
-{
+void a() {
 
 
     i=0;

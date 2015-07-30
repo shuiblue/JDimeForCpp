@@ -2,8 +2,7 @@
 int x=0;
 #endif
 #if defined (A) || defined (B)
-void a()
-{
+void a() {
 #if defined (A)
     i=0;
 #endif
