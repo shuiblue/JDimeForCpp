@@ -613,6 +613,7 @@ public class FileArtifact extends Artifact<FileArtifact> {
 		try (FileWriter writer = new FileWriter(file)) {
 			writer.write(str);
 		}
+
 	}
 
 	@Override

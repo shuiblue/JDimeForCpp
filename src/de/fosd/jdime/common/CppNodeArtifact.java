@@ -623,8 +623,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (c.hasMatches()) {
                     res += c.astnode.getValue();
                 } else {
-                    res += "\n#endif\n";
-                    res += printChoice(c) + "#endif\n";
+
+                    res += "\n"+printChoice(c) + "#endif\n";
                 }
             }
             if (((Element) c.astnode).getLocalName().equals("block")) {

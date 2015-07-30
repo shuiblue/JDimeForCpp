@@ -192,6 +192,12 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     assert (target.exists());
                     target.write(context.getStdIn());
                 }
+                try {
+                    Process process = new ProcessBuilder("astyle/bin/astyle",
+                            "--style=bsd",context.getOutputFile().getPath()).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");

@@ -1,8 +1,9 @@
 #if defined (A) || defined (B)
-void a(){
-i=0;
+void a()
+{
+    i=0;
 #if defined (B)
-j=0;
+    j=0;
 #endif
 }
 #endif
