@@ -329,7 +329,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
      *
      * @return Pretty-printed AST (source code)
      */
-    public abstract String prettyPrint();
+    public abstract String
+    prettyPrint();
 
     /**
      * Returns true if this artifact physically exists.
