@@ -22,6 +22,8 @@ public class Entity {
         nonTerminal.add("constructor");
         nonTerminal.add("while");
         nonTerminal.add("for");
+        nonTerminal.add("class");
+        nonTerminal.add("private");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -35,6 +37,9 @@ public class Entity {
         terminal.add("incr");
         terminal.add("condition");
         terminal.add("do");
+        terminal.add("function_decl");
+      terminal.add("template");
+      terminal.add("super");
 
 /* head entity of
  function : (return type+function name)
@@ -45,11 +50,12 @@ public class Entity {
         headEntity = new HashSet<>();
         headEntity.add("name");
         headEntity.add("type");
-        headEntity.add("function_decl");
+
 
         matchedEntity = new HashSet<>();
         matchedEntity.add("unit");
         matchedEntity.add("block");
+        matchedEntity.add("private");
 
         blockEntity = new HashSet<>();
         blockEntity.add("block");
