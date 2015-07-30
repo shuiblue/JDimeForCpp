@@ -250,10 +250,6 @@ A:                      | B:
     }
     /*
 test11
-A:                      | B:
-void a()  {             | void b()  {
-i=0;                    | i=0;
-}                       |}
 
 */
     @Test
@@ -261,6 +257,31 @@ i=0;                    | i=0;
         inputFileInit(2);
         String testNum = "11/";
         System.out.println("------test11-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
+    /*
+test12
+
+*/
+    @Test
+    public void test12() {
+        inputFileInit(2);
+        String testNum = "12/";
+        System.out.println("------test12-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    @Test
+    public void test13() {
+        inputFileInit(2);
+        String testNum = "13/";
+        System.out.println("------test13-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
