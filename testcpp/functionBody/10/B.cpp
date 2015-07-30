@@ -1,5 +1,3 @@
-int x=0;
-void a(){
-i=1;
+void a(xx){
+	int i=0;
 }
-

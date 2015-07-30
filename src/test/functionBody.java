@@ -231,7 +231,23 @@ j=1 ;                   |
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
 //        afterTest();
     }
+    /*
+test10
+A:                      | B:
 
+}
+
+*/
+    @Test
+    public void test10() {
+        inputFileInit(2);
+        String testNum = "10/";
+        System.out.println("------test10-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
     /*
 test11
 A:                      | B:
@@ -249,6 +265,5 @@ i=0;                    | i=0;
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
-//        afterTest();
     }
 }
