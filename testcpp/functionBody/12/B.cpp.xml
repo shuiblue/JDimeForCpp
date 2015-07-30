@@ -3,7 +3,7 @@
 	<expr_stmt><expr><name>a</name>=0</expr>;</expr_stmt>
 <while>while <condition>( <expr><name>i</name> &gt;= 0</expr> )</condition> 
 <block>{
-    <expr_stmt><expr><name><name>string1</name><index>[<expr><name>i</name></expr>]</index></name> = <name><name>string2</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>string1</name><index>[<expr><name>x</name></expr>]</index></name> = <name><name>string2</name><index>[<expr><name>x</name></expr>]</index></name></expr>;</expr_stmt>
     
 }</block></while>
 }</block></function>
