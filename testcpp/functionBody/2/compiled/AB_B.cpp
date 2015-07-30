@@ -1,6 +1,5 @@
 
-void a()
-{
+void a() {
 
 
 

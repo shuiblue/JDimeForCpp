@@ -193,7 +193,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
                 try {
                     Process process = new ProcessBuilder("astyle/bin/astyle",
-                            "--style=allman",context.getOutputFile().getPath()).start();
+                            "--style=google","-xe",context.getOutputFile().getPath()).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

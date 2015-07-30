@@ -2,8 +2,7 @@
 int x=0;
 
 
-void a()
-{
+void a() {
 
 
 

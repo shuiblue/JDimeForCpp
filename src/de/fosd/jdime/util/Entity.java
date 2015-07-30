@@ -34,10 +34,14 @@ public class Entity {
         terminal.add("init");
         terminal.add("incr");
         terminal.add("condition");
+        terminal.add("do");
 
-// head entity of
-// function : (return type+function name)
-        // for loop: init+ condition+incr
+/* head entity of
+ function : (return type+function name)
+ for loop : init+ condition+incr
+
+
+ */
         headEntity = new HashSet<>();
         headEntity.add("name");
         headEntity.add("type");

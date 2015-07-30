@@ -3,8 +3,7 @@ int x=0;
 int y=0;
 #endif
 #if defined (A) || defined (B)
-void a()
-{
+void a() {
 #if defined (A)
 #ifdef X
     i=0;

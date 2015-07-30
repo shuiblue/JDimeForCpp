@@ -1,22 +1,17 @@
 #if defined (A) || defined (B)
-void a()
-{
-    for(i=0; i<max;)
-    {
+void a() {
+    for(i=0; i<max; i++) {
 #if defined (A)
-        if ( line[i] == ' ' )
-        {
+        if ( line[i] == ' ' ) {
             aaa++;
         }
 #endif
 #if defined (B)
-        if ( line[i] == ' ' )
-        {
+        if ( line[i] == ' ' ) {
             space++;
         }
 #endif
-        if ( line[i] == '\t' )
-        {
+        if ( line[i] == '\t' ) {
             tab++;
         }
     }
