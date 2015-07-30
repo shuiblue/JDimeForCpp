@@ -1,0 +1,8 @@
+#if defined (A) || defined (B)
+class Foo
+#if defined (A)
+:public bar
+#endif
+{
+}
+#endif

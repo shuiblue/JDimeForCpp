@@ -140,7 +140,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     if (node.getClass().getName().contains("Element")) {
                         String localName = ((Element) node).getLocalName();
-                        if(!entity.getHeadEntity().contains(localName)){
+                        if (!entity.getHeadEntity().contains(localName)) {
                             CppNodeArtifact child = new CppNodeArtifact(node, getRevision());
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
@@ -440,33 +440,46 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     return true;
                 } else if (ast_localName.equals("function")
                         || ast_localName.equals("constructor")) {
-                    String astnode_type = ((Element) astnode).getChild(0).getValue();
-                    String astnode_func_name = ((Element) astnode).getChild(2).getValue();
+                    String astnode_type = astnode.getChild(0).getValue();
+                    String astnode_func_name = (astnode).getChild(2).getValue();
 
-                    String other_type = ((Element) other.getCppNode()).getChild(0).getValue();
-                    String other_func_name = ((Element) other.getCppNode()).getChild(2).getValue();
+                    String other_type = (other.getCppNode()).getChild(0).getValue();
+                    String other_func_name = (other.getCppNode()).getChild(2).getValue();
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
-                }else if(ast_localName.equals("while")) {
+                } else if (ast_localName.equals("while")) {
 
-                    String ast_condition =  clearBlank(((Element) astnode).getChild(1).getValue());
-                    String other_condition =  clearBlank(((Element) other.getCppNode()).getChild(1).getValue());
-                    String ast_block = clearBlank(((Element) astnode).getChild(3).getValue());
-                    String other_block = clearBlank(((Element) other.getCppNode()).getChild(3).getValue());
-                    return ast_block.equals(other_block)||ast_condition.equals(other_condition);
-                }else if( ast_localName.equals("for")) {
-                    String ast_init =  clearBlank(((Element) astnode).getChild(1).getValue());
-                    String other_init =  clearBlank(((Element) other.getCppNode()).getChild(1).getValue());
-                    String ast_condition = clearBlank(((Element) astnode).getChild(3).getValue());
-                    String other_condition= clearBlank(((Element) other.getCppNode()).getChild(3).getValue());
+                    String ast_condition = clearBlank((astnode).getChild(1).getValue());
+                    String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_block = clearBlank((astnode).getChild(3).getValue());
+                    String other_block = clearBlank((other.getCppNode()).getChild(3).getValue());
+                    return ast_block.equals(other_block) || ast_condition.equals(other_condition);
+                } else if (ast_localName.equals("for")) {
+                    String ast_init = clearBlank((astnode).getChild(1).getValue());
+                    String other_init = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_condition = clearBlank((astnode).getChild(3).getValue());
+                    String other_condition = clearBlank((other.getCppNode()).getChild(3).getValue());
 
-                    String ast_incr = clearBlank(((Element) astnode).getChild(5).getValue());
-                    String other_incr = clearBlank(((Element) other.getCppNode()).getChild(5).getValue());
+                    String ast_incr = clearBlank((astnode).getChild(5).getValue());
+                    String other_incr = clearBlank((other.getCppNode()).getChild(5).getValue());
 
 
-                    return (ast_init+ast_condition+ast_incr).equals(other_init+other_condition+other_incr);
+                    return (ast_init + ast_condition + ast_incr).equals(other_init + other_condition + other_incr);
 
-                }else {
+                } else if (ast_localName.equals("class")) {
+                    String ast_className = clearBlank((astnode).getChild(1).getValue());
+                    String other_className = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_suffix = "";
+                    String other_suffix = "";
+
+                    if(astnode.getChild(3).getClass().getName().equals("super")||
+                            other.getCppNode().getChild(3).getClass().getName().equals("super")  ){
+                        ast_suffix=clearBlank((astnode).getChild(3).getValue());
+                        other_suffix=clearBlank((other.getCppNode()).getChild(3).getValue());
+
+                    }
+                    return (ast_className+ast_suffix).equals(other_className+other_suffix);
+                } else {
                     return match;
                 }
             }
@@ -476,8 +489,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return false;
     }
 
-    public String clearBlank(String s){
-        return s.replace("\n","").replace(" ","").replace("\t","");
+    public String clearBlank(String s) {
+        return s.replace("\n", "").replace(" ", "").replace("\t", "");
     }
 
     @Override
@@ -634,34 +647,37 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String blockCondition = printMatchCondition(cppNoArt);
         res += blockCondition;
 
-        String nodeLocalName = ((Element)cppNoArt.astnode).getLocalName();
-        if(nodeLocalName.equals("function")||nodeLocalName.equals("while")) {
+        String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
+        if (nodeLocalName.equals("function") || nodeLocalName.equals("while")) {
             //get function return type and name
             //while (while +condition)
             String returnType = (cppNoArt.astnode.getChild(0)).getValue();
             String funcName = (cppNoArt.astnode.getChild(2)).getValue();
             res += returnType + " " + funcName;
-        }else if(nodeLocalName.equals("for")){
-            String ast_init =  clearBlank(((Element)cppNoArt. astnode).getChild(1).getValue());
-            String ast_condition = clearBlank(((Element)cppNoArt. astnode).getChild(3).getValue());
-            String ast_incr = clearBlank(((Element) cppNoArt.astnode).getChild(5).getValue());
-            res +="for("+ast_init+ast_condition+ast_incr+")\n";
+        } else if (nodeLocalName.equals("for")) {
+            String ast_init = clearBlank(( cppNoArt.astnode).getChild(1).getValue());
+            String ast_condition = clearBlank(( cppNoArt.astnode).getChild(3).getValue());
+            String ast_incr = clearBlank(( cppNoArt.astnode).getChild(5).getValue());
+            res += "for(" + ast_init + ast_condition + ast_incr + ")\n";
 
+        }else if(nodeLocalName.equals("class")){
+            res+="class "+cppNoArt.astnode.getChild(1).getValue();
         }
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
         while (it.hasNext()) {
             CppNodeArtifact c = it.next();
             String c_localName = ((Element) c.astnode).getLocalName();
-            if(!nodeLocalName.equals("for")){
-            if (entity.getTerminal().contains(c_localName)) {
-                if (c.hasMatches()) {
-                    res += c.astnode.getValue();
-                } else {
+            if (!nodeLocalName.equals("for")) {
+                if (entity.getTerminal().contains(c_localName)) {
+                    if (c.hasMatches()) {
+                        res += c.astnode.getValue();
+                    } else {
 
-                    res += "\n" + printChoice(c) + "#endif\n";
+                        res += "\n" + printChoice(c) + "#endif\n";
+                    }
                 }
-            }}
+            }
             if (entity.getBlockEntity().contains(c_localName)) {
                 res += "{\n";
                 if (c.isChoice()) {
@@ -795,8 +811,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             String str = c.variants.keySet().toArray()[i].toString();
             s += "#if defined (" + str + ")";
             if (((Element) c.astnode).getLocalName().equals("block")) {
-                for(int t=1;t<c.variants.get(str).astnode.getValue().split("\n").length-1;t++){
-                    s+="\n"+c.variants.get(str).astnode.getValue().split("\n")[t]+"\n";
+                for (int t = 1; t < c.variants.get(str).astnode.getValue().split("\n").length - 1; t++) {
+                    s += "\n" + c.variants.get(str).astnode.getValue().split("\n")[t] + "\n";
                 }
 
             } else {
