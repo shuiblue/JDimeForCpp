@@ -9,10 +9,11 @@ import java.util.Set;
 public class Entity {
     Set<String> nonTerminal = null;
     Set<String> terminal = null;
+
+
     Set<String> blockEntity = null;
-
-
     Set<String> matchedEntity = null;
+    Set<String> headEntity = null;
 
 
     public Entity() {
@@ -20,27 +21,34 @@ public class Entity {
         nonTerminal.add("function");
         nonTerminal.add("constructor");
         nonTerminal.add("while");
+        nonTerminal.add("for");
 
         terminal = new HashSet<>();
         terminal.add("name");
         terminal.add("parameter_list");
-        terminal.add("condition");
         terminal.add("type");
         terminal.add("define");
-        terminal.add("for");
         terminal.add("return");
         terminal.add("decl_stmt");
         terminal.add("expr_stmt");
+        terminal.add("init");
+        terminal.add("incr");
+        terminal.add("condition");
 
-        blockEntity = new HashSet<>();
-        blockEntity.add("name");
-        blockEntity.add("type");
-        blockEntity.add("function_decl");
+// head entity of
+// function : (return type+function name)
+        // for loop: init+ condition+incr
+        headEntity = new HashSet<>();
+        headEntity.add("name");
+        headEntity.add("type");
+        headEntity.add("function_decl");
 
         matchedEntity = new HashSet<>();
         matchedEntity.add("unit");
         matchedEntity.add("block");
-        matchedEntity.add("while");
+
+        blockEntity = new HashSet<>();
+        blockEntity.add("block");
 
     }
 
@@ -53,13 +61,16 @@ public class Entity {
         return terminal;
     }
 
-    public Set<String> getBlockEntity() {
+    public Set<String> getHeadEntity() {
 
-        return blockEntity;
+        return headEntity;
     }
 
     public Set<String> getMatchedEntity() {
         return matchedEntity;
     }
 
+    public Set<String> getBlockEntity() {
+        return blockEntity;
+    }
 }

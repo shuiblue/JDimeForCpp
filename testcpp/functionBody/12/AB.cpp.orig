@@ -4,7 +4,13 @@ a=0;
 #if defined (A) && defined (X) || defined (B)
 while   
 ( i >= 0 ){
-string1[i] = string2[i];
+#if defined (A)
+    string1[i] = string2[i];
+#endif
+#if defined (B)
+    string1[x] = string2[x];
+    
+#endif
 }
 #endif
 }
