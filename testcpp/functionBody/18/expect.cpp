@@ -5,13 +5,17 @@ class Foo
 #endif
 {
     int i=0;
-#if defined (A)
     long a=0;
     int y=0;
+#if defined (B) && defined (X)
+    int t=0;
+#endif
   protected:
-    int s = 0;
-
-
+#if defined (A) || defined (B)
+    int s = 1;
+#endif
+#if defined (A)
+    int ss=0;
 #endif
 }
 #endif
