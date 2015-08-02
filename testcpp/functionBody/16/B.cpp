@@ -1,1 +1,1 @@
-class Foo {int i=0;};
+class Foo {int i=0;}

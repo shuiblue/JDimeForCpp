@@ -16,6 +16,8 @@ public class Entity {
     Set<String> headEntity = null;
 
 
+    Set<String> classBody = null;
+
     public Entity() {
         nonTerminal = new HashSet<>();
         nonTerminal.add("function");
@@ -24,6 +26,8 @@ public class Entity {
         nonTerminal.add("for");
         nonTerminal.add("class");
         nonTerminal.add("private");
+        nonTerminal.add("protected");
+        nonTerminal.add("public");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -38,8 +42,10 @@ public class Entity {
         terminal.add("condition");
         terminal.add("do");
         terminal.add("function_decl");
-      terminal.add("template");
-      terminal.add("super");
+        terminal.add("constructor_decl");
+        terminal.add("destructor_decl");
+        terminal.add("template");
+        terminal.add("super");
 
 /* head entity of
  function : (return type+function name)
@@ -56,9 +62,16 @@ public class Entity {
         matchedEntity.add("unit");
         matchedEntity.add("block");
         matchedEntity.add("private");
+        matchedEntity.add("public");
+        matchedEntity.add("protected");
 
         blockEntity = new HashSet<>();
         blockEntity.add("block");
+
+        classBody = new HashSet<>();
+        classBody.add("private");
+        classBody.add("public");
+        classBody.add("protected");
 
     }
 
@@ -82,5 +95,9 @@ public class Entity {
 
     public Set<String> getBlockEntity() {
         return blockEntity;
+    }
+
+    public Set<String> getClassBody() {
+        return classBody;
     }
 }

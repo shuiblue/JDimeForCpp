@@ -5,6 +5,6 @@ class Foo:public bar
 	int y=0;
 
 protected: 
-	int s = 0;
+	int s = 1;
 
 }

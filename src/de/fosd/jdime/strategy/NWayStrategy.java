@@ -243,33 +243,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 newResult += tmp[i] + "\n";
             }
         }
-//        {
-//            String[] tmp = e.split("\n");
-//            if (conditionStack.size() > 0) {
-//                String lastCon = conditionStack.lastElement();
-//                if (lastCon.equals(tmp[0])) {
-//                    String x = "";
-//                    for (int i = 1; i < tmp.length - 1; i++) {
-//                        x += tmp[i];
-//                        }
-//                    newResult += x;
-//                } else {
-//                    conditionStack.pop();
-//                    conditionStack.push(tmp[0]);
-//                    newResult += "\n#endif\n" + tmp[0] + "\n";
-//                    for (int i = 1; i < tmp.length - 1; i++) {
-//                        newResult += tmp[i] + "\n";
-//                    }
-//                    newResult += s + "\n#endif\n";
-//                }
-//            } else {
-//                conditionStack.push(tmp[0]);
-//                newResult += tmp[0] + "\n";
-//                for (int i = 1; i < tmp.length - 1; i++) {
-//                    newResult += tmp[i] + "\n";
-//            }
-//        }
-//    }
         return newResult+"#endif\n";
     }
 
