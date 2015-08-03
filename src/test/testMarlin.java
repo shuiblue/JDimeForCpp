@@ -1,5 +1,6 @@
 package test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-
+@Ignore
     @Test
     public void test2() {
         String path = "testcpp/Marlin/ConfigurationStore/2way/";
@@ -70,6 +71,7 @@ B : ut7
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
+    @Ignore
     @Test
     public void test3() {
         String path = "testcpp/Marlin/Marlin_main/2way/";
@@ -83,6 +85,7 @@ B : ut7
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
+    @Ignore
     @Test
     public void test4() {
         String path = "testcpp/Marlin/planner/2way/";

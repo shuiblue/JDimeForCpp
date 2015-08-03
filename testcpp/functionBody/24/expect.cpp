@@ -4,24 +4,18 @@ class Computer
     :public bar
 #endif
 {
-    switch( i ) {
-    case -1
-            :
+    while
+    ( i-- > 0 ) {
+        x = f( i );
+        if ( x == 1 ) {
 #if defined (A)
-        n++;
+            continue;
 #endif
 #if defined (B)
-        p++;
+            t++;
 #endif
-        break;
-    case 0
-            :
-        z++;
-        break;
-    case 1
-            :
-        p++;
-        break;
+        }
+        y += x * x;
     }
 }
 #endif

@@ -29,10 +29,12 @@ public class Entity {
         nonTerminal.add("protected");
         nonTerminal.add("public");
         nonTerminal.add("if");
-        nonTerminal.add("then");
-        nonTerminal.add("else");
+//        nonTerminal.add("then");
+//        nonTerminal.add("else");
         nonTerminal.add("switch");
         nonTerminal.add("case");
+//        nonTerminal.add("block");
+        nonTerminal.add("do");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -45,7 +47,7 @@ public class Entity {
         terminal.add("init");
         terminal.add("incr");
         terminal.add("condition");
-        terminal.add("do");
+//        terminal.add("do");
         terminal.add("function_decl");
         terminal.add("constructor_decl");
         terminal.add("destructor_decl");
@@ -82,6 +84,7 @@ public class Entity {
         blockEntity.add("block");
         blockEntity.add("then");
         blockEntity.add("else");
+        blockEntity.add("do");
 
         classBody = new HashSet<>();
         classBody.add("private");

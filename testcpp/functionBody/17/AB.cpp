@@ -20,6 +20,7 @@ class Foo
   protected:
     int s = 0;
 
+
 #endif
 }
 #endif

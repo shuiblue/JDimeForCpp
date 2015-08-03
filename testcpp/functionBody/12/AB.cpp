@@ -4,7 +4,7 @@ void a() {
 #if defined (A) && defined (X) || defined (B)
     while
     ( i >= 0 ) {
-#if defined (A)
+#if defined (A) && defined (X)
         string1[i] = string2[i];
 #endif
 #if defined (B)

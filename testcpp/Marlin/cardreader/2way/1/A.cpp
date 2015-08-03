@@ -9,58 +9,15 @@ void CardReader::lsDive(const char *prepend, SdFile parent, const char * const m
     {
 
       char path[13*2];
-      char lfilename[13];
-      createFilename(lfilename,p);
-      
-      path[0]=0;
-      if(strlen(prepend)==0) //avoid leading / if already in prepend
-      {
-       strcat(path,"/");
-      }
-      strcat(path,prepend);
-      strcat(path,lfilename);
-      strcat(path,"/");
-      
-      //Serial.print(path);
-      
-      SdFile dir;
-      if(!dir.open(parent,lfilename, O_READ))
-      {
-        if(lsAction==LS_SerialPrint)
-        {
-          SERIAL_ECHO_START;
-          SERIAL_ECHOLN(MSG_SD_CANT_OPEN_SUBDIR);
-          SERIAL_ECHOLN(lfilename);
-        }
-      }
-      lsDive(path,dir);
-      //close done automatically by destructor of SdFile
-
       
     }
     else
     {
-      char pn0 = p.name[0];
-      if (pn0 == DIR_NAME_FREE) break;
-      if (pn0 == DIR_NAME_DELETED || pn0 == '.' || pn0 == '_') continue;
-      char lf0 = longFilename[0];
-      if (lf0 == '.' || lf0 == '_') continue;
-
-      if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
-      filenameIsDir=DIR_IS_SUBDIR(&p);
       
-      
-      if(!filenameIsDir)
-      {
-        if(p.name[8]!='G') continue;
-        if(p.name[9]=='~') continue;
-      }
-      //if(cnt++!=nr) continue;
-      createFilename(filename,p);
+     
       if(lsAction==LS_SerialPrint)
       {
-        SERIAL_PROTOCOL(prepend);
-        SERIAL_PROTOCOLLN(filename);
+        a=0;
       }
       else if(lsAction==LS_Count)
       {

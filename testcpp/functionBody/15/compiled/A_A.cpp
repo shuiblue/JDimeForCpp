@@ -1,3 +1,4 @@
 void a(){
-do {x--;} while ( x > 0 );
+do {x--;}
+ while ( x > 0 );
 }

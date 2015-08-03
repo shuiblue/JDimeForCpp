@@ -11,9 +11,9 @@ class Foo
     int t=0;
 #endif
   protected:
-#if defined (A) || defined (B)
+
     int s = 1;
-#endif
+
 #if defined (A)
     int ss=0;
 #endif

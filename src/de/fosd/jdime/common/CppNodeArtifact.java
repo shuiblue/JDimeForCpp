@@ -447,11 +447,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     String other_func_name = (other.getCppNode()).getChild(2).getValue();
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
-                } else if (ast_localName.equals("if")||ast_localName.equals("switch")||ast_localName.equals("case")) {
+                } else if (ast_localName.equals("switch") || ast_localName.equals("case")) {
                     String ast_condition = clearBlank((astnode).getChild(1).getValue());
                     String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+
                     return ast_condition.equals(other_condition);
-                } else if (ast_localName.equals("while")) {
+                } else if (ast_localName.equals("if")) {
+
+                    String ast_condition = clearBlank((astnode).getChild(1).getValue());
+                    String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+
+                    String ast_then = clearBlank((astnode).getChild(2).getValue());
+                    String other_then = clearBlank((other.getCppNode()).getChild(2).getValue());
+
+
+                    return ast_condition.equals(other_condition) || ast_then.equals(other_then);
+
+                } else if (ast_localName.equals("while") || ast_localName.equals("do")) {
 
                     String ast_condition = clearBlank((astnode).getChild(1).getValue());
                     String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
@@ -623,7 +635,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         String localName = ((Element) this.astnode).getLocalName();
 
                         if (localName.equals("public") || localName.equals("protected")) {
-                            res += localName + ":\n";
+                            res += localName + ":\n----\n";
                         }
                     }
                     res += printMatchNode(child);
@@ -638,19 +650,27 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (this.matches != null) {
             res += printMatchNode(this);
         } else {
-            res += printSingleNode();
+            res += printSingleNode(this);
         }
         res += "----\n";
         return res;
     }
 
 
-
+    /**
+     * This function presice the pretty print result of a block when:
+     * 1)neighbor lines have the same condition
+     * 2) the element has the same condition with the block
+     *
+     * @param res            origin pretty print result
+     * @param blockCondition condition of the block
+     * @return presiced result
+     */
     public String presicePrettyprint(String res, String blockCondition) {
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("----\n");
-        if (elements.length == 1||!res.startsWith("#if")) {
+        if (elements.length == 1 || !res.startsWith("#if")) {
             if (elements[0].split("\n")[0].equals(blockCondition.replace("\n", ""))) {
                 String s = "";
                 for (int i = 1; i < elements[0].split("\n").length - 1; i++) {
@@ -661,8 +681,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return res;
         }
         for (String e : elements) {
-            if (e.length() > 0&&!e.equals("\n")) {
+            if (e.length() > 0 && !e.equals("\n")) {
                 String[] tmp = e.split("\n");
+
+
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
                     if (lastCon.equals(tmp[0])) {
@@ -674,8 +696,27 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         continue;
                     } else {
                         conditionStack.pop();
-                        conditionStack.push(tmp[0]);
+
                         newResult += "#endif\n";
+
+
+                        if (tmp[0].equals(blockCondition.replace("\n", ""))) {
+
+                            newResult += "#endif\n";
+
+                            if (tmp.length > 3) {
+                                for (int i = 1; i < tmp.length - 1; i++) {
+                                    newResult += tmp[i] + "\n";
+                                }
+                            } else {
+                                newResult += tmp[1] + "\n";
+                            }
+                            continue;
+                        } else if (!tmp[0].startsWith("#if defined")) {
+                            newResult += e;
+                            continue;
+                        }
+                        conditionStack.push(tmp[0]);
                         for (int i = 0; i < tmp.length - 1; i++) {
                             newResult += tmp[i] + "\n";
                         }
@@ -684,8 +725,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 
                     if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
-                        conditionStack.push(tmp[0]);
-
+                        if (tmp[0].startsWith("#if defined")) {
+                            conditionStack.push(tmp[0]);
+                        }
                         newResult += tmp[0] + "\n";
                     }
                     for (int i = 1; i < tmp.length - 1; i++) {
@@ -695,14 +737,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
             }
         }
-        if (res.replace(" ", "").startsWith("#if")) {
-            return newResult + "#endif\n";
-        } else {
-            return newResult;
+
+        if (conditionStack.size() > 0) {
+            conditionStack.pop();
+            newResult += "\n#endif\n";
         }
+
+        return newResult;
     }
 
-
+    /**
+     * This function pretty print the non-terminal node.
+     * if the node  has matched other node ,then printBlock(c)
+     * if the node is a choice node, then printChoice(c)
+     *
+     * @param c
+     * @return
+     */
     public String printNonTerminalNode(CppNodeArtifact c) {
         String res = "";
         if (c.hasMatches()) {
@@ -716,6 +767,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     Stack<String> block_condStack = new Stack<>();
 
+    /**
+     * This function print the  content in a block
+     *
+     * @param cppNoArt
+     * @return
+     */
     private String printBlock(CppNodeArtifact cppNoArt) {
         String res = "";
         String blockCondition = printMatchCondition(cppNoArt);
@@ -745,18 +802,29 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += "switch";
         } else if (nodeLocalName.equals("case")) {
             res += "case ";
+        } else if (nodeLocalName.equals("do")) {
+            res += "do ";
         }
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
         while (it.hasNext()) {
             CppNodeArtifact c = it.next();
             String c_localName = ((Element) c.astnode).getLocalName();
+
             if (!nodeLocalName.equals("for")) {
                 if (entity.getTerminal().contains(c_localName)) {
                     if (c.hasMatches()) {
-                        res += c.astnode.getValue()+"\n";
-                        if(c.astnode.getValue().contains("break")){
-                            res+="#endif\n";
+
+                        if (((Element) c.astnode).getLocalName().equals("condition") && ((Element) c.getParent().astnode).getLocalName().equals("do")) {
+                            res += "while ";
+                            res += c.astnode.getValue() + ";";
+                        } else {
+                            res += c.astnode.getValue() + "\n";
+                        }
+
+
+                        if (c.astnode.getValue().contains("break")) {
+                            res += "#endif\n";
                         }
                     } else {
 
@@ -764,21 +832,31 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     }
                 }
             }
-            if(c_localName.equals("expr")&&((Element)c.getParent().astnode).getLocalName().equals("case")){
-                res+=":";
+            if (c_localName.equals("expr") && ((Element) c.getParent().astnode).getLocalName().equals("case")) {
+                res += ":";
             }
-
-
-
             if (entity.getBlockEntity().contains(c_localName)) {
-                if (!c_localName.equals("else")) {
-                    res += "{\n";
-                }
                 String blockString = "";
 
-                if (c.isChoice()) {
+                if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
+                    if (!c_localName.equals("else")) {
+                        res += "{\n";
+                    }
                     blockString += printChoice(c) + "#endif\n";
-                } else {
+                } else { // c has matched with other node
+
+                    String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+                    if (c_localName.equals("else")) {
+                        res += printMatchCondition(c);
+                        if (!child_localName.equals("if")) {
+                            res += "else ";
+                        } else {
+                            res += "";
+                        }
+
+                    } else {
+                        res += "{\n";
+                    }
                     Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
                     while (it4Block.hasNext()) {
                         CppNodeArtifact c_block = it4Block.next();
@@ -808,9 +886,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                                     if (entity.getNonTerminal().contains(c_block_localName)) {
                                         String block = printNonTerminalNode(c_block);
-                                        for (int i = 1; i < block.split("\n").length - 1; i++) {
-                                            blockString += block.split("\n")[i] + "\n";
-                                        }
+                                        blockString += presicePrettyprint(block, blockCondition);
                                         continue;
                                     }
                                     blockString += condition;
@@ -830,9 +906,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             } else {
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
                                     String block = printNonTerminalNode(c_block);
-                                    for (int i = 1; i < block.split("\n").length - 1; i++) {
-                                        blockString += block.split("\n")[i] + "\n";
-                                    }
+                                    blockString += presicePrettyprint(block, blockCondition);
                                     continue;
                                 }
                                 if (c_block.hasMatches()) {
@@ -847,7 +921,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     blockString += printNonTerminalNode(c_block);
                                     continue;
                                 }
-
                                 block_condStack.add(condition);
                                 if (c_block.hasMatches()) {
                                     blockString += "#endif";
@@ -856,20 +929,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     blockString += printChoice(c_block);
                                 }
                             } else {
-                                String block ;
+                                String block;
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
                                     block = printNonTerminalNode(c_block);
                                     blockString += presicePrettyprint(block, blockCondition);
                                     continue;
                                 } else if (entity.getBlockEntity().contains(c_block_localName)) {
                                     block = printBlock(c_block) + "\n#endif\n";
-                                    for (int i = 1; i < block.split("\n").length - 1; i++) {
-                                        blockString += block.split("\n")[i] + "\n";
-                                    }
+                                    blockString += presicePrettyprint(block, blockCondition);
                                     continue;
                                 }
-
-
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
@@ -888,35 +957,80 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     blockString = presicePrettyprint(blockString, blockCondition);
                 }
                 res += blockString;
-                if (!c_localName.equals("else")) {
-                    res += "}\n#endif";
-                }
-                res += "----\n";
-            }else if(entity.getNonTerminal().contains(c_localName)){
-                String s=printNonTerminalNode(c);
 
-                s=presicePrettyprint(s,blockCondition);
-                res+=s;
+
+                String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+
+                if (c.hasMatches()) {
+                    if (c_localName.equals("else")) {
+                        if (child_localName.equals("if")) {
+                            res += "}\n";
+                        } else {
+                            res += "";
+                        }
+
+                    } else {
+                        if (res.startsWith("#if"))
+                            res += "}\n#endif";
+                    }
+
+                }else { if (!c_localName.equals("else")) {
+                        res+="}\n#endif";
+                    }}
+
+
+//
+//                if (c_localName.equals("else")) {
+//                    if(!child_localName.equals("if")){
+//                        res+="else ";
+//                    }else{
+//                        res+="";
+//                    }
+//
+//                }else {
+//                    res += "{\n";
+//                }
+
+
+                res += "----\n";
+
+            } else if (entity.getNonTerminal().contains(c_localName)) {
+                String s = printNonTerminalNode(c);
+
+                s = presicePrettyprint(s, blockCondition);
+                res += s;
             }
 
         }
         return res;
     }
 
-    public String printSingleNode() {
+    /**
+     * This function print a single node with #ifdef and #endif
+     *
+     * @return node content
+     */
+    public String printSingleNode(CppNodeArtifact c) {
         String res = "";
         String tmpCondition = "";
-        tmpCondition += "#if " + "defined (" + getRevision() + ")";
-        if (getRevision().conditions.size() > 0) {
+        tmpCondition += "#if " + "defined (" + c.getRevision() + ")";
+        if (c.getRevision().conditions.size() > 0) {
             tmpCondition += " && ";
         }
-        tmpCondition += printCondition(getRevision());
+        tmpCondition += printCondition(c.getRevision());
         res += tmpCondition;
         res += "\n" + toString() + "\n";
         res += "#endif\n";
         return res;
     }
 
+
+    /**
+     * Print the condition of a {@link Revision}
+     *
+     * @param r
+     * @return
+     */
     public String printCondition(Revision r) {
         String res = "";
         if (r.conditions.size() > 0) {
@@ -933,17 +1047,28 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return res;
     }
 
+    /**
+     * This function print the choice node
+     *
+     * @param c
+     * @return
+     */
     public String printChoice(CppNodeArtifact c) {
         String s = "";
         int var_size = c.variants.size();
         for (int i = 0; i < var_size; i++) {
             String str = c.variants.keySet().toArray()[i].toString();
             s += "#if defined (" + str + ")";
-            if (((Element) c.astnode).getLocalName().equals("block")) {
-                for (int t = 1; t < c.variants.get(str).astnode.getValue().split("\n").length - 1; t++) {
-                    s += "\n" + c.variants.get(str).astnode.getValue().split("\n")[t] + "\n";
+            String c_local = ((Element) c.astnode).getLocalName();
+            if (c_local.equals("block")) {
+                String condition = printCondition(((CppNodeArtifact) c).variants.get(str).getRevision());
+                if (condition.length() > 0) {
+                    s += " && " + condition + "\n";
                 }
+                s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
 
+            } else if (c_local.equals("if")) {
+                s += "\n" + c.variants.get(str) + "\n#endif\n";
             } else {
                 s += "\n" + c.variants.get(str) + "\n";
             }
@@ -955,7 +1080,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return s;
     }
 
-
+    /**
+     * This function print the match node
+     *
+     * @param c
+     * @return
+     */
     public String printMatchNode(CppNodeArtifact c) {
         String res = "";
         res += printMatchCondition(c);
@@ -965,6 +1095,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     }
 
+    /**
+     * If the nodes are matched, then print the match condition
+     *
+     * @param c
+     * @return
+     */
     public String printMatchCondition(CppNodeArtifact c) {
         String s = "";
         String condition = "";

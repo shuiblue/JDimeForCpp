@@ -12,6 +12,7 @@ class Foo
     int s = 0;
 
 
+
 #endif
 }
 #endif

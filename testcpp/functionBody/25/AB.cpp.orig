@@ -17,9 +17,9 @@ b++;
 if(x<0){
         		c++;
         	}
+#endif
 
 }
-#endif
 
 }
 }
