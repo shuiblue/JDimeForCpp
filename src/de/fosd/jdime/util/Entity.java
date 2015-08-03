@@ -31,6 +31,8 @@ public class Entity {
         nonTerminal.add("if");
         nonTerminal.add("then");
         nonTerminal.add("else");
+        nonTerminal.add("switch");
+        nonTerminal.add("case");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -49,6 +51,10 @@ public class Entity {
         terminal.add("destructor_decl");
         terminal.add("template");
         terminal.add("super");
+        terminal.add("expr");
+        terminal.add("break");
+        terminal.add("continue");
+        terminal.add("comment");
 
 /* head entity of
  function : (return type+function name)
@@ -69,6 +75,8 @@ public class Entity {
         matchedEntity.add("protected");
         matchedEntity.add("then");
         matchedEntity.add("else");
+        matchedEntity.add("switch");
+        matchedEntity.add("case");
 
         blockEntity = new HashSet<>();
         blockEntity.add("block");

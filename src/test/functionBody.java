@@ -389,5 +389,43 @@ test12
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+
+    // switch case
+    @Test
+    public void test23() {
+        inputFileInit(2);
+        String testNum = "23/";
+
+        System.out.println("------test23-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
+    // continue
+    @Test
+    public void test24() {
+        inputFileInit(2);
+        String testNum = "24/";
+
+        System.out.println("------test24-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    // continue
+    @Test
+    public void test25() {
+        inputFileInit(2);
+        String testNum = "25/";
+
+        System.out.println("------test25-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
 }
 
