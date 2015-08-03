@@ -28,6 +28,9 @@ public class Entity {
         nonTerminal.add("private");
         nonTerminal.add("protected");
         nonTerminal.add("public");
+        nonTerminal.add("if");
+        nonTerminal.add("then");
+        nonTerminal.add("else");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -64,14 +67,17 @@ public class Entity {
         matchedEntity.add("private");
         matchedEntity.add("public");
         matchedEntity.add("protected");
+        matchedEntity.add("then");
 
         blockEntity = new HashSet<>();
         blockEntity.add("block");
+        blockEntity.add("then");
 
         classBody = new HashSet<>();
         classBody.add("private");
         classBody.add("public");
         classBody.add("protected");
+//        classBody.add("then");
 
     }
 

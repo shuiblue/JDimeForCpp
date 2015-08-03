@@ -215,7 +215,7 @@ public class IfdefCompilable {
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
         afterTest();
-    }.
+    }
 
 
     //----------------3 WAY-----------------------------
