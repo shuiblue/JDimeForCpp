@@ -271,6 +271,7 @@ test12
     public void test12() {
         inputFileInit(2);
         String testNum = "12/";
+        config.add("X");
         System.out.println("------test12-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
@@ -360,6 +361,29 @@ test12
         String testNum = "20/";
 
         System.out.println("------test20-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+    @Test
+    public void test21() {
+        inputFileInit(2);
+        String testNum = "21/";
+
+        System.out.println("------test21-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
+    @Test
+    public void test22() {
+        inputFileInit(2);
+        String testNum = "22/";
+
+        System.out.println("------test22-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
