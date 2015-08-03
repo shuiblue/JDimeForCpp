@@ -18,6 +18,7 @@ class Computer
     else {
         t=0;
     }
+
 #endif
 }
 #endif

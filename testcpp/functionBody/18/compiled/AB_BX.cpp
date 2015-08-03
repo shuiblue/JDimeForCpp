@@ -11,7 +11,6 @@ class Foo
     int t=0;
 
   protected:
-
     int s = 1;
 
 

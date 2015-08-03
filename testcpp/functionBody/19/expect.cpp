@@ -11,16 +11,16 @@ class Computer
     int t=0;
 #endif
   protected:
-#if defined (A) || defined (B)
+
     int s = 1;
-#endif
+
 #if defined (A)
     int ss=0;
 #endif
   public:
-#if defined (A) || defined (B)
+
     Computer();
-#endif
+
 #if defined (A)
 // Constructor
     ~Computer();

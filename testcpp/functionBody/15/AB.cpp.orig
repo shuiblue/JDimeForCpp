@@ -1,15 +1,16 @@
 #if defined (A) || defined (B)
 void a()
 {
+do {
 #if defined (A)
-do {x--;} while ( x > 0 );
+x--;
 #endif
 #if defined (B)
-do {
 
 	y--;
-
-s++;} while ( x > 0 );
+s++;
 #endif
+}
+while ( x > 0 );
 }
 #endif

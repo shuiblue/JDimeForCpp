@@ -11,4 +11,5 @@ class Foo
     int s = 0;
 
 
+
 }

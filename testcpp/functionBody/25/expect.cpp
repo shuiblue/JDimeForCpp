@@ -12,6 +12,7 @@ class Computer
             if (x>0) {
                 b++;
 #if defined (A)
+               
                 if(x<0) {
                     c++;
                 }

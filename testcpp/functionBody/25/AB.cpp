@@ -14,8 +14,8 @@ class Computer
                 if(x<0) {
                     c++;
                 }
-            }
 #endif
+            }
         }
     }
 }

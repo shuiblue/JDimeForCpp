@@ -6,10 +6,14 @@ int y=0;
 void a()
 {
 #if defined (A)
+
 i=0;
+
 #endif
 #if defined (B)
+
 i=1;
+
 #endif
 }
 #endif

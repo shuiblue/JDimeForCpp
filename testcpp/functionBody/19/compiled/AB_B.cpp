@@ -11,13 +11,10 @@ class Computer
 
 
   protected:
-
     int s = 1;
 
 
 
-
   public:
-
     Computer();
 }
