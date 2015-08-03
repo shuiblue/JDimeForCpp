@@ -68,10 +68,12 @@ public class Entity {
         matchedEntity.add("public");
         matchedEntity.add("protected");
         matchedEntity.add("then");
+        matchedEntity.add("else");
 
         blockEntity = new HashSet<>();
         blockEntity.add("block");
         blockEntity.add("then");
+        blockEntity.add("else");
 
         classBody = new HashSet<>();
         classBody.add("private");

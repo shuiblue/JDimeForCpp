@@ -736,6 +736,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (nodeLocalName.equals("class")) {
             res += "class " + cppNoArt.astnode.getChild(1).getValue();
         } else if (nodeLocalName.equals("if")) {
+            if(((Element)cppNoArt.getParent().astnode).getLocalName().equals("else")){
+                res+="else ";
+            }
             res += "if ";
         }
 
@@ -754,9 +757,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
             }
             if (entity.getBlockEntity().contains(c_localName)) {
-//                if (c_localName.equals("block")) {
+                if (!c_localName.equals("else")) {
                     res += "{\n";
-//                }
+                }
                 String blockString = "";
 
                 if (c.isChoice()) {
@@ -842,9 +845,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 String block = "";
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
                                     block = printNonTerminalNode(c_block);
-                                    for (int i = 1; i < block.split("\n").length - 1; i++) {
-                                        blockString += block.split("\n")[i] + "\n";
-                                    }
+                                    blockString += presicePrettyprint(block,blockCondition);
                                     continue;
                                 } else if (entity.getBlockEntity().contains(c_block_localName)) {
                                     block = printBlock(c_block)+"\n#endif\n";
@@ -873,10 +874,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     blockString = presicePrettyprint(blockString, blockCondition);
                 }
                 res += blockString;
-//                if (c_localName.equals("block")) {
-                    res += "}\n";
-//                }
-                res += "#endif";
+                if (!c_localName.equals("else")) {
+                    res += "}\n#endif";
+                }
+                res+="----\n";
             }
 
         }
