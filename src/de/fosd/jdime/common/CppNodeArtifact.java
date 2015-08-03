@@ -447,6 +447,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     String other_func_name = (other.getCppNode()).getChild(2).getValue();
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
+                } else if (ast_localName.equals("if")) {
+                    String ast_condition = clearBlank((astnode).getChild(1).getValue());
+                    String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    return ast_condition.equals(other_condition);
                 } else if (ast_localName.equals("while")) {
 
                     String ast_condition = clearBlank((astnode).getChild(1).getValue());
@@ -615,11 +619,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         res += var.prettyPrint();
                     }
                 } else if (child.matches != null) {
-                    if (this.astnode.getClass().getName().contains("Element")){
+                    if (this.astnode.getClass().getName().contains("Element")) {
                         String localName = ((Element) this.astnode).getLocalName();
 
                         if (localName.equals("public") || localName.equals("protected")) {
-                            res += localName+":\n";
+                            res += localName + ":\n";
                         }
                     }
                     res += printMatchNode(child);
@@ -646,6 +650,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("----\n");
         if (elements.length == 1) {
+            if(elements[0].split("\n")[0].equals(blockCondition.replace("\n",""))){
+                String s="";
+                for(int i =1;i<elements[0].split("\n").length-1;i++){
+                    s+=elements[0].split("\n")[i]+"\n";
+                }
+                return s;
+            }
             return res;
         }
         for (String e : elements) {
@@ -724,6 +735,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         } else if (nodeLocalName.equals("class")) {
             res += "class " + cppNoArt.astnode.getChild(1).getValue();
+        } else if (nodeLocalName.equals("if")) {
+            res += "if ";
         }
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
@@ -741,7 +754,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
             }
             if (entity.getBlockEntity().contains(c_localName)) {
-                res += "{\n";
+//                if (c_localName.equals("block")) {
+                    res += "{\n";
+//                }
                 String blockString = "";
 
                 if (c.isChoice()) {
@@ -765,6 +780,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             String s = c_block.prettyPrint();
 
                             blockString += s;
+//                            blockString += presicePrettyprint(s,blockCondition);
                             continue;
                         }
 
@@ -823,13 +839,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     blockString += printChoice(c_block);
                                 }
                             } else {
+                                String block = "";
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
-                                    String block = printNonTerminalNode(c_block);
+                                    block = printNonTerminalNode(c_block);
                                     for (int i = 1; i < block.split("\n").length - 1; i++) {
                                         blockString += block.split("\n")[i] + "\n";
                                     }
                                     continue;
+                                } else if (entity.getBlockEntity().contains(c_block_localName)) {
+                                    block = printBlock(c_block)+"\n#endif\n";
+                                        for (int i = 1; i < block.split("\n").length - 1; i++) {
+                                            blockString += block.split("\n")[i] + "\n";
+                                    }
+                                    continue;
                                 }
+
+
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
@@ -847,8 +872,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     blockString = presicePrettyprint(blockString, blockCondition);
                 }
-                res += blockString + "}\n#endif";
+                res += blockString;
+//                if (c_localName.equals("block")) {
+                    res += "}\n";
+//                }
+                res += "#endif";
             }
+
         }
         return res;
     }
