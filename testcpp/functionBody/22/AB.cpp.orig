@@ -4,8 +4,10 @@ class Computer
 :public bar
 #endif
 {
-if ( i > 0 ){
+if ( i > 0 )
+{
 x = i;
+
 }
 #if defined (A)
 else if(i<0){

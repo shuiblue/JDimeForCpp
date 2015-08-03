@@ -447,7 +447,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     String other_func_name = (other.getCppNode()).getChild(2).getValue();
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
-                } else if (ast_localName.equals("if")) {
+                } else if (ast_localName.equals("if")||ast_localName.equals("switch")||ast_localName.equals("case")) {
                     String ast_condition = clearBlank((astnode).getChild(1).getValue());
                     String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
                     return ast_condition.equals(other_condition);
@@ -645,22 +645,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
 
+
     public String presicePrettyprint(String res, String blockCondition) {
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("----\n");
-        if (elements.length == 1) {
-            if(elements[0].split("\n")[0].equals(blockCondition.replace("\n",""))){
-                String s="";
-                for(int i =1;i<elements[0].split("\n").length-1;i++){
-                    s+=elements[0].split("\n")[i]+"\n";
+        if (elements.length == 1||!res.startsWith("#if")) {
+            if (elements[0].split("\n")[0].equals(blockCondition.replace("\n", ""))) {
+                String s = "";
+                for (int i = 1; i < elements[0].split("\n").length - 1; i++) {
+                    s += elements[0].split("\n")[i] + "\n";
                 }
                 return s;
             }
             return res;
         }
         for (String e : elements) {
-            if (e.length() > 0) {
+            if (e.length() > 0&&!e.equals("\n")) {
                 String[] tmp = e.split("\n");
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
@@ -736,10 +737,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (nodeLocalName.equals("class")) {
             res += "class " + cppNoArt.astnode.getChild(1).getValue();
         } else if (nodeLocalName.equals("if")) {
-            if(((Element)cppNoArt.getParent().astnode).getLocalName().equals("else")){
-                res+="else ";
+            if (((Element) cppNoArt.getParent().astnode).getLocalName().equals("else")) {
+                res += "else ";
             }
             res += "if ";
+        } else if (nodeLocalName.equals("switch")) {
+            res += "switch";
+        } else if (nodeLocalName.equals("case")) {
+            res += "case ";
         }
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
@@ -749,13 +754,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (!nodeLocalName.equals("for")) {
                 if (entity.getTerminal().contains(c_localName)) {
                     if (c.hasMatches()) {
-                        res += c.astnode.getValue();
+                        res += c.astnode.getValue()+"\n";
+                        if(c.astnode.getValue().contains("break")){
+                            res+="#endif\n";
+                        }
                     } else {
 
                         res += "\n" + printChoice(c) + "#endif\n";
                     }
                 }
             }
+            if(c_localName.equals("expr")&&((Element)c.getParent().astnode).getLocalName().equals("case")){
+                res+=":";
+            }
+
+
+
             if (entity.getBlockEntity().contains(c_localName)) {
                 if (!c_localName.equals("else")) {
                     res += "{\n";
@@ -842,15 +856,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     blockString += printChoice(c_block);
                                 }
                             } else {
-                                String block = "";
+                                String block ;
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
                                     block = printNonTerminalNode(c_block);
-                                    blockString += presicePrettyprint(block,blockCondition);
+                                    blockString += presicePrettyprint(block, blockCondition);
                                     continue;
                                 } else if (entity.getBlockEntity().contains(c_block_localName)) {
-                                    block = printBlock(c_block)+"\n#endif\n";
-                                        for (int i = 1; i < block.split("\n").length - 1; i++) {
-                                            blockString += block.split("\n")[i] + "\n";
+                                    block = printBlock(c_block) + "\n#endif\n";
+                                    for (int i = 1; i < block.split("\n").length - 1; i++) {
+                                        blockString += block.split("\n")[i] + "\n";
                                     }
                                     continue;
                                 }
@@ -866,7 +880,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     }
                     if (block_condStack.size() > 0) {
                         block_condStack.pop();
-                        blockString += "#endif\n";
+                        blockString += "\n#endif\n";
                     }
                 }
                 if (blockString.contains("----\n")) {
@@ -877,7 +891,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (!c_localName.equals("else")) {
                     res += "}\n#endif";
                 }
-                res+="----\n";
+                res += "----\n";
+            }else if(entity.getNonTerminal().contains(c_localName)){
+                String s=printNonTerminalNode(c);
+
+                s=presicePrettyprint(s,blockCondition);
+                res+=s;
             }
 
         }

@@ -1,0 +1,1101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/planner/2way/1/A.cpp"><comment type="block">/*
+  planner.c - buffers movement commands and manages the acceleration profile plan
+ Part of Grbl
+ 
+ Copyright (c) 2009-2011 Simen Svale Skogsrud
+ 
+ Grbl is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ Grbl is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with Grbl.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */</comment>
+
+<comment type="block">/* The ring buffer implementation gleaned from the wiring_serial library by David A. Mellis. */</comment>
+
+<comment type="block">/*  
+ Reasoning behind the mathematics in this module (in the key of 'Mathematica'):
+ 
+ s == speed, a == acceleration, t == time, d == distance
+ 
+ Basic definitions:
+ 
+ Speed[s_, a_, t_] := s + (a*t) 
+ Travel[s_, a_, t_] := Integrate[Speed[s, a, t], t]
+ 
+ Distance to reach a specific speed with a constant acceleration:
+ 
+ Solve[{Speed[s, a, t] == m, Travel[s, a, t] == d}, d, t]
+ d -&gt; (m^2 - s^2)/(2 a) --&gt; estimate_acceleration_distance()
+ 
+ Speed after a given distance of travel with constant acceleration:
+ 
+ Solve[{Speed[s, a, t] == m, Travel[s, a, t] == d}, m, t]
+ m -&gt; Sqrt[2 a d + s^2]    
+ 
+ DestinationSpeed[s_, a_, d_] := Sqrt[2 a d + s^2]
+ 
+ When to start braking (di) to reach a specified destionation speed (s2) after accelerating
+ from initial speed s1 without ever stopping at a plateau:
+ 
+ Solve[{DestinationSpeed[s1, a, di] == DestinationSpeed[s2, a, d - di]}, di]
+ di -&gt; (2 a d - s1^2 + s2^2)/(4 a) --&gt; intersection_distance()
+ 
+ IntersectionDistance[s1_, s2_, a_, d_] := (2 a d - s1^2 + s2^2)/(4 a)
+ */</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"planner.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"stepper.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"temperature.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ultralcd.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"language.h"</cpp:file></cpp:include>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================public variables ============================</comment>
+<comment type="line">//===========================================================================</comment>
+
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>minsegmenttime</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>max_feedrate</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt> <comment type="line">// set the max speeds</comment>
+<decl_stmt><decl><type><name>float</name></type> <name><name>axis_steps_per_unit</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name><name>max_acceleration_units_per_sq_second</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt> <comment type="line">// Use M201 to override by software</comment>
+<decl_stmt><decl><type><name>float</name></type> <name>minimumfeedrate</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>acceleration</name></decl>;</decl_stmt>         <comment type="line">// Normal acceleration mm/s^2  THIS IS THE DEFAULT ACCELERATION for all moves. M204 SXXXX</comment>
+<decl_stmt><decl><type><name>float</name></type> <name>retract_acceleration</name></decl>;</decl_stmt> <comment type="line">//  mm/s^2   filament pull-pack and push-forward  while standing still in the other axis M204 TXXXX</comment>
+<decl_stmt><decl><type><name>float</name></type> <name>max_xy_jerk</name></decl>;</decl_stmt> <comment type="line">//speed than can be stopped at once, if i understand correctly.</comment>
+<decl_stmt><decl><type><name>float</name></type> <name>max_z_jerk</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>max_e_jerk</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>mintravelfeedrate</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<comment type="line">// this holds the required transform to compensate for bed level</comment>
+<decl_stmt><decl><type><name>matrix_3x3</name></type> <name>plan_bed_level_matrix</name> <init>= <expr><block>{
+	<expr>1.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>,
+	<expr>0.0</expr>, <expr>1.0</expr>, <expr>0.0</expr>,
+	<expr>0.0</expr>, <expr>0.0</expr>, <expr>1.0</expr>,
+}</block></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// #ifdef ENABLE_AUTO_BED_LEVELING</comment>
+
+<comment type="line">// The current position of the tool in absolute steps</comment>
+<decl_stmt><decl><type><name>long</name></type> <name><name>position</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt>   <comment type="line">//rescaled from extern when axis_steps_per_unit are changed by gcode</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name><name>previous_speed</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt> <comment type="line">// Speed of previous path line segment</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>previous_nominal_speed</name></decl>;</decl_stmt> <comment type="line">// Nominal speed of previous path line segment</comment>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTOTEMP</name></cpp:ifdef>
+<decl_stmt><decl><type><name>float</name></type> <name>autotemp_max</name><init>=<expr>250</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>autotemp_min</name><init>=<expr>210</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>autotemp_factor</name><init>=<expr>0.1</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>bool</name></type> <name>autotemp_enabled</name><init>=<expr>false</expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name><name>g_uc_extruder_last_move</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>0</expr>,<expr>0</expr>,<expr>0</expr>}</block></expr></init></decl>;</decl_stmt>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=================semi-private variables, used in inline  functions    =====</comment>
+<comment type="line">//===========================================================================</comment>
+<decl_stmt><decl><type><name>block_t</name></type> <name><name>block_buffer</name><index>[<expr><name>BLOCK_BUFFER_SIZE</name></expr>]</index></name></decl>;</decl_stmt>            <comment type="line">// A ring buffer for motion instfructions</comment>
+<decl_stmt><decl><type><specifier>volatile</specifier> <name>unsigned</name> <name>char</name></type> <name>block_buffer_head</name></decl>;</decl_stmt>           <comment type="line">// Index of the next block to be pushed</comment>
+<decl_stmt><decl><type><specifier>volatile</specifier> <name>unsigned</name> <name>char</name></type> <name>block_buffer_tail</name></decl>;</decl_stmt>           <comment type="line">// Index of the block to process now</comment>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================private variables ============================</comment>
+<comment type="line">//===========================================================================</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PREVENT_DANGEROUS_EXTRUDE</name></cpp:ifdef>
+<decl_stmt><decl><type><name>float</name></type> <name>extrude_min_temp</name><init>=<expr><name>EXTRUDE_MINTEMP</name></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>XY_FREQUENCY_LIMIT</name></cpp:ifdef>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>MAX_FREQ_TIME</name></cpp:macro> <cpp:value>(1000000.0/XY_FREQUENCY_LIMIT)</cpp:value></cpp:define>
+<comment type="line">// Used for the frequency limit</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>char</name></type> <name>old_direction_bits</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>               <comment type="line">// Old direction bits. Used for speed calculations</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>long</name></type> <name><name>x_segment_time</name><index>[<expr>3</expr>]</index></name><init>=<expr><block>{<expr><name>MAX_FREQ_TIME</name> + 1</expr>,<expr>0</expr>,<expr>0</expr>}</block></expr></init></decl>;</decl_stmt>     <comment type="line">// Segment times (in us). Used for speed calculations</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>long</name></type> <name><name>y_segment_time</name><index>[<expr>3</expr>]</index></name><init>=<expr><block>{<expr><name>MAX_FREQ_TIME</name> + 1</expr>,<expr>0</expr>,<expr>0</expr>}</block></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FILAMENT_SENSOR</name></cpp:ifdef>
+ <decl_stmt><decl><type><specifier>static</specifier> <name>char</name></type> <name>meas_sample</name></decl>;</decl_stmt> <comment type="line">//temporary variable to hold filament measurement sample</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<comment type="line">// Returns the index of the next block in the ring buffer</comment>
+<comment type="line">// NOTE: Removed modulo (%) operator, which uses an expensive divide and multiplication.</comment>
+<function><type><specifier>static</specifier> <name>int8_t</name></type> <name>next_block_index</name><parameter_list>(<param><decl><type><name>int8_t</name></type> <name>block_index</name></decl></param>)</parameter_list> <block>{
+  <expr_stmt><expr><name>block_index</name>++</expr>;</expr_stmt>
+  <if>if <condition>(<expr><name>block_index</name> == <name>BLOCK_BUFFER_SIZE</name></expr>)</condition><then> <block>{ 
+    <expr_stmt><expr><name>block_index</name> = 0</expr>;</expr_stmt> 
+  }</block></then></if>
+  <return>return<expr>(<name>block_index</name>)</expr>;</return>
+}</block></function>
+
+
+<comment type="line">// Returns the index of the previous block in the ring buffer</comment>
+<function><type><specifier>static</specifier> <name>int8_t</name></type> <name>prev_block_index</name><parameter_list>(<param><decl><type><name>int8_t</name></type> <name>block_index</name></decl></param>)</parameter_list> <block>{
+  <if>if <condition>(<expr><name>block_index</name> == 0</expr>)</condition><then> <block>{ 
+    <expr_stmt><expr><name>block_index</name> = <name>BLOCK_BUFFER_SIZE</name></expr>;</expr_stmt> 
+  }</block></then></if>
+  <expr_stmt><expr><name>block_index</name>--</expr>;</expr_stmt>
+  <return>return<expr>(<name>block_index</name>)</expr>;</return>
+}</block></function>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================functions         ============================</comment>
+<comment type="line">//===========================================================================</comment>
+
+<comment type="line">// Calculates the distance (not time) it takes to accelerate from initial_rate to target_rate using the </comment>
+<comment type="line">// given acceleration:</comment>
+<function><type><name>FORCE_INLINE</name> <name>float</name></type> <name>estimate_acceleration_distance</name><parameter_list>(<param><decl><type><name>float</name></type> <name>initial_rate</name></decl></param>, <param><decl><type><name>float</name></type> <name>target_rate</name></decl></param>, <param><decl><type><name>float</name></type> <name>acceleration</name></decl></param>)</parameter_list>
+<block>{
+  <if>if <condition>(<expr><name>acceleration</name>!=0</expr>)</condition><then> <block>{
+    <return>return<expr>((<name>target_rate</name>*<name>target_rate</name>-<name>initial_rate</name>*<name>initial_rate</name>)/
+      (2.0*<name>acceleration</name>))</expr>;</return>
+  }</block></then>
+  <else>else <block>{
+    <return>return <expr>0.0</expr>;</return>  <comment type="line">// acceleration was 0, set acceleration distance to 0</comment>
+  }</block></else></if>
+}</block></function>
+
+<comment type="line">// This function gives you the point at which you must start braking (at the rate of -acceleration) if </comment>
+<comment type="line">// you started at speed initial_rate and accelerated until this point and want to end at the final_rate after</comment>
+<comment type="line">// a total travel of distance. This can be used to compute the intersection point between acceleration and</comment>
+<comment type="line">// deceleration in the cases where the trapezoid has no plateau (i.e. never reaches maximum speed)</comment>
+
+<function><type><name>FORCE_INLINE</name> <name>float</name></type> <name>intersection_distance</name><parameter_list>(<param><decl><type><name>float</name></type> <name>initial_rate</name></decl></param>, <param><decl><type><name>float</name></type> <name>final_rate</name></decl></param>, <param><decl><type><name>float</name></type> <name>acceleration</name></decl></param>, <param><decl><type><name>float</name></type> <name>distance</name></decl></param>)</parameter_list> 
+<block>{
+  <if>if <condition>(<expr><name>acceleration</name>!=0</expr>)</condition><then> <block>{
+    <return>return<expr>((2.0*<name>acceleration</name>*<name>distance</name>-<name>initial_rate</name>*<name>initial_rate</name>+<name>final_rate</name>*<name>final_rate</name>)/
+      (4.0*<name>acceleration</name>) )</expr>;</return>
+  }</block></then>
+  <else>else <block>{
+    <return>return <expr>0.0</expr>;</return>  <comment type="line">// acceleration was 0, set intersection distance to 0</comment>
+  }</block></else></if>
+}</block></function>
+
+<comment type="line">// Calculates trapezoid parameters so that the entry- and exit-speed is compensated by the provided factors.</comment>
+
+<function><type><name>void</name></type> <name>calculate_trapezoid_for_block</name><parameter_list>(<param><decl><type><name>block_t</name> *</type><name>block</name></decl></param>, <param><decl><type><name>float</name></type> <name>entry_factor</name></decl></param>, <param><decl><type><name>float</name></type> <name>exit_factor</name></decl></param>)</parameter_list> <block>{
+  <decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>initial_rate</name> <init>= <expr><call><name>ceil</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name>*<name>entry_factor</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt> <comment type="line">// (step/min)</comment>
+  <decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>final_rate</name> <init>= <expr><call><name>ceil</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name>*<name>exit_factor</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt> <comment type="line">// (step/min)</comment>
+
+  <comment type="line">// Limit minimal step rate (Otherwise the timer will overflow.)</comment>
+  <if>if<condition>(<expr><name>initial_rate</name> &lt;120</expr>)</condition><then> <block>{
+    <expr_stmt><expr><name>initial_rate</name>=120</expr>;</expr_stmt> 
+  }</block></then></if>
+  <if>if<condition>(<expr><name>final_rate</name> &lt; 120</expr>)</condition><then> <block>{
+    <expr_stmt><expr><name>final_rate</name>=120</expr>;</expr_stmt>  
+  }</block></then></if>
+
+  <decl_stmt><decl><type><name>long</name></type> <name>acceleration</name> <init>= <expr><name><name>block</name>-&gt;<name>acceleration_st</name></name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>int32_t</name></type> <name>accelerate_steps</name> <init>=
+    <expr><call><name>ceil</name><argument_list>(<argument><expr><call><name>estimate_acceleration_distance</name><argument_list>(<argument><expr><name>initial_rate</name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name></expr></argument>, <argument><expr><name>acceleration</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>int32_t</name></type> <name>decelerate_steps</name> <init>=
+    <expr><call><name>floor</name><argument_list>(<argument><expr><call><name>estimate_acceleration_distance</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name></expr></argument>, <argument><expr><name>final_rate</name></expr></argument>, <argument><expr>-<name>acceleration</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// Calculate the size of Plateau of Nominal Rate.</comment>
+  <decl_stmt><decl><type><name>int32_t</name></type> <name>plateau_steps</name> <init>= <expr><name><name>block</name>-&gt;<name>step_event_count</name></name>-<name>accelerate_steps</name>-<name>decelerate_steps</name></expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// Is the Plateau of Nominal Rate smaller than nothing? That means no cruising, and we will</comment>
+  <comment type="line">// have to use intersection_distance() to calculate when to abort acceleration and start braking</comment>
+  <comment type="line">// in order to reach the final_rate exactly at the end of this block.</comment>
+  <if>if <condition>(<expr><name>plateau_steps</name> &lt; 0</expr>)</condition><then> <block>{
+    <expr_stmt><expr><name>accelerate_steps</name> = <call><name>ceil</name><argument_list>(<argument><expr><call><name>intersection_distance</name><argument_list>(<argument><expr><name>initial_rate</name></expr></argument>, <argument><expr><name>final_rate</name></expr></argument>, <argument><expr><name>acceleration</name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>step_event_count</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>accelerate_steps</name> = <call><name>max</name><argument_list>(<argument><expr><name>accelerate_steps</name></expr></argument>,<argument><expr>0</expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// Check limits due to numerical round-off</comment>
+    <expr_stmt><expr><name>accelerate_steps</name> = <call><name>min</name><argument_list>(<argument><expr>(<name>uint32_t</name>)<name>accelerate_steps</name></expr></argument>,<argument><expr><name><name>block</name>-&gt;<name>step_event_count</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt><comment type="line">//(We can cast here to unsigned, because the above line ensures that we are above zero)</comment>
+    <expr_stmt><expr><name>plateau_steps</name> = 0</expr>;</expr_stmt>
+  }</block></then></if>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ADVANCE</name></cpp:ifdef>
+  <decl_stmt><decl><type><specifier>volatile</specifier> <name>long</name></type> <name>initial_advance</name> <init>= <expr><name><name>block</name>-&gt;<name>advance</name></name>*<name>entry_factor</name>*<name>entry_factor</name></expr></init></decl>;</decl_stmt> 
+  <decl_stmt><decl><type><specifier>volatile</specifier> <name>long</name></type> <name>final_advance</name> <init>= <expr><name><name>block</name>-&gt;<name>advance</name></name>*<name>exit_factor</name>*<name>exit_factor</name></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ADVANCE</comment>
+
+  <comment type="line">// block-&gt;accelerate_until = accelerate_steps;</comment>
+  <comment type="line">// block-&gt;decelerate_after = accelerate_steps+plateau_steps;</comment>
+  <expr_stmt><expr><name>CRITICAL_SECTION_START</name></expr>;</expr_stmt>  <comment type="line">// Fill variables used by the stepper in a critical section</comment>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>busy</name></name> == false</expr>)</condition><then> <block>{ <comment type="line">// Don't update variables if block is busy.</comment>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>accelerate_until</name></name> = <name>accelerate_steps</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>decelerate_after</name></name> = <name>accelerate_steps</name>+<name>plateau_steps</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>initial_rate</name></name> = <name>initial_rate</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>final_rate</name></name> = <name>final_rate</name></expr>;</expr_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ADVANCE</name></cpp:ifdef>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>initial_advance</name></name> = <name>initial_advance</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>final_advance</name></name> = <name>final_advance</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//ADVANCE</comment>
+  }</block></then></if>
+  <expr_stmt><expr><name>CRITICAL_SECTION_END</name></expr>;</expr_stmt>
+}</block></function>                    
+
+<comment type="line">// Calculates the maximum allowable speed at this point when you must be able to reach target_velocity using the </comment>
+<comment type="line">// acceleration within the allotted distance.</comment>
+<function><type><name>FORCE_INLINE</name> <name>float</name></type> <name>max_allowable_speed</name><parameter_list>(<param><decl><type><name>float</name></type> <name>acceleration</name></decl></param>, <param><decl><type><name>float</name></type> <name>target_velocity</name></decl></param>, <param><decl><type><name>float</name></type> <name>distance</name></decl></param>)</parameter_list> <block>{
+  <return>return  <expr><call><name>sqrt</name><argument_list>(<argument><expr><name>target_velocity</name>*<name>target_velocity</name>-2*<name>acceleration</name>*<name>distance</name></expr></argument>)</argument_list></call></expr>;</return>
+}</block></function>
+
+<comment type="line">// "Junction jerk" in this context is the immediate change in speed at the junction of two blocks.</comment>
+<comment type="line">// This method will calculate the junction jerk as the euclidean distance between the nominal </comment>
+<comment type="line">// velocities of the respective blocks.</comment>
+<comment type="line">//inline float junction_jerk(block_t *before, block_t *after) {</comment>
+<comment type="line">//  return sqrt(</comment>
+<comment type="line">//    pow((before-&gt;speed_x-after-&gt;speed_x), 2)+pow((before-&gt;speed_y-after-&gt;speed_y), 2));</comment>
+<comment type="line">//}</comment>
+
+
+<comment type="line">// The kernel called by planner_recalculate() when scanning the plan from last to first entry.</comment>
+<function><type><name>void</name></type> <name>planner_reverse_pass_kernel</name><parameter_list>(<param><decl><type><name>block_t</name> *</type><name>previous</name></decl></param>, <param><decl><type><name>block_t</name> *</type><name>current</name></decl></param>, <param><decl><type><name>block_t</name> *</type><name>next</name></decl></param>)</parameter_list> <block>{
+  <if>if<condition>(<expr>!<name>current</name></expr>)</condition><then> <block>{ 
+    <return>return;</return> 
+  }</block></then></if>
+
+  <if>if <condition>(<expr><name>next</name></expr>)</condition><then> <block>{
+    <comment type="line">// If entry speed is already at the maximum entry speed, no need to recheck. Block is cruising.</comment>
+    <comment type="line">// If not, block in state of acceleration or deceleration. Reset entry speed to maximum and</comment>
+    <comment type="line">// check for maximum allowable speed reductions to ensure maximum possible planned speed.</comment>
+    <if>if <condition>(<expr><name><name>current</name>-&gt;<name>entry_speed</name></name> != <name><name>current</name>-&gt;<name>max_entry_speed</name></name></expr>)</condition><then> <block>{
+
+      <comment type="line">// If nominal length true, max junction speed is guaranteed to be reached. Only compute</comment>
+      <comment type="line">// for max allowable speed if block is decelerating and nominal length is false.</comment>
+      <if>if <condition>(<expr>(!<name><name>current</name>-&gt;<name>nominal_length_flag</name></name>) &amp;&amp; (<name><name>current</name>-&gt;<name>max_entry_speed</name></name> &gt; <name><name>next</name>-&gt;<name>entry_speed</name></name>)</expr>)</condition><then> <block>{
+        <expr_stmt><expr><name><name>current</name>-&gt;<name>entry_speed</name></name> = <call><name>min</name><argument_list>( <argument><expr><name><name>current</name>-&gt;<name>max_entry_speed</name></name></expr></argument>,
+        <argument><expr><call><name>max_allowable_speed</name><argument_list>(<argument><expr>-<name><name>current</name>-&gt;<name>acceleration</name></name></expr></argument>,<argument><expr><name><name>next</name>-&gt;<name>entry_speed</name></name></expr></argument>,<argument><expr><name><name>current</name>-&gt;<name>millimeters</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      }</block></then> 
+      <else>else <block>{
+        <expr_stmt><expr><name><name>current</name>-&gt;<name>entry_speed</name></name> = <name><name>current</name>-&gt;<name>max_entry_speed</name></name></expr>;</expr_stmt>
+      }</block></else></if>
+      <expr_stmt><expr><name><name>current</name>-&gt;<name>recalculate_flag</name></name> = true</expr>;</expr_stmt>
+
+    }</block></then></if>
+  }</block></then></if> <comment type="line">// Skip last block. Already initialized and set for recalculation.</comment>
+}</block></function>
+
+<comment type="line">// planner_recalculate() needs to go over the current plan twice. Once in reverse and once forward. This </comment>
+<comment type="line">// implements the reverse pass.</comment>
+<function><type><name>void</name></type> <name>planner_reverse_pass</name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name>uint8_t</name></type> <name>block_index</name> <init>= <expr><name>block_buffer_head</name></expr></init></decl>;</decl_stmt>
+  
+  <comment type="line">//Make a local copy of block_buffer_tail, because the interrupt can alter it</comment>
+  <expr_stmt><expr><name>CRITICAL_SECTION_START</name></expr>;</expr_stmt>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>tail</name> <init>= <expr><name>block_buffer_tail</name></expr></init></decl>;</decl_stmt>
+  <macro><name>CRITICAL_SECTION_END</name></macro>
+  
+  <if>if<condition>(<expr>((<name>block_buffer_head</name>-<name>tail</name> + <name>BLOCK_BUFFER_SIZE</name>) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)) &gt; 3</expr>)</condition><then> <block>{
+    <expr_stmt><expr><name>block_index</name> = (<name>block_buffer_head</name> - 3) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)</expr>;</expr_stmt>
+    <decl_stmt><decl><type><name>block_t</name> *</type><name><name>block</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{ 
+      <expr><name>NULL</name></expr>, <expr><name>NULL</name></expr>, <expr><name>NULL</name></expr>         }</block></expr></init></decl>;</decl_stmt>
+    <while>while<condition>(<expr><name>block_index</name> != <name>tail</name></expr>)</condition> <block>{ 
+      <expr_stmt><expr><name>block_index</name> = <call><name>prev_block_index</name><argument_list>(<argument><expr><name>block_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+      <expr_stmt><expr><name><name>block</name><index>[<expr>2</expr>]</index></name>= <name><name>block</name><index>[<expr>1</expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>block</name><index>[<expr>1</expr>]</index></name>= <name><name>block</name><index>[<expr>0</expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>block</name><index>[<expr>0</expr>]</index></name> = &amp;<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>planner_reverse_pass_kernel</name><argument_list>(<argument><expr><name><name>block</name><index>[<expr>0</expr>]</index></name></expr></argument>, <argument><expr><name><name>block</name><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name><name>block</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></while>
+  }</block></then></if>
+}</block></function>
+
+<comment type="line">// The kernel called by planner_recalculate() when scanning the plan from first to last entry.</comment>
+<function><type><name>void</name></type> <name>planner_forward_pass_kernel</name><parameter_list>(<param><decl><type><name>block_t</name> *</type><name>previous</name></decl></param>, <param><decl><type><name>block_t</name> *</type><name>current</name></decl></param>, <param><decl><type><name>block_t</name> *</type><name>next</name></decl></param>)</parameter_list> <block>{
+  <if>if<condition>(<expr>!<name>previous</name></expr>)</condition><then> <block>{ 
+    <return>return;</return> 
+  }</block></then></if>
+
+  <comment type="line">// If the previous block is an acceleration block, but it is not long enough to complete the</comment>
+  <comment type="line">// full speed change within the block, we need to adjust the entry speed accordingly. Entry</comment>
+  <comment type="line">// speeds have already been reset, maximized, and reverse planned by reverse planner.</comment>
+  <comment type="line">// If nominal length is true, max junction speed is guaranteed to be reached. No need to recheck.</comment>
+  <if>if <condition>(<expr>!<name><name>previous</name>-&gt;<name>nominal_length_flag</name></name></expr>)</condition><then> <block>{
+    <if>if <condition>(<expr><name><name>previous</name>-&gt;<name>entry_speed</name></name> &lt; <name><name>current</name>-&gt;<name>entry_speed</name></name></expr>)</condition><then> <block>{
+      <decl_stmt><decl><type><name>double</name></type> <name>entry_speed</name> <init>= <expr><call><name>min</name><argument_list>( <argument><expr><name><name>current</name>-&gt;<name>entry_speed</name></name></expr></argument>,
+      <argument><expr><call><name>max_allowable_speed</name><argument_list>(<argument><expr>-<name><name>previous</name>-&gt;<name>acceleration</name></name></expr></argument>,<argument><expr><name><name>previous</name>-&gt;<name>entry_speed</name></name></expr></argument>,<argument><expr><name><name>previous</name>-&gt;<name>millimeters</name></name></expr></argument>)</argument_list></call></expr></argument> )</argument_list></call></expr></init></decl>;</decl_stmt>
+
+      <comment type="line">// Check for junction speed change</comment>
+      <if>if <condition>(<expr><name><name>current</name>-&gt;<name>entry_speed</name></name> != <name>entry_speed</name></expr>)</condition><then> <block>{
+        <expr_stmt><expr><name><name>current</name>-&gt;<name>entry_speed</name></name> = <name>entry_speed</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>current</name>-&gt;<name>recalculate_flag</name></name> = true</expr>;</expr_stmt>
+      }</block></then></if>
+    }</block></then></if>
+  }</block></then></if>
+}</block></function>
+
+<comment type="line">// planner_recalculate() needs to go over the current plan twice. Once in reverse and once forward. This </comment>
+<comment type="line">// implements the forward pass.</comment>
+<function><type><name>void</name></type> <name>planner_forward_pass</name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name>uint8_t</name></type> <name>block_index</name> <init>= <expr><name>block_buffer_tail</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>block_t</name> *</type><name><name>block</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{ 
+    <expr><name>NULL</name></expr>, <expr><name>NULL</name></expr>, <expr><name>NULL</name></expr>   }</block></expr></init></decl>;</decl_stmt>
+
+  <while>while<condition>(<expr><name>block_index</name> != <name>block_buffer_head</name></expr>)</condition> <block>{
+    <expr_stmt><expr><name><name>block</name><index>[<expr>0</expr>]</index></name> = <name><name>block</name><index>[<expr>1</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name><index>[<expr>1</expr>]</index></name> = <name><name>block</name><index>[<expr>2</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name><index>[<expr>2</expr>]</index></name> = &amp;<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>planner_forward_pass_kernel</name><argument_list>(<argument><expr><name><name>block</name><index>[<expr>0</expr>]</index></name></expr></argument>,<argument><expr><name><name>block</name><index>[<expr>1</expr>]</index></name></expr></argument>,<argument><expr><name><name>block</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>block_index</name> = <call><name>next_block_index</name><argument_list>(<argument><expr><name>block_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></while>
+  <expr_stmt><expr><call><name>planner_forward_pass_kernel</name><argument_list>(<argument><expr><name><name>block</name><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name><name>block</name><index>[<expr>2</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<comment type="line">// Recalculates the trapezoid speed profiles for all blocks in the plan according to the </comment>
+<comment type="line">// entry_factor for each junction. Must be called by planner_recalculate() after </comment>
+<comment type="line">// updating the blocks.</comment>
+<function><type><name>void</name></type> <name>planner_recalculate_trapezoids</name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name>int8_t</name></type> <name>block_index</name> <init>= <expr><name>block_buffer_tail</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>block_t</name> *</type><name>current</name></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>block_t</name> *</type><name>next</name> <init>= <expr><name>NULL</name></expr></init></decl>;</decl_stmt>
+
+  <while>while<condition>(<expr><name>block_index</name> != <name>block_buffer_head</name></expr>)</condition> <block>{
+    <expr_stmt><expr><name>current</name> = <name>next</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>next</name> = &amp;<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name></expr>;</expr_stmt>
+    <if>if <condition>(<expr><name>current</name></expr>)</condition><then> <block>{
+      <comment type="line">// Recalculate if current block entry or exit junction speed has changed.</comment>
+      <if>if <condition>(<expr><name><name>current</name>-&gt;<name>recalculate_flag</name></name> || <name><name>next</name>-&gt;<name>recalculate_flag</name></name></expr>)</condition><then> <block>{
+        <comment type="line">// NOTE: Entry and exit factors always &gt; 0 by all previous logic operations.</comment>
+        <expr_stmt><expr><call><name>calculate_trapezoid_for_block</name><argument_list>(<argument><expr><name>current</name></expr></argument>, <argument><expr><name><name>current</name>-&gt;<name>entry_speed</name></name>/<name><name>current</name>-&gt;<name>nominal_speed</name></name></expr></argument>,
+        <argument><expr><name><name>next</name>-&gt;<name>entry_speed</name></name>/<name><name>current</name>-&gt;<name>nominal_speed</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>current</name>-&gt;<name>recalculate_flag</name></name> = false</expr>;</expr_stmt> <comment type="line">// Reset current only to ensure next trapezoid is computed</comment>
+      }</block></then></if>
+    }</block></then></if>
+    <expr_stmt><expr><name>block_index</name> = <call><name>next_block_index</name><argument_list>( <argument><expr><name>block_index</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  }</block></while>
+  <comment type="line">// Last/newest block in buffer. Exit speed is set with MINIMUM_PLANNER_SPEED. Always recalculated.</comment>
+  <if>if<condition>(<expr><name>next</name> != <name>NULL</name></expr>)</condition><then> <block>{
+    <expr_stmt><expr><call><name>calculate_trapezoid_for_block</name><argument_list>(<argument><expr><name>next</name></expr></argument>, <argument><expr><name><name>next</name>-&gt;<name>entry_speed</name></name>/<name><name>next</name>-&gt;<name>nominal_speed</name></name></expr></argument>,
+    <argument><expr><name>MINIMUM_PLANNER_SPEED</name>/<name><name>next</name>-&gt;<name>nominal_speed</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>next</name>-&gt;<name>recalculate_flag</name></name> = false</expr>;</expr_stmt>
+  }</block></then></if>
+}</block></function>
+
+<comment type="line">// Recalculates the motion plan according to the following algorithm:</comment>
+<comment type="line">//</comment>
+<comment type="line">//   1. Go over every block in reverse order and calculate a junction speed reduction (i.e. block_t.entry_factor) </comment>
+<comment type="line">//      so that:</comment>
+<comment type="line">//     a. The junction jerk is within the set limit</comment>
+<comment type="line">//     b. No speed reduction within one block requires faster deceleration than the one, true constant </comment>
+<comment type="line">//        acceleration.</comment>
+<comment type="line">//   2. Go over every block in chronological order and dial down junction speed reduction values if </comment>
+<comment type="line">//     a. The speed increase within one block would require faster accelleration than the one, true </comment>
+<comment type="line">//        constant acceleration.</comment>
+<comment type="line">//</comment>
+<comment type="line">// When these stages are complete all blocks have an entry_factor that will allow all speed changes to </comment>
+<comment type="line">// be performed using only the one, true constant acceleration, and where no junction jerk is jerkier than </comment>
+<comment type="line">// the set limit. Finally it will:</comment>
+<comment type="line">//</comment>
+<comment type="line">//   3. Recalculate trapezoids for all blocks.</comment>
+
+<function><type><name>void</name></type> <name>planner_recalculate</name><parameter_list>()</parameter_list> <block>{   
+  <expr_stmt><expr><call><name>planner_reverse_pass</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>planner_forward_pass</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>planner_recalculate_trapezoids</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<function><type><name>void</name></type> <name>plan_init</name><parameter_list>()</parameter_list> <block>{
+  <expr_stmt><expr><name>block_buffer_head</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><name>block_buffer_tail</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>memset</name><argument_list>(<argument><expr><name>position</name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><sizeof>sizeof<argument_list>(<argument><expr><name>position</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// clear position</comment>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>0</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>1</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>2</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>3</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name>previous_nominal_speed</name> = 0.0</expr>;</expr_stmt>
+}</block></function>
+
+
+
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTOTEMP</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>getHighESpeed</name><parameter_list>()</parameter_list>
+<block>{
+  <decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>oldt</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr>!<name>autotemp_enabled</name></expr>)</condition><then><block>{
+    <return>return;</return>
+  }</block></then></if>
+  <if>if<condition>(<expr><call><name>degTargetHotend0</name><argument_list>()</argument_list></call>+2&lt;<name>autotemp_min</name></expr>)</condition><then> <block>{  <comment type="line">//probably temperature set to zero.</comment>
+    <return>return;</return> <comment type="line">//do nothing</comment>
+  }</block></then></if>
+
+  <decl_stmt><decl><type><name>float</name></type> <name>high</name><init>=<expr>0.0</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>uint8_t</name></type> <name>block_index</name> <init>= <expr><name>block_buffer_tail</name></expr></init></decl>;</decl_stmt>
+
+  <while>while<condition>(<expr><name>block_index</name> != <name>block_buffer_head</name></expr>)</condition> <block>{
+    <if>if<condition>(<expr>(<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>steps_x</name> != 0) ||
+      (<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>steps_y</name> != 0) ||
+      (<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>steps_z</name> != 0)</expr>)</condition><then> <block>{
+      <decl_stmt><decl><type><name>float</name></type> <name>se</name><init>=<expr>(<call><name>float</name><argument_list>(<argument><expr><name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>steps_e</name></expr></argument>)</argument_list></call>/<call><name>float</name><argument_list>(<argument><expr><name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>step_event_count</name></expr></argument>)</argument_list></call>)*<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>nominal_speed</name></expr></init></decl>;</decl_stmt>
+      <comment type="line">//se; mm/sec;</comment>
+      <if>if<condition>(<expr><name>se</name>&gt;<name>high</name></expr>)</condition><then>
+      <block>{
+        <expr_stmt><expr><name>high</name>=<name>se</name></expr>;</expr_stmt>
+      }</block></then></if>
+    }</block></then></if>
+    <expr_stmt><expr><name>block_index</name> = (<name>block_index</name>+1) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)</expr>;</expr_stmt>
+  }</block></while>
+
+  <decl_stmt><decl><type><name>float</name></type> <name>g</name><init>=<expr><name>autotemp_min</name>+<name>high</name>*<name>autotemp_factor</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>t</name><init>=<expr><name>g</name></expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr><name>t</name>&lt;<name>autotemp_min</name></expr>)</condition><then>
+    <expr_stmt><expr><name>t</name>=<name>autotemp_min</name></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>t</name>&gt;<name>autotemp_max</name></expr>)</condition><then>
+    <expr_stmt><expr><name>t</name>=<name>autotemp_max</name></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>oldt</name>&gt;<name>t</name></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name>t</name>=<name>AUTOTEMP_OLDWEIGHT</name>*<name>oldt</name>+(1-<name>AUTOTEMP_OLDWEIGHT</name>)*<name>t</name></expr>;</expr_stmt>
+  }</block></then></if>
+  <expr_stmt><expr><name>oldt</name>=<name>t</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>setTargetHotend0</name><argument_list>(<argument><expr><name>t</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<function><type><name>void</name></type> <name>check_axes_activity</name><parameter_list>()</parameter_list>
+<block>{
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>x_active</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>y_active</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>  
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>z_active</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>e_active</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>tail_fan_speed</name> <init>= <expr><name>fanSpeed</name></expr></init></decl>;</decl_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BARICUDA</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>tail_valve_pressure</name> <init>= <expr><name>ValvePressure</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>tail_e_to_p_pressure</name> <init>= <expr><name>EtoPPressure</name></expr></init></decl>;</decl_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <decl_stmt><decl><type><name>block_t</name> *</type><name>block</name></decl>;</decl_stmt>
+
+  <if>if<condition>(<expr><name>block_buffer_tail</name> != <name>block_buffer_head</name></expr>)</condition><then>
+  <block>{
+    <decl_stmt><decl><type><name>uint8_t</name></type> <name>block_index</name> <init>= <expr><name>block_buffer_tail</name></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><name>tail_fan_speed</name> = <name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>fan_speed</name></expr>;</expr_stmt>
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BARICUDA</name></cpp:ifdef>
+    <expr_stmt><expr><name>tail_valve_pressure</name> = <name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>valve_pressure</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>tail_e_to_p_pressure</name> = <name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name>.<name>e_to_p_pressure</name></expr>;</expr_stmt>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    <while>while<condition>(<expr><name>block_index</name> != <name>block_buffer_head</name></expr>)</condition>
+    <block>{
+      <expr_stmt><expr><name>block</name> = &amp;<name><name>block_buffer</name><index>[<expr><name>block_index</name></expr>]</index></name></expr>;</expr_stmt>
+      <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_x</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><name>x_active</name>++</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_y</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><name>y_active</name>++</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_z</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><name>z_active</name>++</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_e</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><name>e_active</name>++</expr>;</expr_stmt></then></if>
+      <expr_stmt><expr><name>block_index</name> = (<name>block_index</name>+1) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)</expr>;</expr_stmt>
+    }</block></while>
+  }</block></then></if>
+  <if>if<condition>(<expr>(<name>DISABLE_X</name>) &amp;&amp; (<name>x_active</name> == 0)</expr>)</condition><then> <expr_stmt><expr><call><name>disable_x</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr>(<name>DISABLE_Y</name>) &amp;&amp; (<name>y_active</name> == 0)</expr>)</condition><then> <expr_stmt><expr><call><name>disable_y</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr>(<name>DISABLE_Z</name>) &amp;&amp; (<name>z_active</name> == 0)</expr>)</condition><then> <expr_stmt><expr><call><name>disable_z</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr>(<name>DISABLE_E</name>) &amp;&amp; (<name>e_active</name> == 0)</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><call><name>disable_e0</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>disable_e1</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>disable_e2</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+  }</block></then></if>
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>FAN_PIN</name> &gt; -1</expr></cpp:if>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FAN_KICKSTART_TIME</name></cpp:ifdef>
+    <decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>long</name></type> <name>fan_kick_end</name></decl>;</decl_stmt>
+    <if>if <condition>(<expr><name>tail_fan_speed</name></expr>)</condition><then> <block>{
+      <if>if <condition>(<expr><name>fan_kick_end</name> == 0</expr>)</condition><then> <block>{
+        <comment type="line">// Just starting up fan - run at full power.</comment>
+        <expr_stmt><expr><name>fan_kick_end</name> = <call><name>millis</name><argument_list>()</argument_list></call> + <name>FAN_KICKSTART_TIME</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name>tail_fan_speed</name> = 255</expr>;</expr_stmt>
+      }</block></then> <else>else <if>if <condition>(<expr><name>fan_kick_end</name> &gt; <call><name>millis</name><argument_list>()</argument_list></call></expr>)</condition><then>
+        <comment type="line">// Fan still spinning up.</comment>
+        <expr_stmt><expr><name>tail_fan_speed</name> = 255</expr>;</expr_stmt></then></if></else></if>
+    }</block></then> <else>else <block>{
+      <expr_stmt><expr><name>fan_kick_end</name> = 0</expr>;</expr_stmt>
+    }</block></else></if>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif><comment type="line">//FAN_KICKSTART_TIME</comment>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FAN_SOFT_PWM</name></cpp:ifdef>
+  <expr_stmt><expr><name>fanSpeedSoftPwm</name> = <name>tail_fan_speed</name></expr>;</expr_stmt>
+  <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <expr_stmt><expr><call><name>analogWrite</name><argument_list>(<argument><expr><name>FAN_PIN</name></expr></argument>,<argument><expr><name>tail_fan_speed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif><comment type="line" format="doxygen">//!FAN_SOFT_PWM</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif><comment type="line">//FAN_PIN &gt; -1</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTOTEMP</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>getHighESpeed</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BARICUDA</name></cpp:ifdef>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>HEATER_1_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>HEATER_1_PIN</name> &gt; -1</expr></cpp:if>
+      <expr_stmt><expr><call><name>analogWrite</name><argument_list>(<argument><expr><name>HEATER_1_PIN</name></expr></argument>,<argument><expr><name>tail_valve_pressure</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>HEATER_2_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>HEATER_2_PIN</name> &gt; -1</expr></cpp:if>
+      <expr_stmt><expr><call><name>analogWrite</name><argument_list>(<argument><expr><name>HEATER_2_PIN</name></expr></argument>,<argument><expr><name>tail_e_to_p_pressure</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+
+<decl_stmt><decl><type><name>float</name></type> <name>junction_deviation</name> <init>= <expr>0.1</expr></init></decl>;</decl_stmt>
+<comment type="line">// Add a new linear movement to the buffer. steps_x, _y and _z is the absolute position in </comment>
+<comment type="line">// mm. Microseconds specify how many microseconds the move should take to perform. To aid acceleration</comment>
+<comment type="line">// calculation the caller must also provide the physical length of the line in millimeters.</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>plan_buffer_line</name><parameter_list>(<param><decl><type><name>float</name></type> <name>x</name></decl></param>, <param><decl><type><name>float</name></type> <name>y</name></decl></param>, <param><decl><type><name>float</name></type> <name>z</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>e</name></decl></param>, <param><decl><type><name>float</name></type> <name>feed_rate</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>uint8_t</name> &amp;</type><name>extruder</name></decl></param>)</parameter_list>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+<name>void</name> <name>plan_buffer_line</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>x</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>y</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>z</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>e</name></decl></param>, <param><decl><type><name>float</name></type> <name>feed_rate</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>uint8_t</name> &amp;</type><name>extruder</name></decl></param>)</parameter_list>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>  <comment type="line">//ENABLE_AUTO_BED_LEVELING</comment>
+<block>{
+  <comment type="line">// Calculate the buffer head after we push this byte</comment>
+  <decl_stmt><decl><type><name>int</name></type> <name>next_buffer_head</name> <init>= <expr><call><name>next_block_index</name><argument_list>(<argument><expr><name>block_buffer_head</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// If the buffer is full: good! That means we are well ahead of the robot. </comment>
+  <comment type="line">// Rest here until there is room in the buffer.</comment>
+  <while>while<condition>(<expr><name>block_buffer_tail</name> == <name>next_buffer_head</name></expr>)</condition>
+  <block>{
+    <expr_stmt><expr><call><name>manage_heater</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>manage_inactivity</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>lcd_update</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  }</block></while>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>apply_rotation_xyz</name><argument_list>(<argument><expr><name>plan_bed_level_matrix</name></expr></argument>, <argument><expr><name>x</name></expr></argument>, <argument><expr><name>y</name></expr></argument>, <argument><expr><name>z</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ENABLE_AUTO_BED_LEVELING</comment>
+
+  <comment type="line">// The target position of the tool in absolute steps</comment>
+  <comment type="line">// Calculate target position in absolute steps</comment>
+  <comment type="line">//this should be done after the wait, because otherwise a M92 code within the gcode disrupts this calculation somehow</comment>
+  <decl_stmt><decl><type><name>long</name></type> <name><name>target</name><index>[<expr>4</expr>]</index></name></decl>;</decl_stmt>
+  <expr_stmt><expr><name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>x</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>y</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>target</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>z</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>     
+  <expr_stmt><expr><name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>e</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PREVENT_DANGEROUS_EXTRUDE</name></cpp:ifdef>
+  <if>if<condition>(<expr><name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>!=<name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>)</condition><then>
+  <block>{
+    <if>if<condition>(<expr><call><name>degHotend</name><argument_list>(<argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call>&lt;<name>extrude_min_temp</name></expr>)</condition><then>
+    <block>{
+      <expr_stmt><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>=<name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>;</expr_stmt> <comment type="line">//behave as if the move really took place, but ignore E part</comment>
+      <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_ERR_COLD_EXTRUDE_STOP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if>
+    
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PREVENT_LENGTHY_EXTRUDE</name></cpp:ifdef>
+    <if>if<condition>(<expr><call><name>labs</name><argument_list>(<argument><expr><name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call>&gt;<name><name>axis_steps_per_unit</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>*<name>EXTRUDE_MAXLENGTH</name></expr>)</condition><then>
+    <block>{
+      <expr_stmt><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>=<name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>;</expr_stmt> <comment type="line">//behave as if the move really took place, but ignore E part</comment>
+      <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_ERR_LONG_EXTRUDE_STOP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  }</block></then></if>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Prepare to set up new block</comment>
+  <decl_stmt><decl><type><name>block_t</name> *</type><name>block</name> <init>= <expr>&amp;<name><name>block_buffer</name><index>[<expr><name>block_buffer_head</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// Mark block as not busy (Not executed by the stepper interrupt)</comment>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>busy</name></name> = false</expr>;</expr_stmt>
+
+  <comment type="line">// Number of steps for each axis</comment>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>COREXY</name></cpp:ifndef>
+<comment type="line">// default non-h-bot planning</comment>
+<expr_stmt><expr><name><name>block</name>-&gt;<name>steps_x</name></name> = <call><name>labs</name><argument_list>(<argument><expr><name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><name><name>block</name>-&gt;<name>steps_y</name></name> = <call><name>labs</name><argument_list>(<argument><expr><name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+<comment type="line">// corexy planning</comment>
+<comment type="line">// these equations follow the form of the dA and dB equations on http://www.corexy.com/theory.html</comment>
+<expr_stmt><expr><name><name>block</name>-&gt;<name>steps_x</name></name> = <call><name>labs</name><argument_list>(<argument><expr>(<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) + (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>)</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><name><name>block</name>-&gt;<name>steps_y</name></name> = <call><name>labs</name><argument_list>(<argument><expr>(<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) - (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>)</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>steps_z</name></name> = <call><name>labs</name><argument_list>(<argument><expr><name><name>target</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>steps_e</name></name> = <call><name>labs</name><argument_list>(<argument><expr><name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>steps_e</name></name> *= <name><name>volumetric_multiplier</name><index>[<expr><name>active_extruder</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>steps_e</name></name> *= <name>extrudemultiply</name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>steps_e</name></name> /= 100</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>step_event_count</name></name> = <call><name>max</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>steps_x</name></name></expr></argument>, <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>steps_y</name></name></expr></argument>, <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>steps_z</name></name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>steps_e</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <comment type="line">// Bail if this is a zero-length block</comment>
+  <if>if <condition>(<expr><name><name>block</name>-&gt;<name>step_event_count</name></name> &lt;= <name>dropsegments</name></expr>)</condition><then>
+  <block>{ 
+    <return>return;</return> 
+  }</block></then></if>
+
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>fan_speed</name></name> = <name>fanSpeed</name></expr>;</expr_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BARICUDA</name></cpp:ifdef>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>valve_pressure</name></name> = <name>ValvePressure</name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>e_to_p_pressure</name></name> = <name>EtoPPressure</name></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Compute direction bits for this block </comment>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> = 0</expr>;</expr_stmt>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>COREXY</name></cpp:ifndef>
+  <if>if <condition>(<expr><name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> &lt; <name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>X_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+  <if>if <condition>(<expr><name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> &lt; <name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>Y_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <if>if <condition>(<expr>(<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) + (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>) &lt; 0</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>X_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+  <if>if <condition>(<expr>(<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) - (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>) &lt; 0</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>Y_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <if>if <condition>(<expr><name><name>target</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> &lt; <name><name>position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>Z_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+  <if>if <condition>(<expr><name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> &lt; <name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>direction_bits</name></name> |= (1&lt;&lt;<name>E_AXIS</name>)</expr>;</expr_stmt> 
+  }</block></then></if>
+
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>active_extruder</name></name> = <name>extruder</name></expr>;</expr_stmt>
+
+  <comment type="line">//enable active axes</comment>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>COREXY</name></cpp:ifdef>
+  <if>if<condition>(<expr>(<name><name>block</name>-&gt;<name>steps_x</name></name> != 0) || (<name><name>block</name>-&gt;<name>steps_y</name></name> != 0)</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><call><name>enable_x</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>enable_y</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  }</block></then></if>
+  <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_x</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><call><name>enable_x</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_y</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><call><name>enable_y</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>Z_LATE_ENABLE</name></cpp:ifndef>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_z</name></name> != 0</expr>)</condition><then> <expr_stmt><expr><call><name>enable_z</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Enable extruder(s)</comment>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_e</name></name> != 0</expr>)</condition><then>
+  <block>{
+    <if>if <condition>(<expr><name>DISABLE_INACTIVE_EXTRUDER</name></expr>)</condition><then> <comment type="line">//enable only selected extruder</comment>
+    <block>{
+
+      <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>0</expr>]</index></name> &gt; 0</expr>)</condition><then> <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>0</expr>]</index></name>--</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>1</expr>]</index></name> &gt; 0</expr>)</condition><then> <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>1</expr>]</index></name>--</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>2</expr>]</index></name> &gt; 0</expr>)</condition><then> <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>2</expr>]</index></name>--</expr>;</expr_stmt></then></if>
+      
+      <switch>switch<condition>(<expr><name>extruder</name></expr>)</condition>
+      <block>{
+        <case>case <expr>0</expr>: 
+          <expr_stmt><expr><call><name>enable_e0</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+          <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>0</expr>]</index></name> = <name>BLOCK_BUFFER_SIZE</name>*2</expr>;</expr_stmt>
+          
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>1</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e1</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>2</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e2</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+        <break>break;</break>
+        </case><case>case <expr>1</expr>:
+          <expr_stmt><expr><call><name>enable_e1</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+          <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>1</expr>]</index></name> = <name>BLOCK_BUFFER_SIZE</name>*2</expr>;</expr_stmt>
+          
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>0</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e0</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>2</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e2</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+        <break>break;</break>
+        </case><case>case <expr>2</expr>:
+          <expr_stmt><expr><call><name>enable_e2</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+          <expr_stmt><expr><name><name>g_uc_extruder_last_move</name><index>[<expr>2</expr>]</index></name> = <name>BLOCK_BUFFER_SIZE</name>*2</expr>;</expr_stmt>
+          
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>0</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e0</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+          <if>if<condition>(<expr><name><name>g_uc_extruder_last_move</name><index>[<expr>1</expr>]</index></name> == 0</expr>)</condition><then> <expr_stmt><expr><call><name>disable_e1</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if> 
+        <break>break;</break>        
+      </case>}</block></switch>
+    }</block></then>
+    <else>else <comment type="line">//enable all</comment>
+    <block>{
+      <expr_stmt><expr><call><name>enable_e0</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>enable_e1</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>enable_e2</name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+    }</block></else></if>
+  }</block></then></if>
+
+  <if>if <condition>(<expr><name><name>block</name>-&gt;<name>steps_e</name></name> == 0</expr>)</condition><then>
+  <block>{
+    <if>if<condition>(<expr><name>feed_rate</name>&lt;<name>mintravelfeedrate</name></expr>)</condition><then> <expr_stmt><expr><name>feed_rate</name>=<name>mintravelfeedrate</name></expr>;</expr_stmt></then></if>
+  }</block></then>
+  <else>else
+  <block>{
+    <if>if<condition>(<expr><name>feed_rate</name>&lt;<name>minimumfeedrate</name></expr>)</condition><then> <expr_stmt><expr><name>feed_rate</name>=<name>minimumfeedrate</name></expr>;</expr_stmt></then></if>
+  }</block></else></if> 
+
+<comment type="block">/* This part of the code calculates the total length of the movement. 
+For cartesian bots, the X_AXIS is the real X movement and same for Y_AXIS.
+But for corexy bots, that is not true. The "X_AXIS" and "Y_AXIS" motors (that should be named to A_AXIS
+and B_AXIS) cannot be used for X and Y length, because A=X+Y and B=X-Y.
+So we need to create other 2 "AXIS", named X_HEAD and Y_HEAD, meaning the real displacement of the Head. 
+Having the real displacement of the head, we can calculate the total movement length and apply the desired speed.
+*/</comment> 
+  <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>COREXY</name></cpp:ifndef>
+    <decl_stmt><decl><type><name>float</name></type> <name><name>delta_mm</name><index>[<expr>4</expr>]</index></name></decl>;</decl_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = (<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+  <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+    <decl_stmt><decl><type><name>float</name></type> <name><name>delta_mm</name><index>[<expr>6</expr>]</index></name></decl>;</decl_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>X_HEAD</name></expr>]</index></name> = (<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>Y_HEAD</name></expr>]</index></name> = (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = ((<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) + (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>))/<name><name>axis_steps_per_unit</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = ((<name><name>target</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>) - (<name><name>target</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>))/<name><name>axis_steps_per_unit</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = (<name><name>target</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>delta_mm</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> = ((<name><name>target</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>-<name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>)/<name><name>axis_steps_per_unit</name><index>[<expr><name>E_AXIS</name></expr>]</index></name>)*<name><name>volumetric_multiplier</name><index>[<expr><name>active_extruder</name></expr>]</index></name>*<name>extrudemultiply</name>/100.0</expr>;</expr_stmt>
+  <if>if <condition>( <expr><name><name>block</name>-&gt;<name>steps_x</name></name> &lt;=<name>dropsegments</name> &amp;&amp; <name><name>block</name>-&gt;<name>steps_y</name></name> &lt;=<name>dropsegments</name> &amp;&amp; <name><name>block</name>-&gt;<name>steps_z</name></name> &lt;=<name>dropsegments</name></expr> )</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>millimeters</name></name> = <call><name>fabs</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></then> 
+  <else>else
+  <block>{
+    <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>COREXY</name></cpp:ifndef>
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>millimeters</name></name> = <call><name>sqrt</name><argument_list>(<argument><expr><call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> + <call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> + <call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+	  <expr_stmt><expr><name><name>block</name>-&gt;<name>millimeters</name></name> = <call><name>sqrt</name><argument_list>(<argument><expr><call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>X_HEAD</name></expr>]</index></name></expr></argument>)</argument_list></call> + <call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>Y_HEAD</name></expr>]</index></name></expr></argument>)</argument_list></call> + <call><name>square</name><argument_list>(<argument><expr><name><name>delta_mm</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>	
+  }</block></else></if>
+  <decl_stmt><decl><type><name>float</name></type> <name>inverse_millimeters</name> <init>= <expr>1.0/<name><name>block</name>-&gt;<name>millimeters</name></name></expr></init></decl>;</decl_stmt>  <comment type="line">// Inverse millimeters to remove multiple divides </comment>
+
+    <comment type="line">// Calculate speed in mm/second for each axis. No divide by zero due to previous checks.</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>inverse_second</name> <init>= <expr><name>feed_rate</name> * <name>inverse_millimeters</name></expr></init></decl>;</decl_stmt>
+
+  <decl_stmt><decl><type><name>int</name></type> <name>moves_queued</name><init>=<expr>(<name>block_buffer_head</name>-<name>block_buffer_tail</name> + <name>BLOCK_BUFFER_SIZE</name>) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)</expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// slow down when de buffer starts to empty, rather than wait at the corner for a buffer refill</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>OLD_SLOWDOWN</name></cpp:ifdef>
+  <if>if<condition>(<expr><name><name>moves_queued</name> <argument_list>&lt; <argument><expr>(<name>BLOCK_BUFFER_SIZE</name> * 0.5) &amp;&amp; <name>moves_queued</name></expr></argument> &gt;</argument_list></name> 1</expr>)</condition><then>
+    <expr_stmt><expr><name>feed_rate</name> = <name>feed_rate</name>*<name>moves_queued</name> / (<name>BLOCK_BUFFER_SIZE</name> * 0.5)</expr>;</expr_stmt></then></if> 
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SLOWDOWN</name></cpp:ifdef>
+  <comment type="line">//  segment time im micro seconds</comment>
+  <decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>segment_time</name> <init>= <expr><call><name>lround</name><argument_list>(<argument><expr>1000000.0/<name>inverse_second</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <if>if <condition>(<expr>(<name>moves_queued</name> &gt; 1) &amp;&amp; (<name>moves_queued</name> &lt; (<name>BLOCK_BUFFER_SIZE</name> * 0.5))</expr>)</condition><then>
+  <block>{
+    <if>if <condition>(<expr><name>segment_time</name> &lt; <name>minsegmenttime</name></expr>)</condition><then>
+    <block>{ <comment type="line">// buffer is draining, add extra time.  The amount of time added increases if the buffer is still emptied more.</comment>
+      <expr_stmt><expr><name>inverse_second</name>=1000000.0/(<name>segment_time</name>+<call><name>lround</name><argument_list>(<argument><expr>2*(<name>minsegmenttime</name>-<name>segment_time</name>)/<name>moves_queued</name></expr></argument>)</argument_list></call>)</expr>;</expr_stmt>
+      <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>XY_FREQUENCY_LIMIT</name></cpp:ifdef>
+         <expr_stmt><expr><name>segment_time</name> = <call><name>lround</name><argument_list>(<argument><expr>1000000.0/<name>inverse_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    }</block></then></if>
+  }</block></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <comment type="line">//  END OF SLOW DOWN SECTION    </comment>
+
+
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_speed</name></name> = <name><name>block</name>-&gt;<name>millimeters</name></name> * <name>inverse_second</name></expr>;</expr_stmt> <comment type="line">// (mm/sec) Always &gt; 0</comment>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name> = <call><name>ceil</name><argument_list>(<argument><expr><name><name>block</name>-&gt;<name>step_event_count</name></name> * <name>inverse_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// (step/sec) Always &gt; 0</comment>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FILAMENT_SENSOR</name></cpp:ifdef>
+  <comment type="line">//FMM update ring buffer used for delay with filament measurements</comment>
+  
+  
+    <if>if<condition>(<expr>(<name>extruder</name>==<name>FILAMENT_SENSOR_EXTRUDER_NUM</name>) &amp;&amp; (<name>delay_index2</name> &gt; -1)</expr>)</condition><then>  <comment type="line">//only for extruder with filament sensor and if ring buffer is initialized</comment>
+  	  <block>{
+    <expr_stmt><expr><name>delay_dist</name> = <name>delay_dist</name> + <name><name>delta_mm</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>;</expr_stmt>  <comment type="line">//increment counter with next move in e axis</comment>
+  
+    <while>while <condition>(<expr><name>delay_dist</name> &gt;= (10*(<name>MAX_MEASUREMENT_DELAY</name>+1))</expr>)</condition>  <comment type="line">//check if counter is over max buffer size in mm</comment>
+      	  <expr_stmt><expr><name>delay_dist</name> = <name>delay_dist</name> - 10*(<name>MAX_MEASUREMENT_DELAY</name>+1)</expr>;</expr_stmt></while>  <comment type="line">//loop around the buffer</comment>
+    <while>while <condition>(<expr><name>delay_dist</name>&lt;0</expr>)</condition>
+    	  <expr_stmt><expr><name>delay_dist</name> = <name>delay_dist</name> + 10*(<name>MAX_MEASUREMENT_DELAY</name>+1)</expr>;</expr_stmt></while> <comment type="line">//loop around the buffer</comment>
+      
+    <expr_stmt><expr><name>delay_index1</name>=<name>delay_dist</name>/10.0</expr>;</expr_stmt>  <comment type="line">//calculate index</comment>
+    
+    <comment type="line">//ensure the number is within range of the array after converting from floating point</comment>
+    <if>if<condition>(<expr><name>delay_index1</name>&lt;0</expr>)</condition><then>
+    	<expr_stmt><expr><name>delay_index1</name>=0</expr>;</expr_stmt></then>
+    <else>else <if>if <condition>(<expr><name>delay_index1</name>&gt;<name>MAX_MEASUREMENT_DELAY</name></expr>)</condition><then>
+    	<expr_stmt><expr><name>delay_index1</name>=<name>MAX_MEASUREMENT_DELAY</name></expr>;</expr_stmt></then></if></else></if>
+    	
+    <if>if<condition>(<expr><name>delay_index1</name> != <name>delay_index2</name></expr>)</condition><then>  <comment type="line">//moved index</comment>
+  	  <block>{
+    	<expr_stmt><expr><name>meas_sample</name>=<call><name>widthFil_to_size_ratio</name><argument_list>()</argument_list></call>-100</expr>;</expr_stmt>  <comment type="line">//subtract off 100 to reduce magnitude - to store in a signed char</comment>
+  	  }</block></then></if>
+    <while>while<condition>( <expr><name>delay_index1</name> != <name>delay_index2</name></expr>)</condition>
+  	  <block>{
+  	  <expr_stmt><expr><name>delay_index2</name> = <name>delay_index2</name> + 1</expr>;</expr_stmt>
+  	<if>if<condition>(<expr><name>delay_index2</name>&gt;<name>MAX_MEASUREMENT_DELAY</name></expr>)</condition><then>
+  			  <expr_stmt><expr><name>delay_index2</name>=<name>delay_index2</name>-(<name>MAX_MEASUREMENT_DELAY</name>+1)</expr>;</expr_stmt></then></if>  <comment type="line">//loop around buffer when incrementing</comment>
+  	  <if>if<condition>(<expr><name>delay_index2</name>&lt;0</expr>)</condition><then>
+  		<expr_stmt><expr><name>delay_index2</name>=0</expr>;</expr_stmt></then>
+  	  <else>else <if>if <condition>(<expr><name>delay_index2</name>&gt;<name>MAX_MEASUREMENT_DELAY</name></expr>)</condition><then>
+  		<expr_stmt><expr><name>delay_index2</name>=<name>MAX_MEASUREMENT_DELAY</name></expr>;</expr_stmt></then></if></else></if>  
+  	  
+  	  <expr_stmt><expr><name><name>measurement_delay</name><index>[<expr><name>delay_index2</name></expr>]</index></name>=<name>meas_sample</name></expr>;</expr_stmt>
+  	  }</block></while>
+    	
+    
+  	  }</block></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+
+  <comment type="line">// Calculate and limit speed in mm/sec for each axis</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name><name>current_speed</name><index>[<expr>4</expr>]</index></name></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>speed_factor</name> <init>= <expr>1.0</expr></init></decl>;</decl_stmt> <comment type="line">//factor &lt;=1 do decrease speed</comment>
+  <for>for(<init><decl><type><name>int</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</init> <condition><expr><name>i</name> &lt; 4</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+  <block>{
+    <expr_stmt><expr><name><name>current_speed</name><index>[<expr><name>i</name></expr>]</index></name> = <name><name>delta_mm</name><index>[<expr><name>i</name></expr>]</index></name> * <name>inverse_second</name></expr>;</expr_stmt>
+    <if>if<condition>(<expr><call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>i</name></expr>]</index></name></expr></argument>)</argument_list></call> &gt; <name><name>max_feedrate</name><index>[<expr><name>i</name></expr>]</index></name></expr>)</condition><then>
+      <expr_stmt><expr><name>speed_factor</name> = <call><name>min</name><argument_list>(<argument><expr><name>speed_factor</name></expr></argument>, <argument><expr><name><name>max_feedrate</name><index>[<expr><name>i</name></expr>]</index></name> / <call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>i</name></expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  }</block></for>
+
+  <comment type="line">// Max segement time in us.</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>XY_FREQUENCY_LIMIT</name></cpp:ifdef>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>MAX_FREQ_TIME</name></cpp:macro> <cpp:value>(1000000.0/XY_FREQUENCY_LIMIT)</cpp:value></cpp:define>
+  <comment type="line">// Check and limit the xy direction change frequency</comment>
+  <decl_stmt><decl><type><name>unsigned</name> <name>char</name></type> <name>direction_change</name> <init>= <expr><name><name>block</name>-&gt;<name>direction_bits</name></name> ^ <name>old_direction_bits</name></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><name>old_direction_bits</name> = <name><name>block</name>-&gt;<name>direction_bits</name></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name>segment_time</name> = <call><name>lround</name><argument_list>(<argument><expr>(<name>float</name>)<name>segment_time</name> / <name>speed_factor</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  
+  <if>if<condition>(<expr>(<name>direction_change</name> &amp; (1&lt;&lt;<name>X_AXIS</name>)) == 0</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>x_segment_time</name><index>[<expr>0</expr>]</index></name> += <name>segment_time</name></expr>;</expr_stmt>
+  }</block></then>
+  <else>else
+  <block>{
+    <expr_stmt><expr><name><name>x_segment_time</name><index>[<expr>2</expr>]</index></name> = <name><name>x_segment_time</name><index>[<expr>1</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>x_segment_time</name><index>[<expr>1</expr>]</index></name> = <name><name>x_segment_time</name><index>[<expr>0</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>x_segment_time</name><index>[<expr>0</expr>]</index></name> = <name>segment_time</name></expr>;</expr_stmt>
+  }</block></else></if>
+  <if>if<condition>(<expr>(<name>direction_change</name> &amp; (1&lt;&lt;<name>Y_AXIS</name>)) == 0</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>y_segment_time</name><index>[<expr>0</expr>]</index></name> += <name>segment_time</name></expr>;</expr_stmt>
+  }</block></then>
+  <else>else
+  <block>{
+    <expr_stmt><expr><name><name>y_segment_time</name><index>[<expr>2</expr>]</index></name> = <name><name>y_segment_time</name><index>[<expr>1</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>y_segment_time</name><index>[<expr>1</expr>]</index></name> = <name><name>y_segment_time</name><index>[<expr>0</expr>]</index></name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>y_segment_time</name><index>[<expr>0</expr>]</index></name> = <name>segment_time</name></expr>;</expr_stmt>
+  }</block></else></if>
+  <decl_stmt><decl><type><name>long</name></type> <name>max_x_segment_time</name> <init>= <expr><call><name>max</name><argument_list>(<argument><expr><name><name>x_segment_time</name><index>[<expr>0</expr>]</index></name></expr></argument>, <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>x_segment_time</name><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name><name>x_segment_time</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>long</name></type> <name>max_y_segment_time</name> <init>= <expr><call><name>max</name><argument_list>(<argument><expr><name><name>y_segment_time</name><index>[<expr>0</expr>]</index></name></expr></argument>, <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>y_segment_time</name><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name><name>y_segment_time</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>long</name></type> <name>min_xy_segment_time</name> <init>=<expr><call><name>min</name><argument_list>(<argument><expr><name>max_x_segment_time</name></expr></argument>, <argument><expr><name>max_y_segment_time</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr><name>min_xy_segment_time</name> &lt; <name>MAX_FREQ_TIME</name></expr>)</condition><then>
+    <expr_stmt><expr><name>speed_factor</name> = <call><name>min</name><argument_list>(<argument><expr><name>speed_factor</name></expr></argument>, <argument><expr><name>speed_factor</name> * (<name>float</name>)<name>min_xy_segment_time</name> / (<name>float</name>)<name>MAX_FREQ_TIME</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Correct the speed  </comment>
+  <if>if<condition>( <expr><name>speed_factor</name> &lt; 1.0</expr>)</condition><then>
+  <block>{
+    <for>for(<init><decl><type><name>unsigned</name> <name>char</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</init> <condition><expr><name>i</name> &lt; 4</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+    <block>{
+      <expr_stmt><expr><name><name>current_speed</name><index>[<expr><name>i</name></expr>]</index></name> *= <name>speed_factor</name></expr>;</expr_stmt>
+    }</block></for>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_speed</name></name> *= <name>speed_factor</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name> *= <name>speed_factor</name></expr>;</expr_stmt>
+  }</block></then></if>
+
+  <comment type="line">// Compute and limit the acceleration rate for the trapezoid generator.  </comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>steps_per_mm</name> <init>= <expr><name><name>block</name>-&gt;<name>step_event_count</name></name>/<name><name>block</name>-&gt;<name>millimeters</name></name></expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr><name><name>block</name>-&gt;<name>steps_x</name></name> == 0 &amp;&amp; <name><name>block</name>-&gt;<name>steps_y</name></name> == 0 &amp;&amp; <name><name>block</name>-&gt;<name>steps_z</name></name> == 0</expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <call><name>ceil</name><argument_list>(<argument><expr><name>retract_acceleration</name> * <name>steps_per_mm</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// convert to: acceleration steps/sec^2</comment>
+  }</block></then>
+  <else>else
+  <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <call><name>ceil</name><argument_list>(<argument><expr><name>acceleration</name> * <name>steps_per_mm</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// convert to: acceleration steps/sec^2</comment>
+    <comment type="line">// Limit acceleration per axis</comment>
+    <if>if<condition>(<expr>((<name>float</name>)<name><name>block</name>-&gt;<name>acceleration_st</name></name> * (<name>float</name>)<name><name>block</name>-&gt;<name>steps_x</name></name> / (<name>float</name>)<name><name>block</name>-&gt;<name>step_event_count</name></name>) &gt; <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>)</condition><then>
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt></then></if>
+    <if>if<condition>(<expr>((<name>float</name>)<name><name>block</name>-&gt;<name>acceleration_st</name></name> * (<name>float</name>)<name><name>block</name>-&gt;<name>steps_y</name></name> / (<name>float</name>)<name><name>block</name>-&gt;<name>step_event_count</name></name>) &gt; <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>)</condition><then>
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr>;</expr_stmt></then></if>
+    <if>if<condition>(<expr>((<name>float</name>)<name><name>block</name>-&gt;<name>acceleration_st</name></name> * (<name>float</name>)<name><name>block</name>-&gt;<name>steps_e</name></name> / (<name>float</name>)<name><name>block</name>-&gt;<name>step_event_count</name></name>) &gt; <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>)</condition><then>
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr>;</expr_stmt></then></if>
+    <if>if<condition>(<expr>((<name>float</name>)<name><name>block</name>-&gt;<name>acceleration_st</name></name> * (<name>float</name>)<name><name>block</name>-&gt;<name>steps_z</name></name> / (<name>float</name>)<name><name>block</name>-&gt;<name>step_event_count</name></name> ) &gt; <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>)</condition><then>
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name> = <name><name>axis_steps_per_sqr_second</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>;</expr_stmt></then></if>
+  }</block></else></if>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration</name></name> = <name><name>block</name>-&gt;<name>acceleration_st</name></name> / <name>steps_per_mm</name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>acceleration_rate</name></name> = <call>(<name>long</name>)<argument_list>(<argument><expr>(<name>float</name>)<name><name>block</name>-&gt;<name>acceleration_st</name></name> * (16777216.0 / (<name>F_CPU</name> / 8.0))</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr>0</expr></cpp:if>  <comment type="line">// Use old jerk for now</comment>
+  <comment type="line">// Compute path unit vector</comment>
+  double unit_vec[3];
+
+  unit_vec[X_AXIS] = delta_mm[X_AXIS]*inverse_millimeters;
+  unit_vec[Y_AXIS] = delta_mm[Y_AXIS]*inverse_millimeters;
+  unit_vec[Z_AXIS] = delta_mm[Z_AXIS]*inverse_millimeters;
+
+  <comment type="line">// Compute maximum allowable entry speed at junction by centripetal acceleration approximation.</comment>
+  <comment type="line">// Let a circle be tangent to both previous and current path line segments, where the junction</comment>
+  <comment type="line">// deviation is defined as the distance from the junction to the closest edge of the circle,</comment>
+  <comment type="line">// colinear with the circle center. The circular segment joining the two paths represents the</comment>
+  <comment type="line">// path of centripetal acceleration. Solve for max velocity based on max acceleration about the</comment>
+  <comment type="line">// radius of the circle, defined indirectly by junction deviation. This may be also viewed as</comment>
+  <comment type="line">// path width or max_jerk in the previous grbl version. This approach does not actually deviate</comment>
+  <comment type="line">// from path, but used as a robust way to compute cornering speeds, as it takes into account the</comment>
+  <comment type="line">// nonlinearities of both the junction angle and junction velocity.</comment>
+  double vmax_junction = MINIMUM_PLANNER_SPEED; <comment type="line">// Set default max junction speed</comment>
+
+  <comment type="line">// Skip first block or when previous_nominal_speed is used as a flag for homing and offset cycles.</comment>
+  if ((block_buffer_head != block_buffer_tail) &amp;&amp; (previous_nominal_speed &gt; 0.0)) {
+    <comment type="line">// Compute cosine of angle between previous and current path. (prev_unit_vec is negative)</comment>
+    <comment type="line">// NOTE: Max junction velocity is computed without sin() or acos() by trig half angle identity.</comment>
+    double cos_theta = - previous_unit_vec[X_AXIS] * unit_vec[X_AXIS]
+      - previous_unit_vec[Y_AXIS] * unit_vec[Y_AXIS]
+      - previous_unit_vec[Z_AXIS] * unit_vec[Z_AXIS] ;
+
+    <comment type="line">// Skip and use default max junction speed for 0 degree acute junction.</comment>
+    if (cos_theta &lt; 0.95) {
+      vmax_junction = min(previous_nominal_speed,block-&gt;nominal_speed);
+      <comment type="line">// Skip and avoid divide by zero for straight junctions at 180 degrees. Limit to min() of nominal speeds.</comment>
+      if (cos_theta &gt; -0.95) {
+        <comment type="line">// Compute maximum junction velocity based on maximum acceleration and junction deviation</comment>
+        double sin_theta_d2 = sqrt(0.5*(1.0-cos_theta)); <comment type="line">// Trig half angle identity. Always positive.</comment>
+        vmax_junction = min(vmax_junction,
+        sqrt(block-&gt;acceleration * junction_deviation * sin_theta_d2/(1.0-sin_theta_d2)) );
+      }
+    }
+  }
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <comment type="line">// Start with a safe speed</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>vmax_junction</name> <init>= <expr><name>max_xy_jerk</name>/2</expr></init></decl>;</decl_stmt> 
+  <decl_stmt><decl><type><name>float</name></type> <name>vmax_junction_factor</name> <init>= <expr>1.0</expr></init></decl>;</decl_stmt> 
+  <if>if<condition>(<expr><call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> &gt; <name>max_z_jerk</name>/2</expr>)</condition><then> 
+    <expr_stmt><expr><name>vmax_junction</name> = <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction</name></expr></argument>, <argument><expr><name>max_z_jerk</name>/2</expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> &gt; <name>max_e_jerk</name>/2</expr>)</condition><then> 
+    <expr_stmt><expr><name>vmax_junction</name> = <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction</name></expr></argument>, <argument><expr><name>max_e_jerk</name>/2</expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <expr_stmt><expr><name>vmax_junction</name> = <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction</name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>nominal_speed</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>safe_speed</name> <init>= <expr><name>vmax_junction</name></expr></init></decl>;</decl_stmt>
+
+  <if>if <condition>(<expr>(<name>moves_queued</name> &gt; 1) &amp;&amp; (<name>previous_nominal_speed</name> &gt; 0.0001)</expr>)</condition><then> <block>{
+    <decl_stmt><decl><type><name>float</name></type> <name>jerk</name> <init>= <expr><call><name>sqrt</name><argument_list>(<argument><expr><call><name>pow</name><argument_list>(<argument><expr>(<name><name>current_speed</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>-<name><name>previous_speed</name><index>[<expr><name>X_AXIS</name></expr>]</index></name>)</expr></argument>, <argument><expr>2</expr></argument>)</argument_list></call>+<call><name>pow</name><argument_list>(<argument><expr>(<name><name>current_speed</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>-<name><name>previous_speed</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name>)</expr></argument>, <argument><expr>2</expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <comment type="line">//    if((fabs(previous_speed[X_AXIS]) &gt; 0.0001) || (fabs(previous_speed[Y_AXIS]) &gt; 0.0001)) {</comment>
+    <expr_stmt><expr><name>vmax_junction</name> = <name><name>block</name>-&gt;<name>nominal_speed</name></name></expr>;</expr_stmt>
+    <comment type="line">//    }</comment>
+    <if>if <condition>(<expr><name>jerk</name> &gt; <name>max_xy_jerk</name></expr>)</condition><then> <block>{
+      <expr_stmt><expr><name>vmax_junction_factor</name> = (<name>max_xy_jerk</name>/<name>jerk</name>)</expr>;</expr_stmt>
+    }</block></then></if> 
+    <if>if<condition>(<expr><call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> - <name><name>previous_speed</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> &gt; <name>max_z_jerk</name></expr>)</condition><then> <block>{
+      <expr_stmt><expr><name>vmax_junction_factor</name>= <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction_factor</name></expr></argument>, <argument><expr>(<name>max_z_jerk</name>/<call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> - <name><name>previous_speed</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call>)</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if> 
+    <if>if<condition>(<expr><call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> - <name><name>previous_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call> &gt; <name>max_e_jerk</name></expr>)</condition><then> <block>{
+      <expr_stmt><expr><name>vmax_junction_factor</name> = <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction_factor</name></expr></argument>, <argument><expr>(<name>max_e_jerk</name>/<call><name>fabs</name><argument_list>(<argument><expr><name><name>current_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> - <name><name>previous_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call>)</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if> 
+    <expr_stmt><expr><name>vmax_junction</name> = <call><name>min</name><argument_list>(<argument><expr><name>previous_nominal_speed</name></expr></argument>, <argument><expr><name>vmax_junction</name> * <name>vmax_junction_factor</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// Limit speed to max previous speed</comment>
+  }</block></then></if>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>max_entry_speed</name></name> = <name>vmax_junction</name></expr>;</expr_stmt>
+
+  <comment type="line">// Initialize block entry speed. Compute based on deceleration to user-defined MINIMUM_PLANNER_SPEED.</comment>
+  <decl_stmt><decl><type><name>double</name></type> <name>v_allowable</name> <init>= <expr><call><name>max_allowable_speed</name><argument_list>(<argument><expr>-<name><name>block</name>-&gt;<name>acceleration</name></name></expr></argument>,<argument><expr><name>MINIMUM_PLANNER_SPEED</name></expr></argument>,<argument><expr><name><name>block</name>-&gt;<name>millimeters</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>entry_speed</name></name> = <call><name>min</name><argument_list>(<argument><expr><name>vmax_junction</name></expr></argument>, <argument><expr><name>v_allowable</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <comment type="line">// Initialize planner efficiency flags</comment>
+  <comment type="line">// Set flag if block will always reach maximum junction speed regardless of entry/exit speeds.</comment>
+  <comment type="line">// If a block can de/ac-celerate from nominal speed to zero within the length of the block, then</comment>
+  <comment type="line">// the current block and next block junction speeds are guaranteed to always be at their maximum</comment>
+  <comment type="line">// junction speeds in deceleration and acceleration, respectively. This is due to how the current</comment>
+  <comment type="line">// block nominal speed limits both the current and next maximum junction speeds. Hence, in both</comment>
+  <comment type="line">// the reverse and forward planners, the corresponding block junction speed will always be at the</comment>
+  <comment type="line">// the maximum junction speed and may always be ignored for any speed reduction checks.</comment>
+  <if>if <condition>(<expr><name><name>block</name>-&gt;<name>nominal_speed</name></name> &lt;= <name>v_allowable</name></expr>)</condition><then> <block>{ 
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_length_flag</name></name> = true</expr>;</expr_stmt> 
+  }</block></then>
+  <else>else <block>{ 
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>nominal_length_flag</name></name> = false</expr>;</expr_stmt> 
+  }</block></else></if>
+  <expr_stmt><expr><name><name>block</name>-&gt;<name>recalculate_flag</name></name> = true</expr>;</expr_stmt> <comment type="line">// Always calculate trapezoid for new block</comment>
+
+  <comment type="line">// Update previous path unit_vector and nominal speed</comment>
+  <expr_stmt><expr><call><name>memcpy</name><argument_list>(<argument><expr><name>previous_speed</name></expr></argument>, <argument><expr><name>current_speed</name></expr></argument>, <argument><expr><sizeof>sizeof<argument_list>(<argument><expr><name>previous_speed</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// previous_speed[] = current_speed[]</comment>
+  <expr_stmt><expr><name>previous_nominal_speed</name> = <name><name>block</name>-&gt;<name>nominal_speed</name></name></expr>;</expr_stmt>
+
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ADVANCE</name></cpp:ifdef>
+  <comment type="line">// Calculate advance rate</comment>
+  <if>if<condition>(<expr>(<name><name>block</name>-&gt;<name>steps_e</name></name> == 0) || (<name><name>block</name>-&gt;<name>steps_x</name></name> == 0 &amp;&amp; <name><name>block</name>-&gt;<name>steps_y</name></name> == 0 &amp;&amp; <name><name>block</name>-&gt;<name>steps_z</name></name> == 0)</expr>)</condition><then> <block>{
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>advance_rate</name></name> = 0</expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>advance</name></name> = 0</expr>;</expr_stmt>
+  }</block></then>
+  <else>else <block>{
+    <decl_stmt><decl><type><name>long</name></type> <name>acc_dist</name> <init>= <expr><call><name>estimate_acceleration_distance</name><argument_list>(<argument><expr>0</expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>nominal_rate</name></name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>acceleration_st</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>float</name></type> <name>advance</name> <init>= <expr>(<name>STEPS_PER_CUBIC_MM_E</name> * <name>EXTRUDER_ADVANCE_K</name>) * 
+      (<name><name>current_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> * <name><name>current_speed</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> * <name>EXTRUSION_AREA</name> * <name>EXTRUSION_AREA</name>)*256</expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><name><name>block</name>-&gt;<name>advance</name></name> = <name>advance</name></expr>;</expr_stmt>
+    <if>if<condition>(<expr><name>acc_dist</name> == 0</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>advance_rate</name></name> = 0</expr>;</expr_stmt>
+    }</block></then> 
+    <else>else <block>{
+      <expr_stmt><expr><name><name>block</name>-&gt;<name>advance_rate</name></name> = <name>advance</name> / (<name>float</name>)<name>acc_dist</name></expr>;</expr_stmt>
+    }</block></else></if>
+  }</block></else></if>
+  <comment type="block">/*
+    SERIAL_ECHO_START;
+   SERIAL_ECHOPGM("advance :");
+   SERIAL_ECHO(block-&gt;advance/256.0);
+   SERIAL_ECHOPGM("advance rate :");
+   SERIAL_ECHOLN(block-&gt;advance_rate/256.0);
+   */</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ADVANCE</comment>
+
+  <expr_stmt><expr><call><name>calculate_trapezoid_for_block</name><argument_list>(<argument><expr><name>block</name></expr></argument>, <argument><expr><name><name>block</name>-&gt;<name>entry_speed</name></name>/<name><name>block</name>-&gt;<name>nominal_speed</name></name></expr></argument>,
+  <argument><expr><name>safe_speed</name>/<name><name>block</name>-&gt;<name>nominal_speed</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <comment type="line">// Move buffer head</comment>
+  <expr_stmt><expr><name>block_buffer_head</name> = <name>next_buffer_head</name></expr>;</expr_stmt>
+
+  <comment type="line">// Update position</comment>
+  <expr_stmt><expr><call><name>memcpy</name><argument_list>(<argument><expr><name>position</name></expr></argument>, <argument><expr><name>target</name></expr></argument>, <argument><expr><sizeof>sizeof<argument_list>(<argument><expr><name>target</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// position[] = target[]</comment>
+
+  <expr_stmt><expr><call><name>planner_recalculate</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+
+  <expr_stmt><expr><call><name>st_wake_up</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<function><type><name>vector_3</name></type> <name>plan_get_position</name><parameter_list>()</parameter_list> <block>{
+	<decl_stmt><decl><type><name>vector_3</name></type> <name>position</name> <init>= <expr><call><name>vector_3</name><argument_list>(<argument><expr><call><name>st_get_position_mm</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><call><name>st_get_position_mm</name><argument_list>(<argument><expr><name>Y_AXIS</name></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><call><name>st_get_position_mm</name><argument_list>(<argument><expr><name>Z_AXIS</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+	<comment type="line">//position.debug("in plan_get position");</comment>
+	<comment type="line">//plan_bed_level_matrix.debug("in plan_get bed_level");</comment>
+	<decl_stmt><decl><type><name>matrix_3x3</name></type> <name>inverse</name> <init>= <expr><call><name><name>matrix_3x3</name>::<name>transpose</name></name><argument_list>(<argument><expr><name>plan_bed_level_matrix</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+	<comment type="line">//inverse.debug("in plan_get inverse");</comment>
+	<expr_stmt><expr><call><name><name>position</name>.<name>apply_rotation</name></name><argument_list>(<argument><expr><name>inverse</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<comment type="line">//position.debug("after rotation");</comment>
+
+	<return>return <expr><name>position</name></expr>;</return>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ENABLE_AUTO_BED_LEVELING</comment>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>plan_set_position</name><parameter_list>(<param><decl><type><name>float</name></type> <name>x</name></decl></param>, <param><decl><type><name>float</name></type> <name>y</name></decl></param>, <param><decl><type><name>float</name></type> <name>z</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>e</name></decl></param>)</parameter_list>
+<block>{
+  <expr_stmt><expr><call><name>apply_rotation_xyz</name><argument_list>(<argument><expr><name>plan_bed_level_matrix</name></expr></argument>, <argument><expr><name>x</name></expr></argument>, <argument><expr><name>y</name></expr></argument>, <argument><expr><name>z</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+<function><type><name>void</name></type> <name>plan_set_position</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>x</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>y</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>z</name></decl></param>, <param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>e</name></decl></param>)</parameter_list>
+<block>{
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ENABLE_AUTO_BED_LEVELING</comment>
+
+  <expr_stmt><expr><name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>x</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>y</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>z</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>     
+  <expr_stmt><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>e</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>  
+  <expr_stmt><expr><call><name>st_set_position</name><argument_list>(<argument><expr><name><name>position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name>previous_nominal_speed</name> = 0.0</expr>;</expr_stmt> <comment type="line">// Resets planner junction speeds. Assumes start from rest.</comment>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>0</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>1</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>2</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>previous_speed</name><index>[<expr>3</expr>]</index></name> = 0.0</expr>;</expr_stmt>
+}</block></function>
+
+<function><type><name>void</name></type> <name>plan_set_e_position</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>float</name> &amp;</type><name>e</name></decl></param>)</parameter_list>
+<block>{
+  <expr_stmt><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name> = <call><name>lround</name><argument_list>(<argument><expr><name>e</name>*<name><name>axis_steps_per_unit</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>  
+  <expr_stmt><expr><call><name>st_set_e_position</name><argument_list>(<argument><expr><name><name>position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<function><type><name>uint8_t</name></type> <name>movesplanned</name><parameter_list>()</parameter_list>
+<block>{
+  <return>return <expr>(<name>block_buffer_head</name>-<name>block_buffer_tail</name> + <name>BLOCK_BUFFER_SIZE</name>) &amp; (<name>BLOCK_BUFFER_SIZE</name> - 1)</expr>;</return>
+}</block></function>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PREVENT_DANGEROUS_EXTRUDE</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>set_extrude_min_temp</name><parameter_list>(<param><decl><type><name>float</name></type> <name>temp</name></decl></param>)</parameter_list>
+<block>{
+  <expr_stmt><expr><name>extrude_min_temp</name>=<name>temp</name></expr>;</expr_stmt>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<comment type="line">// Calculate the steps/s^2 acceleration rates, based on the mm/s^s</comment>
+<function><type><name>void</name></type> <name>reset_acceleration_rates</name><parameter_list>()</parameter_list>
+<block>{
+	<for>for(<init><decl><type><name>int8_t</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</init> <condition><expr><name>i</name> &lt; <name>NUM_AXIS</name></expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+        <block>{
+        <expr_stmt><expr><name><name>axis_steps_per_sqr_second</name><index>[<expr><name>i</name></expr>]</index></name> = <name><name>max_acceleration_units_per_sq_second</name><index>[<expr><name>i</name></expr>]</index></name> * <name><name>axis_steps_per_unit</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+        }</block></for>
+}</block></function></block></function>
+</unit>
