@@ -6,7 +6,7 @@ void a()
   if (Y)
 #endif
   {
-    cardOK = true
+    cardOK = true;
   }
 
-};
+}

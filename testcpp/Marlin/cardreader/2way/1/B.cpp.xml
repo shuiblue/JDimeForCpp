@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/2way/1/B.cpp">
-<function><type><name>void</name></type> <name><name>CardReader</name>::<name>openFile</name></name><parameter_list>(<param><decl><type><name>char</name>*</type> <name>name</name></decl></param>,<param><decl><type><name>bool</name></type> <name>read</name></decl></param>, <param><decl><type><name>bool</name></type> <name>replace_current</name></decl></param><comment type="block">/*=true*/</comment>)</parameter_list>
+<function><type><name>void</name></type> <name><name>CardReader</name>::<name>initsd</name></name><parameter_list>()</parameter_list>
 <block>{
-  
-  
-      <expr_stmt><expr><name>filesize</name> = <call><name><name>file</name>.<name>fileSize</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr><name>MSG_SD_FILE_OPENED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>fname</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr><name>MSG_SD_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_PROTOCOLLN</name><argument_list>(<argument><expr><name>filesize</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><name>sdpos</name> = 0</expr>;</expr_stmt>
-      
-      <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_FILE_SELECTED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-      <expr_stmt><expr><call><name>lcd_setstatus</name><argument_list>(<argument><expr><name>fname</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    
-  
+  <expr_stmt><expr><name>cardOK</name> = false</expr>;</expr_stmt>
+  <if>if<condition>(<expr><call><name><name>root</name>.<name>isOpen</name></name><argument_list>()</argument_list></call></expr>)</condition><then>
+    <expr_stmt><expr><call><name><name>root</name>.<name>close</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSLOW</name></cpp:ifdef>
+  <if>if <condition>(<expr>!<call><name><name>card</name>.<name>init</name></name><argument_list>(<argument><expr><name>SPI_HALF_SPEED</name></expr></argument>,<argument><expr><name>SDSS</name></expr></argument>)</argument_list></call></expr>)</condition><then>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <if>if <condition>(<expr>!<call><name><name>card</name>.<name>init</name></name><argument_list>(<argument><expr><name>SPI_FULL_SPEED</name></expr></argument>,<argument><expr><name>SDSS</name></expr></argument>)</argument_list></call></expr>)</condition><then>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <block>{
+    <comment type="line">//if (!card.init(SPI_HALF_SPEED,SDSS))</comment>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_INIT_FAIL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></then>
+  <else>else <if>if <condition>(<expr>!<call><name><name>volume</name>.<name>init</name></name><argument_list>(<argument><expr>&amp;<name>card</name></expr></argument>)</argument_list></call></expr>)</condition><then>
+  <block>{
+    <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_VOL_INIT_FAIL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></then>
+  <else>else <if>if <condition>(<expr>!<call><name><name>root</name>.<name>openRoot</name></name><argument_list>(<argument><expr>&amp;<name>volume</name></expr></argument>)</argument_list></call></expr>)</condition><then> 
+  <block>{
+    <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_OPENROOT_FAIL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></then>
+  <else>else 
+  <block>{
+    <expr_stmt><expr><name>cardOK</name> = true</expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_CARD_OK</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></else></if></else></if></else></if></then></if>
+  <expr_stmt><expr><name>workDir</name>=<name>root</name></expr>;</expr_stmt>
+  <expr_stmt><expr><name>curDir</name>=&amp;<name>root</name></expr>;</expr_stmt>
+  <comment type="block">/*
+  if(!workDir.openRoot(&amp;volume))
+  {
+    SERIAL_ECHOLNPGM(MSG_SD_WORKDIR_FAIL);
+  }
+  */</comment>
   
 }</block></function></unit>

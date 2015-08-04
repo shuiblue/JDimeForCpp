@@ -1,21 +1,50 @@
 
-void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
+void CardReader::initsd()
 {
-
-  
-      filesize = file.fileSize();
-      SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
-      SERIAL_PROTOCOL(fname);
-      SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
-      SERIAL_PROTOCOLLN(filesize);
-      sdpos = 0;
-      
-      SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
-
-
-      getfilename(0, fname);
-      lcd_setstatus(longFilename[0] ? longFilename : fname);
-    ERIAL_PROTOCOLLNPGM(".");
- 
+  cardOK = false;
+  if(root.isOpen())
+    root.close();
+#ifdef SDSLOW
+  if (!card.init(SPI_HALF_SPEED,SDSS)
+  #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
+    && !card.init(SPI_HALF_SPEED,LCD_SDSS)
+  #endif
+    )
+#else
+  if (!card.init(SPI_FULL_SPEED,SDSS)
+  #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
+    && !card.init(SPI_FULL_SPEED,LCD_SDSS)
+  #endif
+    )
+#endif
+  {
+    //if (!card.init(SPI_HALF_SPEED,SDSS))
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM(MSG_SD_INIT_FAIL);
+  }
+  else if (!volume.init(&card))
+  {
+    SERIAL_ERROR_START;
+    SERIAL_ERRORLNPGM(MSG_SD_VOL_INIT_FAIL);
+  }
+  else if (!root.openRoot(&volume)) 
+  {
+    SERIAL_ERROR_START;
+    SERIAL_ERRORLNPGM(MSG_SD_OPENROOT_FAIL);
+  }
+  else 
+  {
+    cardOK = true;
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM(MSG_SD_CARD_OK);
+  }
+  workDir=root;
+  curDir=&root;
+  /*
+  if(!workDir.openRoot(&volume))
+  {
+    SERIAL_ECHOLNPGM(MSG_SD_WORKDIR_FAIL);
+  }
+  */
   
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/15/A.cpp"><function><type><name>void</name></type> <name>a</name><parameter_list>()</parameter_list><block>{
+<do>do <block>{<expr_stmt><expr><name>x</name>--</expr>;</expr_stmt>}</block>
+ while <condition>( <expr><name>x</name> &gt; 0</expr> )</condition>;</do>
+}</block></function>
+
+</unit>

@@ -11,7 +11,6 @@ class Computer:public bar {
             if (strcasecmp(match, filename) == 0) return;
         } else if (cnt == nrFiles) return;
 #endif
-#endif
 #if defined (B)
         if(cnt==nrFiles)
             return;
