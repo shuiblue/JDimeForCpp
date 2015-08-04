@@ -1,44 +1,21 @@
 #if defined (A) || defined (B)
-void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
-{
+void CardReader::getfilename
 #if defined (A)
-
-
-  
-      filesize = file.fileSize();
-      SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
-      SERIAL_PROTOCOL(fname);
-      SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
-      SERIAL_PROTOCOLLN(filesize);
-      sdpos = 0;
-      
-      SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
-
-
-      getfilename(0, fname);
-      lcd_setstatus(longFilename[0] ? longFilename : fname);
-    ERIAL_PROTOCOLLNPGM(".");
- 
-  
-
+(uint16_t nr, const char * const match/*=NULL*/)
 #endif
 #if defined (B)
-
-  
-  
-      filesize = file.fileSize();
-      SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
-      SERIAL_PROTOCOL(fname);
-      SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
-      SERIAL_PROTOCOLLN(filesize);
-      sdpos = 0;
-      
-      SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
-
-      lcd_setstatus(fname);
-    
-  
-  
+(const uint8_t nr)
+#endif
+{
+curDir=&workDir;
+lsAction=LS_GetFilename;
+nrFiles=nr;
+curDir->rewind();
+#if defined (A)
+lsDive("",*curDir,match);
+#endif
+#if defined (B)
+lsDive("",*curDir);
 
 #endif
 }

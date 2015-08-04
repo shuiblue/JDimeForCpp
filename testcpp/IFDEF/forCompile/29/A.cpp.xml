@@ -7,7 +7,7 @@
   <if>if <condition>(<expr><name>Y</name></expr>)</condition><then>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
   <block>{
-    <expr_stmt><expr><name>cardOK</name> = true</expr></expr_stmt>
+    <expr_stmt><expr><name>cardOK</name> = true</expr>;</expr_stmt>
   }</block></then></if></then></if>
 
-}</block></function><empty_stmt>;</empty_stmt></unit>
+}</block></function></unit>

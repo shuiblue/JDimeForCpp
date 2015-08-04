@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/31/B.cpp"><class>class <name>Computer</name><super>:<specifier>public</specifier> <name>bar</name></super>
+	
+<block>{<private type="default">
+<if>if<condition>(<expr><name>lsAction</name>==<name>LS_SerialPrint</name></expr>)</condition><then>
+      <block>{
+        <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>prepend</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_PROTOCOLLN</name><argument_list>(<argument><expr><name>filename</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      }</block></then>
+      <else>else <if>if<condition>(<expr><name>lsAction</name>==<name>LS_Count</name></expr>)</condition><then>
+      <block>{
+        <expr_stmt><expr><name>nrFiles</name>++</expr>;</expr_stmt>
+      }</block></then> 
+      <else>else <if>if<condition>(<expr><name>lsAction</name>==<name>LS_GetFilename</name></expr>)</condition><then>
+      <block>{
+        <if>if<condition>(<expr><name>cnt</name>==<name>nrFiles</name></expr>)</condition><then>
+          <return>return;</return></then></if>
+        <expr_stmt><expr><name>cnt</name>++</expr>;</expr_stmt>
+        
+      }</block></then></if></else></if></else></if>
+    </private>}</block>
+
+
+<decl/></class></unit>

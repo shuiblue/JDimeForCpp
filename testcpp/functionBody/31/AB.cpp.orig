@@ -20,7 +20,6 @@ if (match != NULL) {
         }
         else if (cnt == nrFiles) return;
 #endif
-#endif
 #if defined (B)
 if(cnt==nrFiles)
           return;
