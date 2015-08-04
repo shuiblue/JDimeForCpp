@@ -1,10 +1,10 @@
 #if defined (A) || defined (B)
 void a
 #if defined (A)
-()
+    ()
 #endif
 #if defined (B)
-(xx)
+    (xx)
 #endif
 {
     int i=0;

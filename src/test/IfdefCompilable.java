@@ -633,4 +633,18 @@ a = 2 ;                                  |
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
+
+
+    @Test
+    public void test29() {
+        inputFileInit(2);
+
+        String testNum = "29/";
+        System.out.println("------test 29-----------");
+        // ----------------check Merged result equal to expect result
+        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
+        // ----------------check preprocessed Merged result equal to origin
+        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+    }
+
 }

@@ -845,18 +845,32 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     blockString += printChoice(c) + "#endif\n";
                 } else { // c has matched with other node
 
-                    String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
-                    if (c_localName.equals("else")) {
-                        res += printMatchCondition(c);
-                        if (!child_localName.equals("if")) {
-                            res += "else ";
+
+                        String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+
+                        if (c_localName.equals("else")) {
+                            res += printMatchCondition(c);
+                            if (!child_localName.equals("if")) {
+                                res += "else ";
+                                if (((Element) c.astnode).getChildElements("block","http://www.sdml.info/srcML/src").size()>0) {
+//                                if (child_localName.equals("block")) {
+                                    res += "{\n";
+                                }
+                            } else {
+                                res += "";
+                            }
+
                         } else {
-                            res += "";
+                            if (((Element) c.astnode).getLocalName().equals("then")
+                                    &&
+                                    !((Element) c.astnode).getChildElements().get(0).getLocalName().equals("block")) {
+                                res += "";
+                            } else {
+                                res += "{\n";
+                            }
                         }
 
-                    } else {
-                        res += "{\n";
-                    }
+
                     Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
                     while (it4Block.hasNext()) {
                         CppNodeArtifact c_block = it4Block.next();
@@ -871,11 +885,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         }
 
                         if (entity.getClassBody().contains(c_block_localName)) {
-
                             String s = c_block.prettyPrint();
-
                             blockString += s;
-//                            blockString += presicePrettyprint(s,blockCondition);
                             continue;
                         }
 
@@ -966,31 +977,28 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         if (child_localName.equals("if")) {
                             res += "}\n";
                         } else {
+//                            if(child_localName.equals("block")){
+                            if (((Element) c.astnode).getChildElements("block","http://www.sdml.info/srcML/src").size()>0) {
+                            res+="}\n#endif";
+                            }
                             res += "";
                         }
-
                     } else {
+                        if (((Element) c.astnode).getLocalName().equals("then")
+                                &&
+                                !((Element) c.astnode).getChildElements().get(0).getLocalName().equals("block")) {
+                            res += "";
+                        }else{
+                            res += "}\n";
+                        }
                         if (res.startsWith("#if"))
-                            res += "}\n#endif";
+                            res += "#endif";
                     }
-
-                }else { if (!c_localName.equals("else")) {
-                        res+="}\n#endif";
-                    }}
-
-
-//
-//                if (c_localName.equals("else")) {
-//                    if(!child_localName.equals("if")){
-//                        res+="else ";
-//                    }else{
-//                        res+="";
-//                    }
-//
-//                }else {
-//                    res += "{\n";
-//                }
-
+                } else {
+                    if (!c_localName.equals("else")) {
+                        res += "}\n#endif";
+                    }
+                }
 
                 res += "----\n";
 
@@ -1069,6 +1077,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             } else if (c_local.equals("if")) {
                 s += "\n" + c.variants.get(str) + "\n#endif\n";
+                continue;
             } else {
                 s += "\n" + c.variants.get(str) + "\n";
             }

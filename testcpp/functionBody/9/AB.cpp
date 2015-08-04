@@ -1,8 +1,8 @@
 #if defined (A) || defined (B)
-int x=0;
+    int x=0;
 #endif
 #if defined (A)
-int y=0;
+    int y=0;
 #endif
 #if defined (A) || defined (B)
 void a() {

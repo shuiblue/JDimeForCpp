@@ -1,6 +1,6 @@
 #if defined (A) && (defined(X) && defined(Y))
-void a();
+    void a();
 #endif
 #if defined (B)
-void b();
+    void b();
 #endif

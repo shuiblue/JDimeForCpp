@@ -1,12 +1,12 @@
 #if defined (A) && defined (X)
-void a();
+    void a();
 #endif
 #if defined (B) && defined (Y)
-void b();
+    void b();
 #endif
 #if defined (A) && !defined (X)
-void t();
+    void t();
 #endif
 #if defined (B) && !defined (Y)
-void s();
+    void s();
 #endif

@@ -7,8 +7,6 @@ void a() {
 #if defined (B)
         (x > 4)
 #endif
-    {
         y+=4
     }
-}
 #endif

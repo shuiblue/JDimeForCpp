@@ -1,9 +1,9 @@
 #if defined (A) && defined (X) || defined (B) && defined (X)
-void a();
+    void a();
 #endif
 #if defined (A)
-void b();
+    void b();
 #endif
 #if defined (B)
-void c();
+    void c();
 #endif
