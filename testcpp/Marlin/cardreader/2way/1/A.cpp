@@ -1,37 +1,21 @@
-void CardReader::lsDive(const char *prepend, SdFile parent, const char * const match/*=NULL*/)
-{
-  dir_t p;
- uint8_t cnt=0;
- 
-  while (parent.readDir(p, longFilename) > 0)
-  {
-    if( DIR_IS_SUBDIR(&p) && lsAction!=LS_Count && lsAction!=LS_GetFilename) // hence LS_SerialPrint
-    {
 
-      char path[13*2];
+void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
+{
+
+  
+      filesize = file.fileSize();
+      SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
+      SERIAL_PROTOCOL(fname);
+      SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
+      SERIAL_PROTOCOLLN(filesize);
+      sdpos = 0;
       
-    }
-    else
-    {
-      
-     
-      if(lsAction==LS_SerialPrint)
-      {
-        a=0;
-      }
-      else if(lsAction==LS_Count)
-      {
-        nrFiles++;
-      } 
-      else if(lsAction==LS_GetFilename)
-      {
-        if (match != NULL) {
-          if (strcasecmp(match, filename) == 0) return;
-        }
-        else if (cnt == nrFiles) return;
-        cnt++;
-        
-      }
-    }
-  }
+      SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
+
+
+      getfilename(0, fname);
+      lcd_setstatus(longFilename[0] ? longFilename : fname);
+    ERIAL_PROTOCOLLNPGM(".");
+ 
+  
 }

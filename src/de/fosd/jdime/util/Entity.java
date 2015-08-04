@@ -29,11 +29,8 @@ public class Entity {
         nonTerminal.add("protected");
         nonTerminal.add("public");
         nonTerminal.add("if");
-//        nonTerminal.add("then");
-//        nonTerminal.add("else");
         nonTerminal.add("switch");
         nonTerminal.add("case");
-//        nonTerminal.add("block");
         nonTerminal.add("do");
 
         terminal = new HashSet<>();
@@ -47,7 +44,6 @@ public class Entity {
         terminal.add("init");
         terminal.add("incr");
         terminal.add("condition");
-//        terminal.add("do");
         terminal.add("function_decl");
         terminal.add("constructor_decl");
         terminal.add("destructor_decl");
@@ -57,6 +53,7 @@ public class Entity {
         terminal.add("break");
         terminal.add("continue");
         terminal.add("comment");
+        terminal.add("return");
 
 /* head entity of
  function : (return type+function name)
@@ -90,7 +87,6 @@ public class Entity {
         classBody.add("private");
         classBody.add("public");
         classBody.add("protected");
-//        classBody.add("then");
 
     }
 

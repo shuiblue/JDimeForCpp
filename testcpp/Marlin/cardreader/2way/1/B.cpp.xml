@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/2way/1/B.cpp"><function><type><name>void</name></type>  <name><name>CardReader</name>::<name>lsDive</name></name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>prepend</name></decl></param>,<param><decl><type><name>SdFile</name></type> <name>parent</name></decl></param>)</parameter_list>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/cardreader/2way/1/B.cpp">
+<function><type><name>void</name></type> <name><name>CardReader</name>::<name>openFile</name></name><parameter_list>(<param><decl><type><name>char</name>*</type> <name>name</name></decl></param>,<param><decl><type><name>bool</name></type> <name>read</name></decl></param>, <param><decl><type><name>bool</name></type> <name>replace_current</name></decl></param><comment type="block">/*=true*/</comment>)</parameter_list>
 <block>{
-  <decl_stmt><decl><type><name>dir_t</name></type> <name>p</name></decl>;</decl_stmt>
- <decl_stmt><decl><type><name>uint8_t</name></type> <name>cnt</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
- 
-  <while>while <condition>(<expr><call><name><name>parent</name>.<name>readDir</name></name><argument_list>(<argument><expr><name>p</name></expr></argument>, <argument><expr><name>longFilename</name></expr></argument>)</argument_list></call> &gt; 0</expr>)</condition>
-  <block>{
-    <if>if<condition>( <expr><call><name>DIR_IS_SUBDIR</name><argument_list>(<argument><expr>&amp;<name>p</name></expr></argument>)</argument_list></call> &amp;&amp; <name>lsAction</name>!=<name>LS_Count</name> &amp;&amp; <name>lsAction</name>!=<name>LS_GetFilename</name></expr>)</condition><then> <comment type="line">// hence LS_SerialPrint</comment>
-    <block>{
+  
+  
+      <expr_stmt><expr><name>filesize</name> = <call><name><name>file</name>.<name>fileSize</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr><name>MSG_SD_FILE_OPENED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>fname</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr><name>MSG_SD_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOLLN</name><argument_list>(<argument><expr><name>filesize</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><name>sdpos</name> = 0</expr>;</expr_stmt>
+      
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_FILE_SELECTED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 
-      <decl_stmt><decl><type><name>char</name></type> <name><name>path</name><index>[<expr>13*2</expr>]</index></name></decl>;</decl_stmt>
-      
-    }</block></then>
-    <else>else
-    <block>{
-      
-      <if>if<condition>(<expr><name>lsAction</name>==<name>LS_SerialPrint</name></expr>)</condition><then>
-      <block>{
-        <expr_stmt><expr><name>a</name>=0</expr>;</expr_stmt>
-      }</block></then>
-      <else>else <if>if<condition>(<expr><name>lsAction</name>==<name>LS_Count</name></expr>)</condition><then>
-      <block>{
-        <expr_stmt><expr><name>nrFiles</name>++</expr>;</expr_stmt>
-      }</block></then> 
-      <else>else <if>if<condition>(<expr><name>lsAction</name>==<name>LS_GetFilename</name></expr>)</condition><then>
-      <block>{
-        <if>if<condition>(<expr><name>cnt</name>==<name>nrFiles</name></expr>)</condition><then>
-          <return>return;</return></then></if>
-        <expr_stmt><expr><name>cnt</name>++</expr>;</expr_stmt>
-        
-      }</block></then></if></else></if></else></if>
-    }</block></else></if>
-  }</block></while>
-}</block></function>
-</unit>
+      <expr_stmt><expr><call><name>lcd_setstatus</name><argument_list>(<argument><expr><name>fname</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    
+  
+  
+}</block></function></unit>
