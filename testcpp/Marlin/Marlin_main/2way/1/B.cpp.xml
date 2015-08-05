@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/Marlin_main/2way/1/B.cpp"><comment type="block">/* -*- c++ -*- */</comment>
+
+<comment type="block">/*
+    Reprap firmware based on Sprinter and grbl.
+ Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */</comment>
+
+<comment type="block">/*
+ This firmware is a mashup between Sprinter and grbl.
+  (https://github.com/kliment/Sprinter)
+  (https://github.com/simen/grbl/tree)
+
+ It has preliminary support for Matthew Roberts advance algorithm
+    http://reprap.org/pipermail/reprap-dev/2011-May/003323.html
+ */</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"vector_3.h"</cpp:file></cpp:include>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTO_BED_LEVELING_GRID</name></cpp:ifdef>
+    <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"qr_solve.h"</cpp:file></cpp:include>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ENABLE_AUTO_BED_LEVELING</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ultralcd.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"planner.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"stepper.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"temperature.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"motion_control.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"cardreader.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"watchdog.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ConfigurationStore.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"language.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"pins_arduino.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"math.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BLINKM</name></cpp:ifdef>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"BlinkM.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Wire.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>NUM_SERVOS</name> &gt; 0</expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Servo.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>DIGIPOTSS_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>DIGIPOTSS_PIN</name> &gt; -1</expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;SPI.h&gt;</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>VERSION_STRING</name></cpp:macro>  <cpp:value>"1.0.2"</cpp:value></cpp:define></unit>

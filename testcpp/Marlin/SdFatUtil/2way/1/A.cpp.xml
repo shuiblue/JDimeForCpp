@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/SdFatUtil/2way/1/A.cpp"><comment type="block">/* Arduino SdFat Library
+ * Copyright (C) 2008 by William Greiman
+ *
+ * This file is part of the Arduino SdFat Library
+ *
+ * This Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with the Arduino SdFat Library.  If not, see
+ * &lt;http://www.gnu.org/licenses/&gt;.
+ */</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"SdFatUtil.h"</cpp:file></cpp:include>
+
+<comment type="line">//------------------------------------------------------------------------------</comment>
+<comment type="block" format="doxygen">/** Amount of free RAM
+ * \return The number of free bytes.
+ */</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>__arm__</name></cpp:ifdef>
+<extern>extern "C" <function_decl><type><name>char</name>*</type> <name>sbrk</name><parameter_list>(<param><decl><type><name>int</name></type> <name>incr</name></decl></param>)</parameter_list>;</function_decl></extern>
+<function><type><name>int</name></type> <name><name>SdFatUtil</name>::<name>FreeRam</name></name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name>char</name></type> <name>top</name></decl>;</decl_stmt>
+  <return>return <expr>&amp;<name>top</name> - <call><name><name>reinterpret_cast</name><argument_list>&lt;<argument><expr><name>char</name>*</expr></argument>&gt;</argument_list></name><argument_list>(<argument><expr><call><name>sbrk</name><argument_list>(<argument><expr>0</expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</return>
+}</block></function>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>  <comment type="line">// __arm__</comment>
+<decl_stmt><decl><type><specifier>extern</specifier> <name>char</name> *</type><name>__brkval</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>extern</specifier> <name>char</name></type> <name>__bss_end</name></decl>;</decl_stmt>
+<comment type="block" format="doxygen">/** Amount of free RAM
+ * \return The number of free bytes.
+ */</comment>
+<function><type><name>int</name></type> <name><name>SdFatUtil</name>::<name>FreeRam</name></name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name>char</name></type> <name>top</name></decl>;</decl_stmt>
+  <return>return <expr><name>__brkval</name> ? &amp;<name>top</name> - <name>__brkval</name> : &amp;<name>top</name> - &amp;<name>__bss_end</name></expr>;</return>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>  <comment type="line">// __arm</comment>
+
+<comment type="line">//------------------------------------------------------------------------------</comment>
+<comment type="block" format="doxygen">/** %Print a string in flash memory.
+ *
+ * \param[in] pr Print object for output.
+ * \param[in] str Pointer to string stored in flash memory.
+ */</comment>
+<function><type><name>void</name></type> <name><name>SdFatUtil</name>::<name>print_P</name></name><parameter_list>( <param><decl><type><name>PGM_P</name></type> <name>str</name></decl></param>)</parameter_list> <block>{
+  <for>for (<init><decl><type><name>uint8_t</name></type> <name>c</name></decl>;</init> <condition><expr>(<name>c</name> = <call><name>pgm_read_byte</name><argument_list>(<argument><expr><name>str</name></expr></argument>)</argument_list></call>)</expr>;</condition> <incr><expr><name>str</name>++</expr></incr>) <expr_stmt><expr><call><name><name>MYSERIAL</name>.<name>write</name></name><argument_list>(<argument><expr><name>c</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></for>
+}</block></function>
+<comment type="line">//------------------------------------------------------------------------------</comment>
+<comment type="block" format="doxygen">/** %Print a string in flash memory followed by a CR/LF.
+ *
+ * \param[in] pr Print object for output.
+ * \param[in] str Pointer to string stored in flash memory.
+ */</comment>
+<function><type><name>void</name></type> <name><name>SdFatUtil</name>::<name>println_P</name></name><parameter_list>( <param><decl><type><name>PGM_P</name></type> <name>str</name></decl></param>)</parameter_list> <block>{
+  <expr_stmt><expr><call><name>print_P</name><argument_list>( <argument><expr><name>str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>MYSERIAL</name>.<name>println</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+<comment type="line">//------------------------------------------------------------------------------</comment>
+<comment type="block" format="doxygen">/** %Print a string in flash memory to Serial.
+ *
+ * \param[in] str Pointer to string stored in flash memory.
+ */</comment>
+<function><type><name>void</name></type> <name><name>SdFatUtil</name>::<name>SerialPrint_P</name></name><parameter_list>(<param><decl><type><name>PGM_P</name></type> <name>str</name></decl></param>)</parameter_list> <block>{
+  <expr_stmt><expr><call><name>print_P</name><argument_list>(<argument><expr><name>str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+<comment type="line">//------------------------------------------------------------------------------</comment>
+<comment type="block" format="doxygen">/** %Print a string in flash memory to Serial followed by a CR/LF.
+ *
+ * \param[in] str Pointer to string stored in flash memory.
+ */</comment>
+<function><type><name>void</name></type> <name><name>SdFatUtil</name>::<name>SerialPrintln_P</name></name><parameter_list>(<param><decl><type><name>PGM_P</name></type> <name>str</name></decl></param>)</parameter_list> <block>{
+  <expr_stmt><expr><call><name>println_P</name><argument_list>( <argument><expr><name>str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+</unit>

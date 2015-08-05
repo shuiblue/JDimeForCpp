@@ -23,9 +23,11 @@ autostart_stilltocheck=true;
 //the SD start is delayed, because otherwise the serial cannot answer fast enough to make contact with the host software.
 lastnr=0;
 //power to SD reader
-#endif#if defined (A) && SDPOWER > -1defined (SDSUPPORT) || defined (B) && SDPOWER > -1defined (SDSUPPORT)
 
-WRITE(SDPOWER,HIGH);
+#if defined (A) && (SDPOWER > -1 && defined (SDSUPPORT) ) || defined (B) && (SDPOWER > -1 && defined (SDSUPPORT) )
+
+SET_OUTPUT(SDPOWER);WRITE(SDPOWER,HIGH);
+
 #endif
 //SDPOWER
 autostart_atmillis=millis()+5000;
@@ -54,7 +56,9 @@ void CardReader::lsDive
 #endif
 #if defined (B)
 (const char *prepend,SdFile parent)
+
 #endif
+
 {
 dir_t p;
 uint8_t cnt=0;
@@ -92,16 +96,19 @@ lsDive(path,dir);
 
 else {
 
-#if defined (A)
+#if defined (A) && defined (SDSUPPORT)
 char pn0 = p.name[0];
 #endif
+
 if 
 #if defined (A)
 (pn0 == DIR_NAME_FREE)
 #endif
 #if defined (B)
 (p.name[0] == DIR_NAME_FREE)
+
 #endif
+
 break;
 if 
 #if defined (A)
@@ -109,12 +116,15 @@ if
 #endif
 #if defined (B)
 (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_')
+
 #endif
+
 continue;
 
-#if defined (A)
+#if defined (A) && defined (SDSUPPORT)
 char lf0 = longFilename[0];
 #endif
+
 if 
 #if defined (A)
 (lf0 == '.' || lf0 == '_')
@@ -122,15 +132,18 @@ if
 #if defined (B)
 (longFilename[0] != '\0' &&
           (longFilename[0] == '.' || longFilename[0] == '_'))
+
 #endif
+
 continue;
-#if defined (B)
+#if defined (B) && defined (SDSUPPORT)
 if ( p.name[0] == '.')
       {
         if ( p.name[1] != '.')
         continue;
       }
 #endif
+
 if (!DIR_IS_FILE_OR_SUBDIR(&p))
 continue;
 filenameIsDir=DIR_IS_SUBDIR(&p);
@@ -166,6 +179,7 @@ if (match != NULL) {
 #if defined (B)
 if(cnt==nrFiles)
           return;
+
 #endif
 cnt++;
 
@@ -234,6 +248,7 @@ void CardReader::initsd()
   */
   
 
+
 #endif
 #if defined (B) && defined (SDSUPPORT)
 
@@ -276,6 +291,8 @@ void CardReader::initsd()
   }
   */
   
+
+
 
 #endif
 }
@@ -452,11 +469,14 @@ getfilename(0, fname);
 #endif
 #if defined (B)
 lcd_setstatus(fname);
+
 #endif
 
-#if defined (A)
+
+#if defined (A) && defined (SDSUPPORT)
 lcd_setstatus(longFilename[0] ? longFilename : fname);
 #endif
+
 
 }
 else {
@@ -660,7 +680,9 @@ void CardReader::getfilename
 #endif
 #if defined (B)
 (const uint8_t nr)
+
 #endif
+
 {
 curDir=&workDir;
 lsAction=LS_GetFilename;
@@ -669,10 +691,11 @@ curDir->rewind();
 #if defined (A)
 lsDive("",*curDir,match);
 #endif
+
 #if defined (B)
 lsDive("",*curDir);
-
 #endif
+
 }
 uint16_t CardReader::getnrfilenames()
 {
