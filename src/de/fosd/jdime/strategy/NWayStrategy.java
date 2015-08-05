@@ -216,13 +216,13 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 
     public String presicePrettyprint(String res) {
-       while(res.contains("#endif----")){
-           res = res.replace("#endif----","#endif");
+       while(res.contains("#endif+-+-+-")){
+           res = res.replace("#endif+-+-+-","#endif");
 
        }
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
-        String[] elements = res.split("----\n");
+        String[] elements = res.split("\\+-\\+-\\+-\n");
         String s = "";
         for (String e : elements) {
             if (e.length() > 0) {

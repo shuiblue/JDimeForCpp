@@ -44,12 +44,13 @@ public class testMarlin {
 A : upstream
 B : ut7
   */
-//@Ignore
+@Ignore
     @Test
     public void testCardReader() {
         String path = "testcpp/Marlin/cardreader/2way/";
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
+        config.add("SDSUPPORT");
         String testNum = "1/";
         System.out.println("------test 1-----------");
         // ----------------check Merged result equal to expect result
@@ -57,13 +58,14 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-//    @Ignore
+    @Ignore
     @Test
     public void testConfigurationStore() {
         String path = "testcpp/Marlin/ConfigurationStore/2way/";
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
-        String testNum = "1/";
+        String testNum = "";
+//        String testNum = "1/";
         System.out.println("------test 2-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
@@ -76,14 +78,15 @@ B : ut7
         String path = "testcpp/Marlin/Marlin_main/2way/";
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
-        String testNum = "1/";
+        String testNum = "";
+//        String testNum = "1/";
         System.out.println("------test 3-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-//@Ignore
+@Ignore
     @Test
     public void testplanner() {
         String path = "testcpp/Marlin/planner/2way/";
@@ -96,7 +99,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-
+    @Ignore
     @Test
     public void testdigipot_mcp4451() {
         String path = "testcpp/Marlin/digipot_mcp4451/2way/";
@@ -104,13 +107,13 @@ B : ut7
         inputFileInit(2);
         String testNum = "1/";
         System.out.println("------test digipot_mcp4451-----------");
-        // ----------------check Merged result equal to expect result
+//         ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-
+    @Ignore
     @Test
     public void testSdFatUtil() {
         String path = "testcpp/Marlin/SdFatUtil/2way/";
@@ -123,7 +126,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-
+    @Ignore
     @Test
     public void testtemperature() {
         String path = "testcpp/Marlin/temperature/2way/";

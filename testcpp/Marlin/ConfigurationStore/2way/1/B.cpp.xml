@@ -1,5 +1,116 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/ConfigurationStore/2way/1/B.cpp">
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/ConfigurationStore/2way/1/B.cpp"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"planner.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"temperature.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ultralcd.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ConfigurationStore.h"</cpp:file></cpp:include>
+
+<function><type><name>void</name></type> <name>_EEPROM_writeData</name><parameter_list>(<param><decl><type><name>int</name> &amp;</type><name>pos</name></decl></param>, <param><decl><type><name>uint8_t</name>*</type> <name>value</name></decl></param>, <param><decl><type><name>uint8_t</name></type> <name>size</name></decl></param>)</parameter_list>
+<block>{
+    <do>do
+    <block>{
+        <expr_stmt><expr><call><name>eeprom_write_byte</name><argument_list>(<argument><expr>(<name>unsigned</name> <name>char</name>*)<name>pos</name></expr></argument>, <argument><expr>*<name>value</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>pos</name>++</expr>;</expr_stmt>
+        <expr_stmt><expr><name>value</name>++</expr>;</expr_stmt>
+    }</block>while<condition>(<expr>--<name>size</name></expr>)</condition>;</do>
+}</block></function>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_WRITE_VAR</name><parameter_list>(<param><type><name>pos</name></type></param>, <param><type><name>value</name></type></param>)</parameter_list></cpp:macro> <cpp:value>_EEPROM_writeData(pos, (uint8_t*)&amp;value, sizeof(value))</cpp:value></cpp:define>
+<function><type><name>void</name></type> <name>_EEPROM_readData</name><parameter_list>(<param><decl><type><name>int</name> &amp;</type><name>pos</name></decl></param>, <param><decl><type><name>uint8_t</name>*</type> <name>value</name></decl></param>, <param><decl><type><name>uint8_t</name></type> <name>size</name></decl></param>)</parameter_list>
+<block>{
+    <do>do
+    <block>{
+        <expr_stmt><expr>*<name>value</name> = <call><name>eeprom_read_byte</name><argument_list>(<argument><expr>(<name>unsigned</name> <name>char</name>*)<name>pos</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>pos</name>++</expr>;</expr_stmt>
+        <expr_stmt><expr><name>value</name>++</expr>;</expr_stmt>
+    }</block>while<condition>(<expr>--<name>size</name></expr>)</condition>;</do>
+}</block></function>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_READ_VAR</name><parameter_list>(<param><type><name>pos</name></type></param>, <param><type><name>value</name></type></param>)</parameter_list></cpp:macro> <cpp:value>_EEPROM_readData(pos, (uint8_t*)&amp;value, sizeof(value))</cpp:value></cpp:define>
+<comment type="line">//======================================================================================</comment>
+
+
+
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_OFFSET</name></cpp:macro> <cpp:value>100</cpp:value></cpp:define>
+
+
+<comment type="line">// IMPORTANT:  Whenever there are changes made to the variables stored in EEPROM</comment>
+<comment type="line">// in the functions below, also increment the version number. This makes sure that</comment>
+<comment type="line">// the default values are used whenever there is a change to the data, to prevent</comment>
+<comment type="line">// wrong data being written to the variables.</comment>
+<comment type="line">// ALSO:  always make sure the variables in the Store and retrieve sections are in the same order.</comment>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_VERSION</name></cpp:macro> <cpp:value>"V10"</cpp:value></cpp:define>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+    <cpp:undef>#<cpp:directive>undef</cpp:directive> <name>EEPROM_VERSION</name></cpp:undef>
+    <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_VERSION</name></cpp:macro> <cpp:value>"V11"</cpp:value></cpp:define>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+    <cpp:undef>#<cpp:directive>undef</cpp:directive> <name>EEPROM_VERSION</name></cpp:undef>
+    <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>EEPROM_VERSION</name></cpp:macro> <cpp:value>"V12"</cpp:value></cpp:define>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>EEPROM_SETTINGS</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>Config_StoreSettings</name><parameter_list>()</parameter_list> 
+<block>{
+  <decl_stmt><decl><type><name>char</name></type> <name><name>ver</name><index>[<expr>4</expr>]</index></name><init>= <expr>"000"</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>int</name></type> <name>i</name><init>=<expr><name>EEPROM_OFFSET</name></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>ver</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// invalidate data first </comment>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>axis_steps_per_unit</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>  
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_acceleration_units_per_sq_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>acceleration</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_acceleration</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>minimumfeedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>mintravelfeedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>minsegmenttime</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_xy_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_z_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_e_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>add_homing</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>endstop_adj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_radius</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_segments_per_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>ULTIPANEL</name></cpp:ifndef>
+  <decl_stmt><decl><type><name>int</name></type> <name>plaPreheatHotendTemp</name> <init>= <expr><name>PLA_PREHEAT_HOTEND_TEMP</name></expr></init>, <name>plaPreheatHPBTemp</name> <init>= <expr><name>PLA_PREHEAT_HPB_TEMP</name></expr></init>, <name>plaPreheatFanSpeed</name> <init>= <expr><name>PLA_PREHEAT_FAN_SPEED</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>int</name></type> <name>absPreheatHotendTemp</name> <init>= <expr><name>ABS_PREHEAT_HOTEND_TEMP</name></expr></init>, <name>absPreheatHPBTemp</name> <init>= <expr><name>ABS_PREHEAT_HPB_TEMP</name></expr></init>, <name>absPreheatFanSpeed</name> <init>= <expr><name>ABS_PREHEAT_FAN_SPEED</name></expr></init></decl>;</decl_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatHotendTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatHPBTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatFanSpeed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatHotendTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatHPBTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatFanSpeed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>zprobe_zoffset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PIDTEMP</name></cpp:ifdef>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Kp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Ki</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Kd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+        <decl_stmt><decl><type><name>float</name></type> <name>dummy</name> <init>= <expr>3000.0f</expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>dummy</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>dummy</name> = 0.0f</expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>dummy</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>dummy</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DOGLCD</name></cpp:ifndef>
+    <decl_stmt><decl><type><name>int</name></type> <name>lcd_contrast</name> <init>= <expr>32</expr></init></decl>;</decl_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>lcd_contrast</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>axis_scaling</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>        <comment type="line">// Add scaling for SCARA</comment>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <decl_stmt><decl><type><name>char</name></type> <name><name>ver2</name><index>[<expr>4</expr>]</index></name><init>=<expr><name>EEPROM_VERSION</name></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><name>i</name>=<name>EEPROM_OFFSET</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>ver2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// validate data</comment>
+  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Settings Stored"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//EEPROM_SETTINGS</comment>
+
+
 <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DISABLE_M503</name></cpp:ifndef>
 <function><type><name>void</name></type> <name>Config_PrintSettings</name><parameter_list>()</parameter_list>
 <block>{  <comment type="line">// Always have this function, even with EEPROM_SETTINGS disabled, the current values will be shown</comment>
@@ -71,14 +182,14 @@
     <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M666 X"</expr></argument>,<argument><expr><name><name>endstop_adj</name><index>[<expr>0</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
     <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr>1</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
     <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr>2</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M665 L"</expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" R"</expr></argument> ,<argument><expr><name>delta_radius</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" S"</expr></argument> ,<argument><expr><name>delta_segments_per_second</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
-	<expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M665 L"</expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" R"</expr></argument> ,<argument><expr><name>delta_radius</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" S"</expr></argument> ,<argument><expr><name>delta_segments_per_second</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PIDTEMP</name></cpp:ifdef>
     <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
@@ -93,4 +204,144 @@
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
 
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>EEPROM_SETTINGS</name></cpp:ifdef>
+<function><type><name>void</name></type> <name>Config_RetrieveSettings</name><parameter_list>()</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>int</name></type> <name>i</name><init>=<expr><name>EEPROM_OFFSET</name></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>char</name></type> <name><name>stored_ver</name><index>[<expr>4</expr>]</index></name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>char</name></type> <name><name>ver</name><index>[<expr>4</expr>]</index></name><init>=<expr><name>EEPROM_VERSION</name></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>stored_ver</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">//read stored version</comment>
+    <comment type="line">//  SERIAL_ECHOLN("Version: [" &lt;&lt; ver &lt;&lt; "] Stored version: [" &lt;&lt; stored_ver &lt;&lt; "]");</comment>
+    <if>if <condition>(<expr><call><name>strncmp</name><argument_list>(<argument><expr><name>ver</name></expr></argument>,<argument><expr><name>stored_ver</name></expr></argument>,<argument><expr>3</expr></argument>)</argument_list></call> == 0</expr>)</condition><then>
+    <block>{
+        <comment type="line">// version number match</comment>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>axis_steps_per_unit</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>  
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_acceleration_units_per_sq_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        
+        <comment type="line">// steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)</comment>
+        <expr_stmt><expr><call><name>reset_acceleration_rates</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>acceleration</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_acceleration</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>minimumfeedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>mintravelfeedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>minsegmenttime</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_xy_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_z_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>max_e_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>add_homing</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>endstop_adj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_radius</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>delta_segments_per_second</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>recalc_delta_settings</name><argument_list>(<argument><expr><name>delta_radius</name></expr></argument>, <argument><expr><name>delta_diagonal_rod</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+        <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>ULTIPANEL</name></cpp:ifndef>
+        <decl_stmt><decl><type><name>int</name></type> <name>plaPreheatHotendTemp</name></decl>, <decl><type ref="prev"/><name>plaPreheatHPBTemp</name></decl>, <decl><type ref="prev"/><name>plaPreheatFanSpeed</name></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>int</name></type> <name>absPreheatHotendTemp</name></decl>, <decl><type ref="prev"/><name>absPreheatHPBTemp</name></decl>, <decl><type ref="prev"/><name>absPreheatFanSpeed</name></decl>;</decl_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatHotendTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatHPBTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>plaPreheatFanSpeed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatHotendTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatHPBTemp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>absPreheatFanSpeed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>zprobe_zoffset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>PIDTEMP</name></cpp:ifndef>
+        <decl_stmt><decl><type><name>float</name></type> <name>Kp</name></decl>,<decl><type ref="prev"/><name>Ki</name></decl>,<decl><type ref="prev"/><name>Kd</name></decl>;</decl_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+        <comment type="line">// do not need to scale PID values as the values in EEPROM are already scaled       </comment>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Kp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Ki</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>Kd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DOGLCD</name></cpp:ifndef>
+        <decl_stmt><decl><type><name>int</name></type> <name>lcd_contrast</name></decl>;</decl_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>lcd_contrast</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+        <expr_stmt><expr><call><name>EEPROM_READ_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>axis_scaling</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+        <comment type="line">// Call updatePID (similar to when we have processed M301)</comment>
+        <expr_stmt><expr><call><name>updatePID</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Stored settings retrieved"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then>
+    <else>else
+    <block>{
+        <expr_stmt><expr><call><name>Config_ResetDefault</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    }</block></else></if>
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>EEPROM_CHITCHAT</name></cpp:ifdef>
+      <expr_stmt><expr><call><name>Config_PrintSettings</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<function><type><name>void</name></type> <name>Config_ResetDefault</name><parameter_list>()</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>float</name></type> <name><name>tmp1</name><index>[]</index></name><init>=<expr><name>DEFAULT_AXIS_STEPS_PER_UNIT</name></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>float</name></type> <name><name>tmp2</name><index>[]</index></name><init>=<expr><name>DEFAULT_MAX_FEEDRATE</name></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>long</name></type> <name><name>tmp3</name><index>[]</index></name><init>=<expr><name>DEFAULT_MAX_ACCELERATION</name></expr></init></decl>;</decl_stmt>
+    <for>for (<init><decl><type><name>short</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</init><condition><expr><name>i</name>&lt;4</expr>;</condition><incr><expr><name>i</name>++</expr></incr>) 
+    <block>{
+        <expr_stmt><expr><name><name>axis_steps_per_unit</name><index>[<expr><name>i</name></expr>]</index></name>=<name><name>tmp1</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>  
+        <expr_stmt><expr><name><name>max_feedrate</name><index>[<expr><name>i</name></expr>]</index></name>=<name><name>tmp2</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>  
+        <expr_stmt><expr><name><name>max_acceleration_units_per_sq_second</name><index>[<expr><name>i</name></expr>]</index></name>=<name><name>tmp3</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+        <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+        <expr_stmt><expr><name><name>axis_scaling</name><index>[<expr><name>i</name></expr>]</index></name>=1</expr>;</expr_stmt>
+        <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    }</block></for>
+    
+    <comment type="line">// steps per sq second need to be updated to agree with the units per sq second</comment>
+    <expr_stmt><expr><call><name>reset_acceleration_rates</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    
+    <expr_stmt><expr><name>acceleration</name>=<name>DEFAULT_ACCELERATION</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>retract_acceleration</name>=<name>DEFAULT_RETRACT_ACCELERATION</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>minimumfeedrate</name>=<name>DEFAULT_MINIMUMFEEDRATE</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>minsegmenttime</name>=<name>DEFAULT_MINSEGMENTTIME</name></expr>;</expr_stmt>       
+    <expr_stmt><expr><name>mintravelfeedrate</name>=<name>DEFAULT_MINTRAVELFEEDRATE</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>max_xy_jerk</name>=<name>DEFAULT_XYJERK</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>max_z_jerk</name>=<name>DEFAULT_ZJERK</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>max_e_jerk</name>=<name>DEFAULT_EJERK</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>add_homing</name><index>[<expr>0</expr>]</index></name> = <name><name>add_homing</name><index>[<expr>1</expr>]</index></name> = <name><name>add_homing</name><index>[<expr>2</expr>]</index></name> = 0</expr>;</expr_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+    <expr_stmt><expr><name><name>endstop_adj</name><index>[<expr>0</expr>]</index></name> = <name><name>endstop_adj</name><index>[<expr>1</expr>]</index></name> = <name><name>endstop_adj</name><index>[<expr>2</expr>]</index></name> = 0</expr>;</expr_stmt>
+    <expr_stmt><expr><name>delta_radius</name>= <name>DELTA_RADIUS</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>delta_diagonal_rod</name>= <name>DELTA_DIAGONAL_ROD</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>delta_segments_per_second</name>= <name>DELTA_SEGMENTS_PER_SECOND</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>recalc_delta_settings</name><argument_list>(<argument><expr><name>delta_radius</name></expr></argument>, <argument><expr><name>delta_diagonal_rod</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ULTIPANEL</name></cpp:ifdef>
+    <expr_stmt><expr><name>plaPreheatHotendTemp</name> = <name>PLA_PREHEAT_HOTEND_TEMP</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>plaPreheatHPBTemp</name> = <name>PLA_PREHEAT_HPB_TEMP</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>plaPreheatFanSpeed</name> = <name>PLA_PREHEAT_FAN_SPEED</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>absPreheatHotendTemp</name> = <name>ABS_PREHEAT_HOTEND_TEMP</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>absPreheatHPBTemp</name> = <name>ABS_PREHEAT_HPB_TEMP</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>absPreheatFanSpeed</name> = <name>ABS_PREHEAT_FAN_SPEED</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+    <expr_stmt><expr><name>zprobe_zoffset</name> = -<name>Z_PROBE_OFFSET_FROM_EXTRUDER</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DOGLCD</name></cpp:ifdef>
+    <expr_stmt><expr><name>lcd_contrast</name> = <name>DEFAULT_LCD_CONTRAST</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PIDTEMP</name></cpp:ifdef>
+    <expr_stmt><expr><name>Kp</name> = <name>DEFAULT_Kp</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>Ki</name> = <call><name>scalePID_i</name><argument_list>(<argument><expr><name>DEFAULT_Ki</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>Kd</name> = <call><name>scalePID_d</name><argument_list>(<argument><expr><name>DEFAULT_Kd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    
+    <comment type="line">// call updatePID (similar to when we have processed M301)</comment>
+    <expr_stmt><expr><call><name>updatePID</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PID_ADD_EXTRUSION_RATE</name></cpp:ifdef>
+    <expr_stmt><expr><name>Kc</name> = <name>DEFAULT_Kc</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif><comment type="line">//PID_ADD_EXTRUSION_RATE</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif><comment type="line">//PIDTEMP</comment>
+
+<expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+<expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Hardcoded Default Settings Loaded"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+}</block></function>
 </unit>

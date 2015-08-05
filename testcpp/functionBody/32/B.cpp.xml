@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/32/B.cpp">
+<function><type><specifier>static</specifier> <name>void</name></type> <name>axis_is_at_home</name><parameter_list>(<param><decl><type><name>int</name></type> <name>axis</name></decl></param>)</parameter_list> <block>{
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DUAL_X_CARRIAGE</name></cpp:ifdef>
+  <if>if <condition>(<expr><name>axis</name> == <name>X_AXIS</name></expr>)</condition><then> <block>{
+    <if>if <condition>(<expr><name>active_extruder</name> != 0</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>x_home_pos</name><argument_list>(<argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <name>X2_MIN_POS</name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>max</name><argument_list>(<argument><expr><name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name>X2_MAX_POS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <return>return;</return>
+    }</block></then>
+    <else>else <if>if <condition>(<expr><name>dual_x_carriage_mode</name> == <name>DXC_DUPLICATION_MODE</name> &amp;&amp; <name>active_extruder</name> == 0</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>min</name><argument_list>(<argument><expr><call><name>base_max_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>,
+                                  <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name>X2_MAX_POS</name></expr></argument>)</argument_list></call> - <name>duplicate_extruder_x_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <return>return;</return>
+    }</block></then></if></else></if>
+  }</block></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+   <decl_stmt><decl><type><name>float</name></type> <name><name>homeposition</name><index>[<expr>3</expr>]</index></name></decl>;</decl_stmt>
+   <decl_stmt><decl><type><name>char</name></type> <name>i</name></decl>;</decl_stmt>
+   
+   <if>if <condition>(<expr><name>axis</name> &lt; 2</expr>)</condition><then>
+   <block>{
+   
+     <for>for (<init><expr><name>i</name>=0</expr>;</init> <condition><expr><name>i</name>&lt;3</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+     <block>{
+        <expr_stmt><expr><name><name>homeposition</name><index>[<expr><name>i</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>i</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+     }</block></for>  
+  <comment type="line">// SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);</comment>
+   <comment type="line">//  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);</comment>
+   <comment type="line">// Works out real Homeposition angles using inverse kinematics, </comment>
+   <comment type="line">// and calculates homing offset using forward kinematics</comment>
+     <expr_stmt><expr><call><name>calculate_delta</name><argument_list>(<argument><expr><name>homeposition</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+     
+    <comment type="line">// SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+     
+     <for>for (<init><expr><name>i</name>=0</expr>;</init> <condition><expr><name>i</name>&lt;2</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+     <block>{
+        <expr_stmt><expr><name><name>delta</name><index>[<expr><name>i</name></expr>]</index></name> -= <name><name>add_homing</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+     }</block></for> 
+     
+    <comment type="line">// SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);</comment>
+  <comment type="line">// SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+      
+     <expr_stmt><expr><call><name>calculate_SCARA_forward_Transform</name><argument_list>(<argument><expr><name>delta</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+     
+    <comment type="line">// SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+     
+    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <name><name>delta</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+    
+    <comment type="line">// SCARA home positions are based on configuration since the actual limits are determined by the </comment>
+    <comment type="line">// inverse kinematic transform.</comment>
+    <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// + (delta[axis] - base_home_pos(axis));</comment>
+    <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// + (delta[axis] - base_home_pos(axis));</comment>
+   }</block></then> 
+   <else>else
+   <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+   }</block></else></if>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+</unit>
