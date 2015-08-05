@@ -32,6 +32,7 @@ public class Entity {
         nonTerminal.add("switch");
         nonTerminal.add("case");
         nonTerminal.add("do");
+        nonTerminal.add("extern");
 
         terminal = new HashSet<>();
         terminal.add("name");
@@ -56,6 +57,7 @@ public class Entity {
         terminal.add("return");
         terminal.add("define");
         terminal.add("undef");
+        terminal.add("include");
 
 /* head entity of
  function : (return type+function name)

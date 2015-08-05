@@ -116,9 +116,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
-if(!matched){
-    System.out.println("warning!----------"+node.getBaseURI());
-}
+        if (!matched) {
+            System.out.println("warning!----------" + node.getBaseURI() + "\n" + node.toXML() + "\n");
+        }
         return matched;
     }
 
@@ -231,6 +231,11 @@ if(!matched){
      * @param xmlFilePath path of xml file
      */
     public static Document getXmlDom(String xmlFilePath) {
+        try {
+            Thread.sleep(10);                 //1000 milliseconds is one second.
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
 
         Document doc = null;
         try {
@@ -533,11 +538,16 @@ if(!matched){
 
                     }
                     return (ast_className + ast_suffix).equals(other_className + other_suffix);
+                } else if (ast_localName.equals("extern")) {
+                    String ast_externName = clearBlank((astnode).getChild(0).getValue());
+                    String other_externName = clearBlank((other.getCppNode()).getChild(0).getValue());
+                    return ast_externName.equals(other_externName);
                 } else {
                     return match;
                 }
             }
         } else if (astnode_Class.contains("Text")) {
+
             return match;
         }
         return false;
@@ -664,7 +674,7 @@ if(!matched){
                 String child_localName = ((Element) child.astnode).getLocalName();
                 if (child.variants != null) {
                     if (entity.getNonTerminal().contains(child_localName)) {
-                        res += printChoice(child) + "----\n";
+                        res += printChoice(child) + "+-+-+-\n";
                         continue;
                     }
                     for (String key : child.variants.keySet()) {
@@ -673,21 +683,21 @@ if(!matched){
                     }
 
 
-//                    res += printChoice(child)+"----\n";
+//                    res += printChoice(child)+"+-+-+-\n";
                 } else if (child.matches != null) {
                     if (entity.getNonTerminal().contains(child_localName)) {
-                        res += printBlock(child) + "----\n";
+                        res += printBlock(child) + "+-+-+-\n";
                         continue;
                     }
                     if (this.astnode.getClass().getName().contains("Element")) {
                         String localName = ((Element) this.astnode).getLocalName();
 
                         if (localName.equals("public") || localName.equals("protected")) {
-                            res += localName + ":\n----\n";
+                            res += localName + ":\n+-+-+-\n";
                         }
                     }
                     res += printMatchNode(child);
-                    res += "----\n";
+                    res += "+-+-+-\n";
                 } else {
                     res += printChoice(this);
 //                    res+=printSingleNode(child);
@@ -701,7 +711,7 @@ if(!matched){
         } else {
             res += printSingleNode(this);
         }
-        res += "----\n";
+        res += "+-+-+-\n";
         return res;
     }
 
@@ -718,7 +728,7 @@ if(!matched){
     public String presicePrettyprint(String res, String blockCondition) {
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
-        String[] elements = res.split("----\n");
+        String[] elements = res.split("\\+-\\+-\\+-\n");
         if (elements.length == 1 || !res.startsWith("#if")) {
             if (elements[0].split("\n")[0].equals(blockCondition.replace("\n", ""))) {
                 String s = "";
@@ -727,7 +737,7 @@ if(!matched){
                 }
                 return s;
             }
-            return res.replace("----", "");
+            return res.replace("+-+-+-", "");
         }
         for (String e : elements) {
             if (e.length() > 0 && !e.equals("\n")) {
@@ -812,7 +822,7 @@ if(!matched){
 //            res += printChoice(c) ;
         }
 
-        res += "----\n";
+        res += "+-+-+-\n";
         return res;
     }
 
@@ -927,11 +937,11 @@ if(!matched){
                         if (c_block.hasMatches()) {
                             condition = printMatchCondition(c_block);
                         } else {
-                            if(c_block.variants.size()>1) {
-                                condition = printChoice(c_block).split("----\n")[0].split("\n")[0]
+                            if (c_block.variants.size() > 1) {
+                                condition = printChoice(c_block).split("\\+\\-\\+\\-\\+-\n")[0].split("\n")[0]
                                         + "+++"
-                                        + printChoice(c_block).split("----\n")[1].split("\n")[0];
-                            }else{
+                                        + printChoice(c_block).split("\\+-\\+-\\+-\n")[1].split("\n")[0];
+                            } else {
                                 condition = printChoice(c_block).split("\n")[0];
                             }
                         }
@@ -942,8 +952,8 @@ if(!matched){
                         }
                         if (block_condStack.size() > 0) {
                             if (!condition.equals(block_condStack.lastElement())) {
-                                String x =block_condStack.lastElement();
-                                if(!x.contains("+++")){
+                                String x = block_condStack.lastElement();
+                                if (!x.contains("+++")) {
                                     blockString += "\n#endif\n";
                                 }
 
@@ -956,12 +966,12 @@ if(!matched){
 
                                     block_condStack.pop();
                                     block_condStack.push(condition);
-                                    if(!condition.contains("+++")) {
+                                    if (!condition.contains("+++")) {
 
-                                        blockString += condition+"\n";
+                                        blockString += condition + "\n";
 
                                     }
-                                }else {
+                                } else {
                                     block_condStack.pop();
                                 }
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
@@ -971,9 +981,9 @@ if(!matched){
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
-                                    if(condition.contains("+++")) {
+                                    if (condition.contains("+++")) {
 //                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
-                                        blockString+= printChoice(c_block);
+                                        blockString += printChoice(c_block);
                                         continue;
                                     }
 
@@ -992,9 +1002,9 @@ if(!matched){
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
-                                    if(condition.contains("+++")) {
+                                    if (condition.contains("+++")) {
 //                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
-                                        blockString+= printChoice(c_block);
+                                        blockString += printChoice(c_block);
                                         continue;
                                     }
 
@@ -1020,20 +1030,20 @@ if(!matched){
                                     blockString += c_block.astnode.getValue();
                                 } else {
                                     block_condStack.add(condition);
-                                    if(condition.contains("+++")) {
+                                    if (condition.contains("+++")) {
 //                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
-                                       blockString+= printChoice(c_block);
+                                        blockString += printChoice(c_block);
                                         continue;
                                     }
 
 
                                     String s = printChoice(c_block);
-                                    if(s.split("\n").length>3) {
+                                    if (s.split("\n").length > 3) {
                                         for (int i = 0; i < s.split("\n").length - 2; i++) {
                                             blockString += s.split("\n")[i] + "\n";
                                         }
-                                    }else {
-                                        blockString+=s.split("\n")[0]+"\n"+s.split("\n")[1]+"\n";
+                                    } else {
+                                        blockString += s.split("\n")[0] + "\n" + s.split("\n")[1] + "\n";
                                     }
                                 }
                             } else {
@@ -1058,14 +1068,14 @@ if(!matched){
                         }
                     }
                     if (block_condStack.size() > 0) {
-                        String s=block_condStack.lastElement();
-                                block_condStack.pop();
-                        if(!s.contains("+++")) {
+                        String s = block_condStack.lastElement();
+                        block_condStack.pop();
+                        if (!s.contains("+++")) {
                             blockString += "#endif\n";
                         }
                     }
                 }
-                if (blockString.contains("----\n")) {
+                if (blockString.contains("+-+-+-\n")) {
 
                     blockString = presicePrettyprint(blockString, blockCondition);
                 }
@@ -1104,7 +1114,7 @@ if(!matched){
                     }
                 }
 
-                res += "----\n";
+                res += "+-+-+-\n";
 
             } else if (entity.getNonTerminal().contains(c_localName)) {
                 String s = printNonTerminalNode(c);
@@ -1214,7 +1224,7 @@ if(!matched){
             s += "\n#endif\n";
 
             if (var_size > 1) {
-                s += "----\n";
+                s += "+-+-+-\n";
             }
         }
 
