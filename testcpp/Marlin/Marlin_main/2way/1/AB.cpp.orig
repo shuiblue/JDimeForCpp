@@ -1,5 +1,5 @@
+#if defined (A) || defined (B)
 /* -*- c++ -*- */
-
 /*
     Reprap firmware based on Sprinter and grbl.
  Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
@@ -17,7 +17,6 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  This firmware is a mashup between Sprinter and grbl.
   (https://github.com/kliment/Sprinter)
@@ -26,16 +25,16 @@
  It has preliminary support for Matthew Roberts advance algorithm
     http://reprap.org/pipermail/reprap-dev/2011-May/003323.html
  */
-
 #include "Marlin.h"
-
-#ifdef ENABLE_AUTO_BED_LEVELING
+#endif
+#if defined (A) && defined (ENABLE_AUTO_BED_LEVELING) || defined (B) && defined (ENABLE_AUTO_BED_LEVELING)
 #include "vector_3.h"
-  #ifdef AUTO_BED_LEVELING_GRID
-    #include "qr_solve.h"
-  #endif
-#endif // ENABLE_AUTO_BED_LEVELING
-
+#endif
+#if defined (A) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) ) || defined (B) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) )
+#include "qr_solve.h"
+#endif
+#if defined (A) || defined (B)
+// ENABLE_AUTO_BED_LEVELING
 #include "ultralcd.h"
 #include "planner.h"
 #include "stepper.h"
@@ -47,18 +46,17 @@
 #include "language.h"
 #include "pins_arduino.h"
 #include "math.h"
-
-#ifdef BLINKM
+#endif
+#if defined (A) && defined (BLINKM) || defined (B) && defined (BLINKM)
 #include "BlinkM.h"
 #include "Wire.h"
 #endif
-
-#if NUM_SERVOS > 0
+#if defined (A) && NUM_SERVOS > 0 || defined (B) && NUM_SERVOS > 0
 #include "Servo.h"
 #endif
-
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
+#if defined (A) && (defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1) || defined (B) && (defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1)
 #include <SPI.h>
 #endif
-
+#if defined (A) || defined (B)
 #define VERSION_STRING  "1.0.2"
+#endif

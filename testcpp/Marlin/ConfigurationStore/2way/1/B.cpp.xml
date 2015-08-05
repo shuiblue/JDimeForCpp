@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/ConfigurationStore/2way/1/B.cpp">
-<function><type><name>void</name></type> <name>Config_StoreSettings</name><parameter_list>()</parameter_list> 
-<block>{
- 
-  <decl_stmt><decl><type><name>char</name></type> <name><name>ver2</name><index>[<expr>4</expr>]</index></name><init>=<expr><name>EEPROM_VERSION</name></expr></init></decl>;</decl_stmt>
-  <expr_stmt><expr><name>i</name>=<name>EEPROM_OFFSET</name></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>ver2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// validate data</comment>
-  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Settings Stored"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-}</block></function>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DISABLE_M503</name></cpp:ifndef>
+<function><type><name>void</name></type> <name>Config_PrintSettings</name><parameter_list>()</parameter_list>
+<block>{  <comment type="line">// Always have this function, even with EEPROM_SETTINGS disabled, the current values will be shown</comment>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Steps per unit:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M92 X"</expr></argument>,<argument><expr><name><name>axis_steps_per_unit</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument>,<argument><expr><name><name>axis_steps_per_unit</name><index>[<expr>1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument>,<argument><expr><name><name>axis_steps_per_unit</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" E"</expr></argument>,<argument><expr><name><name>axis_steps_per_unit</name><index>[<expr>3</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+<expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Scaling factors:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M365 X"</expr></argument>,<argument><expr><name><name>axis_scaling</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument>,<argument><expr><name><name>axis_scaling</name><index>[<expr>1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument>,<argument><expr><name><name>axis_scaling</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Maximum feedrates (mm/s):"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M203 X"</expr></argument>,<argument><expr><name><name>max_feedrate</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument>,<argument><expr><name><name>max_feedrate</name><index>[<expr>1</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument>, <argument><expr><name><name>max_feedrate</name><index>[<expr>2</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" E"</expr></argument>, <argument><expr><name><name>max_feedrate</name><index>[<expr>3</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Maximum Acceleration (mm/s2):"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M201 X"</expr></argument> ,<argument><expr><name><name>max_acceleration_units_per_sq_second</name><index>[<expr>0</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument> , <argument><expr><name><name>max_acceleration_units_per_sq_second</name><index>[<expr>1</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name><name>max_acceleration_units_per_sq_second</name><index>[<expr>2</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" E"</expr></argument> ,<argument><expr><name><name>max_acceleration_units_per_sq_second</name><index>[<expr>3</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Acceleration: S=acceleration, T=retract acceleration"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M204 S"</expr></argument>,<argument><expr><name>acceleration</name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" T"</expr></argument> ,<argument><expr><name>retract_acceleration</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Advanced variables: S=Min feedrate (mm/s), T=Min travel feedrate (mm/s), B=minimum segment time (ms), X=maximum XY jerk (mm/s),  Z=maximum Z jerk (mm/s),  E=maximum E jerk (mm/s)"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M205 S"</expr></argument>,<argument><expr><name>minimumfeedrate</name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" T"</expr></argument> ,<argument><expr><name>mintravelfeedrate</name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" B"</expr></argument> ,<argument><expr><name>minsegmenttime</name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" X"</expr></argument> ,<argument><expr><name>max_xy_jerk</name></expr></argument> )</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name>max_z_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" E"</expr></argument> ,<argument><expr><name>max_e_jerk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Home offset (mm):"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M206 X"</expr></argument>,<argument><expr><name><name>add_homing</name><index>[<expr>0</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument> ,<argument><expr><name><name>add_homing</name><index>[<expr>1</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name><name>add_homing</name><index>[<expr>2</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Endstop adjustement (mm):"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M666 X"</expr></argument>,<argument><expr><name><name>endstop_adj</name><index>[<expr>0</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr>1</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr>2</expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M665 L"</expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" R"</expr></argument> ,<argument><expr><name>delta_radius</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" S"</expr></argument> ,<argument><expr><name>delta_segments_per_second</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PIDTEMP</name></cpp:ifdef>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"PID settings:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M301 P"</expr></argument>,<argument><expr><name>Kp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" I"</expr></argument> ,<argument><expr><call><name>unscalePID_i</name><argument_list>(<argument><expr><name>Ki</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" D"</expr></argument> ,<argument><expr><call><name>unscalePID_d</name><argument_list>(<argument><expr><name>Kd</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function> 
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
 
 </unit>

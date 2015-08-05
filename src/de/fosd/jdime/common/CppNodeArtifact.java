@@ -116,7 +116,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
-
+if(!matched){
+    System.out.println("warning!----------"+node.getBaseURI());
+}
         return matched;
     }
 
@@ -921,10 +923,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         CppNodeArtifact c_block = it4Block.next();
                         String c_block_localName = ((Element) c_block.astnode).getLocalName();
                         String condition;
+
                         if (c_block.hasMatches()) {
                             condition = printMatchCondition(c_block);
                         } else {
-                            condition = printChoice(c_block).split("\n")[0];
+                            if(c_block.variants.size()>1) {
+                                condition = printChoice(c_block).split("----\n")[0].split("\n")[0]
+                                        + "+++"
+                                        + printChoice(c_block).split("----\n")[1].split("\n")[0];
+                            }else{
+                                condition = printChoice(c_block).split("\n")[0];
+                            }
                         }
                         if (entity.getClassBody().contains(c_block_localName)) {
                             String s = c_block.prettyPrint();
@@ -933,16 +942,25 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         }
                         if (block_condStack.size() > 0) {
                             if (!condition.equals(block_condStack.lastElement())) {
-                                blockString += "#endif\n";
+                                String x =block_condStack.lastElement();
+                                if(!x.contains("+++")){
+                                    blockString += "\n#endif\n";
+                                }
+
                                 if (!condition.equals(blockCondition)) {
                                     if (entity.getNonTerminal().contains(c_block_localName)) {
                                         String block = printNonTerminalNode(c_block);
                                         blockString += presicePrettyprint(block, blockCondition);
                                         continue;
                                     }
-                                    blockString += condition+"\n";
+
                                     block_condStack.pop();
                                     block_condStack.push(condition);
+                                    if(!condition.contains("+++")) {
+
+                                        blockString += condition+"\n";
+
+                                    }
                                 }else {
                                     block_condStack.pop();
                                 }
@@ -953,6 +971,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
+                                    if(condition.contains("+++")) {
+//                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
+                                        blockString+= printChoice(c_block);
+                                        continue;
+                                    }
+
+
                                     String s = printChoice(c_block);
                                     for (int i = 1; i < s.split("\n").length - 1; i++) {
                                         blockString += s.split("\n")[i] + "\n";
@@ -967,6 +992,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 if (c_block.hasMatches()) {
                                     blockString += c_block.astnode.getValue() + "\n";
                                 } else {
+                                    if(condition.contains("+++")) {
+//                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
+                                        blockString+= printChoice(c_block);
+                                        continue;
+                                    }
+
+
                                     String s = printChoice(c_block);
                                     for (int i = 1; i < s.split("\n").length - 1; i++) {
                                         blockString += s.split("\n")[i] + "\n";
@@ -974,17 +1006,27 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 }
                             }
                         } else {
+
+
                             if (!condition.equals(blockCondition)) {
                                 if (entity.getNonTerminal().contains(c_block_localName)) {
                                     blockString += printNonTerminalNode(c_block);
                                     continue;
                                 }
-                                block_condStack.add(condition);
-                                if (c_block.hasMatches()) {
-                                    blockString += "\n" + condition + "\n";
 
-                                    blockString += c_block.astnode.getValue() + "\n#endif\n";
+                                if (c_block.hasMatches()) {
+                                    block_condStack.add(condition);
+                                    blockString += "\n" + condition + "\n";
+                                    blockString += c_block.astnode.getValue();
                                 } else {
+                                    block_condStack.add(condition);
+                                    if(condition.contains("+++")) {
+//                                        block_condStack.add( condition.split("\\+\\+\\+")[1]);
+                                       blockString+= printChoice(c_block);
+                                        continue;
+                                    }
+
+
                                     String s = printChoice(c_block);
                                     if(s.split("\n").length>3) {
                                         for (int i = 0; i < s.split("\n").length - 2; i++) {
@@ -1016,9 +1058,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         }
                     }
                     if (block_condStack.size() > 0) {
-                        block_condStack.pop();
-                        blockString += "#endif\n";
-
+                        String s=block_condStack.lastElement();
+                                block_condStack.pop();
+                        if(!s.contains("+++")) {
+                            blockString += "#endif\n";
+                        }
                     }
                 }
                 if (blockString.contains("----\n")) {
@@ -1140,17 +1184,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             s += "#if defined (" + str + ")";
             String c_local = ((Element) c.astnode).getLocalName();
             if (c_local.equals("block")) {
-                String condition = printCondition(((CppNodeArtifact) c).variants.get(str).getRevision());
+                String condition = printCondition(c.variants.get(str).getRevision());
                 if (condition.length() > 0) {
                     s += " && " + condition + "\n";
                 }
                 s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
 
-            } else if (c_local.equals("if")) {
-//                s += "\n" + c.variants.get(str) + "\n#endif\n----\n";
-                s += "\n" + c.variants.get(str);
-
-            } else {
+            }
+//            else if (c_local.equals("if")) {
+//
+//                String condition = printCondition(c.variants.get(str).getRevision());
+//                if (var_size == 1 && condition.length() > 0) {
+//
+//                    s += " && " + condition;
+//                }
+//                s += "\n" + c.variants.get(str);
+//
+//            }
+            else {
                 String condition = printCondition(c.variants.get(str).getRevision());
                 if (var_size == 1 && condition.length() > 0) {
 

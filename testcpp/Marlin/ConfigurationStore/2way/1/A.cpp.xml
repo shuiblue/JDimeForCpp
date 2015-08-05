@@ -1,41 +1,81 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/ConfigurationStore/2way/1/A.cpp">
-
-
-<function><type><name>void</name></type> <name>Config_StoreSettings</name><parameter_list>()</parameter_list> 
-<block>{
- 
-  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FWRETRACT</name></cpp:ifdef>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>autoretract_enabled</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_zlift</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-
-  <comment type="line">// Save filament sizes</comment>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name>volumetric_enabled</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DISABLE_M503</name></cpp:ifndef>
+<function><type><name>void</name></type> <name>Config_PrintSettings</name><parameter_list>()</parameter_list>
+<block>{  
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
   
-  <decl_stmt><decl><type><name>char</name></type> <name><name>ver2</name><index>[<expr>4</expr>]</index></name><init>=<expr><name>EEPROM_VERSION</name></expr></init></decl>;</decl_stmt>
-  <expr_stmt><expr><name>i</name>=<name>EEPROM_OFFSET</name></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>ver2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// validate data</comment>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M666 X"</expr></argument>,<argument><expr><name><name>endstop_adj</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Y"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name><name>endstop_adj</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
   <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Settings Stored"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"  M665 L"</expr></argument>,<argument><expr><name>delta_diagonal_rod</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" R"</expr></argument> ,<argument><expr><name>delta_radius</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" S"</expr></argument> ,<argument><expr><name>delta_segments_per_second</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PIDTEMP</name></cpp:ifdef>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"PID settings:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M301 P"</expr></argument>,<argument><expr><name>Kp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" I"</expr></argument> ,<argument><expr><call><name>unscalePID_i</name><argument_list>(<argument><expr><name>Ki</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" D"</expr></argument> ,<argument><expr><call><name>unscalePID_d</name><argument_list>(<argument><expr><name>Kd</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FWRETRACT</name></cpp:ifdef>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Retract: S=Length (mm) F:Speed (mm/m) Z: ZLift (mm)"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M207 S"</expr></argument>,<argument><expr><name>retract_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" F"</expr></argument> ,<argument><expr><name>retract_feedrate</name>*60</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" Z"</expr></argument> ,<argument><expr><name>retract_zlift</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Recover: S=Extra length (mm) F:Speed (mm/m)"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M208 S"</expr></argument>,<argument><expr><name>retract_recover_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>" F"</expr></argument>, <argument><expr><name>retract_recover_feedrate</name>*60</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Auto-Retract: S=0 to disable, 1 to interpret extrude-only moves as retracts or recoveries"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M209 S"</expr></argument>, <argument><expr><call>(<name>unsigned</name> <name>long</name>)<argument_list>(<argument><expr><name>autoretract_enabled</name> ? 1 : 0</expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Multi-extruder settings:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   Swap retract length (mm):    "</expr></argument>, <argument><expr><name>retract_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   Swap rec. addl. length (mm): "</expr></argument>, <argument><expr><name>retract_recover_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <if>if <condition>(<expr><name>volumetric_enabled</name></expr>)</condition><then> <block>{
+        <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Filament settings:"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M200 D"</expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M200 T1 D"</expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOPAIR</name><argument_list>(<argument><expr>"   M200 T2 D"</expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    }</block></then> <else>else <block>{
+        <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Filament settings: Disabled"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></else></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 }</block></function>
-
-
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 </unit>
