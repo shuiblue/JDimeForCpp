@@ -3,6 +3,7 @@ class Computer
 
     :public bar
 
+
 {
     switch( i ) {
     case -1

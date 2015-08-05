@@ -12,6 +12,7 @@ class Computer:public bar {
     else
         x = s;
 
+
 #endif
 }
 #endif

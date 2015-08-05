@@ -3,6 +3,7 @@ class Computer
 
     :public bar
 
+
 {
     while
     ( i-- > 0 ) {

@@ -3,6 +3,7 @@ class Computer
 
     :public bar
 
+
 {
     int i=0;
     long a=0;

@@ -3,6 +3,7 @@ class Computer
 #if defined (A)
     :public bar
 #endif
+
 {
     switch( i ) {
     case -1

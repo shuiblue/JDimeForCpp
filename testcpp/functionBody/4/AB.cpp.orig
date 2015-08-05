@@ -8,10 +8,13 @@ void a()
 
 i=0;
 
+
 #endif
 #if defined (B)
 
 i=1;
+
+
 
 #endif
 }

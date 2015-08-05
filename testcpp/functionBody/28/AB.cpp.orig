@@ -15,11 +15,13 @@ else if (a==0)
 
             b++;
         
+
 #endif
 #if defined (B)
 
     	c++;
     
+
 
 #endif
 }

@@ -3,6 +3,7 @@ class Foo
 #if defined (A)
     :public bar
 #endif
+
 {
     int i=0;
     long a=0;

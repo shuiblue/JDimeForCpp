@@ -9,11 +9,13 @@ if ( line[i] == ' ' )
 
       aaa++;
   
+
 #endif
 #if defined (B)
 
       space++;
   
+
 
 #endif
 }

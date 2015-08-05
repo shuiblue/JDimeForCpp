@@ -1,6 +1,5 @@
-#if defined (A) || defined (B)
-void a() {
 #if defined (A)
+void a() {
 #ifdef SDSLOW
     if (X)
 #else
@@ -9,16 +8,17 @@ void a() {
     {
         cardOK = true;
     }
+}
 #endif
 #if defined (B)
+void b() {
 #ifdef SDSLOW
     if (z)
 #else
-    if (Y)
+    if (b)
 #endif
     {
         cardOK = true;
     }
-#endif
 }
 #endif

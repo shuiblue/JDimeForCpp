@@ -13,11 +13,13 @@ if ( i < 0)
 
 		x = q;
 	
+
 #endif
 #if defined (B)
 
 		x = s;
 	
+
 
 #endif
 }

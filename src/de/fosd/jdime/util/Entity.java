@@ -54,6 +54,8 @@ public class Entity {
         terminal.add("continue");
         terminal.add("comment");
         terminal.add("return");
+        terminal.add("define");
+        terminal.add("undef");
 
 /* head entity of
  function : (return type+function name)
