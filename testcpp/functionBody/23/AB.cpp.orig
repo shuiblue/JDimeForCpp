@@ -3,6 +3,7 @@ class Computer
 #if defined (A)
 :public bar
 #endif
+
 {
 switch( i )
 {
@@ -13,7 +14,9 @@ n++;
 #endif
 #if defined (B)
 p++;
+
 #endif
+
 break;
 case 0
 :z++;

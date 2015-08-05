@@ -5,7 +5,9 @@ void a
 #endif
 #if defined (B)
 (xx)
+
 #endif
+
 {
 int i=0;
 }

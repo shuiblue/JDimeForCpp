@@ -1,6 +1,13 @@
-#if defined (A) && ((X>0 && defined(X)) || (Y>0 && defined(Y)))
-a = 1;
+#if defined (A)
+if (x<0) {
+    a = 1;
+    b = 2;
+} else {
+    a=2;
+    b =3;
+}
 #endif
 #if defined (B)
-a=3;
+    a=1;
+    b=2;
 #endif

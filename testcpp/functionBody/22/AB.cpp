@@ -3,6 +3,7 @@ class Computer
 #if defined (A)
     :public bar
 #endif
+
 {
     if ( i > 0 ) {
         x = i;
@@ -18,6 +19,7 @@ class Computer
     else {
         t=0;
     }
+
 
 #endif
 }

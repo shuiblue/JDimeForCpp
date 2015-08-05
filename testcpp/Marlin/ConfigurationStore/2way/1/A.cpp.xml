@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/ConfigurationStore/2way/1/A.cpp">
+
+
+<function><type><name>void</name></type> <name>Config_StoreSettings</name><parameter_list>()</parameter_list> 
+<block>{
+ 
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FWRETRACT</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>autoretract_enabled</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_zlift</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_length_swap</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>retract_recover_feedrate</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Save filament sizes</comment>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name>volumetric_enabled</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>0</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>, <argument><expr><name><name>filament_size</name><index>[<expr>2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  
+  <decl_stmt><decl><type><name>char</name></type> <name><name>ver2</name><index>[<expr>4</expr>]</index></name><init>=<expr><name>EEPROM_VERSION</name></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><name>i</name>=<name>EEPROM_OFFSET</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>EEPROM_WRITE_VAR</name><argument_list>(<argument><expr><name>i</name></expr></argument>,<argument><expr><name>ver2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// validate data</comment>
+  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"Settings Stored"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+</unit>

@@ -23,6 +23,7 @@ if (match != NULL) {
 #if defined (B)
 if(cnt==nrFiles)
           return;
+
 #endif
 cnt++;
 

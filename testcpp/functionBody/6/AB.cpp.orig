@@ -12,10 +12,13 @@ i=0;
 #endif
 j=2;
 
+
 #endif
 #if defined (B)
 
 i=1;
+
+
 
 #endif
 }

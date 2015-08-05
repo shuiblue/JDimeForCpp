@@ -44,7 +44,7 @@ public class testMarlin {
 A : upstream
 B : ut7
   */
-
+@Ignore
     @Test
     public void testCardReader() {
         String path = "testcpp/Marlin/cardreader/2way/";
@@ -57,7 +57,6 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-@Ignore
     @Test
     public void test2() {
         String path = "testcpp/Marlin/ConfigurationStore/2way/";
@@ -70,8 +69,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-
-    @Ignore
+@Ignore
     @Test
     public void test3() {
         String path = "testcpp/Marlin/Marlin_main/2way/";
@@ -84,8 +82,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-
-    @Ignore
+@Ignore
     @Test
     public void test4() {
         String path = "testcpp/Marlin/planner/2way/";

@@ -9,8 +9,5 @@ if (x<0) {
 #endif
 #if defined (B)
     a=1;
-#endif
-#endif
-#if defined (B)
     b=2;
 #endif
