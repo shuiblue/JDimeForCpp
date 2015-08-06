@@ -78,8 +78,8 @@ B : ut7
         String path = "testcpp/Marlin/Marlin_main/2way/";
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
-        String testNum = "";
-//        String testNum = "1/";
+//        String testNum = "";
+        String testNum = "1/";
         System.out.println("------test 3-----------");
         // ----------------check Merged result equal to expect result
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
