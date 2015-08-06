@@ -57,7 +57,7 @@ public class Entity {
         terminal.add("return");
         terminal.add("define");
         terminal.add("undef");
-        terminal.add("include");
+        terminal.add("undef");
 
 /* head entity of
  function : (return type+function name)
