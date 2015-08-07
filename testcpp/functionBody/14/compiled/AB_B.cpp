@@ -1,7 +1,9 @@
 
-void a() {
+void a
+() {
     for(i=0; i<max; i++) {
-        if ( line[i] == ' ' ) {
+        if
+        ( line[i] == ' ' ) {
 
 
 
@@ -9,7 +11,8 @@ void a() {
             space++;
 
         }
-        if ( line[i] == '\t' ) {
+        if
+        ( line[i] == '\t' ) {
             tab++;
         }
     }

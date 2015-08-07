@@ -1,7 +1,10 @@
 #if defined (A) || defined (B)
-void a()
+void a
+()
 {
+
 while   
+
 ( i >= 0 )
 {
 #if defined (A)
@@ -10,14 +13,16 @@ while
 
 
 #endif
+
 #if defined (B)
 
     string1[j] = string2[j];
     
 
 
-
 #endif
 }
 }
+
+
 #endif

@@ -1,7 +1,10 @@
 #if defined (A) || defined (B)
-void a()
+void a
+()
 {
+
 if 
+
 #if defined (A)
 (x > 5)
 #endif
@@ -10,6 +13,10 @@ if
 
 #endif
 
+
 y+=4
+
 }
+
+
 #endif

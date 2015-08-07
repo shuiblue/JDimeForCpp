@@ -1,10 +1,14 @@
 #if defined (A) || defined (B)
 class Computer
+
 #if defined (A)
     :public bar
+
 #endif
 
+
 {
+
     int i=0;
     long a=0;
     int y=0;
@@ -24,7 +28,7 @@ class Computer
 // Destructor
     void setspeed ( int p );
     int readspeed();
-
 #endif
 }
+
 #endif

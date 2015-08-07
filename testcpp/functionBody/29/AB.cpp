@@ -1,9 +1,17 @@
 #if defined (A) || defined (B)
-class Computer:public bar {
-    if ( i > 0 ) {
+class Computer
+    :public bar {
+
+    if
+    ( i > 0 ) {
         x = i;
-    } else if ( i < 0)
+    }
+
+
+    else if
+    ( i < 0)
         x = q;
+
 #if defined (A)
     else
         x = j;
@@ -14,5 +22,8 @@ class Computer:public bar {
 
 
 #endif
+
 }
+
+
 #endif

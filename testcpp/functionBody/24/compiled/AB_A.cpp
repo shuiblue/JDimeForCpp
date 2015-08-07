@@ -1,14 +1,20 @@
 
 class Computer
 
+
     :public bar
 
 
+
+
 {
+
     while
+
     ( i-- > 0 ) {
         x = f( i );
-        if ( x == 1 ) {
+        if
+        ( x == 1 ) {
 
             continue;
 
@@ -18,4 +24,6 @@ class Computer
         }
         y += x * x;
     }
+
+
 }

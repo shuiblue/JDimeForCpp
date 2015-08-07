@@ -435,17 +435,23 @@ SERIAL_ECHO(v);
 int freeMemory() { return SdFatUtil::FreeRam(); }
 #endif
 #if defined (A) && !defined (SDSUPPORT) || defined (B)
-{
-extern unsigned int __bss_end;
-extern unsigned int __heap_start;
+extern "C" {
+
+#if defined (A) || defined (B)
+
+extern unsigned int __bss_end;extern unsigned int __heap_start;
 extern void *__brkval;
-int freeMemory()
-{
-int free_memory;
-if ((int)__brkval == 0)
-free_memory = ((int)&free_memory) - ((int)&__bss_end);
-return free_memory;
-}
+int freeMemory() {
+      int free_memory;
+
+      if ((int)__brkval == 0)
+        free_memory = ((int)&free_memory) - ((int)&__bss_end);
+      else
+        free_memory = ((int)&free_memory) - ((int)__brkval);
+
+      return free_memory;
+    }
+#endif
 }
 #endif
 #if defined (A)
@@ -597,11 +603,15 @@ servos[3].attach(SERVO3_PIN);
 #if defined (A) && defined (SERVO_ENDSTOPS) || defined (B) && defined (SERVO_ENDSTOPS)
 for(int8_ti=0;i<3;i++)
 {
+#if defined (A) || defined (B)
 if (servo_endstops[i] > -1)
 {
 servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
 
 }
+#endif
+
+
 }
 #endif
 
@@ -700,48 +710,50 @@ get_command();
 
 card.checkautostart(false);
 #endif
-#if defined (A) || defined (B)
 if (buflen)
 {
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
 if (card.saving)
 {
-if (strstr_P(cmdbuffer[bufindr], PSTR("M29")) == NULL)
+
+#if defined (A) || defined (B)
+
 {
-card.write_command(cmdbuffer[bufindr]);
-if (card.logging)
-{
-process_commands();
-
+        if(strstr_P(cmdbuffer[bufindr], PSTR("M29")) == NULL)
+        {
+          card.write_command(cmdbuffer[bufindr]);
+          if(card.logging)
+          {
+            process_commands();
+          }
+          else
+          {
+            SERIAL_PROTOCOLLNPGM(MSG_OK);
+          }
+        }
+        else
+        {
+          card.closefile();
+          SERIAL_PROTOCOLLNPGM(MSG_FILE_SAVED);
+        }
+      }#endif
 }
-else {
-SERIAL_PROTOCOLLNPGM(MSG_OK);
-
-}
-
-}
-else {
-card.closefile();
-SERIAL_PROTOCOLLNPGM(MSG_FILE_SAVED);
-
-}
-
-}
-else {
-process_commands();
-
-}
-
 #endif
+#endif
+else {
+
+#if defined (A) || defined (B)
+
+{
+        process_commands();
+      }#endif
+}
 process_commands();
 //SDSUPPORT
 buflen = (buflen-1);
 bufindr = (bufindr + 1)%BUFSIZE;
 
 }
-#endif
-
-
 //check heater every n milliseconds
 manage_heater();
 manage_inactivity();
@@ -891,8 +903,12 @@ cmdbuffer[bufindw][serial_count++] = serial_char;
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
 if (!card.sdprinting || serial_count!=0)
 {
-return;
 
+#if defined (A) || defined (B)
+
+{
+    return;
+  }#endif
 }
 #endif
 
@@ -903,75 +919,57 @@ return;
 //'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible// if it occurs, stop_buffering is triggered and the buffer is ran dry.
 // this character _can_ occur in serial com, due to checksums. however, no checksums are used in SD printing
 static bool stop_buffering=false;
-#if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
-if (buflen==0)
-stop_buffering=false;
-#endif
-#endif
-
-
-#if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
-while  ( !card.eof()  && buflen < BUFSIZE && !stop_buffering)
-{
-int16_t n=card.get();
-serial_char = (char)n;
-if (serial_char == '\n' ||
+if(buflen==0) stop_buffering=false;
+while( !card.eof()  && buflen < BUFSIZE && !stop_buffering) {
+    int16_t n=card.get();
+    serial_char = (char)n;
+    if(serial_char == '\n' ||
        serial_char == '\r' ||
        (serial_char == '#' && comment_mode == false) ||
        (serial_char == ':' && comment_mode == false) ||
        serial_count >= (MAX_CMD_SIZE - 1)||n==-1)
-{
-if (card.eof())
-{
-SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
-stoptime=millis();
-char time[30];
-unsigned long t=(stoptime-starttime)/1000;
-int hours, minutes;
-minutes=(t/60)%60;
-hours=t/60/60;
-sprintf_P(time, PSTR("%i hours %i minutes"),hours, minutes);
-SERIAL_ECHO_START;
-SERIAL_ECHOLN(time);
-lcd_setstatus(time);
-card.printingHasFinished();
-card.checkautostart(true);
+    {
+      if(card.eof()){
+        SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
+        stoptime=millis();
+        char time[30];
+        unsigned long t=(stoptime-starttime)/1000;
+        int hours, minutes;
+        minutes=(t/60)%60;
+        hours=t/60/60;
+        sprintf_P(time, PSTR("%i hours %i minutes"),hours, minutes);
+        SERIAL_ECHO_START;
+        SERIAL_ECHOLN(time);
+        lcd_setstatus(time);
+        card.printingHasFinished();
+        card.checkautostart(true);
 
-}
-if (serial_char=='#')
-stop_buffering=true;
-if (!serial_count)
-{
-comment_mode = false;
-//for new command
-return;
-//if empty line
+      }
+      if(serial_char=='#')
+        stop_buffering=true;
 
-}
-cmdbuffer[bufindw][serial_count] = 0;
-//terminate string
+      if(!serial_count)
+      {
+        comment_mode = false; //for new command
+        return; //if empty line
+      }
+      cmdbuffer[bufindw][serial_count] = 0; //terminate string
 //      if(!comment_mode){
-fromsd[bufindw] = true;
-buflen += 1;
-bufindw = (bufindw + 1)%BUFSIZE;
+        fromsd[bufindw] = true;
+        buflen += 1;
+        bufindw = (bufindw + 1)%BUFSIZE;
 //      }
-comment_mode = false;
-//for new command
-serial_count = 0;
-//clear buffer
+      comment_mode = false; //for new command
+      serial_count = 0; //clear buffer
+    }
+    else
+    {
+      if(serial_char == ';') comment_mode = true;
+      if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
+    }
+  }
 
-}
-else {
-if (serial_char == ';')
-comment_mode = true;
-if (!comment_mode)
-cmdbuffer[bufindw][serial_count++] = serial_char;
-
-}
-}
 #endif
-
-
 //SDSUPPORT
 }
 float code_value()
@@ -1027,16 +1025,22 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir,  HOME_DIR)
 static int dual_x_carriage_mode = DEFAULT_DUAL_X_CARRIAGE_MODE;
 static float x_home_pos(int extruder)
 {
+#if defined (A) || defined (B)
 if (extruder == 0)
 return base_home_pos(X_AXIS) + add_homing[X_AXIS];
 else // In dual carriage mode the extruder offset provides an override of the
 // second X-carriage offset when homed - otherwise X2_HOME_POS is used.
 // This allow soft recalibration of the second extruder offset position without firmware reflash
 // (through the M218 command).
+
+#endif
 }
 static int x_home_dir(int extruder)
 {
-return (extruder == 0) ? X_HOME_DIR : X2_HOME_DIR;
+
+#if defined (A) || defined (B)
+
+return (extruder == 0) ? X_HOME_DIR : X2_HOME_DIR;#endif
 }
 static float inactive_extruder_x_pos = X2_MAX_POS;
 // used in mode 0 & 1
@@ -1060,34 +1064,34 @@ static void axis_is_at_home(int axis)
 #if defined (A) && defined (DUAL_X_CARRIAGE) || defined (B) && defined (DUAL_X_CARRIAGE)
 if (axis == X_AXIS)
 {
-if (active_extruder != 0)
-{
-current_position[X_AXIS] = x_home_pos(active_extruder);
-min_pos[X_AXIS] =          X2_MIN_POS;
-max_pos[X_AXIS] =          max(extruder_offset[X_AXIS][1], X2_MAX_POS);
-return;
 
-}
-else if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0)
+#if defined (A) || defined (B)
+
 {
-current_position[X_AXIS] = base_home_pos(X_AXIS) + add_homing[X_AXIS];
-min_pos[X_AXIS] =          base_min_pos(X_AXIS) + add_homing[X_AXIS];
-max_pos[X_AXIS] =          min(base_max_pos(X_AXIS) + add_homing[X_AXIS],
+    if (active_extruder != 0) {
+      current_position[X_AXIS] = x_home_pos(active_extruder);
+      min_pos[X_AXIS] =          X2_MIN_POS;
+      max_pos[X_AXIS] =          max(extruder_offset[X_AXIS][1], X2_MAX_POS);
+      return;
+    }
+    else if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0) {
+      current_position[X_AXIS] = base_home_pos(X_AXIS) + add_homing[X_AXIS];
+      min_pos[X_AXIS] =          base_min_pos(X_AXIS) + add_homing[X_AXIS];
+      max_pos[X_AXIS] =          min(base_max_pos(X_AXIS) + add_homing[X_AXIS],
                                   max(extruder_offset[X_AXIS][1], X2_MAX_POS) - duplicate_extruder_x_offset);
-return;
-
-}
-
+      return;
+    }
+  }#endif
 }
 #endif
+
+
 
 #if defined (A) && defined (SCARA) || defined (B) && defined (SCARA)
 
 float homeposition[3];char i;
-#if defined (A) && defined (SCARA) || defined (B) && defined (SCARA)
 if (axis < 2)
-{
-{
+   {
    
      for (i=0; i<3; i++)
      {
@@ -1123,202 +1127,20 @@ if (axis < 2)
     // inverse kinematic transform.
     min_pos[axis] =          base_min_pos(axis); // + (delta[axis] - base_home_pos(axis));
     max_pos[axis] =          base_max_pos(axis); // + (delta[axis] - base_home_pos(axis));
+   } 
+   else
+   {
+      current_position[axis] = base_home_pos(axis) + add_homing[axis];
+      min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
+      max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
    }
+
 #endif
-}
-else {
+#if defined (A) && !defined (SCARA) || defined (B) && !defined (SCARA)
+
 current_position[axis] = base_home_pos(axis) + add_homing[axis];
 min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
 max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
-
-}
-
-#endif
-
-#if defined (A) && !defined (SCARA) || defined (B) && !defined (SCARA)
-
-current_position[axis] = base_home_pos(axis) + add_homing[axis];min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
-max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
 #endif
 }
-#endif
-#if defined (A) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) ) || defined (B) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) )
-static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
-{
-vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
-planeNormal.debug("planeNormal");
-plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
-//bedLevel.debug("bedLevel");
-//plan_bed_level_matrix.debug("bed level before");
-//vector_3 uncorrected_position = plan_get_position_mm();
-//uncorrected_position.debug("position before");
-vector_3 corrected_position = plan_get_position();
-//    corrected_position.debug("position after");
-current_position[X_AXIS] = corrected_position.x;
-current_position[Y_AXIS] = corrected_position.y;
-current_position[Z_AXIS] = corrected_position.z;
-// put the bed at 0 so we don't go below it.
-current_position[Z_AXIS] = zprobe_zoffset;
-// in the lsq we reach here after raising the extruder due to the loop structure
-plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-}
-#endif
-#if defined (A) && (!defined (AUTO_BED_LEVELING_GRID) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (!defined (AUTO_BED_LEVELING_GRID) && defined (ENABLE_AUTO_BED_LEVELING) )
-// not AUTO_BED_LEVELING_GRID
-static void set_bed_level_equation_3pts(float z_at_pt_1, float z_at_pt_2, float z_at_pt_3)
-{
-plan_bed_level_matrix.set_to_identity();
-vector_3 pt1 = vector_3(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, z_at_pt_1);
-vector_3 pt2 = vector_3(ABL_PROBE_PT_2_X, ABL_PROBE_PT_2_Y, z_at_pt_2);
-vector_3 pt3 = vector_3(ABL_PROBE_PT_3_X, ABL_PROBE_PT_3_Y, z_at_pt_3);
-vector_3 from_2_to_1 = (pt1 - pt2).get_normal();
-vector_3 from_2_to_3 = (pt3 - pt2).get_normal();
-vector_3 planeNormal = vector_3::cross(from_2_to_1, from_2_to_3).get_normal();
-planeNormal = vector_3(planeNormal.x, planeNormal.y, abs(planeNormal.z));
-plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
-vector_3 corrected_position = plan_get_position();
-current_position[X_AXIS] = corrected_position.x;
-current_position[Y_AXIS] = corrected_position.y;
-current_position[Z_AXIS] = corrected_position.z;
-// put the bed at 0 so we don't go below it.
-current_position[Z_AXIS] = zprobe_zoffset;
-plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-}
-#endif
-#if defined (A) && defined (ENABLE_AUTO_BED_LEVELING) || defined (B) && defined (ENABLE_AUTO_BED_LEVELING)
-// AUTO_BED_LEVELING_GRID
-static void run_z_probe()
-{
-plan_bed_level_matrix.set_to_identity();
-feedrate = homing_feedrate[Z_AXIS];
-// move down until you find the bed
-float zPosition = -10;
-plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
-st_synchronize();
-// we have to let the planner know where we are right now as it is not where we said to go.
-zPosition = st_get_position_mm(Z_AXIS);
-plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS]);
-// move up the retract distance
-zPosition += home_retract_mm(Z_AXIS);
-plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
-st_synchronize();
-// move back down slowly to find bed
-feedrate = homing_feedrate[Z_AXIS]/4;
-zPosition -= home_retract_mm(Z_AXIS) * 2;
-plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
-st_synchronize();
-current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
-// make sure the planner knows where we are as it may be a bit different than we last said to move to
-plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-}
-static void do_blocking_move_to(float x, float y, float z)
-{
-float oldFeedRate = feedrate;
-#if defined (A) && defined (ENABLE_AUTO_BED_LEVELING)
-feedrate = homing_feedrate[Z_AXIS];
-current_position[Z_AXIS] = z;
-plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], feedrate/60, active_extruder);
-st_synchronize();
-
-#endif
-feedrate = XY_TRAVEL_SPEED;
-current_position[X_AXIS] = x;
-current_position[Y_AXIS] = y;
-#if defined (B) && defined (ENABLE_AUTO_BED_LEVELING)
-current_position[Z_AXIS] = z;
-
-#endif
-plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], feedrate/60, active_extruder);
-st_synchronize();
-feedrate = oldFeedRate;
-}
-static void do_blocking_move_relative(float offset_x, float offset_y, float offset_z)
-{
-do_blocking_move_to(current_position[X_AXIS] + offset_x, current_position[Y_AXIS] + offset_y, current_position[Z_AXIS] + offset_z);
-}
-static void setup_for_endstop_move()
-{
-saved_feedrate = feedrate;
-saved_feedmultiply = feedmultiply;
-feedmultiply = 100;
-previous_millis_cmd = millis();
-enable_endstops(true);
-}
-static void clean_up_after_endstop_move()
-{
-
-#if defined (A) && (defined (ENDSTOPS_ONLY_FOR_HOMING) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (defined (ENDSTOPS_ONLY_FOR_HOMING) && defined (ENABLE_AUTO_BED_LEVELING) )
-
-enable_endstops(false);
-#endif
-feedrate = saved_feedrate;
-feedmultiply = saved_feedmultiply;
-previous_millis_cmd = millis();
-}
-static void engage_z_probe()
-{
-// Engage Z Servo endstop if enabled
-#if defined (A) && (defined (SERVO_ENDSTOPS) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (defined (SERVO_ENDSTOPS) && defined (ENABLE_AUTO_BED_LEVELING) )
-if (servo_endstops[Z_AXIS] > -1)
-{
-servos[servo_endstops[Z_AXIS]].attach(0);
-servos[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2]);
-delay(PROBE_SERVO_DEACTIVATION_DELAY);
-servos[servo_endstops[Z_AXIS]].detach();
-
-}
-#endif
-
-
-}
-static void retract_z_probe()
-{
-// Retract Z Servo endstop if enabled
-#if defined (A) && (defined (SERVO_ENDSTOPS) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (defined (SERVO_ENDSTOPS) && defined (ENABLE_AUTO_BED_LEVELING) )
-if (servo_endstops[Z_AXIS] > -1)
-{
-servos[servo_endstops[Z_AXIS]].attach(0);
-servos[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2 + 1]);
-delay(PROBE_SERVO_DEACTIVATION_DELAY);
-servos[servo_endstops[Z_AXIS]].detach();
-
-}
-#endif
-
-
-}
-/// Probe bed height at position (x,y), returns the measured z value
-static float probe_pt(float x, float y, float z_before)
-{
-// move to right place
-do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], z_before);
-do_blocking_move_to(x - X_PROBE_OFFSET_FROM_EXTRUDER, y - Y_PROBE_OFFSET_FROM_EXTRUDER, current_position[Z_AXIS]);
-
-#if defined (A) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) )
-
-engage_z_probe();// Engage Z Servo endstop if available
-
-#endif
-// Z_PROBE_SLED
-run_z_probe();
-float measured_z = current_position[Z_AXIS];
-
-#if defined (A) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) ) || defined (B) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) )
-
-retract_z_probe();
-#endif
-// Z_PROBE_SLED
-SERIAL_PROTOCOLPGM(MSG_BED);
-SERIAL_PROTOCOLPGM(" x: ");
-SERIAL_PROTOCOL(x);
-SERIAL_PROTOCOLPGM(" y: ");
-SERIAL_PROTOCOL(y);
-SERIAL_PROTOCOLPGM(" z: ");
-SERIAL_PROTOCOL(measured_z);
-SERIAL_PROTOCOLPGM("\n");
-return measured_z;
-}
-#endif
-#if defined (A) || defined (B)
-// #ifdef ENABLE_AUTO_BED_LEVELING
 #endif

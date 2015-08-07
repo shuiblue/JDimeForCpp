@@ -1,7 +1,9 @@
 #if defined (A) || defined (B)
-void a() {
+void a
+() {
     for(i=0; i<max; i++) {
-        if ( line[i] == ' ' ) {
+        if
+        ( line[i] == ' ' ) {
 #if defined (A)
             aaa++;
 #endif
@@ -9,9 +11,12 @@ void a() {
             space++;
 #endif
         }
-        if ( line[i] == '\t' ) {
+        if
+        ( line[i] == '\t' ) {
             tab++;
         }
     }
 }
+
+
 #endif

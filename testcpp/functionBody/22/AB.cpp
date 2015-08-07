@@ -1,13 +1,20 @@
 #if defined (A) || defined (B)
 class Computer
+
 #if defined (A)
     :public bar
+
 #endif
 
+
 {
-    if ( i > 0 ) {
+
+    if
+    ( i > 0 ) {
         x = i;
     }
+
+
 #if defined (A)
     else if(i<0) {
         s=2;
@@ -23,4 +30,6 @@ class Computer
 
 #endif
 }
+
+
 #endif

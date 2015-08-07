@@ -1,14 +1,20 @@
 #if defined (A) || defined (B)
 class Computer
+
 #if defined (A)
     :public bar
+
 #endif
 
+
 {
+
     while
+
     ( i-- > 0 ) {
         x = f( i );
-        if ( x == 1 ) {
+        if
+        ( x == 1 ) {
 #if defined (A)
             continue;
 #endif
@@ -18,5 +24,9 @@ class Computer
         }
         y += x * x;
     }
+
+
 }
+
+
 #endif
