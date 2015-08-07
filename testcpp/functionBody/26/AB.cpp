@@ -1,10 +1,15 @@
 #if defined (A) || defined (B)
-class Computer:public bar {
+class Computer
+    :public bar {
+
     while
+
     ( i-- > 0 ) {
-        if ( x == 1 ) {
+        if
+        ( x == 1 ) {
             a++;
-            if (x>0) {
+            if
+            (x>0) {
                 b++;
             }
 #if defined (B)
@@ -14,5 +19,9 @@ class Computer:public bar {
 #endif
         }
     }
+
+
 }
+
+
 #endif

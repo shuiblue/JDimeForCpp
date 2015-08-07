@@ -1,10 +1,15 @@
 
-class Computer:public bar {
+class Computer
+    :public bar {
+
     while
+
     ( i-- > 0 ) {
-        if ( x == 1 ) {
+        if
+        ( x == 1 ) {
             a++;
-        } else if (a==0) {
+        } else if
+        (a==0) {
 
 
 
@@ -13,4 +18,6 @@ class Computer:public bar {
 
         }
     }
+
+
 }

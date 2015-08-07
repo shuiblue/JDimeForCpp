@@ -63,8 +63,8 @@
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
 <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>VERSION_STRING</name></cpp:macro>  <cpp:value>"1.0.0"</cpp:value></cpp:define>
-    
-    <comment type="line">// look here for descriptions of G-codes: http://linuxcnc.org/handbook/gcode/g-code.html</comment>
+
+<comment type="line">// look here for descriptions of G-codes: http://linuxcnc.org/handbook/gcode/g-code.html</comment>
 <comment type="line">// http://objects.reprap.org/wiki/Mendel_User_Manual:_RepRapGCodes</comment>
 
 <comment type="line">//Implemented Codes</comment>
@@ -192,8 +192,6 @@
 
 <comment type="line">//Stepper Movement Variables</comment>
 
-
-
 <comment type="line">//===========================================================================</comment>
 <comment type="line">//=============================imported variables============================</comment>
 <comment type="line">//===========================================================================</comment>
@@ -236,7 +234,6 @@
 <decl_stmt><decl><type><name>float</name></type> <name><name>max_pos</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{ <expr><name>X_MAX_POS</name></expr>, <expr><name>Y_MAX_POS</name></expr>, <expr><name>Z_MAX_POS</name></expr> }</block></expr></init></decl>;</decl_stmt>
 <decl_stmt><decl><type><name>bool</name></type> <name><name>axis_known_position</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>false</expr>, <expr>false</expr>, <expr>false</expr>}</block></expr></init></decl>;</decl_stmt>
 <decl_stmt><decl><type><name>float</name></type> <name>zprobe_zoffset</name></decl>;</decl_stmt>
-
 
 <comment type="line">// Extruder offset</comment>
 <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
@@ -333,7 +330,6 @@
   <decl_stmt><decl><type><name>int</name></type> <name>meas_delay_cm</name> <init>= <expr><name>MEASUREMENT_DELAY_CM</name></expr></init></decl>;</decl_stmt>  <comment type="line">//distance delay setting</comment>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
-
 <comment type="line">//===========================================================================</comment>
 <comment type="line">//=============================Private Variables=============================</comment>
 <comment type="line">//===========================================================================</comment>
@@ -399,13 +395,13 @@
 
 <function_decl><type><name>void</name></type> <name>get_arc_coordinates</name><parameter_list>()</parameter_list>;</function_decl>
 <function_decl><type><name>bool</name></type> <name>setTargetedHotend</name><parameter_list>(<param><decl><type><name>int</name></type> <name>code</name></decl></param>)</parameter_list>;</function_decl>
+
 <function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>float</name></type> <name>v</name></decl></param>)</parameter_list>
     <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
 <function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>double</name></type> <name>v</name></decl></param>)</parameter_list>
     <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
 <function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>unsigned</name> <name>long</name></type> <name>v</name></decl></param>)</parameter_list>
     <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
-
 
 <extern>extern "C"<block>{
   <decl_stmt><decl><type><specifier>extern</specifier> <name>unsigned</name> <name>int</name></type> <name>__bss_end</name></decl>;</decl_stmt>
@@ -424,7 +420,6 @@
   }</block></function>
 }</block></extern>
 
-
 <comment type="line">//adds an command to the main command buffer</comment>
 <comment type="line">//thats really done in a non-safe way.</comment>
 <comment type="line">//needs overworking someday</comment>
@@ -442,7 +437,6 @@
     <expr_stmt><expr><name>buflen</name> += 1</expr>;</expr_stmt>
   }</block></then></if>
 }</block></function>
-
 
 <function><type><name>void</name></type> <name>enquecommand_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>cmd</name></decl></param>)</parameter_list>
 <block>{
@@ -533,6 +527,7 @@
   <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 }</block></function>
 
+
 <function><type><name>void</name></type> <name>setup</name><parameter_list>()</parameter_list>
 <block>{
   <expr_stmt><expr><call><name>setup_killpin</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
@@ -599,6 +594,7 @@
   <expr_stmt><expr><call><name>digitalWrite</name><argument_list>(<argument><expr><name>SERVO0_PIN</name></expr></argument>, <argument><expr><name>LOW</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// turn it off</comment>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// Z_PROBE_SLED</comment>
 }</block></function>
+
 
 <function><type><name>void</name></type> <name>loop</name><parameter_list>()</parameter_list>
 <block>{
@@ -824,6 +820,7 @@
 
 }</block></function>
 
+
 <function><type><name>float</name></type> <name>code_value</name><parameter_list>()</parameter_list>
 <block>{
   <return>return <expr>(<call><name>strtod</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>)</argument_list></call>)</expr>;</return>
@@ -840,13 +837,12 @@
   <return>return <expr>(<name>strchr_pointer</name> != <name>NULL</name>)</expr>;</return>  <comment type="line">//Return True if a character was found</comment>
 }</block></function>
 
-
 <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DEFINE_PGM_READ_ANY</name><parameter_list>(<param><type><name>type</name></type></param>, <param><type><name>reader</name></type></param>)</parameter_list></cpp:macro>       \
     <cpp:value>static inline type pgm_read_any(const type *p)  \
     { return pgm_read_##reader##_near(p); }</cpp:value></cpp:define>
+
 <expr_stmt><expr><call><name>DEFINE_PGM_READ_ANY</name><argument_list>(<argument><expr><name>float</name></expr></argument>,       <argument><expr><name>float</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 <macro><name>DEFINE_PGM_READ_ANY</name><argument_list>(<argument>signed char</argument>, <argument>byte</argument>)</argument_list></macro><empty_stmt>;</empty_stmt>
-
 
 <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>XYZ_CONSTS_FROM_CONFIG</name><parameter_list>(<param><type><name>type</name></type></param>, <param><type><name>array</name></type></param>, <param><type><name>CONFIG</name></type></param>)</parameter_list></cpp:macro> \
 <cpp:value>static const PROGMEM type array##_P[3] =        \
@@ -860,7 +856,6 @@ static inline type array(int axis)          \
 <expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>max_length</name></expr></argument>,      <argument><expr><name>MAX_LENGTH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 <expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>home_retract_mm</name></expr></argument>, <argument><expr><name>HOME_RETRACT_MM</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 <macro><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument>signed char</argument>, <argument>home_dir</argument>,  <argument>HOME_DIR</argument>)</argument_list></macro><empty_stmt>;</empty_stmt>
-
 
 <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DUAL_X_CARRIAGE</name></cpp:ifdef>
   <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> == 1 || <call><name>defined</name><argument_list>(<argument><expr><name>COREXY</name></expr></argument>)</argument_list></call> \
@@ -975,187 +970,5 @@ static inline type array(int axis)          \
   <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 }</block></function>
-
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTO_BED_LEVELING_GRID</name></cpp:ifdef>
-<function><type><specifier>static</specifier> <name>void</name></type> <name>set_bed_level_equation_lsq</name><parameter_list>(<param><decl><type><name>double</name> *</type><name>plane_equation_coefficients</name></decl></param>)</parameter_list>
-<block>{
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>planeNormal</name> <init>= <expr><call><name>vector_3</name><argument_list>(<argument><expr>-<name><name>plane_equation_coefficients</name><index>[<expr>0</expr>]</index></name></expr></argument>, <argument><expr>-<name><name>plane_equation_coefficients</name><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr>1</expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
-    <expr_stmt><expr><call><name><name>planeNormal</name>.<name>debug</name></name><argument_list>(<argument><expr>"planeNormal"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><name>plan_bed_level_matrix</name> = <call><name><name>matrix_3x3</name>::<name>create_look_at</name></name><argument_list>(<argument><expr><name>planeNormal</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <comment type="line">//bedLevel.debug("bedLevel");</comment>
-
-    <comment type="line">//plan_bed_level_matrix.debug("bed level before");</comment>
-    <comment type="line">//vector_3 uncorrected_position = plan_get_position_mm();</comment>
-    <comment type="line">//uncorrected_position.debug("position before");</comment>
-
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>corrected_position</name> <init>= <expr><call><name>plan_get_position</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-<comment type="line">//    corrected_position.debug("position after");</comment>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>x</name></name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>y</name></name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>z</name></name></expr>;</expr_stmt>
-
-    <comment type="line">// put the bed at 0 so we don't go below it.</comment>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <name>zprobe_zoffset</name></expr>;</expr_stmt> <comment type="line">// in the lsq we reach here after raising the extruder due to the loop structure</comment>
-
-    <expr_stmt><expr><call><name>plan_set_position</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-}</block></function>
-
-<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> <comment type="line">// not AUTO_BED_LEVELING_GRID</comment>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>set_bed_level_equation_3pts</name><parameter_list>(<param><decl><type><name>float</name></type> <name>z_at_pt_1</name></decl></param>, <param><decl><type><name>float</name></type> <name>z_at_pt_2</name></decl></param>, <param><decl><type><name>float</name></type> <name>z_at_pt_3</name></decl></param>)</parameter_list> <block>{
-
-    <expr_stmt><expr><call><name><name>plan_bed_level_matrix</name>.<name>set_to_identity</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>pt1</name> <init>= <expr><call><name>vector_3</name><argument_list>(<argument><expr><name>ABL_PROBE_PT_1_X</name></expr></argument>, <argument><expr><name>ABL_PROBE_PT_1_Y</name></expr></argument>, <argument><expr><name>z_at_pt_1</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>pt2</name> <init>= <expr><call><name>vector_3</name><argument_list>(<argument><expr><name>ABL_PROBE_PT_2_X</name></expr></argument>, <argument><expr><name>ABL_PROBE_PT_2_Y</name></expr></argument>, <argument><expr><name>z_at_pt_2</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>pt3</name> <init>= <expr><call><name>vector_3</name><argument_list>(<argument><expr><name>ABL_PROBE_PT_3_X</name></expr></argument>, <argument><expr><name>ABL_PROBE_PT_3_Y</name></expr></argument>, <argument><expr><name>z_at_pt_3</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
-
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>from_2_to_1</name> <init>= <expr>(<name>pt1</name> - <name>pt2</name>).<call><name>get_normal</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>from_2_to_3</name> <init>= <expr>(<name>pt3</name> - <name>pt2</name>).<call><name>get_normal</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>planeNormal</name> <init>= <expr><call><name><name>vector_3</name>::<name>cross</name></name><argument_list>(<argument><expr><name>from_2_to_1</name></expr></argument>, <argument><expr><name>from_2_to_3</name></expr></argument>)</argument_list></call>.<call><name>get_normal</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-    <expr_stmt><expr><name>planeNormal</name> = <call><name>vector_3</name><argument_list>(<argument><expr><name><name>planeNormal</name>.<name>x</name></name></expr></argument>, <argument><expr><name><name>planeNormal</name>.<name>y</name></name></expr></argument>, <argument><expr><call><name>abs</name><argument_list>(<argument><expr><name><name>planeNormal</name>.<name>z</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-    <expr_stmt><expr><name>plan_bed_level_matrix</name> = <call><name><name>matrix_3x3</name>::<name>create_look_at</name></name><argument_list>(<argument><expr><name>planeNormal</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-    <decl_stmt><decl><type><name>vector_3</name></type> <name>corrected_position</name> <init>= <expr><call><name>plan_get_position</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>x</name></name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>y</name></name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <name><name>corrected_position</name>.<name>z</name></name></expr>;</expr_stmt>
-
-    <comment type="line">// put the bed at 0 so we don't go below it.</comment>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <name>zprobe_zoffset</name></expr>;</expr_stmt>
-
-    <expr_stmt><expr><call><name>plan_set_position</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-}</block></function>
-
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// AUTO_BED_LEVELING_GRID</comment>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>run_z_probe</name><parameter_list>()</parameter_list> <block>{
-    <expr_stmt><expr><call><name><name>plan_bed_level_matrix</name>.<name>set_to_identity</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><name>feedrate</name> = <name><name>homing_feedrate</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
-
-    <comment type="line">// move down until you find the bed</comment>
-    <decl_stmt><decl><type><name>float</name></type> <name>zPosition</name> <init>= <expr>-10</expr></init></decl>;</decl_stmt>
-    <expr_stmt><expr><call><name>plan_buffer_line</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>zPosition</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>feedrate</name>/60</expr></argument>, <argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>st_synchronize</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-        <comment type="line">// we have to let the planner know where we are right now as it is not where we said to go.</comment>
-    <expr_stmt><expr><name>zPosition</name> = <call><name>st_get_position_mm</name><argument_list>(<argument><expr><name>Z_AXIS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>plan_set_position</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>zPosition</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-    <comment type="line">// move up the retract distance</comment>
-    <expr_stmt><expr><name>zPosition</name> += <call><name>home_retract_mm</name><argument_list>(<argument><expr><name>Z_AXIS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>plan_buffer_line</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>zPosition</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>feedrate</name>/60</expr></argument>, <argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>st_synchronize</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-    <comment type="line">// move back down slowly to find bed</comment>
-    <expr_stmt><expr><name>feedrate</name> = <name><name>homing_feedrate</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name>/4</expr>;</expr_stmt>
-    <expr_stmt><expr><name>zPosition</name> -= <call><name>home_retract_mm</name><argument_list>(<argument><expr><name>Z_AXIS</name></expr></argument>)</argument_list></call> * 2</expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>plan_buffer_line</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>zPosition</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>feedrate</name>/60</expr></argument>, <argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>st_synchronize</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <call><name>st_get_position_mm</name><argument_list>(<argument><expr><name>Z_AXIS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <comment type="line">// make sure the planner knows where we are as it may be a bit different than we last said to move to</comment>
-    <expr_stmt><expr><call><name>plan_set_position</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>do_blocking_move_to</name><parameter_list>(<param><decl><type><name>float</name></type> <name>x</name></decl></param>, <param><decl><type><name>float</name></type> <name>y</name></decl></param>, <param><decl><type><name>float</name></type> <name>z</name></decl></param>)</parameter_list> <block>{
-    <decl_stmt><decl><type><name>float</name></type> <name>oldFeedRate</name> <init>= <expr><name>feedrate</name></expr></init></decl>;</decl_stmt>
-
-    <expr_stmt><expr><name>feedrate</name> = <name>XY_TRAVEL_SPEED</name></expr>;</expr_stmt>
-
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <name>x</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> = <name>y</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> = <name>z</name></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>plan_buffer_line</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>E_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>feedrate</name>/60</expr></argument>, <argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>st_synchronize</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-    <expr_stmt><expr><name>feedrate</name> = <name>oldFeedRate</name></expr>;</expr_stmt>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>do_blocking_move_relative</name><parameter_list>(<param><decl><type><name>float</name></type> <name>offset_x</name></decl></param>, <param><decl><type><name>float</name></type> <name>offset_y</name></decl></param>, <param><decl><type><name>float</name></type> <name>offset_z</name></decl></param>)</parameter_list> <block>{
-    <expr_stmt><expr><call><name>do_blocking_move_to</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> + <name>offset_x</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name> + <name>offset_y</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> + <name>offset_z</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>setup_for_endstop_move</name><parameter_list>()</parameter_list> <block>{
-    <expr_stmt><expr><name>saved_feedrate</name> = <name>feedrate</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name>saved_feedmultiply</name> = <name>feedmultiply</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name>feedmultiply</name> = 100</expr>;</expr_stmt>
-    <expr_stmt><expr><name>previous_millis_cmd</name> = <call><name>millis</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-
-    <expr_stmt><expr><call><name>enable_endstops</name><argument_list>(<argument><expr>true</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>clean_up_after_endstop_move</name><parameter_list>()</parameter_list> <block>{
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENDSTOPS_ONLY_FOR_HOMING</name></cpp:ifdef>
-    <expr_stmt><expr><call><name>enable_endstops</name><argument_list>(<argument><expr>false</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-
-    <expr_stmt><expr><name>feedrate</name> = <name>saved_feedrate</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name>feedmultiply</name> = <name>saved_feedmultiply</name></expr>;</expr_stmt>
-    <expr_stmt><expr><name>previous_millis_cmd</name> = <call><name>millis</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>engage_z_probe</name><parameter_list>()</parameter_list> <block>{
-    <comment type="line">// Engage Z Servo endstop if enabled</comment>
-    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SERVO_ENDSTOPS</name></cpp:ifdef>
-    <if>if <condition>(<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> &gt; -1</expr>)</condition><then> <block>{
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>ENABLE_AUTO_BED_LEVELING</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>PROBE_SERVO_DEACTIVATION_DELAY</name> &gt; 0)</expr></cpp:if>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr>0</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>write</name><argument_list>(<argument><expr><name><name>servo_endstop_angles</name><index>[<expr><name>Z_AXIS</name> * 2</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>ENABLE_AUTO_BED_LEVELING</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>PROBE_SERVO_DEACTIVATION_DELAY</name> &gt; 0)</expr></cpp:if>
-        <expr_stmt><expr><call><name>delay</name><argument_list>(<argument><expr><name>PROBE_SERVO_DEACTIVATION_DELAY</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>detach</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-    }</block></then></if>
-    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-}</block></function>
-
-<function><type><specifier>static</specifier> <name>void</name></type> <name>retract_z_probe</name><parameter_list>()</parameter_list> <block>{
-    <comment type="line">// Retract Z Servo endstop if enabled</comment>
-    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SERVO_ENDSTOPS</name></cpp:ifdef>
-    <if>if <condition>(<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name> &gt; -1</expr>)</condition><then> <block>{
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>ENABLE_AUTO_BED_LEVELING</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>PROBE_SERVO_DEACTIVATION_DELAY</name> &gt; 0)</expr></cpp:if>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr>0</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>write</name><argument_list>(<argument><expr><name><name>servo_endstop_angles</name><index>[<expr><name>Z_AXIS</name> * 2 + 1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>ENABLE_AUTO_BED_LEVELING</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>PROBE_SERVO_DEACTIVATION_DELAY</name> &gt; 0)</expr></cpp:if>
-        <expr_stmt><expr><call><name>delay</name><argument_list>(<argument><expr><name>PROBE_SERVO_DEACTIVATION_DELAY</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-        <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>detach</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-    }</block></then></if>
-    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-}</block></function>
-
-<comment type="line" format="doxygen">/// Probe bed height at position (x,y), returns the measured z value</comment>
-<function><type><specifier>static</specifier> <name>float</name></type> <name>probe_pt</name><parameter_list>(<param><decl><type><name>float</name></type> <name>x</name></decl></param>, <param><decl><type><name>float</name></type> <name>y</name></decl></param>, <param><decl><type><name>float</name></type> <name>z_before</name></decl></param>)</parameter_list> <block>{
-  <comment type="line">// move to right place</comment>
-  <expr_stmt><expr><call><name>do_blocking_move_to</name><argument_list>(<argument><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Y_AXIS</name></expr>]</index></name></expr></argument>, <argument><expr><name>z_before</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>do_blocking_move_to</name><argument_list>(<argument><expr><name>x</name> - <name>X_PROBE_OFFSET_FROM_EXTRUDER</name></expr></argument>, <argument><expr><name>y</name> - <name>Y_PROBE_OFFSET_FROM_EXTRUDER</name></expr></argument>, <argument><expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>Z_PROBE_SLED</name></cpp:ifndef>
-  <expr_stmt><expr><call><name>engage_z_probe</name><argument_list>()</argument_list></call></expr>;</expr_stmt>   <comment type="line">// Engage Z Servo endstop if available</comment>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// Z_PROBE_SLED</comment>
-  <expr_stmt><expr><call><name>run_z_probe</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-  <decl_stmt><decl><type><name>float</name></type> <name>measured_z</name> <init>= <expr><name><name>current_position</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
-<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>Z_PROBE_SLED</name></cpp:ifndef>
-  <expr_stmt><expr><call><name>retract_z_probe</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// Z_PROBE_SLED</comment>
-
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr><name>MSG_BED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr>" x: "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>x</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr>" y: "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>y</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr>" z: "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOL</name><argument_list>(<argument><expr><name>measured_z</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>SERIAL_PROTOCOLPGM</name><argument_list>(<argument><expr>"\n"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <return>return <expr><name>measured_z</name></expr>;</return>
-}</block></function>
-
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// #ifdef ENABLE_AUTO_BED_LEVELING</comment>
 
 </unit>

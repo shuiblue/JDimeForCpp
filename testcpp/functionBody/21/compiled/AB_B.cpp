@@ -4,18 +4,16 @@ class Computer
 
 
 
+
+
+
 {
-    if ( i > 0 ) {
+
+    if
+    ( i > 0 ) {
         x = i;
 
 
 
     }
-
-
-
-
-
-
-
 }

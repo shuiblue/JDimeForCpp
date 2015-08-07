@@ -4,9 +4,15 @@ class Computer
 
 
 
+
+
+
 {
-    switch( i ) {
-    case -1
+
+    switch
+    ( i ) {
+    case
+            -1
             :
 
 
@@ -15,13 +21,17 @@ class Computer
         p++;
 
         break;
-    case 0
+    case
+            0
             :
         z++;
         break;
-    case 1
+    case
+            1
             :
         p++;
         break;
     }
+
+
 }

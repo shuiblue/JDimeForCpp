@@ -1,12 +1,18 @@
 
 class Computer
 
+
     :public bar
 
 
+
+
 {
-    switch( i ) {
-    case -1
+
+    switch
+    ( i ) {
+    case
+            -1
             :
 
         n++;
@@ -15,13 +21,17 @@ class Computer
 
 
         break;
-    case 0
+    case
+            0
             :
         z++;
         break;
-    case 1
+    case
+            1
             :
         p++;
         break;
     }
+
+
 }

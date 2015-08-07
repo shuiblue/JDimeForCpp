@@ -1,10 +1,14 @@
 
 class Computer
 
+
     :public bar
 
 
+
+
 {
+
     int i=0;
     long a=0;
     int y=0;
@@ -24,6 +28,5 @@ class Computer
 
     void setspeed ( int p );
     int readspeed();
-
 
 }

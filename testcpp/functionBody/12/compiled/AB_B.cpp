@@ -1,5 +1,6 @@
 
-void a() {
+void a
+() {
     a=0;
 
     while

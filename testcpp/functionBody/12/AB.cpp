@@ -1,5 +1,6 @@
 #if defined (A) || defined (B)
-void a() {
+void a
+() {
     a=0;
 #if defined (A) && defined (X) || defined (B)
     while
@@ -13,4 +14,5 @@ void a() {
     }
 #endif
 }
+
 #endif

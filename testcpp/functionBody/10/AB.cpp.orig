@@ -1,5 +1,6 @@
 #if defined (A) || defined (B)
 void a
+
 #if defined (A)
 ()
 #endif
@@ -8,7 +9,11 @@ void a
 
 #endif
 
+
 {
+
 int i=0;
 }
+
+
 #endif

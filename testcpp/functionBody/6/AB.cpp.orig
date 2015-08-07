@@ -3,7 +3,8 @@ int x=0;
 int y=0;
 #endif
 #if defined (A) || defined (B)
-void a()
+void a
+()
 {
 #if defined (A)
 
@@ -14,10 +15,10 @@ j=2;
 
 
 #endif
+
 #if defined (B)
 
 i=1;
-
 
 
 #endif

@@ -1,5 +1,6 @@
 
-void a() {
+void a
+() {
     i=0;
 
 

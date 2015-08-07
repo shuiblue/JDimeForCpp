@@ -1,10 +1,16 @@
 #if defined (A) || defined (B)
-void a()
+void a
+()
 {
+
 for(i=0;i<max;i++)
+
 {
-if ( line[i] == ' ' )
+
+if 
+( line[i] == ' ' )
 {
+
 #if defined (A)
 
       aaa++;
@@ -16,14 +22,21 @@ if ( line[i] == ' ' )
       space++;
   
 
-
 #endif
 }
-if ( line[i] == '\t' )
+
+if 
+( line[i] == '\t' )
 {
+
 tab++;
+}
+
 
 }
+
+
 }
-}
+
+
 #endif

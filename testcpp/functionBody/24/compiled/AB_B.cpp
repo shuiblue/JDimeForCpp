@@ -4,11 +4,17 @@ class Computer
 
 
 
+
+
+
 {
+
     while
+
     ( i-- > 0 ) {
         x = f( i );
-        if ( x == 1 ) {
+        if
+        ( x == 1 ) {
 
 
 
@@ -18,4 +24,6 @@ class Computer
         }
         y += x * x;
     }
+
+
 }
