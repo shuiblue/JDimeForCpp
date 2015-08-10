@@ -637,51 +637,51 @@ void manage_heater()
 #define PGM_RD_W(x)   (short)pgm_read_word(&x)
 // Derived from RepRap FiveD extruder::getTemperature()
 // For hot end temperature measurement.
-static float analog2temp(int raw, uint8_t e) {
-#ifdef TEMP_SENSOR_1_AS_REDUNDANT
-  if(e > EXTRUDERS)
-#else
-  if(e >= EXTRUDERS)
-#endif
-  {
-      SERIAL_ERROR_START;
-      SERIAL_ERROR((int)e);
-      SERIAL_ERRORLNPGM(" - Invalid extruder number !");
-      kill();
-      return 0.0;
-  } 
-  #ifdef HEATER_0_USES_MAX6675
-    if (e == 0)
-    {
-      return 0.25 * raw;
-    }
-  #endif
+// static float analog2temp(int raw, uint8_t e) {
+// #ifdef TEMP_SENSOR_1_AS_REDUNDANT
+//   if(e > EXTRUDERS)
+// #else
+//   if(e >= EXTRUDERS)
+// #endif
+//   {
+//       SERIAL_ERROR_START;
+//       SERIAL_ERROR((int)e);
+//       SERIAL_ERRORLNPGM(" - Invalid extruder number !");
+//       kill();
+//       return 0.0;
+//   } 
+//   #ifdef HEATER_0_USES_MAX6675
+//     if (e == 0)
+//     {
+//       return 0.25 * raw;
+//     }
+//   #endif
 
-  if(heater_ttbl_map[e] != NULL)
-  {
-    float celsius = 0;
-    uint8_t i;
-    short (*tt)[][2] = (short (*)[][2])(heater_ttbl_map[e]);
+//   if(heater_ttbl_map[e] != NULL)
+//   {
+//     float celsius = 0;
+//     uint8_t i;
+//     short (*tt)[][2] = (short (*)[][2])(heater_ttbl_map[e]);
 
-    for (i=1; i<heater_ttbllen_map[e]; i++)
-    {
-      if (PGM_RD_W((*tt)[i][0]) > raw)
-      {
-        celsius = PGM_RD_W((*tt)[i-1][1]) + 
-          (raw - PGM_RD_W((*tt)[i-1][0])) * 
-          (float)(PGM_RD_W((*tt)[i][1]) - PGM_RD_W((*tt)[i-1][1])) /
-          (float)(PGM_RD_W((*tt)[i][0]) - PGM_RD_W((*tt)[i-1][0]));
-        break;
-      }
-    }
+//     for (i=1; i<heater_ttbllen_map[e]; i++)
+//     {
+//       if (PGM_RD_W((*tt)[i][0]) > raw)
+//       {
+//         celsius = PGM_RD_W((*tt)[i-1][1]) + 
+//           (raw - PGM_RD_W((*tt)[i-1][0])) * 
+//           (float)(PGM_RD_W((*tt)[i][1]) - PGM_RD_W((*tt)[i-1][1])) /
+//           (float)(PGM_RD_W((*tt)[i][0]) - PGM_RD_W((*tt)[i-1][0]));
+//         break;
+//       }
+//     }
 
-    // Overflow: Set to last value in the table
-    if (i == heater_ttbllen_map[e]) celsius = PGM_RD_W((*tt)[i-1][1]);
+//     // Overflow: Set to last value in the table
+//     if (i == heater_ttbllen_map[e]) celsius = PGM_RD_W((*tt)[i-1][1]);
 
-    return celsius;
-  }
-  return ((raw * ((5.0 * 100.0) / 1024.0) / OVERSAMPLENR) * TEMP_SENSOR_AD595_GAIN) + TEMP_SENSOR_AD595_OFFSET;
-}
+//     return celsius;
+//   }
+//   return ((raw * ((5.0 * 100.0) / 1024.0) / OVERSAMPLENR) * TEMP_SENSOR_AD595_GAIN) + TEMP_SENSOR_AD595_OFFSET;
+// }
 
 // Derived from RepRap FiveD extruder::getTemperature()
 // For bed temperature measurement.

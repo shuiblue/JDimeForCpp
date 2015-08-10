@@ -1,25 +1,37 @@
 #if defined (A) || defined (B)
-class Computer
-    :public bar {
-
-    while
-
-    ( i-- > 0 ) {
-        if
-        ( x == 1 ) {
-            a++;
-        } else if
-        (a==0) {
+if
+(a) {
 #if defined (A)
-            b++;
+    {
+#if b
+        if(b+1)
+#else
+        if(c+1)
 #endif
-#if defined (B)
-            c++;
-#endif
+        {
+            d++;
         }
     }
+#endif
+#if defined (B)
+    {
+#if b
+        if(b+1)
+#else
+        if(c+1)
+#endif
+        {
+            d++;
+        }
+    }
+#endif
+}
 
-
+#endif
+#if defined (A) && defined (X) || defined (B) && defined (X)
+float s
+(float d) {
+    return s;
 }
 
 

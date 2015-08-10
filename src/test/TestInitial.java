@@ -113,11 +113,11 @@ public class TestInitial {
      * @return
      */
     public boolean checkMerge_wrapper(HashSet<String> fileName, String testNum, String output) {
-        try {
-            Thread.sleep(10);                 //1000 milliseconds is one second.
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            Thread.sleep(100);                 //1000 milliseconds is one second.
+//        } catch (InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
         ArrayList<String> inputFilePaths = new ArrayList<>();
 
         for (String s : fileName) {
@@ -227,11 +227,11 @@ public class TestInitial {
      * @return
      */
     public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileNameSet, String output, String path, String testNum) {
-        try {
-            Thread.sleep(10);                 //1000 milliseconds is one second.
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            Thread.sleep(100);                 //1000 milliseconds is one second.
+//        } catch (InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
 
         Set<Set<String>> configuration = getAllConfigurations(config);
         Set<String> feature = new HashSet<>();
