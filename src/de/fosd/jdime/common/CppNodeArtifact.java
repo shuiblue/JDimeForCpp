@@ -131,7 +131,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
         if (!matched) {
-            System.out.println("warning!----------" + node.toXML() + "\n");
+//            System.out.println("warning!----------" + node.getBaseURI() + "\n");
+//            System.out.println("warning!----------" + node.toXML() + "\n");
+//            System.out.println("ifdef_num: "+ifdef_num);
+//            System.out.println("ifndef_num: "+ifndef_num);
+//            System.out.println("if_num: "+if_num);
+//            System.out.println("endif_num: "+endif_num);
         }
         return matched;
     }
@@ -155,15 +160,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         String namespace_prefix = ((Element) node).getNamespacePrefix();
                         String childValue = astnode.getChild(i).getValue();
 
-
                         if (ifdef_endif_Matched) {
                             if (localName.equals("endif")) {
+                                System.out.println("------------pare ::" + node.getParent().toXML());
                                 conditionStack.pop();
                                 continue;
                             }
                             if (localName.equals("if")) {
                                 if (namespace_prefix.equals("cpp")) {
                                     String cond = node.getValue().substring(4);
+                                    System.out.println("------------ifcpp ::" + cond);
+
                                     conditionStack.push(cond);
                                     continue;
                                 }
@@ -176,6 +183,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
+                                System.out.println("------------defined (" + condition + ")");
+
                                 continue;
                             }
 
@@ -188,13 +197,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                             if (localName.equals("else")) {
                                 if (namespace_prefix.equals("cpp")) {
-                                    System.out.println("pop-----" + conditionStack.lastElement());
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
+                                        System.out.println("push------"+condition.substring(1));
                                     } else {
                                         conditionStack.push("!" + condition);
+                                        System.out.print("push-------!"+condition);
                                     }
+
+
                                     continue;
                                 }
                             }
@@ -202,7 +214,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         if (!entity.getHeadEntity().contains(localName)) {
                             Revision revision = new Revision(getRevision().getName());
                             if (conditionStack != null && conditionStack.size() > 0) {
-//                                getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
                             CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
@@ -211,13 +222,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (conditionStack != null && conditionStack.size() > 0) {
                                 child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
-//                            child.getRevision().conditions.addAll(child.getParent().getRevision().conditions);
                             children.add(child);
-
-//                            if (!entity.getTerminal().contains(localName) && ifdef_endif_Matched) {
-//
-//                                child.initializeChildren();
-//                            }
                         }
                     }
                 }
@@ -275,7 +280,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                             if (localName.equals("else")) {
                                 if (namespace_prefix.equals("cpp")) {
-                                    System.out.println("pop-----" + conditionStack.lastElement());
+//                                    System.out.println("!!!!!!"+node.getBaseURI()+"----"+node.getParent().toXML());
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
@@ -1236,7 +1241,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public static void sleep() {
         try {
-            Thread.sleep(10);                 //1000 milliseconds is one second.
+            Thread.sleep(50);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

@@ -546,6 +546,7 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
     lcd_update();
   }
 
+
 #ifdef ENABLE_AUTO_BED_LEVELING
   apply_rotation_xyz(plan_bed_level_matrix, x, y, z);
 #endif // ENABLE_AUTO_BED_LEVELING
@@ -771,41 +772,41 @@ block->steps_y = labs((target[X_AXIS]-position[X_AXIS]) - (target[Y_AXIS]-positi
   
   
     if((extruder==FILAMENT_SENSOR_EXTRUDER_NUM) && (delay_index2 > -1))  //only for extruder with filament sensor and if ring buffer is initialized
-  	  {
+      {
     delay_dist = delay_dist + delta_mm[E_AXIS];  //increment counter with next move in e axis
   
     while (delay_dist >= (10*(MAX_MEASUREMENT_DELAY+1)))  //check if counter is over max buffer size in mm
-      	  delay_dist = delay_dist - 10*(MAX_MEASUREMENT_DELAY+1);  //loop around the buffer
+          delay_dist = delay_dist - 10*(MAX_MEASUREMENT_DELAY+1);  //loop around the buffer
     while (delay_dist<0)
-    	  delay_dist = delay_dist + 10*(MAX_MEASUREMENT_DELAY+1); //loop around the buffer
+        delay_dist = delay_dist + 10*(MAX_MEASUREMENT_DELAY+1); //loop around the buffer
       
     delay_index1=delay_dist/10.0;  //calculate index
     
     //ensure the number is within range of the array after converting from floating point
     if(delay_index1<0)
-    	delay_index1=0;
+      delay_index1=0;
     else if (delay_index1>MAX_MEASUREMENT_DELAY)
-    	delay_index1=MAX_MEASUREMENT_DELAY;
-    	
+      delay_index1=MAX_MEASUREMENT_DELAY;
+      
     if(delay_index1 != delay_index2)  //moved index
-  	  {
-    	meas_sample=widthFil_to_size_ratio()-100;  //subtract off 100 to reduce magnitude - to store in a signed char
-  	  }
+      {
+      meas_sample=widthFil_to_size_ratio()-100;  //subtract off 100 to reduce magnitude - to store in a signed char
+      }
     while( delay_index1 != delay_index2)
-  	  {
-  	  delay_index2 = delay_index2 + 1;
-  	if(delay_index2>MAX_MEASUREMENT_DELAY)
-  			  delay_index2=delay_index2-(MAX_MEASUREMENT_DELAY+1);  //loop around buffer when incrementing
-  	  if(delay_index2<0)
-  		delay_index2=0;
-  	  else if (delay_index2>MAX_MEASUREMENT_DELAY)
-  		delay_index2=MAX_MEASUREMENT_DELAY;  
-  	  
-  	  measurement_delay[delay_index2]=meas_sample;
-  	  }
-    	
+      {
+      delay_index2 = delay_index2 + 1;
+    if(delay_index2>MAX_MEASUREMENT_DELAY)
+          delay_index2=delay_index2-(MAX_MEASUREMENT_DELAY+1);  //loop around buffer when incrementing
+      if(delay_index2<0)
+      delay_index2=0;
+      else if (delay_index2>MAX_MEASUREMENT_DELAY)
+      delay_index2=MAX_MEASUREMENT_DELAY;  
+      
+      measurement_delay[delay_index2]=meas_sample;
+      }
+      
     
-  	  }
+      }
 #endif
 
 
@@ -1023,19 +1024,18 @@ block->steps_y = labs((target[X_AXIS]-position[X_AXIS]) - (target[Y_AXIS]-positi
 
 #ifdef ENABLE_AUTO_BED_LEVELING
 vector_3 plan_get_position() {
-	vector_3 position = vector_3(st_get_position_mm(X_AXIS), st_get_position_mm(Y_AXIS), st_get_position_mm(Z_AXIS));
+  vector_3 position = vector_3(st_get_position_mm(X_AXIS), st_get_position_mm(Y_AXIS), st_get_position_mm(Z_AXIS));
 
-	//position.debug("in plan_get position");
-	//plan_bed_level_matrix.debug("in plan_get bed_level");
-	matrix_3x3 inverse = matrix_3x3::transpose(plan_bed_level_matrix);
-	//inverse.debug("in plan_get inverse");
-	position.apply_rotation(inverse);
-	//position.debug("after rotation");
+  //position.debug("in plan_get position");
+  //plan_bed_level_matrix.debug("in plan_get bed_level");
+  matrix_3x3 inverse = matrix_3x3::transpose(plan_bed_level_matrix);
+  //inverse.debug("in plan_get inverse");
+  position.apply_rotation(inverse);
+  //position.debug("after rotation");
 
-	return position;
+  return position;
 }
 #endif // ENABLE_AUTO_BED_LEVELING
-
 #ifdef ENABLE_AUTO_BED_LEVELING
 void plan_set_position(float x, float y, float z, const float &e)
 {

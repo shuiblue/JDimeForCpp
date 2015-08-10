@@ -414,45 +414,64 @@ boolean chdkActive = false;
 //===========================================================================
 void get_arc_coordinates();
 bool setTargetedHotend(int code);
-void serial_echopair_P(const char *s_P, float v)
+void serial_echopair_P
+(const char *s_P, float v)
 {
+
 serialprintPGM(s_P);
 SERIAL_ECHO(v);
 }
-void serial_echopair_P(const char *s_P, double v)
+
+
+void serial_echopair_P
+(const char *s_P, double v)
 {
+
 serialprintPGM(s_P);
 SERIAL_ECHO(v);
 }
-void serial_echopair_P(const char *s_P, unsigned long v)
+
+
+void serial_echopair_P
+(const char *s_P, unsigned long v)
 {
+
 serialprintPGM(s_P);
 SERIAL_ECHO(v);
 }
+
+
 #endif
 #if defined (A) && defined (SDSUPPORT)
 #include "SdFatUtil.h"
 int freeMemory() { return SdFatUtil::FreeRam(); }
 #endif
 #if defined (A) && !defined (SDSUPPORT) || defined (B)
-extern "C" {
+extern "C" 
+{
 
-#if defined (A) || defined (B)
-
-extern unsigned int __bss_end;extern unsigned int __heap_start;
+extern unsigned int __bss_end;
+extern unsigned int __heap_start;
 extern void *__brkval;
-int freeMemory() {
-      int free_memory;
+int freeMemory
+()
+{
 
-      if ((int)__brkval == 0)
-        free_memory = ((int)&free_memory) - ((int)&__bss_end);
-      else
-        free_memory = ((int)&free_memory) - ((int)__brkval);
+int free_memory;
+if 
+((int)__brkval == 0)
+free_memory = ((int)&free_memory) - ((int)&__bss_end);
 
-      return free_memory;
-    }
-#endif
+else 
+free_memory = ((int)&free_memory) - ((int)__brkval);
+
+return free_memory;
 }
+
+
+}
+
+
 #endif
 #if defined (A)
 //!SDSUPPORT
@@ -461,10 +480,14 @@ int freeMemory() {
 //adds an command to the main command buffer
 //thats really done in a non-safe way.
 //needs overworking someday
-void enquecommand(const char *cmd)
+void enquecommand
+(const char *cmd)
 {
-if (buflen < BUFSIZE)
+
+if 
+(buflen < BUFSIZE)
 {
+
 //this is dangerous if a mixing of serial and this happens
 strcpy(&(cmdbuffer[bufindw][0]),cmd);
 SERIAL_ECHO_START;
@@ -477,17 +500,25 @@ SERIAL_ECHOPGM("enqueing \"");
 
 #endif
 
+
 SERIAL_ECHO(cmdbuffer[bufindw]);
 SERIAL_ECHOLNPGM("\"");
 bufindw= (bufindw + 1)%BUFSIZE;
 buflen += 1;
+}
+
 
 }
-}
-void enquecommand_P(const char *cmd)
+
+
+void enquecommand_P
+(const char *cmd)
 {
-if (buflen < BUFSIZE)
+
+if 
+(buflen < BUFSIZE)
 {
+
 //this is dangerous if a mixing of serial and this happens
 strcpy_P(&(cmdbuffer[bufindw][0]),cmd);
 SERIAL_ECHO_START;
@@ -500,15 +531,21 @@ SERIAL_ECHOPGM("enqueing \"");
 
 #endif
 
+
 SERIAL_ECHO(cmdbuffer[bufindw]);
 SERIAL_ECHOLNPGM("\"");
 bufindw= (bufindw + 1)%BUFSIZE;
 buflen += 1;
+}
+
 
 }
-}
-void setup_killpin()
+
+
+void setup_killpin
+()
 {
+
 #if defined (A)
 SET_INPUT(KILL_PIN);
 #endif
@@ -516,11 +553,10 @@ SET_INPUT(KILL_PIN);
 pinMode(KILL_PIN,INPUT);
 #endif
 #if defined (A) && (defined(KILL_PIN) && KILL_PIN > -1) || defined (B) && (defined(KILL_PIN) && KILL_PIN > -1)
-
 WRITE(KILL_PIN,HIGH);
-
 #endif
 }
+
 #endif
 #if defined (A)
 // Set home pin
@@ -533,97 +569,92 @@ void setup_homepin(void)
 }
 #endif
 #if defined (A) || defined (B)
-void setup_photpin()
+void setup_photpin
+()
 {
 
 #if defined (A) && (defined(PHOTOGRAPH_PIN) && PHOTOGRAPH_PIN > -1) || defined (B) && (defined(PHOTOGRAPH_PIN) && PHOTOGRAPH_PIN > -1)
-
-SET_OUTPUT(PHOTOGRAPH_PIN);WRITE(PHOTOGRAPH_PIN, LOW);
+SET_OUTPUT(PHOTOGRAPH_PIN);
+WRITE(PHOTOGRAPH_PIN, LOW);
 #endif
 }
-void setup_powerhold()
+
+void setup_powerhold
+()
 {
 
 #if defined (A) && (defined(SUICIDE_PIN) && SUICIDE_PIN > -1) || defined (B) && (defined(SUICIDE_PIN) && SUICIDE_PIN > -1)
-
-SET_OUTPUT(SUICIDE_PIN);WRITE(SUICIDE_PIN, HIGH);
-
+SET_OUTPUT(SUICIDE_PIN);
+WRITE(SUICIDE_PIN, HIGH);
 #endif
 #if defined (A) && (defined(PS_ON_PIN) && PS_ON_PIN > -1) || defined (B) && (defined(PS_ON_PIN) && PS_ON_PIN > -1)
-
 SET_OUTPUT(PS_ON_PIN);
-
 #endif
 #if defined (A) && (defined(PS_DEFAULT_OFF) && (defined(PS_ON_PIN) && PS_ON_PIN > -1 &) || defined (B) && (defined(PS_DEFAULT_OFF) && (defined(PS_ON_PIN) && PS_ON_PIN > -1 &)
-
 WRITE(PS_ON_PIN, PS_ON_ASLEEP);
-
 #endif
 #if defined (A) && ((defined(PS_ON_PIN) && PS_ON_PIN > -1 && )!defined(PS_DEFAULT_OFF) ) || defined (B) && ((defined(PS_ON_PIN) && PS_ON_PIN > -1 && )!defined(PS_DEFAULT_OFF) )
-
 WRITE(PS_ON_PIN, PS_ON_AWAKE);
 #endif
 }
-void suicide()
+
+void suicide
+()
 {
 
 #if defined (A) && (defined(SUICIDE_PIN) && SUICIDE_PIN > -1) || defined (B) && (defined(SUICIDE_PIN) && SUICIDE_PIN > -1)
-
-SET_OUTPUT(SUICIDE_PIN);WRITE(SUICIDE_PIN, LOW);
+SET_OUTPUT(SUICIDE_PIN);
+WRITE(SUICIDE_PIN, LOW);
 #endif
 }
-void servo_init()
+
+void servo_init
+()
 {
 
 #if defined (A) && ((NUM_SERVOS >= 1) && defined(SERVO0_PIN) && (SERVO0_PIN > -1)) || defined (B) && ((NUM_SERVOS >= 1) && defined(SERVO0_PIN) && (SERVO0_PIN > -1))
-
 servos[0].attach(SERVO0_PIN);
 #endif
 #if defined (A) && ((NUM_SERVOS >= 2) && defined(SERVO1_PIN) && (SERVO1_PIN > -1)) || defined (B) && ((NUM_SERVOS >= 2) && defined(SERVO1_PIN) && (SERVO1_PIN > -1))
-
 servos[1].attach(SERVO1_PIN);
-
 #endif
 #if defined (A) && ((NUM_SERVOS >= 3) && defined(SERVO2_PIN) && (SERVO2_PIN > -1)) || defined (B) && ((NUM_SERVOS >= 3) && defined(SERVO2_PIN) && (SERVO2_PIN > -1))
-
 servos[2].attach(SERVO2_PIN);
-
 #endif
 #if defined (A) && ((NUM_SERVOS >= 4) && defined(SERVO3_PIN) && (SERVO3_PIN > -1)) || defined (B) && ((NUM_SERVOS >= 4) && defined(SERVO3_PIN) && (SERVO3_PIN > -1))
-
 servos[3].attach(SERVO3_PIN);
-
 #endif
 #if defined (A) && (NUM_SERVOS >= 5) || defined (B) && (NUM_SERVOS >= 5)
-
 #error "TODO: enter initalisation code for more servos"
-
 #endif
 // Set position of Servo Endstops that are defined
 #if defined (A) && defined (SERVO_ENDSTOPS) || defined (B) && defined (SERVO_ENDSTOPS)
 for(int8_ti=0;i<3;i++)
+
 {
-#if defined (A) || defined (B)
-if (servo_endstops[i] > -1)
+
+if 
+(servo_endstops[i] > -1)
 {
+
 servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
-
 }
-#endif
 
 
 }
+
+
 #endif
-
-
-
 #if defined (A) && (defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0)) || defined (B) && (defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0))
-
-delay(PROBE_SERVO_DEACTIVATION_DELAY);servos[servo_endstops[Z_AXIS]].detach();
+delay(PROBE_SERVO_DEACTIVATION_DELAY);
+servos[servo_endstops[Z_AXIS]].detach();
 #endif
 }
-void setup()
+
+void setup
+()
 {
+
 setup_killpin();
 setup_powerhold();
 MYSERIAL.begin(BAUDRATE);
@@ -631,29 +662,37 @@ SERIAL_PROTOCOLLNPGM("start");
 SERIAL_ECHO_START;
 // Check startup - does nothing if bootloader sets MCUSR to 0
 byte mcu = MCUSR;
-if (mcu & 1)
+if 
+(mcu & 1)
 SERIAL_ECHOLNPGM(MSG_POWERUP);
-if (mcu & 2)
+
+if 
+(mcu & 2)
 SERIAL_ECHOLNPGM(MSG_EXTERNAL_RESET);
-if (mcu & 4)
+
+if 
+(mcu & 4)
 SERIAL_ECHOLNPGM(MSG_BROWNOUT_RESET);
-if (mcu & 8)
+
+if 
+(mcu & 8)
 SERIAL_ECHOLNPGM(MSG_WATCHDOG_RESET);
-if (mcu & 32)
+
+if 
+(mcu & 32)
 SERIAL_ECHOLNPGM(MSG_SOFTWARE_RESET);
+
 MCUSR=0;
 SERIAL_ECHOPGM(MSG_MARLIN);
 SERIAL_ECHOLNPGM(VERSION_STRING);
-
 #if defined (A) && (defined (STRING_CONFIG_H_AUTHOR) && defined (STRING_VERSION_CONFIG_H) ) || defined (B) && (defined (STRING_CONFIG_H_AUTHOR) && defined (STRING_VERSION_CONFIG_H) )
-
-SERIAL_ECHO_START;SERIAL_ECHOPGM(MSG_CONFIGURATION_VER);
+SERIAL_ECHO_START;
+SERIAL_ECHOPGM(MSG_CONFIGURATION_VER);
 SERIAL_ECHOPGM(STRING_VERSION_CONFIG_H);
 SERIAL_ECHOPGM(MSG_AUTHOR);
 SERIAL_ECHOLNPGM(STRING_CONFIG_H_AUTHOR);
 SERIAL_ECHOPGM("Compiled: ");
 SERIAL_ECHOLNPGM(__DATE__);
-
 #endif
 SERIAL_ECHO_START;
 SERIAL_ECHOPGM(MSG_FREE_MEMORY);
@@ -661,9 +700,13 @@ SERIAL_ECHO(freeMemory());
 SERIAL_ECHOPGM(MSG_PLANNER_BUFFER_BYTES);
 SERIAL_ECHOLN((int)sizeof(block_t)*BLOCK_BUFFER_SIZE);
 for(int8_ti=0;i<BUFSIZE;i++)
+
 {
+
 fromsd[i] = false;
 }
+
+
 // loads data from EEPROM if available else uses defaults (and resets step acceleration rate)
 Config_RetrieveSettings();
 tp_init();
@@ -678,119 +721,150 @@ servo_init();
 lcd_init();
 _delay_ms(1000);
 // wait 1sec to display the splash screen
-
 #if defined (A) && (defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1) || defined (B) && (defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1)
-
-SET_OUTPUT(CONTROLLERFAN_PIN);//Set pin used for driver cooling fan
-
+SET_OUTPUT(CONTROLLERFAN_PIN);
+//Set pin used for driver cooling fan
 #endif
 #if defined (A) && defined (DIGIPOT_I2C) || defined (B) && defined (DIGIPOT_I2C)
-
 digipot_i2c_init();
-
 #endif
 #if defined (A) && defined (Z_PROBE_SLED) || defined (B) && defined (Z_PROBE_SLED)
-
 pinMode(SERVO0_PIN, OUTPUT);
 digitalWrite(SERVO0_PIN, LOW);
 // turn it off
-
 #endif
 // Z_PROBE_SLED
 #if defined (A)
 setup_homepin();
 #endif
 }
-void loop()
+
+void loop
+()
 {
-if (buflen < (BUFSIZE-1))
+
+if 
+(buflen < (BUFSIZE-1))
 get_command();
 
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
-
 card.checkautostart(false);
 #endif
-if (buflen)
+if 
+(buflen)
 {
+
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
-if (card.saving)
+if 
+(card.saving)
 {
 
-#if defined (A) || defined (B)
-
+if 
+(strstr_P(cmdbuffer[bufindr], PSTR("M29")) == NULL)
 {
-        if(strstr_P(cmdbuffer[bufindr], PSTR("M29")) == NULL)
-        {
-          card.write_command(cmdbuffer[bufindr]);
-          if(card.logging)
-          {
-            process_commands();
-          }
-          else
-          {
-            SERIAL_PROTOCOLLNPGM(MSG_OK);
-          }
-        }
-        else
-        {
-          card.closefile();
-          SERIAL_PROTOCOLLNPGM(MSG_FILE_SAVED);
-        }
-      }#endif
+
+card.write_command(cmdbuffer[bufindr]);
+if 
+(card.logging)
+{
+
+process_commands();
 }
-#endif
-#endif
+
+
 else {
 
-#if defined (A) || defined (B)
-
-{
-        process_commands();
-      }#endif
+SERIAL_PROTOCOLLNPGM(MSG_OK);
 }
+
+
+
+}
+
+
+else {
+
+card.closefile();
+SERIAL_PROTOCOLLNPGM(MSG_FILE_SAVED);
+}
+
+
+
+}
+
+
+else {
+
 process_commands();
+}
+
+
+
+#endif
+#if defined (A) && !defined (SDSUPPORT) || defined (B) && !defined (SDSUPPORT)
+process_commands();
+#endif
 //SDSUPPORT
 buflen = (buflen-1);
 bufindr = (bufindr + 1)%BUFSIZE;
-
 }
+
+
 //check heater every n milliseconds
 manage_heater();
 manage_inactivity();
 checkHitEndstops();
 lcd_update();
 }
-void get_command()
+
+
+void get_command
+()
 {
-while  ( MYSERIAL.available() > 0  && buflen < BUFSIZE)
+
+while  
+( MYSERIAL.available() > 0  && buflen < BUFSIZE)
 {
+
 serial_char = MYSERIAL.read();
-if (serial_char == '\n' ||
+if 
+(serial_char == '\n' ||
        serial_char == '\r' ||
        (serial_char == ':' && comment_mode == false) ||
        serial_count >= (MAX_CMD_SIZE - 1) )
 {
-if (!serial_count)
+
+if 
+(!serial_count)
 {
+
 //if empty line
 comment_mode = false;
 //for new command
 return;
-
 }
+
+
+
 cmdbuffer[bufindw][serial_count] = 0;
 //terminate string
-if (!comment_mode)
+if 
+(!comment_mode)
 {
+
 comment_mode = false;
 //for new command
 fromsd[bufindw] = false;
-if (strchr(cmdbuffer[bufindw], 'N') != NULL)
+if 
+(strchr(cmdbuffer[bufindw], 'N') != NULL)
 {
+
 strchr_pointer = strchr(cmdbuffer[bufindw], 'N');
 gcode_N = (strtol(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL, 10));
-if (gcode_N != gcode_LastN+1 && (strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL) )
+if 
+(gcode_N != gcode_LastN+1 && (strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL) )
 {
+
 SERIAL_ERROR_START;
 SERIAL_ERRORPGM(MSG_ERR_LINE_NO);
 SERIAL_ERRORLN(gcode_LastN);
@@ -798,62 +872,93 @@ SERIAL_ERRORLN(gcode_LastN);
 FlushSerialRequestResend();
 serial_count = 0;
 return;
-
 }
-if (strchr(cmdbuffer[bufindw], '*') != NULL)
+
+
+
+if 
+(strchr(cmdbuffer[bufindw], '*') != NULL)
 {
+
 byte checksum = 0;
 byte count = 0;
-while  (cmdbuffer[bufindw][count] != '*')
+while  
+(cmdbuffer[bufindw][count] != '*')
+checksum = checksum^cmdbuffer[bufindw][count++];
+
 strchr_pointer = strchr(cmdbuffer[bufindw], '*');
-if ( (int)(strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL)) != checksum)
+if 
+( (int)(strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL)) != checksum)
 {
+
 SERIAL_ERROR_START;
 SERIAL_ERRORPGM(MSG_ERR_CHECKSUM_MISMATCH);
 SERIAL_ERRORLN(gcode_LastN);
 FlushSerialRequestResend();
 serial_count = 0;
 return;
-
 }
+
+
+
 //if no errors, continue parsing
-
 }
+
+
 else {
+
 SERIAL_ERROR_START;
 SERIAL_ERRORPGM(MSG_ERR_NO_CHECKSUM);
 SERIAL_ERRORLN(gcode_LastN);
 FlushSerialRequestResend();
 serial_count = 0;
 return;
-
 }
+
+
+
 gcode_LastN = gcode_N;
 //if no errors, continue parsing
-
 }
+
+
 else {
+
 // if we don't receive 'N' but still see '*'
-if ((strchr(cmdbuffer[bufindw], '*') != NULL))
+if 
+((strchr(cmdbuffer[bufindw], '*') != NULL))
 {
+
 SERIAL_ERROR_START;
 SERIAL_ERRORPGM(MSG_ERR_NO_LINENUMBER_WITH_CHECKSUM);
 SERIAL_ERRORLN(gcode_LastN);
 serial_count = 0;
 return;
+}
+
+
 
 }
 
-}
-if ((strchr(cmdbuffer[bufindw], 'G') != NULL))
+
+
+if 
+((strchr(cmdbuffer[bufindw], 'G') != NULL))
 {
+
 strchr_pointer = strchr(cmdbuffer[bufindw], 'G');
-switch((int)((strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL))))
+switch
+((int)((strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL))))
 {
-case 0
-case 1
-case 2
-case 3
+
+case 
+0
+case 
+1
+case 
+2
+case 
+3
 :#if defined (A)
 if (Stopped == true) {
               SERIAL_ERRORLNPGM(MSG_ERR_STOPPED);
@@ -880,112 +985,179 @@ default:
           
 }
 
+
+
 }
+
+
+
 //If command was e-stop process now
-if (strcmp(cmdbuffer[bufindw], "M112") == 0)
+if 
+(strcmp(cmdbuffer[bufindw], "M112") == 0)
 kill();
+
+
 bufindw = (bufindw + 1)%BUFSIZE;
 buflen += 1;
-
 }
+
+
+
 serial_count = 0;
 //clear buffer
-
 }
+
+
 else {
-if (serial_char == ';')
+
+if 
+(serial_char == ';')
 comment_mode = true;
-if (!comment_mode)
+
+
+if 
+(!comment_mode)
 cmdbuffer[bufindw][serial_count++] = serial_char;
 
-}
-}
-#if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
-if (!card.sdprinting || serial_count!=0)
-{
 
-#if defined (A) || defined (B)
-
-{
-    return;
-  }#endif
 }
-#endif
 
+
+}
 
 
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
+if 
+(!card.sdprinting || serial_count!=0)
+{
 
-//'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible// if it occurs, stop_buffering is triggered and the buffer is ran dry.
+return;
+}
+
+
+//'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible
+// if it occurs, stop_buffering is triggered and the buffer is ran dry.
 // this character _can_ occur in serial com, due to checksums. however, no checksums are used in SD printing
 static bool stop_buffering=false;
-if(buflen==0) stop_buffering=false;
-while( !card.eof()  && buflen < BUFSIZE && !stop_buffering) {
-    int16_t n=card.get();
-    serial_char = (char)n;
-    if(serial_char == '\n' ||
+if 
+(buflen==0)
+stop_buffering=false;
+
+while  
+( !card.eof()  && buflen < BUFSIZE && !stop_buffering)
+{
+
+int16_t n=card.get();
+serial_char = (char)n;
+if 
+(serial_char == '\n' ||
        serial_char == '\r' ||
        (serial_char == '#' && comment_mode == false) ||
        (serial_char == ':' && comment_mode == false) ||
        serial_count >= (MAX_CMD_SIZE - 1)||n==-1)
-    {
-      if(card.eof()){
-        SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
-        stoptime=millis();
-        char time[30];
-        unsigned long t=(stoptime-starttime)/1000;
-        int hours, minutes;
-        minutes=(t/60)%60;
-        hours=t/60/60;
-        sprintf_P(time, PSTR("%i hours %i minutes"),hours, minutes);
-        SERIAL_ECHO_START;
-        SERIAL_ECHOLN(time);
-        lcd_setstatus(time);
-        card.printingHasFinished();
-        card.checkautostart(true);
+{
 
-      }
-      if(serial_char=='#')
-        stop_buffering=true;
+if 
+(card.eof())
+{
 
-      if(!serial_count)
-      {
-        comment_mode = false; //for new command
-        return; //if empty line
-      }
-      cmdbuffer[bufindw][serial_count] = 0; //terminate string
+SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
+stoptime=millis();
+char time[30];
+unsigned long t=(stoptime-starttime)/1000;
+int hours, minutes;
+minutes=(t/60)%60;
+hours=t/60/60;
+sprintf_P(time, PSTR("%i hours %i minutes"),hours, minutes);
+SERIAL_ECHO_START;
+SERIAL_ECHOLN(time);
+lcd_setstatus(time);
+card.printingHasFinished();
+card.checkautostart(true);
+}
+
+
+
+if 
+(serial_char=='#')
+stop_buffering=true;
+
+
+if 
+(!serial_count)
+{
+
+comment_mode = false;
+//for new command
+return;
+//if empty line
+}
+
+
+
+cmdbuffer[bufindw][serial_count] = 0;
+//terminate string
 //      if(!comment_mode){
-        fromsd[bufindw] = true;
-        buflen += 1;
-        bufindw = (bufindw + 1)%BUFSIZE;
+fromsd[bufindw] = true;
+buflen += 1;
+bufindw = (bufindw + 1)%BUFSIZE;
 //      }
-      comment_mode = false; //for new command
-      serial_count = 0; //clear buffer
-    }
-    else
-    {
-      if(serial_char == ';') comment_mode = true;
-      if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
-    }
-  }
+comment_mode = false;
+//for new command
+serial_count = 0;
+//clear buffer
+}
+
+
+else {
+
+if 
+(serial_char == ';')
+comment_mode = true;
+
+
+if 
+(!comment_mode)
+cmdbuffer[bufindw][serial_count++] = serial_char;
+
+
+}
+
+
+}
+
 
 #endif
 //SDSUPPORT
 }
-float code_value()
+
+
+float code_value
+()
 {
+
 return (strtod(&cmdbuffer[bufindr][strchr_pointer - cmdbuffer[bufindr] + 1], NULL));
 }
-long code_value_long()
+
+
+long code_value_long
+()
 {
+
 return (strtol(&cmdbuffer[bufindr][strchr_pointer - cmdbuffer[bufindr] + 1], NULL, 10));
 }
-bool code_seen(char code)
+
+
+bool code_seen
+(char code)
 {
+
 strchr_pointer = strchr(cmdbuffer[bufindr], code);
 return (strchr_pointer != NULL);
 //Return True if a character was found
 }
+
+
 #define DEFINE_PGM_READ_ANY(type, reader)       \
     static inline type pgm_read_any(const type *p)  \
     { return pgm_read_##reader##_near(p); }
@@ -1023,25 +1195,32 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir,  HOME_DIR)
 #define DXC_AUTO_PARK_MODE    1
 #define DXC_DUPLICATION_MODE  2
 static int dual_x_carriage_mode = DEFAULT_DUAL_X_CARRIAGE_MODE;
-static float x_home_pos(int extruder)
+static float x_home_pos
+(int extruder)
 {
-#if defined (A) || defined (B)
-if (extruder == 0)
+
+if 
+(extruder == 0)
 return base_home_pos(X_AXIS) + add_homing[X_AXIS];
-else // In dual carriage mode the extruder offset provides an override of the
+
+else 
+// In dual carriage mode the extruder offset provides an override of the
 // second X-carriage offset when homed - otherwise X2_HOME_POS is used.
 // This allow soft recalibration of the second extruder offset position without firmware reflash
 // (through the M218 command).
+return (extruder_offset[X_AXIS][1] > 0) ? extruder_offset[X_AXIS][1] : X2_HOME_POS;
 
-#endif
 }
-static int x_home_dir(int extruder)
+
+
+static int x_home_dir
+(int extruder)
 {
 
-#if defined (A) || defined (B)
-
-return (extruder == 0) ? X_HOME_DIR : X2_HOME_DIR;#endif
+return (extruder == 0) ? X_HOME_DIR : X2_HOME_DIR;
 }
+
+
 static float inactive_extruder_x_pos = X2_MAX_POS;
 // used in mode 0 & 1
 static bool active_extruder_parked = false;
@@ -1059,88 +1238,107 @@ bool extruder_duplication_enabled = false;
 #endif
 #if defined (A) || defined (B)
 //DUAL_X_CARRIAGE
-static void axis_is_at_home(int axis)
+static void axis_is_at_home
+(int axis)
 {
+
 #if defined (A) && defined (DUAL_X_CARRIAGE) || defined (B) && defined (DUAL_X_CARRIAGE)
-if (axis == X_AXIS)
+if 
+(axis == X_AXIS)
 {
 
-#if defined (A) || defined (B)
-
+if 
+(active_extruder != 0)
 {
-    if (active_extruder != 0) {
-      current_position[X_AXIS] = x_home_pos(active_extruder);
-      min_pos[X_AXIS] =          X2_MIN_POS;
-      max_pos[X_AXIS] =          max(extruder_offset[X_AXIS][1], X2_MAX_POS);
-      return;
-    }
-    else if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0) {
-      current_position[X_AXIS] = base_home_pos(X_AXIS) + add_homing[X_AXIS];
-      min_pos[X_AXIS] =          base_min_pos(X_AXIS) + add_homing[X_AXIS];
-      max_pos[X_AXIS] =          min(base_max_pos(X_AXIS) + add_homing[X_AXIS],
-                                  max(extruder_offset[X_AXIS][1], X2_MAX_POS) - duplicate_extruder_x_offset);
-      return;
-    }
-  }#endif
+
+current_position[X_AXIS] = x_home_pos(active_extruder);
+min_pos[X_AXIS] =          X2_MIN_POS;
+max_pos[X_AXIS] =          max(extruder_offset[X_AXIS][1], X2_MAX_POS);
+return;
 }
+
+
+else if 
+(dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0)
+{
+
+current_position[X_AXIS] = base_home_pos(X_AXIS) + add_homing[X_AXIS];
+min_pos[X_AXIS] =          base_min_pos(X_AXIS) + add_homing[X_AXIS];
+max_pos[X_AXIS] =          min(base_max_pos(X_AXIS) + add_homing[X_AXIS],
+                                  max(extruder_offset[X_AXIS][1], X2_MAX_POS) - duplicate_extruder_x_offset);
+return;
+}
+
+
+
+
+}
+
+
 #endif
-
-
-
 #if defined (A) && defined (SCARA) || defined (B) && defined (SCARA)
+float homeposition[3];
+char i;
+if 
+(axis < 2)
+{
 
-float homeposition[3];char i;
-if (axis < 2)
-   {
-   
-     for (i=0; i<3; i++)
-     {
-        homeposition[i] = base_home_pos(i); 
-     }  
-  // SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
-   //  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
-   // Works out real Homeposition angles using inverse kinematics, 
-   // and calculates homing offset using forward kinematics
-     calculate_delta(homeposition);
-     
-    // SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
-     
-     for (i=0; i<2; i++)
-     {
-        delta[i] -= add_homing[i];
-     } 
-     
-    // SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);
-  // SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);
-    // SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
-      
-     calculate_SCARA_forward_Transform(delta);
-     
-    // SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);
-     
-    current_position[axis] = delta[axis];
-    
-    // SCARA home positions are based on configuration since the actual limits are determined by the 
-    // inverse kinematic transform.
-    min_pos[axis] =          base_min_pos(axis); // + (delta[axis] - base_home_pos(axis));
-    max_pos[axis] =          base_max_pos(axis); // + (delta[axis] - base_home_pos(axis));
-   } 
-   else
-   {
-      current_position[axis] = base_home_pos(axis) + add_homing[axis];
-      min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
-      max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
-   }
+for(i=0;i<3;i++)
+
+{
+
+homeposition[i] = base_home_pos(i);
+}
+
+
+
+// SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
+//  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
+// Works out real Homeposition angles using inverse kinematics, 
+// and calculates homing offset using forward kinematics
+calculate_delta(homeposition);
+// SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);
+// SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+for(i=0;i<2;i++)
+
+{
+
+delta[i] -= add_homing[i];
+}
+
+
+
+// SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);
+// SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);
+// SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);
+// SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+calculate_SCARA_forward_Transform(delta);
+// SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);
+// SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);
+current_position[axis] = delta[axis];
+// SCARA home positions are based on configuration since the actual limits are determined by the 
+// inverse kinematic transform.
+min_pos[axis] =          base_min_pos(axis);
+// + (delta[axis] - base_home_pos(axis));
+max_pos[axis] =          base_max_pos(axis);
+// + (delta[axis] - base_home_pos(axis));
+}
+
+
+else {
+
+current_position[axis] = base_home_pos(axis) + add_homing[axis];
+min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
+max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
+}
+
 
 #endif
 #if defined (A) && !defined (SCARA) || defined (B) && !defined (SCARA)
-
 current_position[axis] = base_home_pos(axis) + add_homing[axis];
 min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
 max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
 #endif
 }
+
 #endif

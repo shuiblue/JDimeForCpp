@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class testMarlin {
     ArrayList<String> paths = new ArrayList<>();
-//    String path = "testcpp/Marlin/cardreader/2way/";
+    //    String path = "testcpp/Marlin/cardreader/2way/";
 //    TestInitial testInitial = new TestInitial(path);
     HashSet<String> config = new HashSet<>();
     HashSet<String> fileName = new HashSet<>();
@@ -40,16 +40,20 @@ public class testMarlin {
 
     //----------------2 WAY-----------------------------
     String output_2way = "AB";
-  /*
-A : upstream
-B : ut7
-  */
-@Ignore
+
+    /*
+  A : upstream
+  B : ut7
+    */
+    @Ignore
     @Test
     public void testCardReader() {
         String path = "testcpp/Marlin/cardreader/2way/";
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
+
+
+
         config.add("SDSUPPORT");
         String testNum = "1/";
         System.out.println("------test 1-----------");
@@ -58,6 +62,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+
     @Ignore
     @Test
     public void testConfigurationStore() {
@@ -72,7 +77,8 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-//@Ignore
+
+    @Ignore
     @Test
     public void testMarlin_main() {
         String path = "testcpp/Marlin/Marlin_main/2way/";
@@ -86,7 +92,8 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-@Ignore
+
+    @Ignore
     @Test
     public void testplanner() {
         String path = "testcpp/Marlin/planner/2way/";
@@ -99,6 +106,7 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+
     @Ignore
     @Test
     public void testdigipot_mcp4451() {
@@ -126,7 +134,8 @@ B : ut7
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
-    @Ignore
+
+//    @Ignore
     @Test
     public void testtemperature() {
         String path = "testcpp/Marlin/temperature/2way/";

@@ -400,13 +400,13 @@ if (volumetric_enabled) {
         SERIAL_ECHOPAIR("   M200 D", filament_size[0]);
         SERIAL_ECHOLN(""); 
 #if EXTRUDERS > 1
-        SERIAL_ECHO_START;
+		SERIAL_ECHO_START;
         SERIAL_ECHOPAIR("   M200 T1 D", filament_size[1]);
         SERIAL_ECHOLN(""); 
 #if EXTRUDERS > 2
-        SERIAL_ECHO_START;
+		SERIAL_ECHO_START;
         SERIAL_ECHOPAIR("   M200 T2 D", filament_size[2]);
-        SERIAL_ECHOLN("");
+		SERIAL_ECHOLN("");
 #endif
 #endif
     } else {
@@ -472,7 +472,7 @@ EEPROM_READ_VAR(i,zprobe_zoffset);
 #if defined (A) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) ) || defined (B) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
 float Kp,Ki,Kd;
 #endif
-// do not need to scale PID values as the values in EEPROM are already scaled       
+// do not need to scale PID values as the values in EEPROM are already scaled		
 EEPROM_READ_VAR(i,Kp);
 EEPROM_READ_VAR(i,Ki);
 EEPROM_READ_VAR(i,Kd);

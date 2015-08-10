@@ -34,6 +34,7 @@ public class Entity {
         nonTerminal.add("do");
         nonTerminal.add("extern");
         nonTerminal.add("block");
+        nonTerminal.add("macro");
 
         terminal = new HashSet<>();
         terminal.add("name");
