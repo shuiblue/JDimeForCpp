@@ -102,7 +102,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (ifdefMatch) {
                 if (!entity.getTerminal().contains(localName)) {
                     this.initializeChildren(revision);
-//                    this.initializeChildren();
                 }
             }
         }
@@ -132,26 +131,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
         if (!matched) {
             System.out.println("warning!----------" + node.getBaseURI() + "\n");
-//            System.out.println("warning!----------" + node.toXML() + "\n");
-//            System.out.println("ifdef_num: "+ifdef_num);
-//            System.out.println("ifndef_num: "+ifndef_num);
-//            System.out.println("if_num: "+if_num);
-//            System.out.println("endif_num: "+endif_num);
-
-//            File log = new File("/Users/shuruiz/Work/originMarlin/log.txt");
-//            try{
-//                if(log.exists()==false){
-//                    System.out.println("We had to make a new file.");
-//                    log.createNewFile();
-//                }
-//                PrintWriter out = new PrintWriter(new FileWriter(log,true));
-//                out.append("******* " + node.getBaseURI() +"******* " + "\n");
-////                out.append(node.toXML());
-//                out.close();
-//            }catch(IOException e){
-//                System.out.println("COULD NOT LOG!!");
-//            }
-
         }
         return matched;
     }
@@ -707,7 +686,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             for (int i = 0; i < right.getNumChildren(); i++) {
 //            for (int i = 0; !rightChanges && i < right.getNumChildren(); i++) {
                 rightChanges = right.getChild(i).isChange();
-//                if (leftChanges == false) break;
                 if (rightChanges == false) break;
             }
             if (leftChanges && rightChanges) {
