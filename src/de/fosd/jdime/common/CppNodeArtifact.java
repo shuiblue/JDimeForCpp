@@ -81,6 +81,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 this.initializeChildren();
 //            }
 //        }
+
+//        boolean ifdef_endif_Matched = checkIfEndifMatched(astnode);
+
+
         renumberTree();
     }
 
@@ -138,7 +142,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 //            System.out.println("if_num: "+if_num);
 //            System.out.println("endif_num: "+endif_num);
 
-            File log = new File("/Users/shuruiz/Work/originMarlin/log.txt");
+            File log = new File("/Users/shuruiz/Work/originMarlin/log-unit.txt");
             try{
                 if(log.exists()==false){
                     System.out.println("We had to make a new file.");
@@ -175,70 +179,71 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         String namespace_prefix = ((Element) node).getNamespacePrefix();
                         String childValue = astnode.getChild(i).getValue();
 
-                        if (ifdef_endif_Matched) {
-                            if (localName.equals("endif")) {
-                                System.out.println("------------pare ::" + node.getParent().toXML());
-                                conditionStack.pop();
-                                continue;
-                            }
-                            if (localName.equals("if")) {
-                                if (namespace_prefix.equals("cpp")) {
-                                    String cond = node.getValue().substring(4);
-                                    System.out.println("------------ifcpp ::" + cond);
-
-                                    conditionStack.push(cond);
-                                    continue;
-                                }
-                            }
-                            if (localName.equals("ifndef")) {
-                                String condition = childValue.substring(8);
-                                conditionStack.push("!defined (" + condition + ")");
-                                continue;
-                            }
-                            if (localName.equals("ifdef")) {
-                                String condition = childValue.substring(7);
-                                conditionStack.push("defined (" + condition + ")");
-                                System.out.println("------------defined (" + condition + ")");
-
-                                continue;
-                            }
-
-                            if (localName.equals("elif")) {
-                                conditionStack.pop();
-                                String condition = childValue.substring(6);
-                                conditionStack.push(condition);
-                                continue;
-                            }
-
-                            if (localName.equals("else")) {
-                                if (namespace_prefix.equals("cpp")) {
-                                    String condition = conditionStack.pop();
-                                    if (condition.contains("!")) {
-                                        conditionStack.push(condition.substring(1));
-                                        System.out.println("push------" + condition.substring(1));
-                                    } else {
-                                        conditionStack.push("!" + condition);
-                                        System.out.print("push-------!" + condition);
-                                    }
-
-
-                                    continue;
-                                }
-                            }
-                        }
-                        if (!entity.getHeadEntity().contains(localName)) {
-                            Revision revision = new Revision(getRevision().getName());
-                            if (conditionStack != null && conditionStack.size() > 0) {
-                                revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-                            }
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
-                            child.setParent(this);
-                            child.setRevision(new Revision(getRevision().getName()));
-                            if (conditionStack != null && conditionStack.size() > 0) {
-                                child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
-                            }
-                            children.add(child);
-                        }
+//                        if (!ifdef_endif_Matched) {
+//
+//                            if (localName.equals("endif")) {
+//                                System.out.println("------------pare ::" + node.getParent().toXML());
+//                                conditionStack.pop();
+//                                continue;
+//                            }
+//                            if (localName.equals("if")) {
+//                                if (namespace_prefix.equals("cpp")) {
+//                                    String cond = node.getValue().substring(4);
+//                                    System.out.println("------------ifcpp ::" + cond);
+//
+//                                    conditionStack.push(cond);
+//                                    continue;
+//                                }
+//                            }
+//                            if (localName.equals("ifndef")) {
+//                                String condition = childValue.substring(8);
+//                                conditionStack.push("!defined (" + condition + ")");
+//                                continue;
+//                            }
+//                            if (localName.equals("ifdef")) {
+//                                String condition = childValue.substring(7);
+//                                conditionStack.push("defined (" + condition + ")");
+//                                System.out.println("------------defined (" + condition + ")");
+//
+//                                continue;
+//                            }
+//
+//                            if (localName.equals("elif")) {
+//                                conditionStack.pop();
+//                                String condition = childValue.substring(6);
+//                                conditionStack.push(condition);
+//                                continue;
+//                            }
+//
+//                            if (localName.equals("else")) {
+//                                if (namespace_prefix.equals("cpp")) {
+//                                    String condition = conditionStack.pop();
+//                                    if (condition.contains("!")) {
+//                                        conditionStack.push(condition.substring(1));
+//                                        System.out.println("push------" + condition.substring(1));
+//                                    } else {
+//                                        conditionStack.push("!" + condition);
+//                                        System.out.print("push-------!" + condition);
+//                                    }
+//
+//
+//                                    continue;
+//                                }
+//                            }
+//                        }
+//                        if (!entity.getHeadEntity().contains(localName)) {
+//                            Revision revision = new Revision(getRevision().getName());
+//                            if (conditionStack != null && conditionStack.size() > 0) {
+//                                revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+//                            }
+//                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+//                            child.setParent(this);
+//                            child.setRevision(new Revision(getRevision().getName()));
+//                            if (conditionStack != null && conditionStack.size() > 0) {
+//                                child.getRevision().conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
+//                            }
+//                            children.add(child);
+//                        }
                     }
                 }
             }
