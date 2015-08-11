@@ -12,6 +12,8 @@ import org.apache.commons.io.FileUtils;
 import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
 public class checkUndeciplinedAnnotation {
 
         public static void main (String[]args)throws IOException {
-
+//            clearTmpFile();
             File dir = new File("/Users/shuruiz/Work/originMarlin");
             String[] extensions = new String[]{"cpp"};
 //            String[] extensions = new String[]{"cpp", "h"};
@@ -75,9 +77,41 @@ public class checkUndeciplinedAnnotation {
 
     public static void sleep() {
         try {
-            Thread.sleep(50);                 //1000 milliseconds is one second.
+            Thread.sleep(100);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
     }
+
+    /**
+     * clean temp file ".xml" and compiled folders
+     */
+    public static void clearTmpFile() {
+        Path directory = Paths.get("/Users/shuruiz/Work/originMarlin");
+        try {
+            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (file.getFileName().toString().endsWith("xml")) {
+                        Files.delete(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+//                @Override
+//                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+//                    if (dir.getFileName().toString().equals("compiled")) {
+//                        Files.delete(dir);
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
+
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 }
