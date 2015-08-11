@@ -668,51 +668,51 @@
 <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>PGM_RD_W</name><parameter_list>(<param><type><name>x</name></type></param>)</parameter_list></cpp:macro>   <cpp:value>(short)pgm_read_word(&amp;x)</cpp:value></cpp:define>
 <comment type="line">// Derived from RepRap FiveD extruder::getTemperature()</comment>
 <comment type="line">// For hot end temperature measurement.</comment>
-<comment type="line">// static float analog2temp(int raw, uint8_t e) {</comment>
-<comment type="line">// #ifdef TEMP_SENSOR_1_AS_REDUNDANT</comment>
-<comment type="line">//   if(e &gt; EXTRUDERS)</comment>
-<comment type="line">// #else</comment>
-<comment type="line">//   if(e &gt;= EXTRUDERS)</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//   {</comment>
-<comment type="line">//       SERIAL_ERROR_START;</comment>
-<comment type="line">//       SERIAL_ERROR((int)e);</comment>
-<comment type="line">//       SERIAL_ERRORLNPGM(" - Invalid extruder number !");</comment>
-<comment type="line">//       kill();</comment>
-<comment type="line">//       return 0.0;</comment>
-<comment type="line">//   } </comment>
-<comment type="line">//   #ifdef HEATER_0_USES_MAX6675</comment>
-<comment type="line">//     if (e == 0)</comment>
-<comment type="line">//     {</comment>
-<comment type="line">//       return 0.25 * raw;</comment>
-<comment type="line">//     }</comment>
-<comment type="line">//   #endif</comment>
+<function><type><specifier>static</specifier> <name>float</name></type> <name>analog2temp</name><parameter_list>(<param><decl><type><name>int</name></type> <name>raw</name></decl></param>, <param><decl><type><name>uint8_t</name></type> <name>e</name></decl></param>)</parameter_list> <block>{
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>TEMP_SENSOR_1_AS_REDUNDANT</name></cpp:ifdef>
+  <if>if<condition>(<expr><name>e</name> &gt; <name>EXTRUDERS</name></expr>)</condition><then>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <if>if<condition>(<expr><name>e</name> &gt;= <name>EXTRUDERS</name></expr>)</condition><then>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <block>{
+      <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ERROR</name><argument_list>(<argument><expr>(<name>int</name>)<name>e</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr>" - Invalid extruder number !"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>kill</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+      <return>return <expr>0.0</expr>;</return>
+  }</block></then></if></then></if> 
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HEATER_0_USES_MAX6675</name></cpp:ifdef>
+    <if>if <condition>(<expr><name>e</name> == 0</expr>)</condition><then>
+    <block>{
+      <return>return <expr>0.25 * <name>raw</name></expr>;</return>
+    }</block></then></if>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
-<comment type="line">//   if(heater_ttbl_map[e] != NULL)</comment>
-<comment type="line">//   {</comment>
-<comment type="line">//     float celsius = 0;</comment>
-<comment type="line">//     uint8_t i;</comment>
-<comment type="line">//     short (*tt)[][2] = (short (*)[][2])(heater_ttbl_map[e]);</comment>
+  <if>if<condition>(<expr><name><name>heater_ttbl_map</name><index>[<expr><name>e</name></expr>]</index></name> != <name>NULL</name></expr>)</condition><then>
+  <block>{
+    <decl_stmt><decl><type><name>float</name></type> <name>celsius</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>uint8_t</name></type> <name>i</name></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>short</name> <argument_list>(<argument><expr>*<name>tt</name></expr></argument>)</argument_list></call><index>[]</index><index>[<expr>2</expr>]</index> = (<call><name>short</name> <argument_list>(<argument><expr>*</expr></argument>)</argument_list></call><index>[]</index><index>[<expr>2</expr>]</index>)(<name><name>heater_ttbl_map</name><index>[<expr><name>e</name></expr>]</index></name>)</expr>;</expr_stmt>
 
-<comment type="line">//     for (i=1; i&lt;heater_ttbllen_map[e]; i++)</comment>
-<comment type="line">//     {</comment>
-<comment type="line">//       if (PGM_RD_W((*tt)[i][0]) &gt; raw)</comment>
-<comment type="line">//       {</comment>
-<comment type="line">//         celsius = PGM_RD_W((*tt)[i-1][1]) + </comment>
-<comment type="line">//           (raw - PGM_RD_W((*tt)[i-1][0])) * </comment>
-<comment type="line">//           (float)(PGM_RD_W((*tt)[i][1]) - PGM_RD_W((*tt)[i-1][1])) /</comment>
-<comment type="line">//           (float)(PGM_RD_W((*tt)[i][0]) - PGM_RD_W((*tt)[i-1][0]));</comment>
-<comment type="line">//         break;</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     }</comment>
+    <for>for (<init><expr><name>i</name>=1</expr>;</init> <condition><expr><name>i</name>&lt;<name><name>heater_ttbllen_map</name><index>[<expr><name>e</name></expr>]</index></name></expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+    <block>{
+      <if>if <condition>(<expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call> &gt; <name>raw</name></expr>)</condition><then>
+      <block>{
+        <expr_stmt><expr><name>celsius</name> = <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call> + 
+          (<name>raw</name> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call>) * 
+          <call>(<name>float</name>)<argument_list>(<argument><expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> /
+          <call>(<name>float</name>)<argument_list>(<argument><expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <break>break;</break>
+      }</block></then></if>
+    }</block></for>
 
-<comment type="line">//     // Overflow: Set to last value in the table</comment>
-<comment type="line">//     if (i == heater_ttbllen_map[e]) celsius = PGM_RD_W((*tt)[i-1][1]);</comment>
+    <comment type="line">// Overflow: Set to last value in the table</comment>
+    <if>if <condition>(<expr><name>i</name> == <name><name>heater_ttbllen_map</name><index>[<expr><name>e</name></expr>]</index></name></expr>)</condition><then> <expr_stmt><expr><name>celsius</name> = <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
 
-<comment type="line">//     return celsius;</comment>
-<comment type="line">//   }</comment>
-<comment type="line">//   return ((raw * ((5.0 * 100.0) / 1024.0) / OVERSAMPLENR) * TEMP_SENSOR_AD595_GAIN) + TEMP_SENSOR_AD595_OFFSET;</comment>
-<comment type="line">// }</comment>
+    <return>return <expr><name>celsius</name></expr>;</return>
+  }</block></then></if>
+  <return>return <expr>((<name>raw</name> * ((5.0 * 100.0) / 1024.0) / <name>OVERSAMPLENR</name>) * <name>TEMP_SENSOR_AD595_GAIN</name>) + <name>TEMP_SENSOR_AD595_OFFSET</name></expr>;</return>
+}</block></function>
 
 <comment type="line">// Derived from RepRap FiveD extruder::getTemperature()</comment>
 <comment type="line">// For bed temperature measurement.</comment>
