@@ -131,26 +131,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
         if (!matched) {
-//            System.out.println("warning!----------" + node.getBaseURI() + "\n");
+            System.out.println("warning!----------" + node.getBaseURI() + "\n");
 //            System.out.println("warning!----------" + node.toXML() + "\n");
 //            System.out.println("ifdef_num: "+ifdef_num);
 //            System.out.println("ifndef_num: "+ifndef_num);
 //            System.out.println("if_num: "+if_num);
 //            System.out.println("endif_num: "+endif_num);
 
-            File log = new File("/Users/shuruiz/Work/originMarlin/log.txt");
-            try{
-                if(log.exists()==false){
-                    System.out.println("We had to make a new file.");
-                    log.createNewFile();
-                }
-                PrintWriter out = new PrintWriter(new FileWriter(log,true));
-                out.append("******* " + node.getBaseURI() +"******* " + "\n");
-//                out.append(node.toXML());
-                out.close();
-            }catch(IOException e){
-                System.out.println("COULD NOT LOG!!");
-            }
+//            File log = new File("/Users/shuruiz/Work/originMarlin/log.txt");
+//            try{
+//                if(log.exists()==false){
+//                    System.out.println("We had to make a new file.");
+//                    log.createNewFile();
+//                }
+//                PrintWriter out = new PrintWriter(new FileWriter(log,true));
+//                out.append("******* " + node.getBaseURI() +"******* " + "\n");
+////                out.append(node.toXML());
+//                out.close();
+//            }catch(IOException e){
+//                System.out.println("COULD NOT LOG!!");
+//            }
 
         }
         return matched;
@@ -177,14 +177,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                         if (ifdef_endif_Matched) {
                             if (localName.equals("endif")) {
-                                System.out.println("------------pare ::" + node.getParent().toXML());
                                 conditionStack.pop();
                                 continue;
                             }
                             if (localName.equals("if")) {
                                 if (namespace_prefix.equals("cpp")) {
                                     String cond = node.getValue().substring(4);
-                                    System.out.println("------------ifcpp ::" + cond);
 
                                     conditionStack.push(cond);
                                     continue;
@@ -198,7 +196,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
-                                System.out.println("------------defined (" + condition + ")");
 
                                 continue;
                             }
@@ -215,10 +212,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
-                                        System.out.println("push------" + condition.substring(1));
                                     } else {
                                         conditionStack.push("!" + condition);
-                                        System.out.print("push-------!" + condition);
                                     }
 
 
@@ -295,7 +290,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                             if (localName.equals("else")) {
                                 if (namespace_prefix.equals("cpp")) {
-//                                    System.out.println("!!!!!!"+node.getBaseURI()+"----"+node.getParent().toXML());
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
