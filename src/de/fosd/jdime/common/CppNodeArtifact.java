@@ -74,13 +74,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public CppNodeArtifact(final Node astnode, Revision revision) {
         this.astnode = astnode;
         this.setRevision(revision);
-//        if (astnode.getClass().getName().contains("Element")) {
-//            String localName = ((Element) astnode).getLocalName();
-//
-//            if (!entity.getTerminal().contains(localName) && checkIfEndifMatched(astnode)) {
+        if (astnode.getClass().getName().contains("Element")) {
+            String localName = ((Element) astnode).getLocalName();
+
+            if (!entity.getTerminal().contains(localName) && checkIfEndifMatched(astnode)) {
                 this.initializeChildren();
-//            }
-//        }
+            }
+        }
         renumberTree();
     }
 
@@ -264,47 +264,47 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 
                         if (ifdef_endif_Matched) {
-//                            if (localName.equals("endif")) {
-//                                conditionStack.pop();
-//                                continue;
-//                            }
-//                            if (localName.equals("if")) {
-//                                if (namespace_prefix.equals("cpp")) {
-//                                    String cond = node.getValue().substring(4);
-//                                    conditionStack.push(cond);
-//                                    continue;
-//                                }
-//                            }
-//                            if (localName.equals("ifndef")) {
-//                                String condition = childValue.substring(8);
-//                                conditionStack.push("!defined (" + condition + ")");
-//                                continue;
-//                            }
-//                            if (localName.equals("ifdef")) {
-//                                String condition = childValue.substring(7);
-//                                conditionStack.push("defined (" + condition + ")");
-//                                continue;
-//                            }
-//
-//                            if (localName.equals("elif")) {
-//                                conditionStack.pop();
-//                                String condition = childValue.substring(6);
-//                                conditionStack.push(condition);
-//                                continue;
-//                            }
-//
-//                            if (localName.equals("else")) {
-//                                if (namespace_prefix.equals("cpp")) {
-////                                    System.out.println("!!!!!!"+node.getBaseURI()+"----"+node.getParent().toXML());
-//                                    String condition = conditionStack.pop();
-//                                    if (condition.contains("!")) {
-//                                        conditionStack.push(condition.substring(1));
-//                                    } else {
-//                                        conditionStack.push("!" + condition);
-//                                    }
-//                                    continue;
-//                                }
-//                            }
+                            if (localName.equals("endif")) {
+                                conditionStack.pop();
+                                continue;
+                            }
+                            if (localName.equals("if")) {
+                                if (namespace_prefix.equals("cpp")) {
+                                    String cond = node.getValue().substring(4);
+                                    conditionStack.push(cond);
+                                    continue;
+                                }
+                            }
+                            if (localName.equals("ifndef")) {
+                                String condition = childValue.substring(8);
+                                conditionStack.push("!defined (" + condition + ")");
+                                continue;
+                            }
+                            if (localName.equals("ifdef")) {
+                                String condition = childValue.substring(7);
+                                conditionStack.push("defined (" + condition + ")");
+                                continue;
+                            }
+
+                            if (localName.equals("elif")) {
+                                conditionStack.pop();
+                                String condition = childValue.substring(6);
+                                conditionStack.push(condition);
+                                continue;
+                            }
+
+                            if (localName.equals("else")) {
+                                if (namespace_prefix.equals("cpp")) {
+//                                    System.out.println("!!!!!!"+node.getBaseURI()+"----"+node.getParent().toXML());
+                                    String condition = conditionStack.pop();
+                                    if (condition.contains("!")) {
+                                        conditionStack.push(condition.substring(1));
+                                    } else {
+                                        conditionStack.push("!" + condition);
+                                    }
+                                    continue;
+                                }
+                            }
                         }
                         if (!entity.getHeadEntity().contains(localName)) {
                             Revision revision = new Revision(getRevision().getName());
@@ -719,7 +719,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             for (int i = 0; i < right.getNumChildren(); i++) {
 //            for (int i = 0; !rightChanges && i < right.getNumChildren(); i++) {
                 rightChanges = right.getChild(i).isChange();
-                if (leftChanges == false) break;
+//                if (leftChanges == false) break;
+                if (rightChanges == false) break;
             }
             if (leftChanges && rightChanges) {
                 safeMerge = false;
