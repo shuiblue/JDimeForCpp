@@ -1209,552 +1209,554 @@ int read_max6675()
 #endif
 
 
-// Timer 0 is shared with millies
-ISR(TIMER0_COMPB_vect)
-{
-  //these variables are only accesible from the ISR, but static, so they don't lose their value
-  static unsigned char temp_count = 0;
-  static unsigned long raw_temp_0_value = 0;
-  static unsigned long raw_temp_1_value = 0;
-  static unsigned long raw_temp_2_value = 0;
-  static unsigned long raw_temp_bed_value = 0;
-  static unsigned char temp_state = 10;
-  static unsigned char pwm_count = (1 << SOFT_PWM_SCALE);
-  static unsigned char soft_pwm_0;
-#ifdef SLOW_PWM_HEATERS
-  static unsigned char slow_pwm_count = 0;
-  static unsigned char state_heater_0 = 0;
-  static unsigned char state_timer_heater_0 = 0;
-#endif 
-#if (EXTRUDERS > 1) || defined(HEATERS_PARALLEL)
-  static unsigned char soft_pwm_1;
-#ifdef SLOW_PWM_HEATERS
-  static unsigned char state_heater_1 = 0;
-  static unsigned char state_timer_heater_1 = 0;
-#endif 
-#endif
-#if EXTRUDERS > 2
-  static unsigned char soft_pwm_2;
-#ifdef SLOW_PWM_HEATERS
-  static unsigned char state_heater_2 = 0;
-  static unsigned char state_timer_heater_2 = 0;
-#endif 
-#endif
-#if HEATER_BED_PIN > -1
-  static unsigned char soft_pwm_b;
-#ifdef SLOW_PWM_HEATERS
-  static unsigned char state_heater_b = 0;
-  static unsigned char state_timer_heater_b = 0;
-#endif 
-#endif
+//---------------------undeciplined annotation--------------------------------
+// // Timer 0 is shared with millies
+// ISR(TIMER0_COMPB_vect)
+// {
+//   //these variables are only accesible from the ISR, but static, so they don't lose their value
+//   static unsigned char temp_count = 0;
+//   static unsigned long raw_temp_0_value = 0;
+//   static unsigned long raw_temp_1_value = 0;
+//   static unsigned long raw_temp_2_value = 0;
+//   static unsigned long raw_temp_bed_value = 0;
+//   static unsigned char temp_state = 10;
+//   static unsigned char pwm_count = (1 << SOFT_PWM_SCALE);
+//   static unsigned char soft_pwm_0;
+// #ifdef SLOW_PWM_HEATERS
+//   static unsigned char slow_pwm_count = 0;
+//   static unsigned char state_heater_0 = 0;
+//   static unsigned char state_timer_heater_0 = 0;
+// #endif 
+// #if (EXTRUDERS > 1) || defined(HEATERS_PARALLEL)
+//   static unsigned char soft_pwm_1;
+// #ifdef SLOW_PWM_HEATERS
+//   static unsigned char state_heater_1 = 0;
+//   static unsigned char state_timer_heater_1 = 0;
+// #endif 
+// #endif
+// #if EXTRUDERS > 2
+//   static unsigned char soft_pwm_2;
+// #ifdef SLOW_PWM_HEATERS
+//   static unsigned char state_heater_2 = 0;
+//   static unsigned char state_timer_heater_2 = 0;
+// #endif 
+// #endif
+// #if HEATER_BED_PIN > -1
+//   static unsigned char soft_pwm_b;
+// #ifdef SLOW_PWM_HEATERS
+//   static unsigned char state_heater_b = 0;
+//   static unsigned char state_timer_heater_b = 0;
+// #endif 
+// #endif
   
-#if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1)
-  static unsigned long raw_filwidth_value = 0;  //added for filament width sensor
-#endif
+// #if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1)
+//   static unsigned long raw_filwidth_value = 0;  //added for filament width sensor
+// #endif
   
-#ifndef SLOW_PWM_HEATERS
-  /*
-   * standard PWM modulation
-   */
-  if(pwm_count == 0){
-    soft_pwm_0 = soft_pwm[0];
-    if(soft_pwm_0 > 0) { 
-      WRITE(HEATER_0_PIN,1);
-#ifdef HEATERS_PARALLEL
-      WRITE(HEATER_1_PIN,1);
-#endif
-    } else WRITE(HEATER_0_PIN,0);
+// #ifndef SLOW_PWM_HEATERS
+//   /*
+//    * standard PWM modulation
+//    */
+//   if(pwm_count == 0){
+//     soft_pwm_0 = soft_pwm[0];
+//     if(soft_pwm_0 > 0) { 
+//       WRITE(HEATER_0_PIN,1);
+// #ifdef HEATERS_PARALLEL
+//       WRITE(HEATER_1_PIN,1);
+// #endif
+//     } else WRITE(HEATER_0_PIN,0);
     
-#if EXTRUDERS > 1
-    soft_pwm_1 = soft_pwm[1];
-    if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);
-#endif
-#if EXTRUDERS > 2
-    soft_pwm_2 = soft_pwm[2];
-    if(soft_pwm_2 > 0) WRITE(HEATER_2_PIN,1); else WRITE(HEATER_2_PIN,0);
-#endif
-#if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-    soft_pwm_b = soft_pwm_bed;
-    if(soft_pwm_b > 0) WRITE(HEATER_BED_PIN,1); else WRITE(HEATER_BED_PIN,0);
-#endif
-#ifdef FAN_SOFT_PWM
-    soft_pwm_fan = fanSpeedSoftPwm / 2;
-    if(soft_pwm_fan > 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);
-#endif
-  }
-  if(soft_pwm_0 < pwm_count) { 
-    WRITE(HEATER_0_PIN,0);
-#ifdef HEATERS_PARALLEL
-    WRITE(HEATER_1_PIN,0);
-#endif
-  }
-#if EXTRUDERS > 1
-  if(soft_pwm_1 < pwm_count) WRITE(HEATER_1_PIN,0);
-#endif
-#if EXTRUDERS > 2
-  if(soft_pwm_2 < pwm_count) WRITE(HEATER_2_PIN,0);
-#endif
-#if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-  if(soft_pwm_b < pwm_count) WRITE(HEATER_BED_PIN,0);
-#endif
-#ifdef FAN_SOFT_PWM
-  if(soft_pwm_fan < pwm_count) WRITE(FAN_PIN,0);
-#endif
+// #if EXTRUDERS > 1
+//     soft_pwm_1 = soft_pwm[1];
+//     if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);
+// #endif
+// #if EXTRUDERS > 2
+//     soft_pwm_2 = soft_pwm[2];
+//     if(soft_pwm_2 > 0) WRITE(HEATER_2_PIN,1); else WRITE(HEATER_2_PIN,0);
+// #endif
+// #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
+//     soft_pwm_b = soft_pwm_bed;
+//     if(soft_pwm_b > 0) WRITE(HEATER_BED_PIN,1); else WRITE(HEATER_BED_PIN,0);
+// #endif
+// #ifdef FAN_SOFT_PWM
+//     soft_pwm_fan = fanSpeedSoftPwm / 2;
+//     if(soft_pwm_fan > 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);
+// #endif
+//   }
+//   if(soft_pwm_0 < pwm_count) { 
+//     WRITE(HEATER_0_PIN,0);
+// #ifdef HEATERS_PARALLEL
+//     WRITE(HEATER_1_PIN,0);
+// #endif
+//   }
+// #if EXTRUDERS > 1
+//   if(soft_pwm_1 < pwm_count) WRITE(HEATER_1_PIN,0);
+// #endif
+// #if EXTRUDERS > 2
+//   if(soft_pwm_2 < pwm_count) WRITE(HEATER_2_PIN,0);
+// #endif
+// #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
+//   if(soft_pwm_b < pwm_count) WRITE(HEATER_BED_PIN,0);
+// #endif
+// #ifdef FAN_SOFT_PWM
+//   if(soft_pwm_fan < pwm_count) WRITE(FAN_PIN,0);
+// #endif
   
-  pwm_count += (1 << SOFT_PWM_SCALE);
-  pwm_count &= 0x7f;
+//   pwm_count += (1 << SOFT_PWM_SCALE);
+//   pwm_count &= 0x7f;
   
-#else //ifndef SLOW_PWM_HEATERS
-  /*
-   * SLOW PWM HEATERS
-   *
-   * for heaters drived by relay
-   */
-#ifndef MIN_STATE_TIME
-#define MIN_STATE_TIME 16 // MIN_STATE_TIME * 65.5 = time in milliseconds
-#endif
-  if (slow_pwm_count == 0) {
-    // EXTRUDER 0 
-    soft_pwm_0 = soft_pwm[0];
-    if (soft_pwm_0 > 0) {
-      // turn ON heather only if the minimum time is up 
-      if (state_timer_heater_0 == 0) { 
-	// if change state set timer 
-	if (state_heater_0 == 0) {
-	  state_timer_heater_0 = MIN_STATE_TIME;
-	}
-	state_heater_0 = 1;
-	WRITE(HEATER_0_PIN, 1);
-#ifdef HEATERS_PARALLEL
-	WRITE(HEATER_1_PIN, 1);
-#endif
-      }
-    } else {
-      // turn OFF heather only if the minimum time is up 
-      if (state_timer_heater_0 == 0) {
-	// if change state set timer 
-	if (state_heater_0 == 1) {
-	  state_timer_heater_0 = MIN_STATE_TIME;
-	}
-	state_heater_0 = 0;
-	WRITE(HEATER_0_PIN, 0);
-#ifdef HEATERS_PARALLEL
-	WRITE(HEATER_1_PIN, 0);
-#endif
-      }
-    }
+// #else //ifndef SLOW_PWM_HEATERS
+//   /*
+//    * SLOW PWM HEATERS
+//    *
+//    * for heaters drived by relay
+//    */
+// #ifndef MIN_STATE_TIME
+// #define MIN_STATE_TIME 16 // MIN_STATE_TIME * 65.5 = time in milliseconds
+// #endif
+//   if (slow_pwm_count == 0) {
+//     // EXTRUDER 0 
+//     soft_pwm_0 = soft_pwm[0];
+//     if (soft_pwm_0 > 0) {
+//       // turn ON heather only if the minimum time is up 
+//       if (state_timer_heater_0 == 0) { 
+// 	// if change state set timer 
+// 	if (state_heater_0 == 0) {
+// 	  state_timer_heater_0 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_0 = 1;
+// 	WRITE(HEATER_0_PIN, 1);
+// #ifdef HEATERS_PARALLEL
+// 	WRITE(HEATER_1_PIN, 1);
+// #endif
+//       }
+//     } else {
+//       // turn OFF heather only if the minimum time is up 
+//       if (state_timer_heater_0 == 0) {
+// 	// if change state set timer 
+// 	if (state_heater_0 == 1) {
+// 	  state_timer_heater_0 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_0 = 0;
+// 	WRITE(HEATER_0_PIN, 0);
+// #ifdef HEATERS_PARALLEL
+// 	WRITE(HEATER_1_PIN, 0);
+// #endif
+//       }
+//     }
     
-#if EXTRUDERS > 1
-    // EXTRUDER 1
-    soft_pwm_1 = soft_pwm[1];
-    if (soft_pwm_1 > 0) {
-      // turn ON heather only if the minimum time is up 
-      if (state_timer_heater_1 == 0) { 
-	// if change state set timer 
-	if (state_heater_1 == 0) {
-	  state_timer_heater_1 = MIN_STATE_TIME;
-	}
-	state_heater_1 = 1;
-	WRITE(HEATER_1_PIN, 1);
-      }
-    } else {
-      // turn OFF heather only if the minimum time is up 
-      if (state_timer_heater_1 == 0) {
-	// if change state set timer 
-	if (state_heater_1 == 1) {
-	  state_timer_heater_1 = MIN_STATE_TIME;
-	}
-	state_heater_1 = 0;
-	WRITE(HEATER_1_PIN, 0);
-      }
-    }
-#endif
+// #if EXTRUDERS > 1
+//     // EXTRUDER 1
+//     soft_pwm_1 = soft_pwm[1];
+//     if (soft_pwm_1 > 0) {
+//       // turn ON heather only if the minimum time is up 
+//       if (state_timer_heater_1 == 0) { 
+// 	// if change state set timer 
+// 	if (state_heater_1 == 0) {
+// 	  state_timer_heater_1 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_1 = 1;
+// 	WRITE(HEATER_1_PIN, 1);
+//       }
+//     } else {
+//       // turn OFF heather only if the minimum time is up 
+//       if (state_timer_heater_1 == 0) {
+// 	// if change state set timer 
+// 	if (state_heater_1 == 1) {
+// 	  state_timer_heater_1 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_1 = 0;
+// 	WRITE(HEATER_1_PIN, 0);
+//       }
+//     }
+// #endif
     
-#if EXTRUDERS > 2
-    // EXTRUDER 2
-    soft_pwm_2 = soft_pwm[2];
-    if (soft_pwm_2 > 0) {
-      // turn ON heather only if the minimum time is up 
-      if (state_timer_heater_2 == 0) { 
-	// if change state set timer 
-	if (state_heater_2 == 0) {
-	  state_timer_heater_2 = MIN_STATE_TIME;
-	}
-	state_heater_2 = 1;
-	WRITE(HEATER_2_PIN, 1);
-      }
-    } else {
-      // turn OFF heather only if the minimum time is up 
-      if (state_timer_heater_2 == 0) {
-	// if change state set timer 
-	if (state_heater_2 == 1) {
-	  state_timer_heater_2 = MIN_STATE_TIME;
-	}
-	state_heater_2 = 0;
-	WRITE(HEATER_2_PIN, 0);
-      }
-    }
-#endif
+// #if EXTRUDERS > 2
+//     // EXTRUDER 2
+//     soft_pwm_2 = soft_pwm[2];
+//     if (soft_pwm_2 > 0) {
+//       // turn ON heather only if the minimum time is up 
+//       if (state_timer_heater_2 == 0) { 
+// 	// if change state set timer 
+// 	if (state_heater_2 == 0) {
+// 	  state_timer_heater_2 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_2 = 1;
+// 	WRITE(HEATER_2_PIN, 1);
+//       }
+//     } else {
+//       // turn OFF heather only if the minimum time is up 
+//       if (state_timer_heater_2 == 0) {
+// 	// if change state set timer 
+// 	if (state_heater_2 == 1) {
+// 	  state_timer_heater_2 = MIN_STATE_TIME;
+// 	}
+// 	state_heater_2 = 0;
+// 	WRITE(HEATER_2_PIN, 0);
+//       }
+//     }
+// #endif
     
-#if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-    // BED
-    soft_pwm_b = soft_pwm_bed;
-    if (soft_pwm_b > 0) {
-      // turn ON heather only if the minimum time is up 
-      if (state_timer_heater_b == 0) { 
-	// if change state set timer 
-	if (state_heater_b == 0) {
-	  state_timer_heater_b = MIN_STATE_TIME;
-	}
-	state_heater_b = 1;
-	WRITE(HEATER_BED_PIN, 1);
-      }
-    } else {
-      // turn OFF heather only if the minimum time is up 
-      if (state_timer_heater_b == 0) {
-	// if change state set timer 
-	if (state_heater_b == 1) {
-	  state_timer_heater_b = MIN_STATE_TIME;
-	}
-	state_heater_b = 0;
-	WRITE(HEATER_BED_PIN, 0);
-      }
-    }
-#endif
-  } // if (slow_pwm_count == 0)
+// #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
+//     // BED
+//     soft_pwm_b = soft_pwm_bed;
+//     if (soft_pwm_b > 0) {
+//       // turn ON heather only if the minimum time is up 
+//       if (state_timer_heater_b == 0) { 
+// 	// if change state set timer 
+// 	if (state_heater_b == 0) {
+// 	  state_timer_heater_b = MIN_STATE_TIME;
+// 	}
+// 	state_heater_b = 1;
+// 	WRITE(HEATER_BED_PIN, 1);
+//       }
+//     } else {
+//       // turn OFF heather only if the minimum time is up 
+//       if (state_timer_heater_b == 0) {
+// 	// if change state set timer 
+// 	if (state_heater_b == 1) {
+// 	  state_timer_heater_b = MIN_STATE_TIME;
+// 	}
+// 	state_heater_b = 0;
+// 	WRITE(HEATER_BED_PIN, 0);
+//       }
+//     }
+// #endif
+//   } // if (slow_pwm_count == 0)
   
-  // EXTRUDER 0 
-  if (soft_pwm_0 < slow_pwm_count) {
-    // turn OFF heather only if the minimum time is up 
-    if (state_timer_heater_0 == 0) { 
-      // if change state set timer 
-      if (state_heater_0 == 1) {
-	state_timer_heater_0 = MIN_STATE_TIME;
-      }
-      state_heater_0 = 0;
-      WRITE(HEATER_0_PIN, 0);
-#ifdef HEATERS_PARALLEL
-      WRITE(HEATER_1_PIN, 0);
-#endif
-    }
-  }
+//   // EXTRUDER 0 
+//   if (soft_pwm_0 < slow_pwm_count) {
+//     // turn OFF heather only if the minimum time is up 
+//     if (state_timer_heater_0 == 0) { 
+//       // if change state set timer 
+//       if (state_heater_0 == 1) {
+// 	state_timer_heater_0 = MIN_STATE_TIME;
+//       }
+//       state_heater_0 = 0;
+//       WRITE(HEATER_0_PIN, 0);
+// #ifdef HEATERS_PARALLEL
+//       WRITE(HEATER_1_PIN, 0);
+// #endif
+//     }
+//   }
     
-#if EXTRUDERS > 1
-  // EXTRUDER 1 
-  if (soft_pwm_1 < slow_pwm_count) {
-    // turn OFF heather only if the minimum time is up 
-    if (state_timer_heater_1 == 0) { 
-      // if change state set timer 
-      if (state_heater_1 == 1) {
-	state_timer_heater_1 = MIN_STATE_TIME;
-      }
-      state_heater_1 = 0;
-      WRITE(HEATER_1_PIN, 0);
-    }
-  }
-#endif
+// #if EXTRUDERS > 1
+//   // EXTRUDER 1 
+//   if (soft_pwm_1 < slow_pwm_count) {
+//     // turn OFF heather only if the minimum time is up 
+//     if (state_timer_heater_1 == 0) { 
+//       // if change state set timer 
+//       if (state_heater_1 == 1) {
+// 	state_timer_heater_1 = MIN_STATE_TIME;
+//       }
+//       state_heater_1 = 0;
+//       WRITE(HEATER_1_PIN, 0);
+//     }
+//   }
+// #endif
   
-#if EXTRUDERS > 2
-  // EXTRUDER 2
-  if (soft_pwm_2 < slow_pwm_count) {
-    // turn OFF heather only if the minimum time is up 
-    if (state_timer_heater_2 == 0) { 
-      // if change state set timer 
-      if (state_heater_2 == 1) {
-	state_timer_heater_2 = MIN_STATE_TIME;
-      }
-      state_heater_2 = 0;
-      WRITE(HEATER_2_PIN, 0);
-    }
-  }
-#endif
+// #if EXTRUDERS > 2
+//   // EXTRUDER 2
+//   if (soft_pwm_2 < slow_pwm_count) {
+//     // turn OFF heather only if the minimum time is up 
+//     if (state_timer_heater_2 == 0) { 
+//       // if change state set timer 
+//       if (state_heater_2 == 1) {
+// 	state_timer_heater_2 = MIN_STATE_TIME;
+//       }
+//       state_heater_2 = 0;
+//       WRITE(HEATER_2_PIN, 0);
+//     }
+//   }
+// #endif
   
-#if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-  // BED
-  if (soft_pwm_b < slow_pwm_count) {
-    // turn OFF heather only if the minimum time is up 
-    if (state_timer_heater_b == 0) { 
-      // if change state set timer 
-      if (state_heater_b == 1) {
-	state_timer_heater_b = MIN_STATE_TIME;
-      }
-      state_heater_b = 0;
-      WRITE(HEATER_BED_PIN, 0);
-    }
-  }
-#endif
+// #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
+//   // BED
+//   if (soft_pwm_b < slow_pwm_count) {
+//     // turn OFF heather only if the minimum time is up 
+//     if (state_timer_heater_b == 0) { 
+//       // if change state set timer 
+//       if (state_heater_b == 1) {
+// 	state_timer_heater_b = MIN_STATE_TIME;
+//       }
+//       state_heater_b = 0;
+//       WRITE(HEATER_BED_PIN, 0);
+//     }
+//   }
+// #endif
   
-#ifdef FAN_SOFT_PWM
-  if (pwm_count == 0){
-    soft_pwm_fan = fanSpeedSoftPwm / 2;
-    if (soft_pwm_fan > 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);
-  }
-  if (soft_pwm_fan < pwm_count) WRITE(FAN_PIN,0);
-#endif
+// #ifdef FAN_SOFT_PWM
+//   if (pwm_count == 0){
+//     soft_pwm_fan = fanSpeedSoftPwm / 2;
+//     if (soft_pwm_fan > 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);
+//   }
+//   if (soft_pwm_fan < pwm_count) WRITE(FAN_PIN,0);
+// #endif
   
-  pwm_count += (1 << SOFT_PWM_SCALE);
-  pwm_count &= 0x7f;
+//   pwm_count += (1 << SOFT_PWM_SCALE);
+//   pwm_count &= 0x7f;
   
-  // increment slow_pwm_count only every 64 pwm_count circa 65.5ms
-  if ((pwm_count % 64) == 0) {
-    slow_pwm_count++;
-    slow_pwm_count &= 0x7f;
+//   // increment slow_pwm_count only every 64 pwm_count circa 65.5ms
+//   if ((pwm_count % 64) == 0) {
+//     slow_pwm_count++;
+//     slow_pwm_count &= 0x7f;
     
-    // Extruder 0
-    if (state_timer_heater_0 > 0) {
-      state_timer_heater_0--;
-    } 
+//     // Extruder 0
+//     if (state_timer_heater_0 > 0) {
+//       state_timer_heater_0--;
+//     } 
   
-#if EXTRUDERS > 1
-    // Extruder 1
-    if (state_timer_heater_1 > 0) 
-      state_timer_heater_1--;
-#endif
+// #if EXTRUDERS > 1
+//     // Extruder 1
+//     if (state_timer_heater_1 > 0) 
+//       state_timer_heater_1--;
+// #endif
     
-#if EXTRUDERS > 2
-    // Extruder 2
-    if (state_timer_heater_2 > 0) 
-      state_timer_heater_2--;
-#endif
+// #if EXTRUDERS > 2
+//     // Extruder 2
+//     if (state_timer_heater_2 > 0) 
+//       state_timer_heater_2--;
+// #endif
     
-#if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-    // Bed   
-    if (state_timer_heater_b > 0) 
-      state_timer_heater_b--;
-#endif
-  } //if ((pwm_count % 64) == 0) {
+// #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
+//     // Bed   
+//     if (state_timer_heater_b > 0) 
+//       state_timer_heater_b--;
+// #endif
+//   } //if ((pwm_count % 64) == 0) {
   
-#endif //ifndef SLOW_PWM_HEATERS
+// #endif //ifndef SLOW_PWM_HEATERS
   
-  switch(temp_state) {
-    case 0: // Prepare TEMP_0
-      #if defined(TEMP_0_PIN) && (TEMP_0_PIN > -1)
-        #if TEMP_0_PIN > 7
-          ADCSRB = 1<<MUX5;
-        #else
-          ADCSRB = 0;
-        #endif
-        ADMUX = ((1 << REFS0) | (TEMP_0_PIN & 0x07));
-        ADCSRA |= 1<<ADSC; // Start conversion
-      #endif
-      lcd_buttons_update();
-      temp_state = 1;
-      break;
-    case 1: // Measure TEMP_0
-      #if defined(TEMP_0_PIN) && (TEMP_0_PIN > -1)
-        raw_temp_0_value += ADC;
-      #endif
-      #ifdef HEATER_0_USES_MAX6675 // TODO remove the blocking
-        raw_temp_0_value = read_max6675();
-      #endif
-      temp_state = 2;
-      break;
-    case 2: // Prepare TEMP_BED
-      #if defined(TEMP_BED_PIN) && (TEMP_BED_PIN > -1)
-        #if TEMP_BED_PIN > 7
-          ADCSRB = 1<<MUX5;
-        #else
-          ADCSRB = 0;
-        #endif
-        ADMUX = ((1 << REFS0) | (TEMP_BED_PIN & 0x07));
-        ADCSRA |= 1<<ADSC; // Start conversion
-      #endif
-      lcd_buttons_update();
-      temp_state = 3;
-      break;
-    case 3: // Measure TEMP_BED
-      #if defined(TEMP_BED_PIN) && (TEMP_BED_PIN > -1)
-        raw_temp_bed_value += ADC;
-      #endif
-      temp_state = 4;
-      break;
-    case 4: // Prepare TEMP_1
-      #if defined(TEMP_1_PIN) && (TEMP_1_PIN > -1)
-        #if TEMP_1_PIN > 7
-          ADCSRB = 1<<MUX5;
-        #else
-          ADCSRB = 0;
-        #endif
-        ADMUX = ((1 << REFS0) | (TEMP_1_PIN & 0x07));
-        ADCSRA |= 1<<ADSC; // Start conversion
-      #endif
-      lcd_buttons_update();
-      temp_state = 5;
-      break;
-    case 5: // Measure TEMP_1
-      #if defined(TEMP_1_PIN) && (TEMP_1_PIN > -1)
-        raw_temp_1_value += ADC;
-      #endif
-      temp_state = 6;
-      break;
-    case 6: // Prepare TEMP_2
-      #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-        #if TEMP_2_PIN > 7
-          ADCSRB = 1<<MUX5;
-        #else
-          ADCSRB = 0;
-        #endif
-        ADMUX = ((1 << REFS0) | (TEMP_2_PIN & 0x07));
-        ADCSRA |= 1<<ADSC; // Start conversion
-      #endif
-      lcd_buttons_update();
-      temp_state = 7;
-      break;
-    case 7: // Measure TEMP_2
-      #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-        raw_temp_2_value += ADC;
-      #endif
-      temp_state = 8;//change so that Filament Width is also measured
+//   switch(temp_state) {
+//     case 0: // Prepare TEMP_0
+//       #if defined(TEMP_0_PIN) && (TEMP_0_PIN > -1)
+//         #if TEMP_0_PIN > 7
+//           ADCSRB = 1<<MUX5;
+//         #else
+//           ADCSRB = 0;
+//         #endif
+//         ADMUX = ((1 << REFS0) | (TEMP_0_PIN & 0x07));
+//         ADCSRA |= 1<<ADSC; // Start conversion
+//       #endif
+//       lcd_buttons_update();
+//       temp_state = 1;
+//       break;
+//     case 1: // Measure TEMP_0
+//       #if defined(TEMP_0_PIN) && (TEMP_0_PIN > -1)
+//         raw_temp_0_value += ADC;
+//       #endif
+//       #ifdef HEATER_0_USES_MAX6675 // TODO remove the blocking
+//         raw_temp_0_value = read_max6675();
+//       #endif
+//       temp_state = 2;
+//       break;
+//     case 2: // Prepare TEMP_BED
+//       #if defined(TEMP_BED_PIN) && (TEMP_BED_PIN > -1)
+//         #if TEMP_BED_PIN > 7
+//           ADCSRB = 1<<MUX5;
+//         #else
+//           ADCSRB = 0;
+//         #endif
+//         ADMUX = ((1 << REFS0) | (TEMP_BED_PIN & 0x07));
+//         ADCSRA |= 1<<ADSC; // Start conversion
+//       #endif
+//       lcd_buttons_update();
+//       temp_state = 3;
+//       break;
+//     case 3: // Measure TEMP_BED
+//       #if defined(TEMP_BED_PIN) && (TEMP_BED_PIN > -1)
+//         raw_temp_bed_value += ADC;
+//       #endif
+//       temp_state = 4;
+//       break;
+//     case 4: // Prepare TEMP_1
+//       #if defined(TEMP_1_PIN) && (TEMP_1_PIN > -1)
+//         #if TEMP_1_PIN > 7
+//           ADCSRB = 1<<MUX5;
+//         #else
+//           ADCSRB = 0;
+//         #endif
+//         ADMUX = ((1 << REFS0) | (TEMP_1_PIN & 0x07));
+//         ADCSRA |= 1<<ADSC; // Start conversion
+//       #endif
+//       lcd_buttons_update();
+//       temp_state = 5;
+//       break;
+//     case 5: // Measure TEMP_1
+//       #if defined(TEMP_1_PIN) && (TEMP_1_PIN > -1)
+//         raw_temp_1_value += ADC;
+//       #endif
+//       temp_state = 6;
+//       break;
+//     case 6: // Prepare TEMP_2
+//       #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
+//         #if TEMP_2_PIN > 7
+//           ADCSRB = 1<<MUX5;
+//         #else
+//           ADCSRB = 0;
+//         #endif
+//         ADMUX = ((1 << REFS0) | (TEMP_2_PIN & 0x07));
+//         ADCSRA |= 1<<ADSC; // Start conversion
+//       #endif
+//       lcd_buttons_update();
+//       temp_state = 7;
+//       break;
+//     case 7: // Measure TEMP_2
+//       #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
+//         raw_temp_2_value += ADC;
+//       #endif
+//       temp_state = 8;//change so that Filament Width is also measured
       
-      break;
-    case 8: //Prepare FILWIDTH 
-     #if defined(FILWIDTH_PIN) && (FILWIDTH_PIN> -1) 
-      #if FILWIDTH_PIN>7 
-         ADCSRB = 1<<MUX5;
-      #else
-         ADCSRB = 0; 
-      #endif 
-      ADMUX = ((1 << REFS0) | (FILWIDTH_PIN & 0x07)); 
-      ADCSRA |= 1<<ADSC; // Start conversion 
-     #endif 
-     lcd_buttons_update();       
-     temp_state = 9; 
-     break; 
-    case 9:   //Measure FILWIDTH 
-     #if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1) 
-     //raw_filwidth_value += ADC;  //remove to use an IIR filter approach 
-      if(ADC>102)  //check that ADC is reading a voltage > 0.5 volts, otherwise don't take in the data.
-        {
-    	raw_filwidth_value= raw_filwidth_value-(raw_filwidth_value>>7);  //multipliy raw_filwidth_value by 127/128
+//       break;
+//     case 8: //Prepare FILWIDTH 
+//      #if defined(FILWIDTH_PIN) && (FILWIDTH_PIN> -1) 
+//       #if FILWIDTH_PIN>7 
+//          ADCSRB = 1<<MUX5;
+//       #else
+//          ADCSRB = 0; 
+//       #endif 
+//       ADMUX = ((1 << REFS0) | (FILWIDTH_PIN & 0x07)); 
+//       ADCSRA |= 1<<ADSC; // Start conversion 
+//      #endif 
+//      lcd_buttons_update();       
+//      temp_state = 9; 
+//      break; 
+//     case 9:   //Measure FILWIDTH 
+//      #if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1) 
+//      //raw_filwidth_value += ADC;  //remove to use an IIR filter approach 
+//       if(ADC>102)  //check that ADC is reading a voltage > 0.5 volts, otherwise don't take in the data.
+//         {
+//     	raw_filwidth_value= raw_filwidth_value-(raw_filwidth_value>>7);  //multipliy raw_filwidth_value by 127/128
         
-        raw_filwidth_value= raw_filwidth_value + ((unsigned long)ADC<<7);  //add new ADC reading 
-        }
-     #endif 
-     temp_state = 0;   
+//         raw_filwidth_value= raw_filwidth_value + ((unsigned long)ADC<<7);  //add new ADC reading 
+//         }
+//      #endif 
+//      temp_state = 0;   
       
-     temp_count++;
-     break;      
+//      temp_count++;
+//      break;      
       
       
-    case 10: //Startup, delay initial temp reading a tiny bit so the hardware can settle.
-      temp_state = 0;
-      break;
-//    default:
-//      SERIAL_ERROR_START;
-//      SERIAL_ERRORLNPGM("Temp measurement error!");
-//      break;
-  }
+//     case 10: //Startup, delay initial temp reading a tiny bit so the hardware can settle.
+//       temp_state = 0;
+//       break;
+// //    default:
+// //      SERIAL_ERROR_START;
+// //      SERIAL_ERRORLNPGM("Temp measurement error!");
+// //      break;
+//   }
     
-  if(temp_count >= OVERSAMPLENR) // 10 * 16 * 1/(16000000/64/256)  = 164ms.
-  {
-    if (!temp_meas_ready) //Only update the raw values if they have been read. Else we could be updating them during reading.
-    {
-      current_temperature_raw[0] = raw_temp_0_value;
-#if EXTRUDERS > 1
-      current_temperature_raw[1] = raw_temp_1_value;
-#endif
-#ifdef TEMP_SENSOR_1_AS_REDUNDANT
-      redundant_temperature_raw = raw_temp_1_value;
-#endif
-#if EXTRUDERS > 2
-      current_temperature_raw[2] = raw_temp_2_value;
-#endif
-      current_temperature_bed_raw = raw_temp_bed_value;
-    }
+//   if(temp_count >= OVERSAMPLENR) // 10 * 16 * 1/(16000000/64/256)  = 164ms.
+//   {
+//     if (!temp_meas_ready) //Only update the raw values if they have been read. Else we could be updating them during reading.
+//     {
+//       current_temperature_raw[0] = raw_temp_0_value;
+// #if EXTRUDERS > 1
+//       current_temperature_raw[1] = raw_temp_1_value;
+// #endif
+// #ifdef TEMP_SENSOR_1_AS_REDUNDANT
+//       redundant_temperature_raw = raw_temp_1_value;
+// #endif
+// #if EXTRUDERS > 2
+//       current_temperature_raw[2] = raw_temp_2_value;
+// #endif
+//       current_temperature_bed_raw = raw_temp_bed_value;
+//     }
 
-//Add similar code for Filament Sensor - can be read any time since IIR filtering is used 
-#if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1)
-  current_raw_filwidth = raw_filwidth_value>>10;  //need to divide to get to 0-16384 range since we used 1/128 IIR filter approach 
-#endif
+// //Add similar code for Filament Sensor - can be read any time since IIR filtering is used 
+// #if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1)
+//   current_raw_filwidth = raw_filwidth_value>>10;  //need to divide to get to 0-16384 range since we used 1/128 IIR filter approach 
+// #endif
     
     
-    temp_meas_ready = true;
-    temp_count = 0;
-    raw_temp_0_value = 0;
-    raw_temp_1_value = 0;
-    raw_temp_2_value = 0;
-    raw_temp_bed_value = 0;
+//     temp_meas_ready = true;
+//     temp_count = 0;
+//     raw_temp_0_value = 0;
+//     raw_temp_1_value = 0;
+//     raw_temp_2_value = 0;
+//     raw_temp_bed_value = 0;
 
-#if HEATER_0_RAW_LO_TEMP > HEATER_0_RAW_HI_TEMP
-    if(current_temperature_raw[0] <= maxttemp_raw[0]) {
-#else
-    if(current_temperature_raw[0] >= maxttemp_raw[0]) {
-#endif
-        max_temp_error(0);
-    }
-#if HEATER_0_RAW_LO_TEMP > HEATER_0_RAW_HI_TEMP
-    if(current_temperature_raw[0] >= minttemp_raw[0]) {
-#else
-    if(current_temperature_raw[0] <= minttemp_raw[0]) {
-#endif
-        min_temp_error(0);
-    }
-#if EXTRUDERS > 1
-#if HEATER_1_RAW_LO_TEMP > HEATER_1_RAW_HI_TEMP
-    if(current_temperature_raw[1] <= maxttemp_raw[1]) {
-#else
-    if(current_temperature_raw[1] >= maxttemp_raw[1]) {
-#endif
-        max_temp_error(1);
-    }
-#if HEATER_1_RAW_LO_TEMP > HEATER_1_RAW_HI_TEMP
-    if(current_temperature_raw[1] >= minttemp_raw[1]) {
-#else
-    if(current_temperature_raw[1] <= minttemp_raw[1]) {
-#endif
-        min_temp_error(1);
-    }
-#endif
-#if EXTRUDERS > 2
-#if HEATER_2_RAW_LO_TEMP > HEATER_2_RAW_HI_TEMP
-    if(current_temperature_raw[2] <= maxttemp_raw[2]) {
-#else
-    if(current_temperature_raw[2] >= maxttemp_raw[2]) {
-#endif
-        max_temp_error(2);
-    }
-#if HEATER_2_RAW_LO_TEMP > HEATER_2_RAW_HI_TEMP
-    if(current_temperature_raw[2] >= minttemp_raw[2]) {
-#else
-    if(current_temperature_raw[2] <= minttemp_raw[2]) {
-#endif
-        min_temp_error(2);
-    }
-#endif
+// #if HEATER_0_RAW_LO_TEMP > HEATER_0_RAW_HI_TEMP
+//     if(current_temperature_raw[0] <= maxttemp_raw[0]) {
+// #else
+//     if(current_temperature_raw[0] >= maxttemp_raw[0]) {
+// #endif
+//         max_temp_error(0);
+//     }
+// #if HEATER_0_RAW_LO_TEMP > HEATER_0_RAW_HI_TEMP
+//     if(current_temperature_raw[0] >= minttemp_raw[0]) {
+// #else
+//     if(current_temperature_raw[0] <= minttemp_raw[0]) {
+// #endif
+//         min_temp_error(0);
+//     }
+// #if EXTRUDERS > 1
+// #if HEATER_1_RAW_LO_TEMP > HEATER_1_RAW_HI_TEMP
+//     if(current_temperature_raw[1] <= maxttemp_raw[1]) {
+// #else
+//     if(current_temperature_raw[1] >= maxttemp_raw[1]) {
+// #endif
+//         max_temp_error(1);
+//     }
+// #if HEATER_1_RAW_LO_TEMP > HEATER_1_RAW_HI_TEMP
+//     if(current_temperature_raw[1] >= minttemp_raw[1]) {
+// #else
+//     if(current_temperature_raw[1] <= minttemp_raw[1]) {
+// #endif
+//         min_temp_error(1);
+//     }
+// #endif
+// #if EXTRUDERS > 2
+// #if HEATER_2_RAW_LO_TEMP > HEATER_2_RAW_HI_TEMP
+//     if(current_temperature_raw[2] <= maxttemp_raw[2]) {
+// #else
+//     if(current_temperature_raw[2] >= maxttemp_raw[2]) {
+// #endif
+//         max_temp_error(2);
+//     }
+// #if HEATER_2_RAW_LO_TEMP > HEATER_2_RAW_HI_TEMP
+//     if(current_temperature_raw[2] >= minttemp_raw[2]) {
+// #else
+//     if(current_temperature_raw[2] <= minttemp_raw[2]) {
+// #endif
+//         min_temp_error(2);
+//     }
+// #endif
   
-  /* No bed MINTEMP error? */
-#if defined(BED_MAXTEMP) && (TEMP_SENSOR_BED != 0)
-# if HEATER_BED_RAW_LO_TEMP > HEATER_BED_RAW_HI_TEMP
-    if(current_temperature_bed_raw <= bed_maxttemp_raw) {
-#else
-    if(current_temperature_bed_raw >= bed_maxttemp_raw) {
-#endif
-       target_temperature_bed = 0;
-       bed_max_temp_error();
-    }
-#endif
-  }
+//   /* No bed MINTEMP error? */
+// #if defined(BED_MAXTEMP) && (TEMP_SENSOR_BED != 0)
+// # if HEATER_BED_RAW_LO_TEMP > HEATER_BED_RAW_HI_TEMP
+//     if(current_temperature_bed_raw <= bed_maxttemp_raw) {
+// #else
+//     if(current_temperature_bed_raw >= bed_maxttemp_raw) {
+// #endif
+//        target_temperature_bed = 0;
+//        bed_max_temp_error();
+//     }
+// #endif
+//   }
   
-#ifdef BABYSTEPPING
-  for(uint8_t axis=0;axis<3;axis++)
-  {
-    int curTodo=babystepsTodo[axis]; //get rid of volatile for performance
+// #ifdef BABYSTEPPING
+//   for(uint8_t axis=0;axis<3;axis++)
+//   {
+//     int curTodo=babystepsTodo[axis]; //get rid of volatile for performance
    
-    if(curTodo>0)
-    {
-      babystep(axis,/*fwd*/true);
-      babystepsTodo[axis]--; //less to do next time
-    }
-    else
-    if(curTodo<0)
-    {
-      babystep(axis,/*fwd*/false);
-      babystepsTodo[axis]++; //less to do next time
-    }
-  }
-#endif //BABYSTEPPING
-}
+//     if(curTodo>0)
+//     {
+//       babystep(axis,/*fwd*/true);
+//       babystepsTodo[axis]--; //less to do next time
+//     }
+//     else
+//     if(curTodo<0)
+//     {
+//       babystep(axis,/*fwd*/false);
+//       babystepsTodo[axis]++; //less to do next time
+//     }
+//   }
+// #endif //BABYSTEPPING
+// }
 
+//---------------------undeciplined annotation--------------------------------
 #ifdef PIDTEMP
 // Apply the scale factors to the PID values
 

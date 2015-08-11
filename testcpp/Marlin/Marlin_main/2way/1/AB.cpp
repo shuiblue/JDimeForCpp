@@ -953,7 +953,6 @@ bool code_seen
     static inline type pgm_read_any(const type *p)  \
     { return pgm_read_##reader##_near(p); }
 DEFINE_PGM_READ_ANY(float,       float);
-DEFINE_PGM_READ_ANY(signed char, byte)
 ;
 #define XYZ_CONSTS_FROM_CONFIG(type, array, CONFIG) \
 static const PROGMEM type array##_P[3] =        \
@@ -965,7 +964,6 @@ XYZ_CONSTS_FROM_CONFIG(float, base_max_pos,    MAX_POS);
 XYZ_CONSTS_FROM_CONFIG(float, base_home_pos,   HOME_POS);
 XYZ_CONSTS_FROM_CONFIG(float, max_length,      MAX_LENGTH);
 XYZ_CONSTS_FROM_CONFIG(float, home_retract_mm, HOME_RETRACT_MM);
-XYZ_CONSTS_FROM_CONFIG(signed char, home_dir,  HOME_DIR)
 ;
 #endif
 #if defined (A) && (defined (DUAL_X_CARRIAGE) && (EXTRUDERS == 1 || defined(COREXY) \

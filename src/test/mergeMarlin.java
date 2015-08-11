@@ -31,6 +31,7 @@ public class mergeMarlin {
         }
         testInitial.clearTmpFile();
     }
+
     String output_2way = "AB";
     String output_3way = "ABC";
 
@@ -52,43 +53,5 @@ public class mergeMarlin {
         assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
-    }
-
-    /*
-   test 2
-   main repo: cardreader.cpp ---A
-   hampassandberg -- B
-
-    */
-    @Test
-    public void test2() {
-        inputFileInit(2);
-        String testNum = "2/";
-        config.add("SDSUPPORT");
-        System.out.println("------test 2-----------");
-        // ----------------check Merged result equal to expect result
-        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
-        // ----------------check preprocessed Merged result equal to origin
-        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
-    }
-
-
-    /*
-  test 2
-  main repo: cardreader.cpp ---A
-  ut7-- B
-  hampassandberg -- C
-
-   */
-    @Test
-    public void test3() {
-        inputFileInit(3);
-        String testNum = "3/";
-        config.add("SDSUPPORT");
-        System.out.println("------test 3-----------");
-        // ----------------check Merged result equal to expect result
-        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_3way));
-        // ----------------check preprocessed Merged result equal to origin
-        assertTrue(testInitial.testEveryConfig(config, fileName, output_3way, path, testNum));
     }
 }

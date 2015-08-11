@@ -339,7 +339,6 @@ void planner_reverse_pass
 //Make a local copy of block_buffer_tail, because the interrupt can alter it
     CRITICAL_SECTION_START;
     unsigned char tail = block_buffer_tail;
-    CRITICAL_SECTION_END
     if
     (((block_buffer_head-tail + BLOCK_BUFFER_SIZE) & (BLOCK_BUFFER_SIZE - 1)) > 3) {
         block_index = (block_buffer_head - 3) & (BLOCK_BUFFER_SIZE - 1);

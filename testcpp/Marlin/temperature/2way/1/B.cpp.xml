@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/temperature/2way/1/A.cpp"><comment type="block">/*
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/temperature/2way/1/B.cpp"><comment type="block">/*
   temperature.c - temperature control
   Part of Marlin
   
@@ -189,12 +189,6 @@
   <decl_stmt><decl><type><name>float</name></type> <name>Kp</name></decl>, <decl><type ref="prev"/><name>Ki</name></decl>, <decl><type ref="prev"/><name>Kd</name></decl>;</decl_stmt>
   <decl_stmt><decl><type><name>float</name></type> <name>max</name> <init>= <expr>0</expr></init>, <name>min</name> <init>= <expr>10000</expr></init></decl>;</decl_stmt>
 
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_0_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_0_AUTO_FAN_PIN</name> &gt; -1) || \
-    (<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_1_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_1_AUTO_FAN_PIN</name> &gt; -1) || \
-    (<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_2_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_2_AUTO_FAN_PIN</name> &gt; -1)</expr></cpp:if>
-  <decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>extruder_autofan_last_check</name> <init>= <expr><call><name>millis</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-
   <if>if <condition>(<expr>(<name>extruder</name> &gt;= <name>EXTRUDERS</name>)
   <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>TEMP_BED_PIN</name> &lt;= -1)</expr></cpp:if>
        ||(<name>extruder</name> &lt; 0)</expr>
@@ -231,16 +225,6 @@
 
       <expr_stmt><expr><name>max</name>=<call><name>max</name><argument_list>(<argument><expr><name>max</name></expr></argument>,<argument><expr><name>input</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
       <expr_stmt><expr><name>min</name>=<call><name>min</name><argument_list>(<argument><expr><name>min</name></expr></argument>,<argument><expr><name>input</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-
-      <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_0_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_0_AUTO_FAN_PIN</name> &gt; -1) || \
-          (<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_1_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_1_AUTO_FAN_PIN</name> &gt; -1) || \
-          (<call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_2_AUTO_FAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>EXTRUDER_2_AUTO_FAN_PIN</name> &gt; -1)</expr></cpp:if>
-      <if>if<condition>(<expr><call><name>millis</name><argument_list>()</argument_list></call> - <name>extruder_autofan_last_check</name> &gt; 2500</expr>)</condition><then> <block>{
-        <expr_stmt><expr><call><name>checkExtruderAutoFans</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-        <expr_stmt><expr><name>extruder_autofan_last_check</name> = <call><name>millis</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-      }</block></then></if>
-      <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-
       <if>if<condition>(<expr><name>heating</name> == true &amp;&amp; <name>input</name> &gt; <name>temp</name></expr>)</condition><then> <block>{
         <if>if<condition>(<expr><call><name>millis</name><argument_list>()</argument_list></call> - <name>t2</name> &gt; 5000</expr>)</condition><then> <block>{ 
           <expr_stmt><expr><name>heating</name>=false</expr>;</expr_stmt>
@@ -442,7 +426,7 @@
   <for>for(<init><decl><type><name>int</name></type> <name>e</name> <init>= <expr>0</expr></init></decl>;</init> <condition><expr><name>e</name> &lt; <name>EXTRUDERS</name></expr>;</condition> <incr><expr><name>e</name>++</expr></incr>) 
   <block>{
 
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name></expr></argument>)</argument_list></call> &amp;&amp; <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> &gt; 0</expr></cpp:if>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&amp;&amp;</name> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&gt;</name> <name>0</name></cpp:ifdef>
     <expr_stmt><expr><call><name>thermal_runaway_protection</name><argument_list>(<argument><expr>&amp;<name><name>thermal_runaway_state_machine</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>, <argument><expr>&amp;<name><name>thermal_runaway_timer</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>current_temperature</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>, <argument><expr><name><name>target_temperature</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>, <argument><expr><name>e</name></expr></argument>, <argument><expr><name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name></expr></argument>, <argument><expr><name>THERMAL_RUNAWAY_PROTECTION_HYSTERESIS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
   <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
@@ -472,14 +456,7 @@
           <comment type="line">//K1 defined in Configuration.h in the PID settings</comment>
           <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>K2</name></cpp:macro> <cpp:value>(1.0-K1)</cpp:value></cpp:define>
           <expr_stmt><expr><name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name> = (<name>Kd</name> * (<name>pid_input</name> - <name><name>temp_dState</name><index>[<expr><name>e</name></expr>]</index></name>))*<name>K2</name> + (<name>K1</name> * <name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name>)</expr>;</expr_stmt>
-          <expr_stmt><expr><name>pid_output</name> = <name><name>pTerm</name><index>[<expr><name>e</name></expr>]</index></name> + <name><name>iTerm</name><index>[<expr><name>e</name></expr>]</index></name> - <name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name></expr>;</expr_stmt>
-          <if>if <condition>(<expr><name>pid_output</name> &gt; <name>PID_MAX</name></expr>)</condition><then> <block>{
-            <if>if <condition>(<expr><name><name>pid_error</name><index>[<expr><name>e</name></expr>]</index></name> &gt; 0</expr> )</condition><then>  <expr_stmt><expr><name><name>temp_iState</name><index>[<expr><name>e</name></expr>]</index></name> -= <name><name>pid_error</name><index>[<expr><name>e</name></expr>]</index></name></expr>;</expr_stmt></then></if> <comment type="line">// conditional un-integration</comment>
-            <expr_stmt><expr><name>pid_output</name>=<name>PID_MAX</name></expr>;</expr_stmt>
-          }</block></then> <else>else <if>if <condition>(<expr><name>pid_output</name> &lt; 0</expr>)</condition><then><block>{
-            <if>if <condition>(<expr><name><name>pid_error</name><index>[<expr><name>e</name></expr>]</index></name> &lt; 0</expr> )</condition><then>  <expr_stmt><expr><name><name>temp_iState</name><index>[<expr><name>e</name></expr>]</index></name> -= <name><name>pid_error</name><index>[<expr><name>e</name></expr>]</index></name></expr>;</expr_stmt></then></if> <comment type="line">// conditional un-integration</comment>
-            <expr_stmt><expr><name>pid_output</name>=0</expr>;</expr_stmt>
-          }</block></then></if></else></if>
+          <expr_stmt><expr><name>pid_output</name> = <call><name>constrain</name><argument_list>(<argument><expr><name><name>pTerm</name><index>[<expr><name>e</name></expr>]</index></name> + <name><name>iTerm</name><index>[<expr><name>e</name></expr>]</index></name> - <name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><name>PID_MAX</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
         }</block></else></if></else></if>
         <expr_stmt><expr><name><name>temp_dState</name><index>[<expr><name>e</name></expr>]</index></name> = <name>pid_input</name></expr>;</expr_stmt>
     <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> 
@@ -498,7 +475,7 @@
     <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr>" iTerm "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
     <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name><name>iTerm</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
     <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr>" dTerm "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr><name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr><name><name>dTerm</name><index>[<expr><name>e</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>  
     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//PID_DEBUG</comment>
   <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> <comment type="block">/* PID off */</comment>
     <expr_stmt><expr><name>pid_output</name> = 0</expr>;</expr_stmt>
@@ -563,7 +540,7 @@
 
   <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>TEMP_SENSOR_BED</name> != 0</expr></cpp:if>
   
-    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>THERMAL_RUNAWAY_PROTECTION_BED_PERIOD</name> <name>&amp;&amp;</name> <name>THERMAL_RUNAWAY_PROTECTION_BED_PERIOD</name> <name>&gt;</name> <name>0</name></cpp:ifdef>
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&amp;&amp;</name> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&gt;</name> <name>0</name></cpp:ifdef>
       <expr_stmt><expr><call><name>thermal_runaway_protection</name><argument_list>(<argument><expr>&amp;<name>thermal_runaway_bed_state_machine</name></expr></argument>, <argument><expr>&amp;<name>thermal_runaway_bed_timer</name></expr></argument>, <argument><expr><name>current_temperature_bed</name></expr></argument>, <argument><expr><name>target_temperature_bed</name></expr></argument>, <argument><expr>9</expr></argument>, <argument><expr><name>THERMAL_RUNAWAY_PROTECTION_BED_PERIOD</name></expr></argument>, <argument><expr><name>THERMAL_RUNAWAY_PROTECTION_BED_HYSTERESIS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
@@ -582,14 +559,7 @@
 		  <expr_stmt><expr><name>dTerm_bed</name>= (<name>bedKd</name> * (<name>pid_input</name> - <name>temp_dState_bed</name>))*<name>K2</name> + (<name>K1</name> * <name>dTerm_bed</name>)</expr>;</expr_stmt>
 		  <expr_stmt><expr><name>temp_dState_bed</name> = <name>pid_input</name></expr>;</expr_stmt>
 
-		  <expr_stmt><expr><name>pid_output</name> = <name>pTerm_bed</name> + <name>iTerm_bed</name> - <name>dTerm_bed</name></expr>;</expr_stmt>
-          	  <if>if <condition>(<expr><name>pid_output</name> &gt; <name>MAX_BED_POWER</name></expr>)</condition><then> <block>{
-            	    <if>if <condition>(<expr><name>pid_error_bed</name> &gt; 0</expr> )</condition><then>  <expr_stmt><expr><name>temp_iState_bed</name> -= <name>pid_error_bed</name></expr>;</expr_stmt></then></if> <comment type="line">// conditional un-integration</comment>
-                    <expr_stmt><expr><name>pid_output</name>=<name>MAX_BED_POWER</name></expr>;</expr_stmt>
-          	  }</block></then> <else>else <if>if <condition>(<expr><name>pid_output</name> &lt; 0</expr>)</condition><then><block>{
-            	    <if>if <condition>(<expr><name>pid_error_bed</name> &lt; 0</expr> )</condition><then>  <expr_stmt><expr><name>temp_iState_bed</name> -= <name>pid_error_bed</name></expr>;</expr_stmt></then></if> <comment type="line">// conditional un-integration</comment>
-                    <expr_stmt><expr><name>pid_output</name>=0</expr>;</expr_stmt>
-                  }</block></then></if></else></if>
+		  <expr_stmt><expr><name>pid_output</name> = <call><name>constrain</name><argument_list>(<argument><expr><name>pTerm_bed</name> + <name>iTerm_bed</name> - <name>dTerm_bed</name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><name>MAX_BED_POWER</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 
     <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> 
       <expr_stmt><expr><name>pid_output</name> = <call><name>constrain</name><argument_list>(<argument><expr><name>target_temperature_bed</name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><name>MAX_BED_POWER</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
@@ -668,51 +638,51 @@
 <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>PGM_RD_W</name><parameter_list>(<param><type><name>x</name></type></param>)</parameter_list></cpp:macro>   <cpp:value>(short)pgm_read_word(&amp;x)</cpp:value></cpp:define>
 <comment type="line">// Derived from RepRap FiveD extruder::getTemperature()</comment>
 <comment type="line">// For hot end temperature measurement.</comment>
-<function><type><specifier>static</specifier> <name>float</name></type> <name>analog2temp</name><parameter_list>(<param><decl><type><name>int</name></type> <name>raw</name></decl></param>, <param><decl><type><name>uint8_t</name></type> <name>e</name></decl></param>)</parameter_list> <block>{
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>TEMP_SENSOR_1_AS_REDUNDANT</name></cpp:ifdef>
-  <if>if<condition>(<expr><name>e</name> &gt; <name>EXTRUDERS</name></expr>)</condition><then>
-<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
-  <if>if<condition>(<expr><name>e</name> &gt;= <name>EXTRUDERS</name></expr>)</condition><then>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-  <block>{
-      <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_ERROR</name><argument_list>(<argument><expr>(<name>int</name>)<name>e</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr>" - Invalid extruder number !"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-      <expr_stmt><expr><call><name>kill</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
-      <return>return <expr>0.0</expr>;</return>
-  }</block></then></if></then></if> 
-  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HEATER_0_USES_MAX6675</name></cpp:ifdef>
-    <if>if <condition>(<expr><name>e</name> == 0</expr>)</condition><then>
-    <block>{
-      <return>return <expr>0.25 * <name>raw</name></expr>;</return>
-    }</block></then></if>
-  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<comment type="line">// static float analog2temp(int raw, uint8_t e) {</comment>
+<comment type="line">// #ifdef TEMP_SENSOR_1_AS_REDUNDANT</comment>
+<comment type="line">//   if(e &gt; EXTRUDERS)</comment>
+<comment type="line">// #else</comment>
+<comment type="line">//   if(e &gt;= EXTRUDERS)</comment>
+<comment type="line">// #endif</comment>
+<comment type="line">//   {</comment>
+<comment type="line">//       SERIAL_ERROR_START;</comment>
+<comment type="line">//       SERIAL_ERROR((int)e);</comment>
+<comment type="line">//       SERIAL_ERRORLNPGM(" - Invalid extruder number !");</comment>
+<comment type="line">//       kill();</comment>
+<comment type="line">//       return 0.0;</comment>
+<comment type="line">//   } </comment>
+<comment type="line">//   #ifdef HEATER_0_USES_MAX6675</comment>
+<comment type="line">//     if (e == 0)</comment>
+<comment type="line">//     {</comment>
+<comment type="line">//       return 0.25 * raw;</comment>
+<comment type="line">//     }</comment>
+<comment type="line">//   #endif</comment>
 
-  <if>if<condition>(<expr><name><name>heater_ttbl_map</name><index>[<expr><name>e</name></expr>]</index></name> != <name>NULL</name></expr>)</condition><then>
-  <block>{
-    <decl_stmt><decl><type><name>float</name></type> <name>celsius</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
-    <decl_stmt><decl><type><name>uint8_t</name></type> <name>i</name></decl>;</decl_stmt>
-    <expr_stmt><expr><call><name>short</name> <argument_list>(<argument><expr>*<name>tt</name></expr></argument>)</argument_list></call><index>[]</index><index>[<expr>2</expr>]</index> = (<call><name>short</name> <argument_list>(<argument><expr>*</expr></argument>)</argument_list></call><index>[]</index><index>[<expr>2</expr>]</index>)(<name><name>heater_ttbl_map</name><index>[<expr><name>e</name></expr>]</index></name>)</expr>;</expr_stmt>
+<comment type="line">//   if(heater_ttbl_map[e] != NULL)</comment>
+<comment type="line">//   {</comment>
+<comment type="line">//     float celsius = 0;</comment>
+<comment type="line">//     uint8_t i;</comment>
+<comment type="line">//     short (*tt)[][2] = (short (*)[][2])(heater_ttbl_map[e]);</comment>
 
-    <for>for (<init><expr><name>i</name>=1</expr>;</init> <condition><expr><name>i</name>&lt;<name><name>heater_ttbllen_map</name><index>[<expr><name>e</name></expr>]</index></name></expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
-    <block>{
-      <if>if <condition>(<expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call> &gt; <name>raw</name></expr>)</condition><then>
-      <block>{
-        <expr_stmt><expr><name>celsius</name> = <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call> + 
-          (<name>raw</name> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call>) * 
-          <call>(<name>float</name>)<argument_list>(<argument><expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> /
-          <call>(<name>float</name>)<argument_list>(<argument><expr><call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name></expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call> - <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>0</expr>]</index></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-        <break>break;</break>
-      }</block></then></if>
-    }</block></for>
+<comment type="line">//     for (i=1; i&lt;heater_ttbllen_map[e]; i++)</comment>
+<comment type="line">//     {</comment>
+<comment type="line">//       if (PGM_RD_W((*tt)[i][0]) &gt; raw)</comment>
+<comment type="line">//       {</comment>
+<comment type="line">//         celsius = PGM_RD_W((*tt)[i-1][1]) + </comment>
+<comment type="line">//           (raw - PGM_RD_W((*tt)[i-1][0])) * </comment>
+<comment type="line">//           (float)(PGM_RD_W((*tt)[i][1]) - PGM_RD_W((*tt)[i-1][1])) /</comment>
+<comment type="line">//           (float)(PGM_RD_W((*tt)[i][0]) - PGM_RD_W((*tt)[i-1][0]));</comment>
+<comment type="line">//         break;</comment>
+<comment type="line">//       }</comment>
+<comment type="line">//     }</comment>
 
-    <comment type="line">// Overflow: Set to last value in the table</comment>
-    <if>if <condition>(<expr><name>i</name> == <name><name>heater_ttbllen_map</name><index>[<expr><name>e</name></expr>]</index></name></expr>)</condition><then> <expr_stmt><expr><name>celsius</name> = <call><name>PGM_RD_W</name><argument_list>(<argument><expr>(*<name>tt</name>)<index>[<expr><name>i</name>-1</expr>]</index><index>[<expr>1</expr>]</index></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+<comment type="line">//     // Overflow: Set to last value in the table</comment>
+<comment type="line">//     if (i == heater_ttbllen_map[e]) celsius = PGM_RD_W((*tt)[i-1][1]);</comment>
 
-    <return>return <expr><name>celsius</name></expr>;</return>
-  }</block></then></if>
-  <return>return <expr>((<name>raw</name> * ((5.0 * 100.0) / 1024.0) / <name>OVERSAMPLENR</name>) * <name>TEMP_SENSOR_AD595_GAIN</name>) + <name>TEMP_SENSOR_AD595_OFFSET</name></expr>;</return>
-}</block></function>
+<comment type="line">//     return celsius;</comment>
+<comment type="line">//   }</comment>
+<comment type="line">//   return ((raw * ((5.0 * 100.0) / 1024.0) / OVERSAMPLENR) * TEMP_SENSOR_AD595_GAIN) + TEMP_SENSOR_AD595_OFFSET;</comment>
+<comment type="line">// }</comment>
 
 <comment type="line">// Derived from RepRap FiveD extruder::getTemperature()</comment>
 <comment type="line">// For bed temperature measurement.</comment>
@@ -756,7 +726,7 @@
     <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>TEMP_SENSOR_1_AS_REDUNDANT</name></cpp:ifdef>
       <expr_stmt><expr><name>redundant_temperature</name> = <call><name>analog2temp</name><argument_list>(<argument><expr><name>redundant_temperature_raw</name></expr></argument>, <argument><expr>1</expr></argument>)</argument_list></call></expr>;</expr_stmt>
     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>FILAMENT_SENSOR</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>FILWIDTH_PIN</name> &gt; -1)</expr></cpp:if>    <comment type="line">//check if a sensor is supported </comment>
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FILAMENT_SENSOR</name>  <name>&amp;&amp;</name> <name>(</name><name>FILWIDTH_PIN</name> <name>&gt;</name> <name>-</name><name>1</name><name>)</name></cpp:ifdef>    <comment type="line">//check if a sensor is supported </comment>
       <expr_stmt><expr><name>filament_width_meas</name> = <call><name>analog2widthFil</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>  
     <comment type="line">//Reset the watchdog after we know we have a temperature measurement.</comment>
@@ -799,7 +769,7 @@
 
 <function><type><name>void</name></type> <name>tp_init</name><parameter_list>()</parameter_list>
 <block>{
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>MB</name><argument_list>(<argument><expr><name>RUMBA</name></expr></argument>)</argument_list></call> &amp;&amp; ((<name>TEMP_SENSOR_0</name>==-1)||(<name>TEMP_SENSOR_1</name>==-1)||(<name>TEMP_SENSOR_2</name>==-1)||(<name>TEMP_SENSOR_BED</name>==-1))</expr></cpp:if>
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>MOTHERBOARD</name> == 80) &amp;&amp; ((<name>TEMP_SENSOR_0</name>==-1)||(<name>TEMP_SENSOR_1</name>==-1)||(<name>TEMP_SENSOR_2</name>==-1)||(<name>TEMP_SENSOR_BED</name>==-1))</expr></cpp:if>
   <comment type="line">//disable RUMBA JTAG in case the thermocouple extension is plugged on top of JTAG connector</comment>
   <expr_stmt><expr><name>MCUCR</name>=(1&lt;&lt;<name>JTD</name>)</expr>;</expr_stmt> 
   <expr_stmt><expr><name>MCUCR</name>=(1&lt;&lt;<name>JTD</name>)</expr>;</expr_stmt>
@@ -1014,7 +984,7 @@
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> 
 }</block></function>
 
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<call><name>defined</name> <argument_list>(<argument><expr><name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name></expr></argument>)</argument_list></call> &amp;&amp; <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> &gt; 0) || (<call><name>defined</name> <argument_list>(<argument><expr><name>THERMAL_RUNAWAY_PROTECTION_BED_PERIOD</name></expr></argument>)</argument_list></call> &amp;&amp; <name>THERMAL_RUNAWAY_PROTECTION_BED_PERIOD</name> &gt; 0)</expr></cpp:if>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&amp;&amp;</name> <name>THERMAL_RUNAWAY_PROTECTION_PERIOD</name> <name>&gt;</name> <name>0</name></cpp:ifdef>
 <function><type><name>void</name></type> <name>thermal_runaway_protection</name><parameter_list>(<param><decl><type><name>int</name> *</type><name>state</name></decl></param>, <param><decl><type><name>unsigned</name> <name>long</name> *</type><name>timer</name></decl></param>, <param><decl><type><name>float</name></type> <name>temperature</name></decl></param>, <param><decl><type><name>float</name></type> <name>target_temperature</name></decl></param>, <param><decl><type><name>int</name></type> <name>heater_id</name></decl></param>, <param><decl><type><name>int</name></type> <name>period_seconds</name></decl></param>, <param><decl><type><name>int</name></type> <name>hysteresis_degc</name></decl></param>)</parameter_list>
 <block>{
 <comment type="block">/*
@@ -1050,7 +1020,7 @@
       <block>{
         <expr_stmt><expr>*<name>timer</name> = <call><name>millis</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
       }</block></then> 
-      <else>else <if>if <condition>( <expr>(<call><name>millis</name><argument_list>()</argument_list></call> - *<name>timer</name>) &gt; ((<name>unsigned</name> <name>long</name>) <name>period_seconds</name>) * 1000</expr>)</condition><then>
+      <else>else <if>if <condition>( <expr>(<call><name>millis</name><argument_list>()</argument_list></call> - *<name>timer</name>) &gt; <name>period_seconds</name>*1000</expr>)</condition><then>
       <block>{
         <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
         <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr>"Thermal Runaway, system stopped! Heater_ID: "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
@@ -1209,7 +1179,6 @@
 }</block></function>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
-
 <comment type="line">//---------------------undeciplined annotation--------------------------------</comment>
 <comment type="line">// // Timer 0 is shared with millies</comment>
 <comment type="line">// ISR(TIMER0_COMPB_vect)</comment>
@@ -1223,310 +1192,67 @@
 <comment type="line">//   static unsigned char temp_state = 10;</comment>
 <comment type="line">//   static unsigned char pwm_count = (1 &lt;&lt; SOFT_PWM_SCALE);</comment>
 <comment type="line">//   static unsigned char soft_pwm_0;</comment>
-<comment type="line">// #ifdef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   static unsigned char slow_pwm_count = 0;</comment>
-<comment type="line">//   static unsigned char state_heater_0 = 0;</comment>
-<comment type="line">//   static unsigned char state_timer_heater_0 = 0;</comment>
-<comment type="line">// #endif </comment>
-<comment type="line">// #if (EXTRUDERS &gt; 1) || defined(HEATERS_PARALLEL)</comment>
+<comment type="line">//   #if (EXTRUDERS &gt; 1) || defined(HEATERS_PARALLEL)</comment>
 <comment type="line">//   static unsigned char soft_pwm_1;</comment>
-<comment type="line">// #ifdef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   static unsigned char state_heater_1 = 0;</comment>
-<comment type="line">//   static unsigned char state_timer_heater_1 = 0;</comment>
-<comment type="line">// #endif </comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
+<comment type="line">//   #endif</comment>
+<comment type="line">//   #if EXTRUDERS &gt; 2</comment>
 <comment type="line">//   static unsigned char soft_pwm_2;</comment>
-<comment type="line">// #ifdef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   static unsigned char state_heater_2 = 0;</comment>
-<comment type="line">//   static unsigned char state_timer_heater_2 = 0;</comment>
-<comment type="line">// #endif </comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if HEATER_BED_PIN &gt; -1</comment>
+<comment type="line">//   #endif</comment>
+<comment type="line">//   #if HEATER_BED_PIN &gt; -1</comment>
 <comment type="line">//   static unsigned char soft_pwm_b;</comment>
-<comment type="line">// #ifdef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   static unsigned char state_heater_b = 0;</comment>
-<comment type="line">//   static unsigned char state_timer_heater_b = 0;</comment>
-<comment type="line">// #endif </comment>
-<comment type="line">// #endif</comment>
+<comment type="line">//   #endif</comment>
   
-<comment type="line">// #if defined(FILWIDTH_PIN) &amp;&amp;(FILWIDTH_PIN &gt; -1)</comment>
-<comment type="line">//   static unsigned long raw_filwidth_value = 0;  //added for filament width sensor</comment>
-<comment type="line">// #endif</comment>
+<comment type="line">//   #if defined(FILWIDTH_PIN) &amp;&amp;(FILWIDTH_PIN &gt; -1)</comment>
+<comment type="line">//    static unsigned long raw_filwidth_value = 0;  //added for filament width sensor</comment>
+<comment type="line">//   #endif</comment>
   
-<comment type="line">// #ifndef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   /*</comment>
-<comment type="line">//    * standard PWM modulation</comment>
-<comment type="line">//    */</comment>
 <comment type="line">//   if(pwm_count == 0){</comment>
 <comment type="line">//     soft_pwm_0 = soft_pwm[0];</comment>
 <comment type="line">//     if(soft_pwm_0 &gt; 0) { </comment>
 <comment type="line">//       WRITE(HEATER_0_PIN,1);</comment>
-<comment type="line">// #ifdef HEATERS_PARALLEL</comment>
+<comment type="line">//       #ifdef HEATERS_PARALLEL</comment>
 <comment type="line">//       WRITE(HEATER_1_PIN,1);</comment>
-<comment type="line">// #endif</comment>
+<comment type="line">//       #endif</comment>
 <comment type="line">//     } else WRITE(HEATER_0_PIN,0);</comment>
-    
-<comment type="line">// #if EXTRUDERS &gt; 1</comment>
+	
+<comment type="line">//     #if EXTRUDERS &gt; 1</comment>
 <comment type="line">//     soft_pwm_1 = soft_pwm[1];</comment>
 <comment type="line">//     if(soft_pwm_1 &gt; 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
+<comment type="line">//     #endif</comment>
+<comment type="line">//     #if EXTRUDERS &gt; 2</comment>
 <comment type="line">//     soft_pwm_2 = soft_pwm[2];</comment>
 <comment type="line">//     if(soft_pwm_2 &gt; 0) WRITE(HEATER_2_PIN,1); else WRITE(HEATER_2_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
+<comment type="line">//     #endif</comment>
+<comment type="line">//     #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
 <comment type="line">//     soft_pwm_b = soft_pwm_bed;</comment>
 <comment type="line">//     if(soft_pwm_b &gt; 0) WRITE(HEATER_BED_PIN,1); else WRITE(HEATER_BED_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #ifdef FAN_SOFT_PWM</comment>
+<comment type="line">//     #endif</comment>
+<comment type="line">//     #ifdef FAN_SOFT_PWM</comment>
 <comment type="line">//     soft_pwm_fan = fanSpeedSoftPwm / 2;</comment>
 <comment type="line">//     if(soft_pwm_fan &gt; 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);</comment>
-<comment type="line">// #endif</comment>
+<comment type="line">//     #endif</comment>
 <comment type="line">//   }</comment>
 <comment type="line">//   if(soft_pwm_0 &lt; pwm_count) { </comment>
-<comment type="line">//     WRITE(HEATER_0_PIN,0);</comment>
-<comment type="line">// #ifdef HEATERS_PARALLEL</comment>
-<comment type="line">//     WRITE(HEATER_1_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//   }</comment>
-<comment type="line">// #if EXTRUDERS &gt; 1</comment>
+<comment type="line">//       WRITE(HEATER_0_PIN,0);</comment>
+<comment type="line">//       #ifdef HEATERS_PARALLEL</comment>
+<comment type="line">//       WRITE(HEATER_1_PIN,0);</comment>
+<comment type="line">//       #endif</comment>
+<comment type="line">//     }</comment>
+<comment type="line">//   #if EXTRUDERS &gt; 1</comment>
 <comment type="line">//   if(soft_pwm_1 &lt; pwm_count) WRITE(HEATER_1_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
+<comment type="line">//   #endif</comment>
+<comment type="line">//   #if EXTRUDERS &gt; 2</comment>
 <comment type="line">//   if(soft_pwm_2 &lt; pwm_count) WRITE(HEATER_2_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
+<comment type="line">//   #endif</comment>
+<comment type="line">//   #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
 <comment type="line">//   if(soft_pwm_b &lt; pwm_count) WRITE(HEATER_BED_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">// #ifdef FAN_SOFT_PWM</comment>
+<comment type="line">//   #endif</comment>
+<comment type="line">//   #ifdef FAN_SOFT_PWM</comment>
 <comment type="line">//   if(soft_pwm_fan &lt; pwm_count) WRITE(FAN_PIN,0);</comment>
-<comment type="line">// #endif</comment>
+<comment type="line">//   #endif</comment>
   
 <comment type="line">//   pwm_count += (1 &lt;&lt; SOFT_PWM_SCALE);</comment>
 <comment type="line">//   pwm_count &amp;= 0x7f;</comment>
-  
-<comment type="line">// #else //ifndef SLOW_PWM_HEATERS</comment>
-<comment type="line">//   /*</comment>
-<comment type="line">//    * SLOW PWM HEATERS</comment>
-<comment type="line">//    *</comment>
-<comment type="line">//    * for heaters drived by relay</comment>
-<comment type="line">//    */</comment>
-<comment type="line">// #ifndef MIN_STATE_TIME</comment>
-<comment type="line">// #define MIN_STATE_TIME 16 // MIN_STATE_TIME * 65.5 = time in milliseconds</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//   if (slow_pwm_count == 0) {</comment>
-<comment type="line">//     // EXTRUDER 0 </comment>
-<comment type="line">//     soft_pwm_0 = soft_pwm[0];</comment>
-<comment type="line">//     if (soft_pwm_0 &gt; 0) {</comment>
-<comment type="line">//       // turn ON heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_0 == 0) { </comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_0 == 0) {</comment>
-<comment type="line">// 	  state_timer_heater_0 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_0 = 1;</comment>
-<comment type="line">// 	WRITE(HEATER_0_PIN, 1);</comment>
-<comment type="line">// #ifdef HEATERS_PARALLEL</comment>
-<comment type="line">// 	WRITE(HEATER_1_PIN, 1);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     } else {</comment>
-<comment type="line">//       // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_0 == 0) {</comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_0 == 1) {</comment>
-<comment type="line">// 	  state_timer_heater_0 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_0 = 0;</comment>
-<comment type="line">// 	WRITE(HEATER_0_PIN, 0);</comment>
-<comment type="line">// #ifdef HEATERS_PARALLEL</comment>
-<comment type="line">// 	WRITE(HEATER_1_PIN, 0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     }</comment>
-    
-<comment type="line">// #if EXTRUDERS &gt; 1</comment>
-<comment type="line">//     // EXTRUDER 1</comment>
-<comment type="line">//     soft_pwm_1 = soft_pwm[1];</comment>
-<comment type="line">//     if (soft_pwm_1 &gt; 0) {</comment>
-<comment type="line">//       // turn ON heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_1 == 0) { </comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_1 == 0) {</comment>
-<comment type="line">// 	  state_timer_heater_1 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_1 = 1;</comment>
-<comment type="line">// 	WRITE(HEATER_1_PIN, 1);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     } else {</comment>
-<comment type="line">//       // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_1 == 0) {</comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_1 == 1) {</comment>
-<comment type="line">// 	  state_timer_heater_1 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_1 = 0;</comment>
-<comment type="line">// 	WRITE(HEATER_1_PIN, 0);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     }</comment>
-<comment type="line">// #endif</comment>
-    
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
-<comment type="line">//     // EXTRUDER 2</comment>
-<comment type="line">//     soft_pwm_2 = soft_pwm[2];</comment>
-<comment type="line">//     if (soft_pwm_2 &gt; 0) {</comment>
-<comment type="line">//       // turn ON heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_2 == 0) { </comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_2 == 0) {</comment>
-<comment type="line">// 	  state_timer_heater_2 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_2 = 1;</comment>
-<comment type="line">// 	WRITE(HEATER_2_PIN, 1);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     } else {</comment>
-<comment type="line">//       // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_2 == 0) {</comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_2 == 1) {</comment>
-<comment type="line">// 	  state_timer_heater_2 = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_2 = 0;</comment>
-<comment type="line">// 	WRITE(HEATER_2_PIN, 0);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     }</comment>
-<comment type="line">// #endif</comment>
-    
-<comment type="line">// #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
-<comment type="line">//     // BED</comment>
-<comment type="line">//     soft_pwm_b = soft_pwm_bed;</comment>
-<comment type="line">//     if (soft_pwm_b &gt; 0) {</comment>
-<comment type="line">//       // turn ON heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_b == 0) { </comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_b == 0) {</comment>
-<comment type="line">// 	  state_timer_heater_b = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_b = 1;</comment>
-<comment type="line">// 	WRITE(HEATER_BED_PIN, 1);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     } else {</comment>
-<comment type="line">//       // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//       if (state_timer_heater_b == 0) {</comment>
-<comment type="line">// 	// if change state set timer </comment>
-<comment type="line">// 	if (state_heater_b == 1) {</comment>
-<comment type="line">// 	  state_timer_heater_b = MIN_STATE_TIME;</comment>
-<comment type="line">// 	}</comment>
-<comment type="line">// 	state_heater_b = 0;</comment>
-<comment type="line">// 	WRITE(HEATER_BED_PIN, 0);</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//     }</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//   } // if (slow_pwm_count == 0)</comment>
-  
-<comment type="line">//   // EXTRUDER 0 </comment>
-<comment type="line">//   if (soft_pwm_0 &lt; slow_pwm_count) {</comment>
-<comment type="line">//     // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//     if (state_timer_heater_0 == 0) { </comment>
-<comment type="line">//       // if change state set timer </comment>
-<comment type="line">//       if (state_heater_0 == 1) {</comment>
-<comment type="line">// 	state_timer_heater_0 = MIN_STATE_TIME;</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//       state_heater_0 = 0;</comment>
-<comment type="line">//       WRITE(HEATER_0_PIN, 0);</comment>
-<comment type="line">// #ifdef HEATERS_PARALLEL</comment>
-<comment type="line">//       WRITE(HEATER_1_PIN, 0);</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//     }</comment>
-<comment type="line">//   }</comment>
-    
-<comment type="line">// #if EXTRUDERS &gt; 1</comment>
-<comment type="line">//   // EXTRUDER 1 </comment>
-<comment type="line">//   if (soft_pwm_1 &lt; slow_pwm_count) {</comment>
-<comment type="line">//     // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//     if (state_timer_heater_1 == 0) { </comment>
-<comment type="line">//       // if change state set timer </comment>
-<comment type="line">//       if (state_heater_1 == 1) {</comment>
-<comment type="line">// 	state_timer_heater_1 = MIN_STATE_TIME;</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//       state_heater_1 = 0;</comment>
-<comment type="line">//       WRITE(HEATER_1_PIN, 0);</comment>
-<comment type="line">//     }</comment>
-<comment type="line">//   }</comment>
-<comment type="line">// #endif</comment>
-  
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
-<comment type="line">//   // EXTRUDER 2</comment>
-<comment type="line">//   if (soft_pwm_2 &lt; slow_pwm_count) {</comment>
-<comment type="line">//     // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//     if (state_timer_heater_2 == 0) { </comment>
-<comment type="line">//       // if change state set timer </comment>
-<comment type="line">//       if (state_heater_2 == 1) {</comment>
-<comment type="line">// 	state_timer_heater_2 = MIN_STATE_TIME;</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//       state_heater_2 = 0;</comment>
-<comment type="line">//       WRITE(HEATER_2_PIN, 0);</comment>
-<comment type="line">//     }</comment>
-<comment type="line">//   }</comment>
-<comment type="line">// #endif</comment>
-  
-<comment type="line">// #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
-<comment type="line">//   // BED</comment>
-<comment type="line">//   if (soft_pwm_b &lt; slow_pwm_count) {</comment>
-<comment type="line">//     // turn OFF heather only if the minimum time is up </comment>
-<comment type="line">//     if (state_timer_heater_b == 0) { </comment>
-<comment type="line">//       // if change state set timer </comment>
-<comment type="line">//       if (state_heater_b == 1) {</comment>
-<comment type="line">// 	state_timer_heater_b = MIN_STATE_TIME;</comment>
-<comment type="line">//       }</comment>
-<comment type="line">//       state_heater_b = 0;</comment>
-<comment type="line">//       WRITE(HEATER_BED_PIN, 0);</comment>
-<comment type="line">//     }</comment>
-<comment type="line">//   }</comment>
-<comment type="line">// #endif</comment>
-  
-<comment type="line">// #ifdef FAN_SOFT_PWM</comment>
-<comment type="line">//   if (pwm_count == 0){</comment>
-<comment type="line">//     soft_pwm_fan = fanSpeedSoftPwm / 2;</comment>
-<comment type="line">//     if (soft_pwm_fan &gt; 0) WRITE(FAN_PIN,1); else WRITE(FAN_PIN,0);</comment>
-<comment type="line">//   }</comment>
-<comment type="line">//   if (soft_pwm_fan &lt; pwm_count) WRITE(FAN_PIN,0);</comment>
-<comment type="line">// #endif</comment>
-  
-<comment type="line">//   pwm_count += (1 &lt;&lt; SOFT_PWM_SCALE);</comment>
-<comment type="line">//   pwm_count &amp;= 0x7f;</comment>
-  
-<comment type="line">//   // increment slow_pwm_count only every 64 pwm_count circa 65.5ms</comment>
-<comment type="line">//   if ((pwm_count % 64) == 0) {</comment>
-<comment type="line">//     slow_pwm_count++;</comment>
-<comment type="line">//     slow_pwm_count &amp;= 0x7f;</comment>
-    
-<comment type="line">//     // Extruder 0</comment>
-<comment type="line">//     if (state_timer_heater_0 &gt; 0) {</comment>
-<comment type="line">//       state_timer_heater_0--;</comment>
-<comment type="line">//     } </comment>
-  
-<comment type="line">// #if EXTRUDERS &gt; 1</comment>
-<comment type="line">//     // Extruder 1</comment>
-<comment type="line">//     if (state_timer_heater_1 &gt; 0) </comment>
-<comment type="line">//       state_timer_heater_1--;</comment>
-<comment type="line">// #endif</comment>
-    
-<comment type="line">// #if EXTRUDERS &gt; 2</comment>
-<comment type="line">//     // Extruder 2</comment>
-<comment type="line">//     if (state_timer_heater_2 &gt; 0) </comment>
-<comment type="line">//       state_timer_heater_2--;</comment>
-<comment type="line">// #endif</comment>
-    
-<comment type="line">// #if defined(HEATER_BED_PIN) &amp;&amp; HEATER_BED_PIN &gt; -1</comment>
-<comment type="line">//     // Bed   </comment>
-<comment type="line">//     if (state_timer_heater_b &gt; 0) </comment>
-<comment type="line">//       state_timer_heater_b--;</comment>
-<comment type="line">// #endif</comment>
-<comment type="line">//   } //if ((pwm_count % 64) == 0) {</comment>
-  
-<comment type="line">// #endif //ifndef SLOW_PWM_HEATERS</comment>
   
 <comment type="line">//   switch(temp_state) {</comment>
 <comment type="line">//     case 0: // Prepare TEMP_0</comment>
