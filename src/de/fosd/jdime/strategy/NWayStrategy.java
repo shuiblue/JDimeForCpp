@@ -192,6 +192,12 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     assert (target.exists());
                     target.write(context.getStdIn());
                 }
+                try {
+                    Process process = new ProcessBuilder("astyle/bin/astyle",
+                            "--style=google","--indent-preproc-block","-xe",context.getOutputFile().getPath()).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
@@ -214,33 +220,39 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 
     public String presicePrettyprint(String res) {
+       while(res.contains("#endif+-+-+-")){
+           res = res.replace("#endif+-+-+-","#endif");
+
+       }
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
-        String[] tmp = res.split("#endif\n");
-        for (String s : tmp) {
+        String[] elements = res.split("\\+-\\+-\\+-\n");
+        String s = "";
+        for (String e : elements) {
+            if (e.length() > 0) {
+            String[] tmp = e.split("\n");
             if (conditionStack.size() > 0) {
                 String lastCon = conditionStack.lastElement();
-                if (lastCon.equals(s.split("\n")[0])) {
+                if (lastCon.equals(tmp[0])) {
                     String x = "";
-                    for (int i = 1; i < s.split("\n").length; i++) {
-                        x += s.split("\n")[i];
+                    for (int i = 1; i < tmp.length - 1; i++) {
+                        x += tmp[i]+"\n";
                     }
-                    s = x;
-
+                    newResult += x;
+                    continue;
                 } else {
                     conditionStack.pop();
-                    conditionStack.push(s.split("\n")[0]);
-                    newResult += "#endif\n";
+                    conditionStack.push(tmp[0]);
+                    newResult +="#endif\n";
                 }
-            } else {
-                conditionStack.push(s.split("\n")[0]);
             }
-            newResult +=s;
-            if (!s.endsWith("\n")) {
-                newResult += "\n";
+            conditionStack.push(tmp[0]);
+            newResult += tmp[0] + "\n";
+            for (int i = 1; i < tmp.length - 1; i++) {
+                newResult += tmp[i] + "\n";
             }
-        }
-        return newResult+"#endif";
+        }}
+        return newResult+"#endif\n";
     }
 
     @Override

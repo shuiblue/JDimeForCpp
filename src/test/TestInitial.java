@@ -99,8 +99,8 @@ public class TestInitial {
         String result = "";
         String expect_result = "";
         try {
-            result = readResult(prefix + outputPath + suffix);
-            expect_result = readResult(prefix + expectResultPath + suffix);
+            result = readResult(prefix + outputPath + suffix).replace("\n","").replace(" ","").replace("\t","");
+            expect_result = readResult(prefix + expectResultPath + suffix).replace("\n","").replace(" ","").replace("\t","");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,6 +113,11 @@ public class TestInitial {
      * @return
      */
     public boolean checkMerge_wrapper(HashSet<String> fileName, String testNum, String output) {
+//        try {
+//            Thread.sleep(100);                 //1000 milliseconds is one second.
+//        } catch (InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
         ArrayList<String> inputFilePaths = new ArrayList<>();
 
         for (String s : fileName) {
@@ -141,7 +146,7 @@ public class TestInitial {
         String r1 = compileCpp(config, merged, filePath);
         String r2 = compileCpp(config, origin, filePath);
         try {
-            return readResult(r1).equals(readResult(r2));
+            return readResult(r1).replace("\n", "").replace(" ","").replace("\t", "").equals(readResult(r2).replace("\n","").replace(" ","").replace("\t", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -222,6 +227,12 @@ public class TestInitial {
      * @return
      */
     public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileNameSet, String output, String path, String testNum) {
+//        try {
+//            Thread.sleep(100);                 //1000 milliseconds is one second.
+//        } catch (InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
+
         Set<Set<String>> configuration = getAllConfigurations(config);
         Set<String> feature = new HashSet<>();
         for (String file : fileNameSet) {

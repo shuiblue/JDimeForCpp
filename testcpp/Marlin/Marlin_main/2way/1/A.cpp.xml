@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/Marlin_main/2way/1/A.cpp"><comment type="block">/* -*- c++ -*- */</comment>
+
+<comment type="block">/*
+    Reprap firmware based on Sprinter and grbl.
+ Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */</comment>
+
+<comment type="block">/*
+ This firmware is a mashup between Sprinter and grbl.
+  (https://github.com/kliment/Sprinter)
+  (https://github.com/simen/grbl/tree)
+
+ It has preliminary support for Matthew Roberts advance algorithm
+    http://reprap.org/pipermail/reprap-dev/2011-May/003323.html
+ */</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ENABLE_AUTO_BED_LEVELING</name></cpp:ifdef>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"vector_3.h"</cpp:file></cpp:include>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>AUTO_BED_LEVELING_GRID</name></cpp:ifdef>
+    <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"qr_solve.h"</cpp:file></cpp:include>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// ENABLE_AUTO_BED_LEVELING</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ultralcd.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"planner.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"stepper.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"temperature.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"motion_control.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"cardreader.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"watchdog.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ConfigurationStore.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"language.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"pins_arduino.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"math.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BLINKM</name></cpp:ifdef>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"BlinkM.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Wire.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>NUM_SERVOS</name> &gt; 0</expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Servo.h"</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>DIGIPOTSS_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>DIGIPOTSS_PIN</name> &gt; -1</expr></cpp:if>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;SPI.h&gt;</cpp:file></cpp:include>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>VERSION_STRING</name></cpp:macro>  <cpp:value>"1.0.2"</cpp:value></cpp:define>
+
+<comment type="line">// look here for descriptions of G-codes: http://linuxcnc.org/handbook/gcode/g-code.html</comment>
+<comment type="line">// http://objects.reprap.org/wiki/Mendel_User_Manual:_RepRapGCodes</comment>
+
+<comment type="line">//Implemented Codes</comment>
+<comment type="line">//-------------------</comment>
+<comment type="line">// G0  -&gt; G1</comment>
+<comment type="line">// G1  - Coordinated Movement X Y Z E</comment>
+<comment type="line">// G2  - CW ARC</comment>
+<comment type="line">// G3  - CCW ARC</comment>
+<comment type="line">// G4  - Dwell S&lt;seconds&gt; or P&lt;milliseconds&gt;</comment>
+<comment type="line">// G10 - retract filament according to settings of M207</comment>
+<comment type="line">// G11 - retract recover filament according to settings of M208</comment>
+<comment type="line">// G28 - Home all Axis</comment>
+<comment type="line">// G29 - Detailed Z-Probe, probes the bed at 3 or more points.  Will fail if you haven't homed yet.</comment>
+<comment type="line">// G30 - Single Z Probe, probes bed at current XY location.</comment>
+<comment type="line">// G31 - Dock sled (Z_PROBE_SLED only)</comment>
+<comment type="line">// G32 - Undock sled (Z_PROBE_SLED only)</comment>
+<comment type="line">// G90 - Use Absolute Coordinates</comment>
+<comment type="line">// G91 - Use Relative Coordinates</comment>
+<comment type="line">// G92 - Set current position to coordinates given</comment>
+
+<comment type="line">// M Codes</comment>
+<comment type="line">// M0   - Unconditional stop - Wait for user to press a button on the LCD (Only if ULTRA_LCD is enabled)</comment>
+<comment type="line">// M1   - Same as M0</comment>
+<comment type="line">// M17  - Enable/Power all stepper motors</comment>
+<comment type="line">// M18  - Disable all stepper motors; same as M84</comment>
+<comment type="line">// M20  - List SD card</comment>
+<comment type="line">// M21  - Init SD card</comment>
+<comment type="line">// M22  - Release SD card</comment>
+<comment type="line">// M23  - Select SD file (M23 filename.g)</comment>
+<comment type="line">// M24  - Start/resume SD print</comment>
+<comment type="line">// M25  - Pause SD print</comment>
+<comment type="line">// M26  - Set SD position in bytes (M26 S12345)</comment>
+<comment type="line">// M27  - Report SD print status</comment>
+<comment type="line">// M28  - Start SD write (M28 filename.g)</comment>
+<comment type="line">// M29  - Stop SD write</comment>
+<comment type="line">// M30  - Delete file from SD (M30 filename.g)</comment>
+<comment type="line">// M31  - Output time since last M109 or SD card start to serial</comment>
+<comment type="line">// M32  - Select file and start SD print (Can be used _while_ printing from SD card files):</comment>
+<comment type="line">//        syntax "M32 /path/filename#", or "M32 S&lt;startpos bytes&gt; !filename#"</comment>
+<comment type="line">//        Call gcode file : "M32 P !filename#" and return to caller file after finishing (similar to #include).</comment>
+<comment type="line">//        The '#' is necessary when calling from within sd files, as it stops buffer prereading</comment>
+<comment type="line">// M42  - Change pin status via gcode Use M42 Px Sy to set pin x to value y, when omitting Px the onboard led will be used.</comment>
+<comment type="line">// M80  - Turn on Power Supply</comment>
+<comment type="line">// M81  - Turn off Power Supply</comment>
+<comment type="line">// M82  - Set E codes absolute (default)</comment>
+<comment type="line">// M83  - Set E codes relative while in Absolute Coordinates (G90) mode</comment>
+<comment type="line">// M84  - Disable steppers until next move,</comment>
+<comment type="line">//        or use S&lt;seconds&gt; to specify an inactivity timeout, after which the steppers will be disabled.  S0 to disable the timeout.</comment>
+<comment type="line">// M85  - Set inactivity shutdown timer with parameter S&lt;seconds&gt;. To disable set zero (default)</comment>
+<comment type="line">// M92  - Set axis_steps_per_unit - same syntax as G92</comment>
+<comment type="line">// M104 - Set extruder target temp</comment>
+<comment type="line">// M105 - Read current temp</comment>
+<comment type="line">// M106 - Fan on</comment>
+<comment type="line">// M107 - Fan off</comment>
+<comment type="line">// M109 - Sxxx Wait for extruder current temp to reach target temp. Waits only when heating</comment>
+<comment type="line">//        Rxxx Wait for extruder current temp to reach target temp. Waits when heating and cooling</comment>
+<comment type="line">//        IF AUTOTEMP is enabled, S&lt;mintemp&gt; B&lt;maxtemp&gt; F&lt;factor&gt;. Exit autotemp by any M109 without F</comment>
+<comment type="line">// M112 - Emergency stop</comment>
+<comment type="line">// M114 - Output current position to serial port</comment>
+<comment type="line">// M115 - Capabilities string</comment>
+<comment type="line">// M117 - display message</comment>
+<comment type="line">// M119 - Output Endstop status to serial port</comment>
+<comment type="line">// M126 - Solenoid Air Valve Open (BariCUDA support by jmil)</comment>
+<comment type="line">// M127 - Solenoid Air Valve Closed (BariCUDA vent to atmospheric pressure by jmil)</comment>
+<comment type="line">// M128 - EtoP Open (BariCUDA EtoP = electricity to air pressure transducer by jmil)</comment>
+<comment type="line">// M129 - EtoP Closed (BariCUDA EtoP = electricity to air pressure transducer by jmil)</comment>
+<comment type="line">// M140 - Set bed target temp</comment>
+<comment type="line">// M150 - Set BlinkM Color Output R: Red&lt;0-255&gt; U(!): Green&lt;0-255&gt; B: Blue&lt;0-255&gt; over i2c, G for green does not work.</comment>
+<comment type="line">// M190 - Sxxx Wait for bed current temp to reach target temp. Waits only when heating</comment>
+<comment type="line">//        Rxxx Wait for bed current temp to reach target temp. Waits when heating and cooling</comment>
+<comment type="line">// M200 D&lt;millimeters&gt;- set filament diameter and set E axis units to cubic millimeters (use S0 to set back to millimeters).</comment>
+<comment type="line">// M201 - Set max acceleration in units/s^2 for print moves (M201 X1000 Y1000)</comment>
+<comment type="line">// M202 - Set max acceleration in units/s^2 for travel moves (M202 X1000 Y1000) Unused in Marlin!!</comment>
+<comment type="line">// M203 - Set maximum feedrate that your machine can sustain (M203 X200 Y200 Z300 E10000) in mm/sec</comment>
+<comment type="line">// M204 - Set default acceleration: S normal moves T filament only moves (M204 S3000 T7000) in mm/sec^2  also sets minimum segment time in ms (B20000) to prevent buffer under-runs and M20 minimum feedrate</comment>
+<comment type="line">// M205 -  advanced settings:  minimum travel speed S=while printing T=travel only,  B=minimum segment time X= maximum xy jerk, Z=maximum Z jerk, E=maximum E jerk</comment>
+<comment type="line">// M206 - set additional homing offset</comment>
+<comment type="line">// M207 - set retract length S[positive mm] F[feedrate mm/min] Z[additional zlift/hop], stays in mm regardless of M200 setting</comment>
+<comment type="line">// M208 - set recover=unretract length S[positive mm surplus to the M207 S*] F[feedrate mm/sec]</comment>
+<comment type="line">// M209 - S&lt;1=true/0=false&gt; enable automatic retract detect if the slicer did not support G10/11: every normal extrude-only move will be classified as retract depending on the direction.</comment>
+<comment type="line">// M218 - set hotend offset (in mm): T&lt;extruder_number&gt; X&lt;offset_on_X&gt; Y&lt;offset_on_Y&gt;</comment>
+<comment type="line">// M220 S&lt;factor in percent&gt;- set speed factor override percentage</comment>
+<comment type="line">// M221 S&lt;factor in percent&gt;- set extrude factor override percentage</comment>
+<comment type="line">// M226 P&lt;pin number&gt; S&lt;pin state&gt;- Wait until the specified pin reaches the state required</comment>
+<comment type="line">// M240 - Trigger a camera to take a photograph</comment>
+<comment type="line">// M250 - Set LCD contrast C&lt;contrast value&gt; (value 0..63)</comment>
+<comment type="line">// M280 - set servo position absolute. P: servo index, S: angle or microseconds</comment>
+<comment type="line">// M300 - Play beep sound S&lt;frequency Hz&gt; P&lt;duration ms&gt;</comment>
+<comment type="line">// M301 - Set PID parameters P I and D</comment>
+<comment type="line">// M302 - Allow cold extrudes, or set the minimum extrude S&lt;temperature&gt;.</comment>
+<comment type="line">// M303 - PID relay autotune S&lt;temperature&gt; sets the target temperature. (default target temperature = 150C)</comment>
+<comment type="line">// M304 - Set bed PID parameters P I and D</comment>
+<comment type="line">// M400 - Finish all moves</comment>
+<comment type="line">// M401 - Lower z-probe if present</comment>
+<comment type="line">// M402 - Raise z-probe if present</comment>
+<comment type="line">// M404 - N&lt;dia in mm&gt; Enter the nominal filament width (3mm, 1.75mm ) or will display nominal filament width without parameters</comment>
+<comment type="line">// M405 - Turn on Filament Sensor extrusion control.  Optional D&lt;delay in cm&gt; to set delay in centimeters between sensor and extruder </comment>
+<comment type="line">// M406 - Turn off Filament Sensor extrusion control </comment>
+<comment type="line">// M407 - Displays measured filament diameter </comment>
+<comment type="line">// M500 - stores parameters in EEPROM</comment>
+<comment type="line">// M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).</comment>
+<comment type="line">// M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.</comment>
+<comment type="line">// M503 - print the current settings (from memory not from EEPROM)</comment>
+<comment type="line">// M540 - Use S[0|1] to enable or disable the stop SD card print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)</comment>
+<comment type="line">// M600 - Pause for filament change X[pos] Y[pos] Z[relative lift] E[initial retract] L[later retract distance for removal]</comment>
+<comment type="line">// M665 - set delta configurations</comment>
+<comment type="line">// M666 - set delta endstop adjustment</comment>
+<comment type="line">// M605 - Set dual x-carriage movement mode: S&lt;mode&gt; [ X&lt;duplication x-offset&gt; R&lt;duplication temp offset&gt; ]</comment>
+<comment type="line">// M907 - Set digital trimpot motor current using axis codes.</comment>
+<comment type="line">// M908 - Control digital trimpot directly.</comment>
+<comment type="line">// M350 - Set microstepping mode.</comment>
+<comment type="line">// M351 - Toggle MS1 MS2 pins directly.</comment>
+
+<comment type="line">// ************ SCARA Specific - This can change to suit future G-code regulations</comment>
+<comment type="line">// M360 - SCARA calibration: Move to cal-position ThetaA (0 deg calibration)</comment>
+<comment type="line">// M361 - SCARA calibration: Move to cal-position ThetaB (90 deg calibration - steps per degree)</comment>
+<comment type="line">// M362 - SCARA calibration: Move to cal-position PsiA (0 deg calibration)</comment>
+<comment type="line">// M363 - SCARA calibration: Move to cal-position PsiB (90 deg calibration - steps per degree)</comment>
+<comment type="line">// M364 - SCARA calibration: Move to cal-position PSIC (90 deg to Theta calibration position)</comment>
+<comment type="line">// M365 - SCARA calibration: Scaling factor, X, Y, Z axis</comment>
+<comment type="line">//************* SCARA End ***************</comment>
+
+<comment type="line">// M928 - Start SD logging (M928 filename.g) - ended by M29</comment>
+<comment type="line">// M999 - Restart after being stopped by error</comment>
+
+<comment type="line">//Stepper Movement Variables</comment>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================imported variables============================</comment>
+<comment type="line">//===========================================================================</comment>
+
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================public variables=============================</comment>
+<comment type="line">//===========================================================================</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+<decl_stmt><decl><type><name>CardReader</name></type> <name>card</name></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<decl_stmt><decl><type><name>float</name></type> <name><name>homing_feedrate</name><index>[]</index></name> <init>= <expr><name>HOMING_FEEDRATE</name></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>bool</name></type> <name><name>axis_relative_modes</name><index>[]</index></name> <init>= <expr><name>AXIS_RELATIVE_MODES</name></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>int</name></type> <name>feedmultiply</name><init>=<expr>100</expr></init></decl>;</decl_stmt> <comment type="line">//100-&gt;1 200-&gt;2</comment>
+<decl_stmt><decl><type><name>int</name></type> <name>saved_feedmultiply</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>int</name></type> <name>extrudemultiply</name><init>=<expr>100</expr></init></decl>;</decl_stmt> <comment type="line">//100-&gt;1 200-&gt;2</comment>
+<decl_stmt><decl><type><name>int</name></type> <name><name>extruder_multiply</name><index>[<expr><name>EXTRUDERS</name></expr>]</index></name> <init>= <expr><block>{<expr>100</expr>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    , <expr>100</expr>
+    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+      , <expr>100</expr>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>bool</name></type> <name>volumetric_enabled</name> <init>= <expr>false</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>filament_size</name><index>[<expr><name>EXTRUDERS</name></expr>]</index></name> <init>= <expr><block>{ <expr><name>DEFAULT_NOMINAL_FILAMENT_DIA</name></expr>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+      , <expr><name>DEFAULT_NOMINAL_FILAMENT_DIA</name></expr>
+    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+       , <expr><name>DEFAULT_NOMINAL_FILAMENT_DIA</name></expr>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>volumetric_multiplier</name><index>[<expr><name>EXTRUDERS</name></expr>]</index></name> <init>= <expr><block>{<expr>1.0</expr>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    , <expr>1.0</expr>
+    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+      , <expr>1.0</expr>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>current_position</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name> <init>= <expr><block>{ <expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr> }</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>add_homing</name><index>[<expr>3</expr>]</index></name><init>=<expr><block>{<expr>0</expr>,<expr>0</expr>,<expr>0</expr>}</block></expr></init></decl>;</decl_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+<decl_stmt><decl><type><name>float</name></type> <name><name>endstop_adj</name><index>[<expr>3</expr>]</index></name><init>=<expr><block>{<expr>0</expr>,<expr>0</expr>,<expr>0</expr>}</block></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<decl_stmt><decl><type><name>float</name></type> <name><name>min_pos</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{ <expr><name>X_MIN_POS</name></expr>, <expr><name>Y_MIN_POS</name></expr>, <expr><name>Z_MIN_POS</name></expr> }</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name><name>max_pos</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{ <expr><name>X_MAX_POS</name></expr>, <expr><name>Y_MAX_POS</name></expr>, <expr><name>Z_MAX_POS</name></expr> }</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>bool</name></type> <name><name>axis_known_position</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>false</expr>, <expr>false</expr>, <expr>false</expr>}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>float</name></type> <name>zprobe_zoffset</name></decl>;</decl_stmt>
+
+<comment type="line">// Extruder offset</comment>
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DUAL_X_CARRIAGE</name></cpp:ifndef>
+  <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>NUM_EXTRUDER_OFFSETS</name></cpp:macro> <cpp:value>2</cpp:value></cpp:define> <comment type="line">// only in XY plane</comment>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>NUM_EXTRUDER_OFFSETS</name></cpp:macro> <cpp:value>3</cpp:value></cpp:define> <comment type="line">// supports offsets in XYZ plane</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<decl_stmt><decl><type><name>float</name></type> <name><name>extruder_offset</name><index>[<expr><name>NUM_EXTRUDER_OFFSETS</name></expr>]</index><index>[<expr><name>EXTRUDERS</name></expr>]</index></name> <init>= <expr><block>{
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_OFFSET_X</name></expr></argument>)</argument_list></call> &amp;&amp; <call><name>defined</name><argument_list>(<argument><expr><name>EXTRUDER_OFFSET_Y</name></expr></argument>)</argument_list></call></expr></cpp:if>
+  <expr><name>EXTRUDER_OFFSET_X</name></expr>, <expr><name>EXTRUDER_OFFSET_Y</name></expr>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<decl_stmt><decl><type><name>uint8_t</name></type> <name>active_extruder</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>int</name></type> <name>fanSpeed</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SERVO_ENDSTOPS</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>int</name></type> <name><name>servo_endstops</name><index>[]</index></name> <init>= <expr><name>SERVO_ENDSTOPS</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>int</name></type> <name><name>servo_endstop_angles</name><index>[]</index></name> <init>= <expr><name>SERVO_ENDSTOP_ANGLES</name></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BARICUDA</name></cpp:ifdef>
+<decl_stmt><decl><type><name>int</name></type> <name>ValvePressure</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>int</name></type> <name>EtoPPressure</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FWRETRACT</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>bool</name></type> <name>autoretract_enabled</name><init>=<expr>false</expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>bool</name></type> <name><name>retracted</name><index>[<expr><name>EXTRUDERS</name></expr>]</index></name><init>=<expr><block>{<expr>false</expr>
+    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    , <expr>false</expr>
+     <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+      , <expr>false</expr>
+     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  }</block></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>bool</name></type> <name><name>retracted_swap</name><index>[<expr><name>EXTRUDERS</name></expr>]</index></name><init>=<expr><block>{<expr>false</expr>
+    <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 1</expr></cpp:if>
+    , <expr>false</expr>
+     <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> &gt; 2</expr></cpp:if>
+      , <expr>false</expr>
+     <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  }</block></expr></init></decl>;</decl_stmt>
+
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_length</name> <init>= <expr><name>RETRACT_LENGTH</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_length_swap</name> <init>= <expr><name>RETRACT_LENGTH_SWAP</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_feedrate</name> <init>= <expr><name>RETRACT_FEEDRATE</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_zlift</name> <init>= <expr><name>RETRACT_ZLIFT</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_recover_length</name> <init>= <expr><name>RETRACT_RECOVER_LENGTH</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_recover_length_swap</name> <init>= <expr><name>RETRACT_RECOVER_LENGTH_SWAP</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>retract_recover_feedrate</name> <init>= <expr><name>RETRACT_RECOVER_FEEDRATE</name></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>ULTIPANEL</name></cpp:ifdef>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>PS_DEFAULT_OFF</name></cpp:ifdef>
+    <decl_stmt><decl><type><name>bool</name></type> <name>powersupply</name> <init>= <expr>false</expr></init></decl>;</decl_stmt>
+  <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+    <decl_stmt><decl><type><name>bool</name></type> <name>powersupply</name> <init>= <expr>true</expr></init></decl>;</decl_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DELTA</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>float</name></type> <name><name>delta</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>}</block></expr></init></decl>;</decl_stmt>
+  <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>SIN_60</name></cpp:macro> <cpp:value>0.8660254037844386</cpp:value></cpp:define>
+  <cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>COS_60</name></cpp:macro> <cpp:value>0.5</cpp:value></cpp:define>
+  <comment type="line">// these are the default values, can be overriden with M665</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_radius</name><init>= <expr><name>DELTA_RADIUS</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower1_x</name><init>= <expr>-<name>SIN_60</name>*<name>delta_radius</name></expr></init></decl>;</decl_stmt> <comment type="line">// front left tower</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower1_y</name><init>= <expr>-<name>COS_60</name>*<name>delta_radius</name></expr></init></decl>;</decl_stmt>    
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower2_x</name><init>=  <expr><name>SIN_60</name>*<name>delta_radius</name></expr></init></decl>;</decl_stmt> <comment type="line">// front right tower</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower2_y</name><init>= <expr>-<name>COS_60</name>*<name>delta_radius</name></expr></init></decl>;</decl_stmt>    
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower3_x</name><init>= <expr>0.0</expr></init></decl>;</decl_stmt>                  <comment type="line">// back middle tower</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_tower3_y</name><init>= <expr><name>delta_radius</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_diagonal_rod</name><init>= <expr><name>DELTA_DIAGONAL_ROD</name></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_diagonal_rod_2</name><init>= <expr><call><name>sq</name><argument_list>(<argument><expr><name>delta_diagonal_rod</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><name>float</name></type> <name>delta_segments_per_second</name><init>= <expr><name>DELTA_SEGMENTS_PER_SECOND</name></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>                              <comment type="line">// Build size scaling</comment>
+<decl_stmt><decl><type><name>float</name></type> <name><name>axis_scaling</name><index>[<expr>3</expr>]</index></name><init>=<expr><block>{<expr>1</expr>,<expr>1</expr>,<expr>1</expr>}</block></expr></init></decl>;</decl_stmt>  <comment type="line">// Build size scaling, default to 1</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>        
+
+<decl_stmt><decl><type><name>bool</name></type> <name>cancel_heatup</name> <init>= <expr>false</expr></init></decl> ;</decl_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>FILAMENT_SENSOR</name></cpp:ifdef>
+  <comment type="line">//Variables for Filament Sensor input </comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>filament_width_nominal</name><init>=<expr><name>DEFAULT_NOMINAL_FILAMENT_DIA</name></expr></init></decl>;</decl_stmt>  <comment type="line">//Set nominal filament width, can be changed with M404 </comment>
+  <decl_stmt><decl><type><name>bool</name></type> <name>filament_sensor</name><init>=<expr>false</expr></init></decl>;</decl_stmt>  <comment type="line">//M405 turns on filament_sensor control, M406 turns it off </comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>filament_width_meas</name><init>=<expr><name>DEFAULT_MEASURED_FILAMENT_DIA</name></expr></init></decl>;</decl_stmt> <comment type="line">//Stores the measured filament diameter </comment>
+  <decl_stmt><decl><type><name>signed</name> <name>char</name></type> <name><name>measurement_delay</name><index>[<expr><name>MAX_MEASUREMENT_DELAY</name>+1</expr>]</index></name></decl>;</decl_stmt>  <comment type="line">//ring buffer to delay measurement  store extruder factor after subtracting 100 </comment>
+  <decl_stmt><decl><type><name>int</name></type> <name>delay_index1</name><init>=<expr>0</expr></init></decl>;</decl_stmt>  <comment type="line">//index into ring buffer</comment>
+  <decl_stmt><decl><type><name>int</name></type> <name>delay_index2</name><init>=<expr>-1</expr></init></decl>;</decl_stmt>  <comment type="line">//index into ring buffer - set to -1 on startup to indicate ring buffer needs to be initialized</comment>
+  <decl_stmt><decl><type><name>float</name></type> <name>delay_dist</name><init>=<expr>0</expr></init></decl>;</decl_stmt> <comment type="line">//delay distance counter  </comment>
+  <decl_stmt><decl><type><name>int</name></type> <name>meas_delay_cm</name> <init>= <expr><name>MEASUREMENT_DELAY_CM</name></expr></init></decl>;</decl_stmt>  <comment type="line">//distance delay setting</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<decl_stmt><decl><type><specifier>const</specifier> <name>char</name> <name>errormagic</name><index>[]</index></type> <name>PROGMEM</name> <init>= <expr>"Error:"</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>const</specifier> <name>char</name> <name>echomagic</name><index>[]</index></type> <name>PROGMEM</name> <init>= <expr>"echo:"</expr></init></decl>;</decl_stmt>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================Private Variables=============================</comment>
+<comment type="line">//===========================================================================</comment>
+<decl_stmt><decl><type><specifier>const</specifier> <name>char</name></type> <name><name>axis_codes</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name> <init>= <expr><block>{<expr>'X'</expr>, <expr>'Y'</expr>, <expr>'Z'</expr>, <expr>'E'</expr>}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name><name>destination</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name> <init>= <expr><block>{  <expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>}</block></expr></init></decl>;</decl_stmt>
+
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>DELTA</name></cpp:ifndef>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name><name>delta</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>}</block></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name><name>offset</name><index>[<expr>3</expr>]</index></name> <init>= <expr><block>{<expr>0.0</expr>, <expr>0.0</expr>, <expr>0.0</expr>}</block></expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>bool</name></type> <name>home_all_axis</name> <init>= <expr>true</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>feedrate</name> <init>= <expr>1500.0</expr></init>, <name>next_feedrate</name></decl>, <decl><type ref="prev"/><name>saved_feedrate</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>long</name></type> <name>gcode_N</name></decl>, <decl><type ref="prev"/><name>gcode_LastN</name></decl>, <decl><type ref="prev"/><name>Stopped_gcode_LastN</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+
+<decl_stmt><decl><type><specifier>static</specifier> <name>bool</name></type> <name>relative_mode</name> <init>= <expr>false</expr></init></decl>;</decl_stmt>  <comment type="line">//Determines Absolute or Relative Coordinates</comment>
+
+<decl_stmt><decl><type><specifier>static</specifier> <name>char</name></type> <name><name>cmdbuffer</name><index>[<expr><name>BUFSIZE</name></expr>]</index><index>[<expr><name>MAX_CMD_SIZE</name></expr>]</index></name></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>bool</name></type> <name><name>fromsd</name><index>[<expr><name>BUFSIZE</name></expr>]</index></name></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>int</name></type> <name>bufindr</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>int</name></type> <name>bufindw</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>int</name></type> <name>buflen</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<comment type="line">//static int i = 0;</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>char</name></type> <name>serial_char</name></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>int</name></type> <name>serial_count</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>boolean</name></type> <name>comment_mode</name> <init>= <expr>false</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>char</name> *</type><name>strchr_pointer</name></decl>;</decl_stmt> <comment type="line">// just a pointer to find chars in the command string like X, Y, Z, E, etc</comment>
+
+<decl_stmt><decl><type><specifier>const</specifier> <name>int</name></type> <name><name>sensitive_pins</name><index>[]</index></name> <init>= <expr><name>SENSITIVE_PINS</name></expr></init></decl>;</decl_stmt> <comment type="line">// Sensitive pin list for M42</comment>
+
+<comment type="line">//static float tt = 0;</comment>
+<comment type="line">//static float bt = 0;</comment>
+
+<comment type="line">//Inactivity shutdown variables</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>long</name></type> <name>previous_millis_cmd</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>long</name></type> <name>max_inactive_time</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>long</name></type> <name>stepper_inactive_time</name> <init>= <expr><name>DEFAULT_STEPPER_DEACTIVE_TIME</name>*1000l</expr></init></decl>;</decl_stmt>
+
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>starttime</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>stoptime</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+
+<decl_stmt><decl><type><specifier>static</specifier> <name>uint8_t</name></type> <name>tmp_extruder</name></decl>;</decl_stmt>
+
+
+<decl_stmt><decl><type><name>bool</name></type> <name>Stopped</name><init>=<expr>false</expr></init></decl>;</decl_stmt>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>NUM_SERVOS</name> &gt; 0</expr></cpp:if>
+  <decl_stmt><decl><type><name>Servo</name></type> <name><name>servos</name><index>[<expr><name>NUM_SERVOS</name></expr>]</index></name></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<decl_stmt><decl><type><name>bool</name></type> <name>CooldownNoWait</name> <init>= <expr>true</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>bool</name></type> <name>target_direction</name></decl>;</decl_stmt>
+
+<comment type="line">//Insert variables if CHDK is defined</comment>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>CHDK</name></cpp:ifdef>
+<decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>chdkHigh</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+<decl_stmt><decl><type><name>boolean</name></type> <name>chdkActive</name> <init>= <expr>false</expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<comment type="line">//===========================================================================</comment>
+<comment type="line">//=============================Routines======================================</comment>
+<comment type="line">//===========================================================================</comment>
+
+<function_decl><type><name>void</name></type> <name>get_arc_coordinates</name><parameter_list>()</parameter_list>;</function_decl>
+<function_decl><type><name>bool</name></type> <name>setTargetedHotend</name><parameter_list>(<param><decl><type><name>int</name></type> <name>code</name></decl></param>)</parameter_list>;</function_decl>
+
+<function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>float</name></type> <name>v</name></decl></param>)</parameter_list>
+    <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
+<function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>double</name></type> <name>v</name></decl></param>)</parameter_list>
+    <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
+<function><type><name>void</name></type> <name>serial_echopair_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>s_P</name></decl></param>, <param><decl><type><name>unsigned</name> <name>long</name></type> <name>v</name></decl></param>)</parameter_list>
+    <block>{ <expr_stmt><expr><call><name>serialprintPGM</name><argument_list>(<argument><expr><name>s_P</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name>v</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> }</block></function>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+  <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"SdFatUtil.h"</cpp:file></cpp:include>
+  <function><type><name>int</name></type> <name>freeMemory</name><parameter_list>()</parameter_list> <block>{ <return>return <expr><call><name><name>SdFatUtil</name>::<name>FreeRam</name></name><argument_list>()</argument_list></call></expr>;</return> }</block></function>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <extern>extern "C" <block>{
+    <decl_stmt><decl><type><specifier>extern</specifier> <name>unsigned</name> <name>int</name></type> <name>__bss_end</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><specifier>extern</specifier> <name>unsigned</name> <name>int</name></type> <name>__heap_start</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><specifier>extern</specifier> <name>void</name> *</type><name>__brkval</name></decl>;</decl_stmt>
+
+    <function><type><name>int</name></type> <name>freeMemory</name><parameter_list>()</parameter_list> <block>{
+      <decl_stmt><decl><type><name>int</name></type> <name>free_memory</name></decl>;</decl_stmt>
+
+      <if>if <condition>(<expr>(<name>int</name>)<name>__brkval</name> == 0</expr>)</condition><then>
+        <expr_stmt><expr><name>free_memory</name> = ((<name>int</name>)&amp;<name>free_memory</name>) - ((<name>int</name>)&amp;<name>__bss_end</name>)</expr>;</expr_stmt></then>
+      <else>else
+        <expr_stmt><expr><name>free_memory</name> = ((<name>int</name>)&amp;<name>free_memory</name>) - ((<name>int</name>)<name>__brkval</name>)</expr>;</expr_stmt></else></if>
+
+      <return>return <expr><name>free_memory</name></expr>;</return>
+    }</block></function>
+  }</block></extern>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line" format="doxygen">//!SDSUPPORT</comment>
+
+<comment type="line">//adds an command to the main command buffer</comment>
+<comment type="line">//thats really done in a non-safe way.</comment>
+<comment type="line">//needs overworking someday</comment>
+<function><type><name>void</name></type> <name>enquecommand</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>cmd</name></decl></param>)</parameter_list>
+<block>{
+  <if>if<condition>(<expr><name>buflen</name> &lt; <name>BUFSIZE</name></expr>)</condition><then>
+  <block>{
+    <comment type="line">//this is dangerous if a mixing of serial and this happens</comment>
+    <expr_stmt><expr><call><name>strcpy</name><argument_list>(<argument><expr>&amp;(<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr>0</expr>]</index></name>)</expr></argument>,<argument><expr><name>cmd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_Enqueing</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"\""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>bufindw</name>= (<name>bufindw</name> + 1)%<name>BUFSIZE</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>buflen</name> += 1</expr>;</expr_stmt>
+  }</block></then></if>
+}</block></function>
+
+<function><type><name>void</name></type> <name>enquecommand_P</name><parameter_list>(<param><decl><type><specifier>const</specifier> <name>char</name> *</type><name>cmd</name></decl></param>)</parameter_list>
+<block>{
+  <if>if<condition>(<expr><name>buflen</name> &lt; <name>BUFSIZE</name></expr>)</condition><then>
+  <block>{
+    <comment type="line">//this is dangerous if a mixing of serial and this happens</comment>
+    <expr_stmt><expr><call><name>strcpy_P</name><argument_list>(<argument><expr>&amp;(<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr>0</expr>]</index></name>)</expr></argument>,<argument><expr><name>cmd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_Enqueing</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr>"\""</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name>bufindw</name>= (<name>bufindw</name> + 1)%<name>BUFSIZE</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>buflen</name> += 1</expr>;</expr_stmt>
+  }</block></then></if>
+}</block></function>
+
+<function><type><name>void</name></type> <name>setup_killpin</name><parameter_list>()</parameter_list>
+<block>{
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>KILL_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>KILL_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_INPUT</name><argument_list>(<argument><expr><name>KILL_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>KILL_PIN</name></expr></argument>,<argument><expr><name>HIGH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+<comment type="line">// Set home pin</comment>
+<function><type><name>void</name></type> <name>setup_homepin</name><parameter_list>(<param><decl><type><name>void</name></type></decl></param>)</parameter_list>
+<block>{
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>HOME_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>HOME_PIN</name> &gt; -1</expr></cpp:if>
+   <expr_stmt><expr><call><name>SET_INPUT</name><argument_list>(<argument><expr><name>HOME_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+   <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>HOME_PIN</name></expr></argument>,<argument><expr><name>HIGH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+
+<function><type><name>void</name></type> <name>setup_photpin</name><parameter_list>()</parameter_list>
+<block>{
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>PHOTOGRAPH_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>PHOTOGRAPH_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_OUTPUT</name><argument_list>(<argument><expr><name>PHOTOGRAPH_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>PHOTOGRAPH_PIN</name></expr></argument>, <argument><expr><name>LOW</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+<function><type><name>void</name></type> <name>setup_powerhold</name><parameter_list>()</parameter_list>
+<block>{
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>SUICIDE_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_OUTPUT</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>, <argument><expr><name>HIGH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>PS_ON_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>PS_ON_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_OUTPUT</name><argument_list>(<argument><expr><name>PS_ON_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>PS_DEFAULT_OFF</name></expr></argument>)</argument_list></call></expr></cpp:if>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>PS_ON_PIN</name></expr></argument>, <argument><expr><name>PS_ON_ASLEEP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>PS_ON_PIN</name></expr></argument>, <argument><expr><name>PS_ON_AWAKE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+<function><type><name>void</name></type> <name>suicide</name><parameter_list>()</parameter_list>
+<block>{
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>SUICIDE_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_OUTPUT</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>WRITE</name><argument_list>(<argument><expr><name>SUICIDE_PIN</name></expr></argument>, <argument><expr><name>LOW</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+<function><type><name>void</name></type> <name>servo_init</name><parameter_list>()</parameter_list>
+<block>{
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>NUM_SERVOS</name> &gt;= 1) &amp;&amp; <call><name>defined</name><argument_list>(<argument><expr><name>SERVO0_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>SERVO0_PIN</name> &gt; -1)</expr></cpp:if>
+    <expr_stmt><expr><name><name>servos</name><index>[<expr>0</expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr><name>SERVO0_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>NUM_SERVOS</name> &gt;= 2) &amp;&amp; <call><name>defined</name><argument_list>(<argument><expr><name>SERVO1_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>SERVO1_PIN</name> &gt; -1)</expr></cpp:if>
+    <expr_stmt><expr><name><name>servos</name><index>[<expr>1</expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr><name>SERVO1_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>NUM_SERVOS</name> &gt;= 3) &amp;&amp; <call><name>defined</name><argument_list>(<argument><expr><name>SERVO2_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>SERVO2_PIN</name> &gt; -1)</expr></cpp:if>
+    <expr_stmt><expr><name><name>servos</name><index>[<expr>2</expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr><name>SERVO2_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>NUM_SERVOS</name> &gt;= 4) &amp;&amp; <call><name>defined</name><argument_list>(<argument><expr><name>SERVO3_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>SERVO3_PIN</name> &gt; -1)</expr></cpp:if>
+    <expr_stmt><expr><name><name>servos</name><index>[<expr>3</expr>]</index></name>.<call><name>attach</name><argument_list>(<argument><expr><name>SERVO3_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>NUM_SERVOS</name> &gt;= 5)</expr></cpp:if>
+    <cpp:error>#<cpp:directive>error</cpp:directive> "TODO: enter initalisation code for more servos"</cpp:error>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <comment type="line">// Set position of Servo Endstops that are defined</comment>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SERVO_ENDSTOPS</name></cpp:ifdef>
+  <for>for(<init><decl><type><name>int8_t</name></type> <name>i</name> <init>= <expr>0</expr></init></decl>;</init> <condition><expr><name>i</name> &lt; 3</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+  <block>{
+    <if>if<condition>(<expr><name><name>servo_endstops</name><index>[<expr><name>i</name></expr>]</index></name> &gt; -1</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>i</name></expr>]</index></name></expr>]</index></name>.<call><name>write</name><argument_list>(<argument><expr><name><name>servo_endstop_angles</name><index>[<expr><name>i</name> * 2 + 1</expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if>
+  }</block></for>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name> <argument_list>(<argument><expr><name>ENABLE_AUTO_BED_LEVELING</name></expr></argument>)</argument_list></call> &amp;&amp; (<name>PROBE_SERVO_DEACTIVATION_DELAY</name> &gt; 0)</expr></cpp:if>
+  <expr_stmt><expr><call><name>delay</name><argument_list>(<argument><expr><name>PROBE_SERVO_DEACTIVATION_DELAY</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>servos</name><index>[<expr><name><name>servo_endstops</name><index>[<expr><name>Z_AXIS</name></expr>]</index></name></expr>]</index></name>.<call><name>detach</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+
+<function><type><name>void</name></type> <name>setup</name><parameter_list>()</parameter_list>
+<block>{
+  <expr_stmt><expr><call><name>setup_killpin</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>setup_powerhold</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>MYSERIAL</name>.<name>begin</name></name><argument_list>(<argument><expr><name>BAUDRATE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr>"start"</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+
+  <comment type="line">// Check startup - does nothing if bootloader sets MCUSR to 0</comment>
+  <decl_stmt><decl><type><name>byte</name></type> <name>mcu</name> <init>= <expr><name>MCUSR</name></expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr><name>mcu</name> &amp; 1</expr>)</condition><then> <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_POWERUP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>mcu</name> &amp; 2</expr>)</condition><then> <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_EXTERNAL_RESET</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>mcu</name> &amp; 4</expr>)</condition><then> <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_BROWNOUT_RESET</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>mcu</name> &amp; 8</expr>)</condition><then> <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_WATCHDOG_RESET</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <if>if<condition>(<expr><name>mcu</name> &amp; 32</expr>)</condition><then> <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>MSG_SOFTWARE_RESET</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></then></if>
+  <expr_stmt><expr><name>MCUSR</name>=0</expr>;</expr_stmt>
+
+  <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_MARLIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>VERSION_STRING</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>STRING_VERSION_CONFIG_H</name></cpp:ifdef>
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>STRING_CONFIG_H_AUTHOR</name></cpp:ifdef>
+      <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_CONFIGURATION_VER</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>STRING_VERSION_CONFIG_H</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_AUTHOR</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>STRING_CONFIG_H_AUTHOR</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr>"Compiled: "</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><call><name>SERIAL_ECHOLNPGM</name><argument_list>(<argument><expr><name>__DATE__</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_FREE_MEMORY</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHO</name><argument_list>(<argument><expr><call><name>freeMemory</name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOPGM</name><argument_list>(<argument><expr><name>MSG_PLANNER_BUFFER_BYTES</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr>(<name>int</name>)<sizeof>sizeof<argument_list>(<argument><expr><name>block_t</name></expr></argument>)</argument_list></sizeof>*<name>BLOCK_BUFFER_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <for>for(<init><decl><type><name>int8_t</name></type> <name>i</name> <init>= <expr>0</expr></init></decl>;</init> <condition><expr><name>i</name> &lt; <name>BUFSIZE</name></expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+  <block>{
+    <expr_stmt><expr><name><name>fromsd</name><index>[<expr><name>i</name></expr>]</index></name> = false</expr>;</expr_stmt>
+  }</block></for>
+
+  <comment type="line">// loads data from EEPROM if available else uses defaults (and resets step acceleration rate)</comment>
+  <expr_stmt><expr><call><name>Config_RetrieveSettings</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+
+  <expr_stmt><expr><call><name>tp_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>    <comment type="line">// Initialize temperature loop</comment>
+  <expr_stmt><expr><call><name>plan_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>  <comment type="line">// Initialize planner;</comment>
+  <expr_stmt><expr><call><name>watchdog_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>st_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>    <comment type="line">// Initialize stepper, this enables interrupts!</comment>
+  <expr_stmt><expr><call><name>setup_photpin</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>servo_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  
+
+  <expr_stmt><expr><call><name>lcd_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>_delay_ms</name><argument_list>(<argument><expr>1000</expr></argument>)</argument_list></call></expr>;</expr_stmt>  <comment type="line">// wait 1sec to display the splash screen</comment>
+
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><call><name>defined</name><argument_list>(<argument><expr><name>CONTROLLERFAN_PIN</name></expr></argument>)</argument_list></call> &amp;&amp; <name>CONTROLLERFAN_PIN</name> &gt; -1</expr></cpp:if>
+    <expr_stmt><expr><call><name>SET_OUTPUT</name><argument_list>(<argument><expr><name>CONTROLLERFAN_PIN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">//Set pin used for driver cooling fan</comment>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DIGIPOT_I2C</name></cpp:ifdef>
+    <expr_stmt><expr><call><name>digipot_i2c_init</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>Z_PROBE_SLED</name></cpp:ifdef>
+  <expr_stmt><expr><call><name>pinMode</name><argument_list>(<argument><expr><name>SERVO0_PIN</name></expr></argument>, <argument><expr><name>OUTPUT</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>digitalWrite</name><argument_list>(<argument><expr><name>SERVO0_PIN</name></expr></argument>, <argument><expr><name>LOW</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// turn it off</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// Z_PROBE_SLED</comment>
+  <expr_stmt><expr><call><name>setup_homepin</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+<function><type><name>void</name></type> <name>loop</name><parameter_list>()</parameter_list>
+<block>{
+  <if>if<condition>(<expr><name>buflen</name> &lt; (<name>BUFSIZE</name>-1)</expr>)</condition><then>
+    <expr_stmt><expr><call><name>get_command</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+  <expr_stmt><expr><call><name><name>card</name>.<name>checkautostart</name></name><argument_list>(<argument><expr>false</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <if>if<condition>(<expr><name>buflen</name></expr>)</condition><then>
+  <block>{
+    <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+      <if>if<condition>(<expr><name><name>card</name>.<name>saving</name></name></expr>)</condition><then>
+      <block>{
+        <if>if<condition>(<expr><call><name>strstr_P</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name></expr></argument>, <argument><expr><call><name>PSTR</name><argument_list>(<argument><expr>"M29"</expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> == <name>NULL</name></expr>)</condition><then>
+        <block>{
+          <expr_stmt><expr><call><name><name>card</name>.<name>write_command</name></name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+          <if>if<condition>(<expr><name><name>card</name>.<name>logging</name></name></expr>)</condition><then>
+          <block>{
+            <expr_stmt><expr><call><name>process_commands</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+          }</block></then>
+          <else>else
+          <block>{
+            <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_OK</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+          }</block></else></if>
+        }</block></then>
+        <else>else
+        <block>{
+          <expr_stmt><expr><call><name><name>card</name>.<name>closefile</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+          <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_FILE_SAVED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></else></if>
+      }</block></then>
+      <else>else
+      <block>{
+        <expr_stmt><expr><call><name>process_commands</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+      }</block></else></if>
+    <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+      <expr_stmt><expr><call><name>process_commands</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//SDSUPPORT</comment>
+    <expr_stmt><expr><name>buflen</name> = (<name>buflen</name>-1)</expr>;</expr_stmt>
+    <expr_stmt><expr><name>bufindr</name> = (<name>bufindr</name> + 1)%<name>BUFSIZE</name></expr>;</expr_stmt>
+  }</block></then></if>
+  <comment type="line">//check heater every n milliseconds</comment>
+  <expr_stmt><expr><call><name>manage_heater</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>manage_inactivity</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>checkHitEndstops</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>lcd_update</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<function><type><name>void</name></type> <name>get_command</name><parameter_list>()</parameter_list>
+<block>{
+  <while>while<condition>( <expr><call><name><name>MYSERIAL</name>.<name>available</name></name><argument_list>()</argument_list></call> &gt; 0  &amp;&amp; <name>buflen</name> &lt; <name>BUFSIZE</name></expr>)</condition> <block>{
+    <expr_stmt><expr><name>serial_char</name> = <call><name><name>MYSERIAL</name>.<name>read</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <if>if<condition>(<expr><name>serial_char</name> == '\n' ||
+       <name>serial_char</name> == '\r' ||
+       (<name>serial_char</name> == ':' &amp;&amp; <name>comment_mode</name> == false) ||
+       <name>serial_count</name> &gt;= (<name>MAX_CMD_SIZE</name> - 1)</expr> )</condition><then>
+    <block>{
+      <if>if<condition>(<expr>!<name>serial_count</name></expr>)</condition><then> <block>{ <comment type="line">//if empty line</comment>
+        <expr_stmt><expr><name>comment_mode</name> = false</expr>;</expr_stmt> <comment type="line">//for new command</comment>
+        <return>return;</return>
+      }</block></then></if>
+      <expr_stmt><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>serial_count</name></expr>]</index></name> = 0</expr>;</expr_stmt> <comment type="line">//terminate string</comment>
+      <if>if<condition>(<expr>!<name>comment_mode</name></expr>)</condition><then><block>{
+        <expr_stmt><expr><name>comment_mode</name> = false</expr>;</expr_stmt> <comment type="line">//for new command</comment>
+        <expr_stmt><expr><name><name>fromsd</name><index>[<expr><name>bufindw</name></expr>]</index></name> = false</expr>;</expr_stmt>
+        <if>if<condition>(<expr><call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'N'</expr></argument>)</argument_list></call> != <name>NULL</name></expr>)</condition><then>
+        <block>{
+          <expr_stmt><expr><name>strchr_pointer</name> = <call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'N'</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+          <expr_stmt><expr><name>gcode_N</name> = (<call><name>strtol</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>, <argument><expr>10</expr></argument>)</argument_list></call>)</expr>;</expr_stmt>
+          <if>if<condition>(<expr><name>gcode_N</name> != <name>gcode_LastN</name>+1 &amp;&amp; (<call><name>strstr_P</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr><call><name>PSTR</name><argument_list>(<argument><expr>"M110"</expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> == <name>NULL</name>)</expr> )</condition><then> <block>{
+            <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORPGM</name><argument_list>(<argument><expr><name>MSG_ERR_LINE_NO</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORLN</name><argument_list>(<argument><expr><name>gcode_LastN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <comment type="line">//Serial.println(gcode_N);</comment>
+            <expr_stmt><expr><call><name>FlushSerialRequestResend</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt>
+            <return>return;</return>
+          }</block></then></if>
+
+          <if>if<condition>(<expr><call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'*'</expr></argument>)</argument_list></call> != <name>NULL</name></expr>)</condition><then>
+          <block>{
+            <decl_stmt><decl><type><name>byte</name></type> <name>checksum</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+            <decl_stmt><decl><type><name>byte</name></type> <name>count</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
+            <while>while<condition>(<expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>count</name></expr>]</index></name> != '*'</expr>)</condition> <expr_stmt><expr><name>checksum</name> = <name>checksum</name>^<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>count</name>++</expr>]</index></name></expr>;</expr_stmt></while>
+            <expr_stmt><expr><name>strchr_pointer</name> = <call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'*'</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if>if<condition>( <expr><call>(<name>int</name>)<argument_list>(<argument><expr><call><name>strtod</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> != <name>checksum</name></expr>)</condition><then> <block>{
+              <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+              <expr_stmt><expr><call><name>SERIAL_ERRORPGM</name><argument_list>(<argument><expr><name>MSG_ERR_CHECKSUM_MISMATCH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+              <expr_stmt><expr><call><name>SERIAL_ERRORLN</name><argument_list>(<argument><expr><name>gcode_LastN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+              <expr_stmt><expr><call><name>FlushSerialRequestResend</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+              <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt>
+              <return>return;</return>
+            }</block></then></if>
+            <comment type="line">//if no errors, continue parsing</comment>
+          }</block></then>
+          <else>else
+          <block>{
+            <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORPGM</name><argument_list>(<argument><expr><name>MSG_ERR_NO_CHECKSUM</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORLN</name><argument_list>(<argument><expr><name>gcode_LastN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>FlushSerialRequestResend</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt>
+            <return>return;</return>
+          }</block></else></if>
+
+          <expr_stmt><expr><name>gcode_LastN</name> = <name>gcode_N</name></expr>;</expr_stmt>
+          <comment type="line">//if no errors, continue parsing</comment>
+        }</block></then>
+        <else>else  <comment type="line">// if we don't receive 'N' but still see '*'</comment>
+        <block>{
+          <if>if<condition>(<expr>(<call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'*'</expr></argument>)</argument_list></call> != <name>NULL</name>)</expr>)</condition><then>
+          <block>{
+            <expr_stmt><expr><name>SERIAL_ERROR_START</name></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORPGM</name><argument_list>(<argument><expr><name>MSG_ERR_NO_LINENUMBER_WITH_CHECKSUM</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>SERIAL_ERRORLN</name><argument_list>(<argument><expr><name>gcode_LastN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt>
+            <return>return;</return>
+          }</block></then></if>
+        }</block></else></if>
+        <if>if<condition>(<expr>(<call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'G'</expr></argument>)</argument_list></call> != <name>NULL</name>)</expr>)</condition><then><block>{
+          <expr_stmt><expr><name>strchr_pointer</name> = <call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>'G'</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+          <switch>switch<condition>(<expr><call>(<name>int</name>)<argument_list>(<argument><expr>(<call><name>strtod</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>)</argument_list></call>)</expr></argument>)</argument_list></call></expr>)</condition><block>{
+          <case>case <expr>0</expr>:
+          </case><case>case <expr>1</expr>:
+          </case><case>case <expr>2</expr>:
+          </case><case>case <expr>3</expr>:
+            <if>if <condition>(<expr><name>Stopped</name> == true</expr>)</condition><then> <block>{
+              <expr_stmt><expr><call><name>SERIAL_ERRORLNPGM</name><argument_list>(<argument><expr><name>MSG_ERR_STOPPED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+              <expr_stmt><expr><call><name>LCD_MESSAGEPGM</name><argument_list>(<argument><expr><name>MSG_STOPPED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            }</block></then></if>
+            <break>break;</break>
+          </case><default>default:
+            <break>break;</break>
+          </default>}</block></switch>
+
+        }</block></then></if>
+
+        <comment type="line">//If command was e-stop process now</comment>
+        <if>if<condition>(<expr><call><name>strcmp</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index></name></expr></argument>, <argument><expr>"M112"</expr></argument>)</argument_list></call> == 0</expr>)</condition><then>
+          <expr_stmt><expr><call><name>kill</name><argument_list>()</argument_list></call></expr>;</expr_stmt></then></if>
+        
+        <expr_stmt><expr><name>bufindw</name> = (<name>bufindw</name> + 1)%<name>BUFSIZE</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name>buflen</name> += 1</expr>;</expr_stmt>
+      }</block></then></if>
+      <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt> <comment type="line">//clear buffer</comment>
+    }</block></then>
+    <else>else
+    <block>{
+      <if>if<condition>(<expr><name>serial_char</name> == ';'</expr>)</condition><then> <expr_stmt><expr><name>comment_mode</name> = true</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr>!<name>comment_mode</name></expr>)</condition><then> <expr_stmt><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>serial_count</name>++</expr>]</index></name> = <name>serial_char</name></expr>;</expr_stmt></then></if>
+    }</block></else></if>
+  }</block></while>
+  <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+  <if>if<condition>(<expr>!<name><name>card</name>.<name>sdprinting</name></name> || <name>serial_count</name>!=0</expr>)</condition><then><block>{
+    <return>return;</return>
+  }</block></then></if>
+
+  <comment type="line">//'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible</comment>
+  <comment type="line">// if it occurs, stop_buffering is triggered and the buffer is ran dry.</comment>
+  <comment type="line">// this character _can_ occur in serial com, due to checksums. however, no checksums are used in SD printing</comment>
+
+  <decl_stmt><decl><type><specifier>static</specifier> <name>bool</name></type> <name>stop_buffering</name><init>=<expr>false</expr></init></decl>;</decl_stmt>
+  <if>if<condition>(<expr><name>buflen</name>==0</expr>)</condition><then> <expr_stmt><expr><name>stop_buffering</name>=false</expr>;</expr_stmt></then></if>
+
+  <while>while<condition>( <expr>!<call><name><name>card</name>.<name>eof</name></name><argument_list>()</argument_list></call>  &amp;&amp; <name>buflen</name> &lt; <name>BUFSIZE</name> &amp;&amp; !<name>stop_buffering</name></expr>)</condition> <block>{
+    <decl_stmt><decl><type><name>int16_t</name></type> <name>n</name><init>=<expr><call><name><name>card</name>.<name>get</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><name>serial_char</name> = (<name>char</name>)<name>n</name></expr>;</expr_stmt>
+    <if>if<condition>(<expr><name>serial_char</name> == '\n' ||
+       <name>serial_char</name> == '\r' ||
+       (<name>serial_char</name> == '#' &amp;&amp; <name>comment_mode</name> == false) ||
+       (<name>serial_char</name> == ':' &amp;&amp; <name>comment_mode</name> == false) ||
+       <name>serial_count</name> &gt;= (<name>MAX_CMD_SIZE</name> - 1)||<name>n</name>==-1</expr>)</condition><then>
+    <block>{
+      <if>if<condition>(<expr><call><name><name>card</name>.<name>eof</name></name><argument_list>()</argument_list></call></expr>)</condition><then><block>{
+        <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_FILE_PRINTED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>stoptime</name>=<call><name>millis</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>char</name></type> <name><name>time</name><index>[<expr>30</expr>]</index></name></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>unsigned</name> <name>long</name></type> <name>t</name><init>=<expr>(<name>stoptime</name>-<name>starttime</name>)/1000</expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>int</name></type> <name>hours</name></decl>, <decl><type ref="prev"/><name>minutes</name></decl>;</decl_stmt>
+        <expr_stmt><expr><name>minutes</name>=(<name>t</name>/60)%60</expr>;</expr_stmt>
+        <expr_stmt><expr><name>hours</name>=<name>t</name>/60/60</expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>sprintf_P</name><argument_list>(<argument><expr><name>time</name></expr></argument>, <argument><expr><call><name>PSTR</name><argument_list>(<argument><expr>"%i hours %i minutes"</expr></argument>)</argument_list></call></expr></argument>,<argument><expr><name>hours</name></expr></argument>, <argument><expr><name>minutes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>SERIAL_ECHO_START</name></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>SERIAL_ECHOLN</name><argument_list>(<argument><expr><name>time</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>lcd_setstatus</name><argument_list>(<argument><expr><name>time</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name><name>card</name>.<name>printingHasFinished</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name><name>card</name>.<name>checkautostart</name></name><argument_list>(<argument><expr>true</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+      }</block></then></if>
+      <if>if<condition>(<expr><name>serial_char</name>=='#'</expr>)</condition><then>
+        <expr_stmt><expr><name>stop_buffering</name>=true</expr>;</expr_stmt></then></if>
+
+      <if>if<condition>(<expr>!<name>serial_count</name></expr>)</condition><then>
+      <block>{
+        <expr_stmt><expr><name>comment_mode</name> = false</expr>;</expr_stmt> <comment type="line">//for new command</comment>
+        <return>return;</return> <comment type="line">//if empty line</comment>
+      }</block></then></if>
+      <expr_stmt><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>serial_count</name></expr>]</index></name> = 0</expr>;</expr_stmt> <comment type="line">//terminate string</comment>
+<comment type="line">//      if(!comment_mode){</comment>
+        <expr_stmt><expr><name><name>fromsd</name><index>[<expr><name>bufindw</name></expr>]</index></name> = true</expr>;</expr_stmt>
+        <expr_stmt><expr><name>buflen</name> += 1</expr>;</expr_stmt>
+        <expr_stmt><expr><name>bufindw</name> = (<name>bufindw</name> + 1)%<name>BUFSIZE</name></expr>;</expr_stmt>
+<comment type="line">//      }</comment>
+      <expr_stmt><expr><name>comment_mode</name> = false</expr>;</expr_stmt> <comment type="line">//for new command</comment>
+      <expr_stmt><expr><name>serial_count</name> = 0</expr>;</expr_stmt> <comment type="line">//clear buffer</comment>
+    }</block></then>
+    <else>else
+    <block>{
+      <if>if<condition>(<expr><name>serial_char</name> == ';'</expr>)</condition><then> <expr_stmt><expr><name>comment_mode</name> = true</expr>;</expr_stmt></then></if>
+      <if>if<condition>(<expr>!<name>comment_mode</name></expr>)</condition><then> <expr_stmt><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindw</name></expr>]</index><index>[<expr><name>serial_count</name>++</expr>]</index></name> = <name>serial_char</name></expr>;</expr_stmt></then></if>
+    }</block></else></if>
+  }</block></while>
+
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//SDSUPPORT</comment>
+
+}</block></function>
+
+
+<function><type><name>float</name></type> <name>code_value</name><parameter_list>()</parameter_list>
+<block>{
+  <return>return <expr>(<call><name>strtod</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>)</argument_list></call>)</expr>;</return>
+}</block></function>
+
+<function><type><name>long</name></type> <name>code_value_long</name><parameter_list>()</parameter_list>
+<block>{
+  <return>return <expr>(<call><name>strtol</name><argument_list>(<argument><expr>&amp;<name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index><index>[<expr><name>strchr_pointer</name> - <name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name> + 1</expr>]</index></name></expr></argument>, <argument><expr><name>NULL</name></expr></argument>, <argument><expr>10</expr></argument>)</argument_list></call>)</expr>;</return>
+}</block></function>
+
+<function><type><name>bool</name></type> <name>code_seen</name><parameter_list>(<param><decl><type><name>char</name></type> <name>code</name></decl></param>)</parameter_list>
+<block>{
+  <expr_stmt><expr><name>strchr_pointer</name> = <call><name>strchr</name><argument_list>(<argument><expr><name><name>cmdbuffer</name><index>[<expr><name>bufindr</name></expr>]</index></name></expr></argument>, <argument><expr><name>code</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <return>return <expr>(<name>strchr_pointer</name> != <name>NULL</name>)</expr>;</return>  <comment type="line">//Return True if a character was found</comment>
+}</block></function>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DEFINE_PGM_READ_ANY</name><parameter_list>(<param><type><name>type</name></type></param>, <param><type><name>reader</name></type></param>)</parameter_list></cpp:macro>       \
+    <cpp:value>static inline type pgm_read_any(const type *p)  \
+    { return pgm_read_##reader##_near(p); }</cpp:value></cpp:define>
+
+<expr_stmt><expr><call><name>DEFINE_PGM_READ_ANY</name><argument_list>(<argument><expr><name>float</name></expr></argument>,       <argument><expr><name>float</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<macro><name>DEFINE_PGM_READ_ANY</name><argument_list>(<argument>signed char</argument>, <argument>byte</argument>)</argument_list></macro><empty_stmt>;</empty_stmt>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>XYZ_CONSTS_FROM_CONFIG</name><parameter_list>(<param><type><name>type</name></type></param>, <param><type><name>array</name></type></param>, <param><type><name>CONFIG</name></type></param>)</parameter_list></cpp:macro> \
+<cpp:value>static const PROGMEM type array##_P[3] =        \
+    { X_##CONFIG, Y_##CONFIG, Z_##CONFIG };     \
+static inline type array(int axis)          \
+    { return pgm_read_any(&amp;array##_P[axis]); }</cpp:value></cpp:define>
+
+<expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>base_min_pos</name></expr></argument>,    <argument><expr><name>MIN_POS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>base_max_pos</name></expr></argument>,    <argument><expr><name>MAX_POS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>base_home_pos</name></expr></argument>,   <argument><expr><name>HOME_POS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>max_length</name></expr></argument>,      <argument><expr><name>MAX_LENGTH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<expr_stmt><expr><call><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument><expr><name>float</name></expr></argument>, <argument><expr><name>home_retract_mm</name></expr></argument>, <argument><expr><name>HOME_RETRACT_MM</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<macro><name>XYZ_CONSTS_FROM_CONFIG</name><argument_list>(<argument>signed char</argument>, <argument>home_dir</argument>,  <argument>HOME_DIR</argument>)</argument_list></macro><empty_stmt>;</empty_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DUAL_X_CARRIAGE</name></cpp:ifdef>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>EXTRUDERS</name> == 1 || <call><name>defined</name><argument_list>(<argument><expr><name>COREXY</name></expr></argument>)</argument_list></call> \
+      || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_ENABLE_PIN</name></expr></argument>)</argument_list></call> || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_STEP_PIN</name></expr></argument>)</argument_list></call> || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_DIR_PIN</name></expr></argument>)</argument_list></call> \
+      || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_HOME_POS</name></expr></argument>)</argument_list></call> || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_MIN_POS</name></expr></argument>)</argument_list></call> || !<call><name>defined</name><argument_list>(<argument><expr><name>X2_MAX_POS</name></expr></argument>)</argument_list></call> \
+      || !<call><name>defined</name><argument_list>(<argument><expr><name>X_MAX_PIN</name></expr></argument>)</argument_list></call> || <name>X_MAX_PIN</name> &lt; 0</expr></cpp:if>
+    <cpp:error>#<cpp:directive>error</cpp:directive> "Missing or invalid definitions for DUAL_X_CARRIAGE mode."</cpp:error>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+  <cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>X_HOME_DIR</name> != -1 || <name>X2_HOME_DIR</name> != 1</expr></cpp:if>
+    <cpp:error>#<cpp:directive>error</cpp:directive> "Please use canonical x-carriage assignment"</cpp:error> <comment type="line">// the x-carriages are defined by their homing directions</comment>
+  <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DXC_FULL_CONTROL_MODE</name></cpp:macro> <cpp:value>0</cpp:value></cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DXC_AUTO_PARK_MODE</name></cpp:macro>    <cpp:value>1</cpp:value></cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DXC_DUPLICATION_MODE</name></cpp:macro>  <cpp:value>2</cpp:value></cpp:define>
+<decl_stmt><decl><type><specifier>static</specifier> <name>int</name></type> <name>dual_x_carriage_mode</name> <init>= <expr><name>DEFAULT_DUAL_X_CARRIAGE_MODE</name></expr></init></decl>;</decl_stmt>
+
+<function><type><specifier>static</specifier> <name>float</name></type> <name>x_home_pos</name><parameter_list>(<param><decl><type><name>int</name></type> <name>extruder</name></decl></param>)</parameter_list> <block>{
+  <if>if <condition>(<expr><name>extruder</name> == 0</expr>)</condition><then>
+    <return>return <expr><call><name>base_home_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</return></then>
+  <else>else
+    <comment type="line">// In dual carriage mode the extruder offset provides an override of the</comment>
+    <comment type="line">// second X-carriage offset when homed - otherwise X2_HOME_POS is used.</comment>
+    <comment type="line">// This allow soft recalibration of the second extruder offset position without firmware reflash</comment>
+    <comment type="line">// (through the M218 command).</comment>
+    <return>return <expr>(<name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name> &gt; 0) ? <name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name> : <name>X2_HOME_POS</name></expr>;</return></else></if>
+}</block></function>
+
+<function><type><specifier>static</specifier> <name>int</name></type> <name>x_home_dir</name><parameter_list>(<param><decl><type><name>int</name></type> <name>extruder</name></decl></param>)</parameter_list> <block>{
+  <return>return <expr>(<name>extruder</name> == 0) ? <name>X_HOME_DIR</name> : <name>X2_HOME_DIR</name></expr>;</return>
+}</block></function>
+
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>inactive_extruder_x_pos</name> <init>= <expr><name>X2_MAX_POS</name></expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 0 &amp; 1</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>bool</name></type> <name>active_extruder_parked</name> <init>= <expr>false</expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 1 &amp; 2</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name><name>raised_parked_position</name><index>[<expr><name>NUM_AXIS</name></expr>]</index></name></decl>;</decl_stmt> <comment type="line">// used in mode 1</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>unsigned</name> <name>long</name></type> <name>delayed_move_time</name> <init>= <expr>0</expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 1</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>duplicate_extruder_x_offset</name> <init>= <expr><name>DEFAULT_DUPLICATION_X_OFFSET</name></expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 2</comment>
+<decl_stmt><decl><type><specifier>static</specifier> <name>float</name></type> <name>duplicate_extruder_temp_offset</name> <init>= <expr>0</expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 2</comment>
+<decl_stmt><decl><type><name>bool</name></type> <name>extruder_duplication_enabled</name> <init>= <expr>false</expr></init></decl>;</decl_stmt> <comment type="line">// used in mode 2</comment>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//DUAL_X_CARRIAGE</comment>
+
+
+<function><type><specifier>static</specifier> <name>void</name></type> <name>axis_is_at_home</name><parameter_list>(<param><decl><type><name>int</name></type> <name>axis</name></decl></param>)</parameter_list> <block>{
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>DUAL_X_CARRIAGE</name></cpp:ifdef>
+  <if>if <condition>(<expr><name>axis</name> == <name>X_AXIS</name></expr>)</condition><then> <block>{
+    <if>if <condition>(<expr><name>active_extruder</name> != 0</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>x_home_pos</name><argument_list>(<argument><expr><name>active_extruder</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <name>X2_MIN_POS</name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>max</name><argument_list>(<argument><expr><name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name>X2_MAX_POS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <return>return;</return>
+    }</block></then>
+    <else>else <if>if <condition>(<expr><name>dual_x_carriage_mode</name> == <name>DXC_DUPLICATION_MODE</name> &amp;&amp; <name>active_extruder</name> == 0</expr>)</condition><then> <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>X_AXIS</name></expr>]</index></name> =          <call><name>min</name><argument_list>(<argument><expr><call><name>base_max_pos</name><argument_list>(<argument><expr><name>X_AXIS</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>X_AXIS</name></expr>]</index></name></expr></argument>,
+                                  <argument><expr><call><name>max</name><argument_list>(<argument><expr><name><name>extruder_offset</name><index>[<expr><name>X_AXIS</name></expr>]</index><index>[<expr>1</expr>]</index></name></expr></argument>, <argument><expr><name>X2_MAX_POS</name></expr></argument>)</argument_list></call> - <name>duplicate_extruder_x_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+      <return>return;</return>
+    }</block></then></if></else></if>
+  }</block></then></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SCARA</name></cpp:ifdef>
+   <decl_stmt><decl><type><name>float</name></type> <name><name>homeposition</name><index>[<expr>3</expr>]</index></name></decl>;</decl_stmt>
+   <decl_stmt><decl><type><name>char</name></type> <name>i</name></decl>;</decl_stmt>
+   
+   <if>if <condition>(<expr><name>axis</name> &lt; 2</expr>)</condition><then>
+   <block>{
+   
+     <for>for (<init><expr><name>i</name>=0</expr>;</init> <condition><expr><name>i</name>&lt;3</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+     <block>{
+        <expr_stmt><expr><name><name>homeposition</name><index>[<expr><name>i</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>i</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+     }</block></for>  
+  <comment type="line">// SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);</comment>
+   <comment type="line">//  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);</comment>
+   <comment type="line">// Works out real Homeposition angles using inverse kinematics, </comment>
+   <comment type="line">// and calculates homing offset using forward kinematics</comment>
+     <expr_stmt><expr><call><name>calculate_delta</name><argument_list>(<argument><expr><name>homeposition</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+     
+    <comment type="line">// SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+     
+     <for>for (<init><expr><name>i</name>=0</expr>;</init> <condition><expr><name>i</name>&lt;2</expr>;</condition> <incr><expr><name>i</name>++</expr></incr>)
+     <block>{
+        <expr_stmt><expr><name><name>delta</name><index>[<expr><name>i</name></expr>]</index></name> -= <name><name>add_homing</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+     }</block></for> 
+     
+    <comment type="line">// SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);</comment>
+  <comment type="line">// SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+      
+     <expr_stmt><expr><call><name>calculate_SCARA_forward_Transform</name><argument_list>(<argument><expr><name>delta</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+     
+    <comment type="line">// SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);</comment>
+    <comment type="line">// SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);</comment>
+     
+    <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <name><name>delta</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+    
+    <comment type="line">// SCARA home positions are based on configuration since the actual limits are determined by the </comment>
+    <comment type="line">// inverse kinematic transform.</comment>
+    <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// + (delta[axis] - base_home_pos(axis));</comment>
+    <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line">// + (delta[axis] - base_home_pos(axis));</comment>
+   }</block></then> 
+   <else>else
+   <block>{
+      <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+      <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+   }</block></else></if>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+  <expr_stmt><expr><name><name>current_position</name><index>[<expr><name>axis</name></expr>]</index></name> = <call><name>base_home_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>min_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_min_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+  <expr_stmt><expr><name><name>max_pos</name><index>[<expr><name>axis</name></expr>]</index></name> =          <call><name>base_max_pos</name><argument_list>(<argument><expr><name>axis</name></expr></argument>)</argument_list></call> + <name><name>add_homing</name><index>[<expr><name>axis</name></expr>]</index></name></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+</unit>

@@ -27,16 +27,13 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import de.fosd.jdime.common.Artifact;
-import de.fosd.jdime.common.MergeContext;
-import de.fosd.jdime.common.MergeScenario;
-import de.fosd.jdime.common.MergeType;
-import de.fosd.jdime.common.Revision;
+import de.fosd.jdime.common.*;
 import de.fosd.jdime.common.operations.AddOperation;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.DeleteOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Matching;
+import nu.xom.Element;
 
 /**
  * @author Olaf Lessenich
@@ -83,6 +80,12 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
 		Revision r = right.getRevision();
 		Iterator<T> leftIt = left.getChildren().iterator();
 		Iterator<T> rightIt = right.getChildren().iterator();
+
+
+
+
+
+
 
 		boolean leftdone = false;
 		boolean rightdone = false;
@@ -334,7 +337,9 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
 							: MergeType.THREEWAY;
 					T baseChild = mBase == null ? leftChild.createEmptyArtifact()
 							: mBase.getMatchingArtifact(leftChild);
+
 					T targetChild = target == null ? null : target.addChild((T) leftChild.clone());
+
 					if (targetChild != null) {
 						assert targetChild.exists();
 						targetChild.deleteChildren();

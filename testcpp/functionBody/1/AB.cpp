@@ -1,10 +1,10 @@
-#if defined (A)
-void a(){
-a= 0;
-}
-#endif
+#if defined (A) || defined (B)
+void a
+() {
+    i=0;
 #if defined (B)
-void b(){
-b = 0;
+    j=0;
+#endif
 }
+
 #endif

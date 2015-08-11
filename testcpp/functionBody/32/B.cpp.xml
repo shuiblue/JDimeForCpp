@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/32/B.cpp">
+
+<macro><name>ISR</name><argument_list>()</argument_list></macro>
+<block>{
+<if>if<condition>(<expr><name>a</name></expr>)</condition><then> 
+  <block>{
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>b</name></expr></cpp:if>
+    <if>if<condition>(<expr><name>b</name>+1</expr>)</condition><then> 
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
+    <if>if<condition>(<expr><name>c</name>+1</expr>)</condition><then> 
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+    <block>{
+        <expr_stmt><expr><name>d</name>++</expr>;</expr_stmt>
+     }</block></then></if></then></if>
+    }</block></then></if>
+}</block>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>X</name></cpp:ifdef>
+
+<function><type><name>float</name></type> <name>s</name><parameter_list>(<param><decl><type><name>float</name></type> <name>d</name></decl></param>)</parameter_list>
+<block>{
+  <return>return <expr><name>s</name></expr>;</return>
+}</block></function>
+
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> 
+</unit>
