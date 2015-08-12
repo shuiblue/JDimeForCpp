@@ -128,11 +128,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         int if_num = ((Element) node).getChildElements("if", "http://www.sdml.info/srcML/cpp").size();
 
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
+        int else_num = ((Element) node).getChildElements("else", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
+
+        //-----tricky way
+        Boolean elseNum = (else_num <= (ifdef_num + ifndef_num + if_num));
+        //----------
         if (!matched) {
             System.out.println("warning!----------" + node.getBaseURI() + "\n");
         }
-        return matched;
+        return matched && elseNum;
     }
 
     /**
@@ -269,6 +274,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                             if (localName.equals("else")) {
                                 if (namespace_prefix.equals("cpp")) {
+//                                    System.out.println("!!!!" + node.getParent().toXML());
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
@@ -356,9 +362,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         return doc;
     }
-
-
-
 
 
     public HashMap<String, Integer> getLanguageElementStatistics() {
@@ -786,7 +789,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += printMatchNode(child);
                     res += "+-+-+-\n";
                 } else {
+//                    res+= printSingleNode(child)printSingleNode(child);
                     res += printChoice(this);
+                    continue;
                 }
             }
         } else if (this.isChoice()) {
@@ -927,118 +932,123 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += cppNoArt.astnode.getChild(0).getValue();
         }
 
-        Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
-        while (it.hasNext()) {
-            CppNodeArtifact c = it.next();
-            String c_localName = ((Element) c.astnode).getLocalName();
-            String c_value = c.astnode.getValue();
-            String c_parent_localName = ((Element) c.getParent().astnode).getLocalName();
-            res += "+-+-+-\n";
+        if (cppNoArt.children == null) {
 
-            if (!nodeLocalName.equals("for")) {
-                if (entity.getTerminal().contains(c_localName)) {
-                    if (c.hasMatches()) {
-                        if (c_localName.equals("condition") && c_parent_localName.equals("do")) {
-                            res += "while ";
-                            res += c_value + ";";
-                        } else {
-                            res += printMatchCondition(c);
-                            res += c_value + "\n";
-                            res += "#endif\n";
-                        }
-                        if (c_value.contains("break")) {
-                            res += "";
-                        }
-                    } else {
-                        res += "\n" + presicePrettyprint(printChoice(c), blockCondition) + "\n";
-                    }
-                }
-            }
-            if (c_localName.equals("expr") && c_parent_localName.equals("case")) {
-                res += ":";
-            }
-            if (entity.getBlockEntity().contains(c_localName)) {
-                String blockString = "";
-                if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
-                    if (!c_localName.equals("else")) {
-                        blockString += "{\n";
-                    }
-                    blockString += printChoice(c) + "\n";
-                } else { // c has matched with other node
-                    String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
-                    if (c_localName.equals("else")) {
-                        if (!child_localName.equals("if")) {
-                            blockString += "else ";
-                            if (((Element) c.astnode).getChildElements("block", "http://www.sdml.info/srcML/src").size() > 0) {
-                                blockString += "{\n";
+            res += res += "+-+-+-\n" + cppNoArt.prettyPrint();
+        } else {
+            Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
+            while (it.hasNext()) {
+                CppNodeArtifact c = it.next();
+                String c_localName = ((Element) c.astnode).getLocalName();
+                String c_value = c.astnode.getValue();
+                String c_parent_localName = ((Element) c.getParent().astnode).getLocalName();
+                res += "+-+-+-\n";
+
+                if (!nodeLocalName.equals("for")) {
+                    if (entity.getTerminal().contains(c_localName)) {
+                        if (c.hasMatches()) {
+                            if (c_localName.equals("condition") && c_parent_localName.equals("do")) {
+                                res += "while ";
+                                res += c_value + ";";
+                            } else {
+                                res += printMatchCondition(c);
+                                res += c_value + "\n";
+                                res += "#endif\n";
+                            }
+                            if (c_value.contains("break")) {
+                                res += "";
                             }
                         } else {
-                            blockString += "";
+                            res += "\n" + presicePrettyprint(printChoice(c), blockCondition) + "\n";
                         }
-                    } else {
-                        if (c_localName.equals("then") && !child_localName.equals("block")) {
-                            blockString += "";
-                        } else {
+                    }
+                }
+                if (c_localName.equals("expr") && c_parent_localName.equals("case")) {
+                    res += ":";
+                }
+                if (entity.getBlockEntity().contains(c_localName)) {
+                    String blockString = "";
+                    if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
+                        if (!c_localName.equals("else")) {
                             blockString += "{\n";
                         }
-                    }
-                    Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
-                    while (it4Block.hasNext()) {
-                        blockString += "+-+-+-\n";
-                        CppNodeArtifact c_block = it4Block.next();
-                        String c_block_localName = ((Element) c_block.astnode).getLocalName();
-                        if (entity.getClassBody().contains(c_block_localName)) {
-                            String s = c_block.prettyPrint();
-                            blockString += s;
-                            continue;
-                        }
-                        if (entity.getNonTerminal().contains(c_block_localName)) {
-                            String block = printNonTerminalNode(c_block);
-                            blockString += block;
-                            continue;
-                        }
-                        if (c_block.hasMatches()) {
-                            blockString += printMatchCondition(c_block) + c_block.astnode.getValue() + "\n#endif\n";
+                        blockString += printChoice(c) + "\n";
+                    } else { // c has matched with other node
+                        String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+                        if (c_localName.equals("else")) {
+                            if (!child_localName.equals("if")) {
+                                blockString += "else ";
+                                if (((Element) c.astnode).getChildElements("block", "http://www.sdml.info/srcML/src").size() > 0) {
+                                    blockString += "{\n";
+                                }
+                            } else {
+                                blockString += "";
+                            }
                         } else {
-                            String choice = printChoice(c_block);
-                            blockString += choice;
+                            if (c_localName.equals("then") && !child_localName.equals("block")) {
+                                blockString += "";
+                            } else {
+                                blockString += "{\n";
+                            }
+                        }
+                        Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
+                        while (it4Block.hasNext()) {
+                            blockString += "+-+-+-\n";
+                            CppNodeArtifact c_block = it4Block.next();
+                            String c_block_localName = ((Element) c_block.astnode).getLocalName();
+                            if (entity.getClassBody().contains(c_block_localName)) {
+                                String s = c_block.prettyPrint();
+                                blockString += s;
+                                continue;
+                            }
+                            if (entity.getNonTerminal().contains(c_block_localName)) {
+                                String block = printNonTerminalNode(c_block);
+                                blockString += block;
+                                continue;
+                            }
+                            if (c_block.hasMatches()) {
+                                blockString += printMatchCondition(c_block) + c_block.astnode.getValue() + "\n#endif\n";
+                            } else {
+                                String choice = printChoice(c_block);
+                                blockString += choice;
+                            }
                         }
                     }
-                }
-                String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
-                blockString += "+-+-+-\n";
-                if (c.hasMatches()) {
-                    if (c_localName.equals("else")) {
-                        if (child_localName.equals("if")) {
-                            blockString += "";
+                    String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+                    blockString += "+-+-+-\n";
+                    if (c.hasMatches()) {
+                        if (c_localName.equals("else")) {
+                            if (child_localName.equals("if")) {
+                                blockString += "";
+                            } else {
+                                if (((Element) c.astnode).getChildElements("block", "http://www.sdml.info/srcML/src").size() > 0) {
+                                    blockString += "}\n";
+                                }
+                                blockString += "";
+                            }
                         } else {
-                            if (((Element) c.astnode).getChildElements("block", "http://www.sdml.info/srcML/src").size() > 0) {
+                            if (((Element) c.astnode).getLocalName().equals("then")
+                                    &&
+                                    !((Element) c.astnode).getChildElements().get(0).getLocalName().equals("block")) {
+                                blockString += "";
+                            } else {
                                 blockString += "}\n";
                             }
-                            blockString += "";
+                            if (res.startsWith("#if"))
+                                blockString += "#endif\n";
                         }
                     } else {
-                        if (((Element) c.astnode).getLocalName().equals("then")
-                                &&
-                                !((Element) c.astnode).getChildElements().get(0).getLocalName().equals("block")) {
-                            blockString += "";
-                        } else {
-                            blockString += "}\n";
+                        if (!c_localName.equals("else")) {
+                            blockString += "}";
                         }
-                        if (res.startsWith("#if"))
-                            blockString += "#endif\n";
                     }
-                } else {
-                    if (!c_localName.equals("else")) {
-                        blockString += "}";
-                    }
+                    blockString += "+-+-+-\n";
+                    res += presicePrettyprint(blockString, blockCondition);
+                } else if (entity.getNonTerminal().contains(c_localName)) {
+                    String s = printNonTerminalNode(c);
+                    s = presicePrettyprint(s, blockCondition);
+                    res += s;
                 }
-                blockString += "+-+-+-\n";
-                res += presicePrettyprint(blockString, blockCondition);
-            } else if (entity.getNonTerminal().contains(c_localName)) {
-                String s = printNonTerminalNode(c);
-                s = presicePrettyprint(s, blockCondition);
-                res += s;
             }
         }
         res = "+-+-+-\n" + blockCondition + presicePrettyprint(res, blockCondition) + "#endif\n";
@@ -1054,11 +1064,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public String printSingleNode(CppNodeArtifact c) {
         String res = "";
         String tmpCondition = "";
-        tmpCondition += "#if " + "defined (" + c.getRevision() + ")";
-        if (c.getRevision().conditions.size() > 0) {
-            tmpCondition += " && ";
+        if (!c.getRevision().getName().equals("choice")) {
+            tmpCondition += "#if " + "defined (" + c.getRevision() + ")";
+            if (c.getRevision().conditions.size() > 0) {
+                tmpCondition += " && ";
+            }
+            tmpCondition += printCondition(c.getRevision());
+        } else {
+            tmpCondition += "#if " + "defined (" + c.getRevision().alternatives.toArray()[0] + ")";
+
+//            if (c.getRevision().conditions.size() > 0) {
+//                tmpCondition += " && ";
+//            }
+//            tmpCondition += printCondition(c.getRevision());
+//            tmpCondition += printCondition(c.getRevision().alternatives.toArray()[0]);
+
         }
-        tmpCondition += printCondition(c.getRevision());
         res += tmpCondition;
         res += "\n" + toString() + "\n";
         res += "#endif\n";
@@ -1107,32 +1128,35 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public String printChoice(CppNodeArtifact c) {
         String s = "";
-        int var_size = c.variants.size();
-        for (int i = 0; i < var_size; i++) {
-            String str = c.variants.keySet().toArray()[i].toString();
-            s += "#if defined (" + str + ")";
-            String c_local = ((Element) c.astnode).getLocalName();
-            if (c_local.equals("block")) {
-                String condition = printCondition(c.variants.get(str).getRevision());
-                if (condition.length() > 0) {
-                    s += " && " + condition + "\n";
-                }
-                s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
+        if (c.variants != null) {
+            int var_size = c.variants.size();
+            for (int i = 0; i < var_size; i++) {
+                String str = c.variants.keySet().toArray()[i].toString();
+                s += "#if defined (" + str + ")";
+                String c_local = ((Element) c.astnode).getLocalName();
+                if (c_local.equals("block")) {
+                    String condition = printCondition(c.variants.get(str).getRevision());
+                    if (condition.length() > 0) {
+                        s += " && " + condition + "\n";
+                    }
+                    s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
 
-            }
-            else {
-                String condition = printCondition(c.variants.get(str).getRevision());
-                if (var_size == 1 && condition.length() > 0) {
-                    s += " && " + condition;
+                } else {
+                    String condition = printCondition(c.variants.get(str).getRevision());
+                    if (var_size == 1 && condition.length() > 0) {
+                        s += " && " + condition;
+                    }
+                    s += "\n" + c.variants.get(str);
                 }
-                s += "\n" + c.variants.get(str);
-            }
-            s += printCondition(c.getRevision());
-            s += "\n#endif\n";
+                s += printCondition(c.getRevision());
+                s += "\n#endif\n";
 
-            if (var_size > 1) {
-                s += "+-+-+-\n";
+                if (var_size > 1) {
+                    s += "+-+-+-\n";
+                }
             }
+        }else{
+            s+=printSingleNode(this);
         }
         return s;
     }
@@ -1227,7 +1251,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public static void sleep() {
         try {
-            Thread.sleep(50);                 //1000 milliseconds is one second.
+            Thread.sleep(500);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

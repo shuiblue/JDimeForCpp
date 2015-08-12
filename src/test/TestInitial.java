@@ -133,19 +133,17 @@ public class TestInitial {
     public String checkMerge_wrapper4Marlin(String path, String fork, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
-String outputPath_pre = "testcpp/mergedResult/"+mergedFile+"/";
-//        for (String fork : forkName) {
+        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/";
 
-                inputFilePaths.add(fork + "/Marlin/Marlin/");
-                String outputPath = outputPath_pre + "upstream_" + fork;
-                runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+        inputFilePaths.add(fork + "/Marlin/Marlin/");
+        String outputPath = outputPath_pre + "upstream_" + fork;
+        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
 
-                try {
-                    result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
-                } catch (IOException e) {
-                    e.printStackTrace();
+        try {
+            result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+        } catch (IOException e) {
+            e.printStackTrace();
 
-//            }
         }
 
         return result;
@@ -156,8 +154,8 @@ String outputPath_pre = "testcpp/mergedResult/"+mergedFile+"/";
 
         for (int i = 0; i < inputFilePaths.size(); i++) {
             String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
-                    +prefix+"upstream/Marlin/Marlin/"+mergedFile+".cpp,";
-            commandLine += prefix + inputFilePaths.get(i) + mergedFile+suffix;
+                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
+            commandLine += prefix + inputFilePaths.get(i) + mergedFile + suffix;
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
             }

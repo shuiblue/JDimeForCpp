@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/17/A.cpp"><class>class <name>Foo</name><super>:<specifier>public</specifier> <name>bar</name></super>
 	
-<block>{<private type="default"> <decl_stmt><decl><type><name>int</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
+<block>{<private type="default"> 
+	<decl_stmt><decl><type><name>int</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
 	<decl_stmt><decl><type><name>long</name></type> <name>a</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
 	<decl_stmt><decl><type><name>int</name></type> <name>y</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
 
