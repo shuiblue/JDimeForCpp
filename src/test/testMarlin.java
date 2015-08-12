@@ -45,7 +45,7 @@ public class testMarlin {
   A : upstream
   B : ut7
     */
-//    @Ignore
+    @Ignore
     @Test
     public void testCardReader() {
         String path = "testcpp/Marlin/cardreader/2way/";
@@ -63,7 +63,7 @@ public class testMarlin {
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testConfigurationStore() {
         String path = "testcpp/Marlin/ConfigurationStore/2way/";
@@ -93,7 +93,7 @@ public class testMarlin {
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testplanner() {
         String path = "testcpp/Marlin/planner/2way/";
@@ -107,7 +107,7 @@ public class testMarlin {
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testdigipot_mcp4451() {
         String path = "testcpp/Marlin/digipot_mcp4451/2way/";
@@ -121,7 +121,7 @@ public class testMarlin {
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testSdFatUtil() {
         String path = "testcpp/Marlin/SdFatUtil/2way/";
@@ -135,7 +135,7 @@ public class testMarlin {
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testtemperature() {
         String path = "testcpp/Marlin/temperature/2way/";

@@ -131,6 +131,57 @@ public class TestInitial {
     }
 
     /**
+<<<<<<< origin/develop
+=======
+     * wrapper for check Merge-- for new real Marlin REPO
+     *
+     * @return
+     */
+    public String checkMerge_wrapper4Marlin(String path, String fork, String mergedFile) {
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        String result = "";
+        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/";
+
+        inputFilePaths.add(fork + "/Marlin/Marlin/");
+        String outputPath = outputPath_pre + "upstream_" + fork;
+        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+
+        try {
+            result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+        return result;
+    }
+
+    public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
+
+
+        for (int i = 0; i < inputFilePaths.size(); i++) {
+            String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
+                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
+            commandLine += prefix + inputFilePaths.get(i) + mergedFile + suffix;
+            if (i < inputFilePaths.size() - 1) {
+                commandLine += ",";
+            }
+
+            String[] arg = commandLine.split(",");
+            try {
+                Main.main(arg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+>>>>>>> HEAD~64
      * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
      *
      * @param config
