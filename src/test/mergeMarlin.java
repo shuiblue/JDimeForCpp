@@ -1,27 +1,40 @@
 package test;
 
+import de.fosd.jdime.common.CppNodeArtifact;
+import de.fosd.jdime.common.Revision;
+import nu.xom.Document;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by shuruiz on 7/26/15.
  */
 public class mergeMarlin {
-    String path = "testcpp/Marlin/cardreader/";
+    String path = "testcpp/originMarlin/";
     TestInitial testInitial = new TestInitial(path);
     HashSet<String> config = new HashSet<>();
-    HashSet<String> fileName = new HashSet<>();
+    HashSet<String> forkName = new HashSet<>();
 
-    public void inputFileInit(int i) {
-        char A = 'A';
-        fileName.add("A");
-        for (int j = 1; j < i; j++) {
-            fileName.add(String.valueOf(++A));
+    public HashSet<String> inputFileInit(String mergedFile) {
+        File dir = new File(path);
+        String[] names = dir.list();
+        for (String name : names) {
+            if (new File(path + name).isDirectory()) {
+                forkName.add(name);
+
+            }
+
         }
+        return forkName;
     }
+
 
     public void afterTest() {
         try {
@@ -32,26 +45,22 @@ public class mergeMarlin {
         testInitial.clearTmpFile();
     }
 
-    String output_2way = "AB";
-    String output_3way = "ABC";
-
-    /*
-    test 1
-    main repo: cardreader.cpp ---A
-    ut7: -- B
-
-     */
 
 
     @Test
-    public void test1() {
-        inputFileInit(2);
-        String testNum = "1/";
-        config.add("SDSUPPORT");
-        System.out.println("------test 1-----------");
+    public void testMarlinMain() {
+        String mergedFile = "Marlin_main";
+        HashSet<String> forkNames = inputFileInit(mergedFile);
+
         // ----------------check Merged result equal to expect result
-        assertTrue(testInitial.checkMerge_wrapper(fileName, testNum, output_2way));
-        // ----------------check preprocessed Merged result equal to origin
-        assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
+        for (String fork : forkNames) {
+            System.out.println("2way : merge fork '" + fork + "' " + mergedFile + ".cpp file with upstream repo");
+
+
+            if (!fork.equals("upstream")) {
+                System.out.print(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile)!=null);
+                assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile));
+            }
+        }
     }
 }

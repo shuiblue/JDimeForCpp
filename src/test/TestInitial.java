@@ -99,8 +99,8 @@ public class TestInitial {
         String result = "";
         String expect_result = "";
         try {
-            result = readResult(prefix + outputPath + suffix).replace("\n","").replace(" ","").replace("\t","");
-            expect_result = readResult(prefix + expectResultPath + suffix).replace("\n","").replace(" ","").replace("\t","");
+            result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+            expect_result = readResult(prefix + expectResultPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,11 +113,6 @@ public class TestInitial {
      * @return
      */
     public boolean checkMerge_wrapper(HashSet<String> fileName, String testNum, String output) {
-//        try {
-//            Thread.sleep(100);                 //1000 milliseconds is one second.
-//        } catch (InterruptedException ex) {
-//            Thread.currentThread().interrupt();
-//        }
         ArrayList<String> inputFilePaths = new ArrayList<>();
 
         for (String s : fileName) {
@@ -128,6 +123,56 @@ public class TestInitial {
         String expectResultPath = testNum + "expect";
 
         return checkMerge(inputFilePaths, outputPath, expectResultPath);
+    }
+
+    /**
+     * wrapper for check Merge-- for new real Marlin REPO
+     *
+     * @return
+     */
+    public String checkMerge_wrapper4Marlin(String path, String fork, String mergedFile) {
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        String result = "";
+String outputPath_pre = "testcpp/mergedResult/"+mergedFile+"/";
+//        for (String fork : forkName) {
+
+                inputFilePaths.add(fork + "/Marlin/Marlin/");
+                String outputPath = outputPath_pre + "upstream_" + fork;
+                runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+
+                try {
+                    result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+//            }
+        }
+
+        return result;
+    }
+
+    public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
+
+
+        for (int i = 0; i < inputFilePaths.size(); i++) {
+            String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
+                    +prefix+"upstream/Marlin/Marlin/"+mergedFile+".cpp,";
+            commandLine += prefix + inputFilePaths.get(i) + mergedFile+suffix;
+            if (i < inputFilePaths.size() - 1) {
+                commandLine += ",";
+            }
+
+            String[] arg = commandLine.split(",");
+            try {
+                Main.main(arg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -146,7 +191,7 @@ public class TestInitial {
         String r1 = compileCpp(config, merged, filePath);
         String r2 = compileCpp(config, origin, filePath);
         try {
-            return readResult(r1).replace("\n", "").replace(" ","").replace("\t", "").equals(readResult(r2).replace("\n","").replace(" ","").replace("\t", ""));
+            return readResult(r1).replace("\n", "").replace(" ", "").replace("\t", "").equals(readResult(r2).replace("\n", "").replace(" ", "").replace("\t", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -169,10 +214,10 @@ public class TestInitial {
 
         if (config != null) {
             for (String s : config) {
-            if (s.contains(">")||s.contains("<")||s.contains("=")) {
-                   s= s.replace('<','l');
-                   s= s.replace('>','b');
-                   s= s.replace('=','e');
+                if (s.contains(">") || s.contains("<") || s.contains("=")) {
+                    s = s.replace('<', 'l');
+                    s = s.replace('>', 'b');
+                    s = s.replace('=', 'e');
 
                 }
 
@@ -180,7 +225,7 @@ public class TestInitial {
                     compiledPath += "not" + s.substring(1);
                     cmd_compiling += ",-U" + s.substring(1);
 
-                } else{
+                } else {
                     compiledPath += s;
                     cmd_compiling += ",-D" + s;
                 }
