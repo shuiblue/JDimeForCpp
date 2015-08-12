@@ -44,7 +44,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             xmlDoc = getXmlDom(getXmlFile(filePath));
         }
         this.astnode = xmlDoc.getChild(0);
-        this.initializeChildren();
+        if(checkIfEndifMatched(this.astnode)) {
+            this.initializeChildren();
+        }
         renumberTree();
     }
 
@@ -1251,7 +1253,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public static void sleep() {
         try {
-            Thread.sleep(500);                 //1000 milliseconds is one second.
+            Thread.sleep(200);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
