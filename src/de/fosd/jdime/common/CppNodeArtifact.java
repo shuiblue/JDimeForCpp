@@ -898,7 +898,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     /**
      * This function print the  content in a block
-     *
+     *∂
      * @param cppNoArt
      * @return
      */
@@ -906,11 +906,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String res = "";
         String blockCondition = printMatchCondition(cppNoArt);
         String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
-        if (nodeLocalName.equals("function") || nodeLocalName.equals("while")) {
+        if (nodeLocalName.equals("function") || nodeLocalName.equals("while")||nodeLocalName.equals("constructor") ) {
             //get function return type and name
             //while (while +condition)
             String returnType = (cppNoArt.astnode.getChild(0)).getValue();
-            String funcName = (cppNoArt.astnode.getChild(2)).getValue();
+//            String funcName = (cppNoArt.astnode.getChild(2)).getValue();
+            String funcName = (cppNoArt.astnode.getChild(1)).getValue();
             res += returnType + " " + funcName;
         } else if (nodeLocalName.equals("for")) {
             String ast_init = clearBlank((cppNoArt.astnode).getChild(1).getValue());
