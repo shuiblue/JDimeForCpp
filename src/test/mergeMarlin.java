@@ -58,7 +58,7 @@ public class mergeMarlin {
 =======
     public static void sleep() {
         try {
-            Thread.sleep(500);                 //1000 milliseconds is one second.
+            Thread.sleep(200);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
