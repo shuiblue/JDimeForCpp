@@ -138,14 +138,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         int endif_num = ((Element) node).getChildElements("endif", "http://www.sdml.info/srcML/cpp").size();
         Boolean matched = (ifdef_num + ifndef_num + if_num == endif_num);
-        if (!matched) {
-//            System.out.println("warning!----------" + node.getBaseURI() + "\n");
-//            System.out.println("warning!----------" + node.toXML() + "\n");
-//            System.out.println("ifdef_num: "+ifdef_num);
-//            System.out.println("ifndef_num: "+ifndef_num);
-//            System.out.println("if_num: "+if_num);
-//            System.out.println("endif_num: "+endif_num);
 
+        int else_num = ((Element) node).getChildElements("else", "http://www.sdml.info/srcML/cpp").size();
+        int elif_num = ((Element) node).getChildElements("elif", "http://www.sdml.info/srcML/cpp").size();
+
+        //-----tricky way
+        Boolean elseNum = ((else_num+elif_num) <= (ifdef_num + ifndef_num + if_num));
+        //----------
+
+
+        if (!matched) {
             File log = new File("/Users/shuruiz/Work/originMarlin/log-unit.txt");
             try{
                 if(log.exists()==false){
@@ -161,7 +163,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             }
 
         }
-        return matched;
+        return matched && elseNum;
     }
 
     /**
