@@ -43,8 +43,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (filePath.contains(".cpp")) {
             xmlDoc = getXmlDom(getXmlFile(filePath));
         }
+
+
         this.astnode = xmlDoc.getChild(0);
-        this.initializeChildren();
+        if(checkIfEndifMatched(this.astnode)) {
+            this.initializeChildren();
+        }
         renumberTree();
     }
 
