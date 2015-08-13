@@ -10,7 +10,6 @@ class Computer
 {
 
     while
-
     ( i-- > 0 ) {
         x = f( i );
         if

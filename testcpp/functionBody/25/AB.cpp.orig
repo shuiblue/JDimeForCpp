@@ -9,8 +9,7 @@ class Computer
 
 {
 
-while   
-
+while 
 ( i-- > 0 )
 {
 

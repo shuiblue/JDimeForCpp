@@ -3,8 +3,7 @@ void a
 ()
 {
 
-while   
-
+while 
 ( i >= 0 )
 {
 #if defined (A)
