@@ -5,8 +5,7 @@ void a
 
 a=0;
 #if defined (A) && defined (X) || defined (B)
-while   
-
+while 
 ( i >= 0 )
 {
 #if defined (A) && defined (X)

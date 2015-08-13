@@ -904,22 +904,25 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     private String printBlock(CppNodeArtifact cppNoArt) {
         String res = "";
+        String xmlns = "http://www.sdml.info/srcML/src";
         String blockCondition = printMatchCondition(cppNoArt);
         String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
-        if (nodeLocalName.equals("function") || nodeLocalName.equals("while")||nodeLocalName.equals("constructor") ) {
-            //get function return type and name
-            //while (while +condition)
-            String returnType = (cppNoArt.astnode.getChild(0)).getValue();
-//            String funcName = (cppNoArt.astnode.getChild(2)).getValue();
-            String funcName = (cppNoArt.astnode.getChild(1)).getValue();
+        if (nodeLocalName.equals("function")||nodeLocalName.equals("constructor") ) {
+            String returnType = (((Element) cppNoArt.astnode).getChildElements("type",xmlns )).get(0).getValue();
+            String funcName = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
             res += returnType + " " + funcName;
-        } else if (nodeLocalName.equals("for")) {
-            String ast_init = clearBlank((cppNoArt.astnode).getChild(1).getValue());
-            String ast_condition = clearBlank((cppNoArt.astnode).getChild(3).getValue());
-            String ast_incr = clearBlank((cppNoArt.astnode).getChild(5).getValue());
+        }
+        else if(nodeLocalName.equals("while")){
+            res += "while ";
+        }
+        else if (nodeLocalName.equals("for")) {
+            String ast_init = (((Element) cppNoArt.astnode).getChildElements("init", xmlns)).get(0).getValue();
+            String ast_condition = (((Element) cppNoArt.astnode).getChildElements("condition", xmlns)).get(0).getValue();
+            String ast_incr = (((Element) cppNoArt.astnode).getChildElements("incr", xmlns)).get(0).getValue();
             res += "for(" + ast_init + ast_condition + ast_incr + ")\n";
         } else if (nodeLocalName.equals("class")) {
-            res += "class " + cppNoArt.astnode.getChild(1).getValue();
+            String ast_name = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
+            res += "class " + ast_name;
         } else if (nodeLocalName.equals("if")) {
             if (((Element) cppNoArt.getParent().astnode).getLocalName().equals("else")) {
                 res += "else ";
@@ -932,7 +935,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (nodeLocalName.equals("do")) {
             res += "do ";
         } else if (nodeLocalName.equals("extern")) {
-            res += cppNoArt.astnode.getChild(0).getValue();
+            String ast_name = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
+            res += ast_name;
         }
 
         if (cppNoArt.children == null) {
@@ -1254,7 +1258,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public static void sleep() {
         try {
-            Thread.sleep(200);                 //1000 milliseconds is one second.
+            Thread.sleep(50);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
