@@ -1,17 +1,9 @@
 
-class Computer
-    :public bar {
-
-    if
-    ( i > 0 ) {
+class Computer:public bar {
+    if ( i > 0 ) {
         x = i;
-    }
-
-
-    else if
-    ( i < 0)
+    } else if ( i < 0)
         x = q;
-
 
 
 
@@ -19,8 +11,5 @@ class Computer
 
     else
         x = s;
-
-
-
 
 }

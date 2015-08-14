@@ -3,12 +3,9 @@ class Foo
 
 #if defined (A)
     :public bar
-
 #endif
 
-
 {
-
     int i=0;
     long a=0;
     int y=0;
@@ -21,5 +18,4 @@ class Foo
     int ss=0;
 #endif
 }
-
 #endif

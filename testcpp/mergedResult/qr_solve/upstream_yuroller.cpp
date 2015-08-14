@@ -235,8 +235,8 @@ double r8mat_amax
     int j;
     double value;
     value = r8_abs ( a[0+0*m] );
-    for(j=0; j<n; j++) {
-        for(i=0; i<m; i++) {
+    for(j = 0; j < n; j++) {
+        for(i = 0; i < m; i++) {
             if
             ( value < r8_abs ( a[i+j*m] ) ) {
                 value = r8_abs ( a[i+j*m] );
@@ -247,7 +247,7 @@ double r8mat_amax
 }
 
 
-double *
+double * r8mat_copy_new
 ( int m, int n, double a1[] )
 /******************************************************************************/
 /*
@@ -285,8 +285,8 @@ double *
     int i;
     int j;
     a2 = ( double * ) malloc ( m * n * sizeof ( double ) );
-    for(j=0; j<n; j++) {
-        for(i=0; i<m; i++) {
+    for(j = 0; j < n; j++) {
+        for(i = 0; i < m; i++) {
             a2[i+j*m] = a1[i+j*m];
         }
     }
@@ -377,7 +377,7 @@ void daxpy
         } else {
             iy = ( - n + 1 ) * incy;
         }
-        for(i=0; i<n; i++) {
+        for(i = 0; i < n; i++) {
             dy[iy] = dy[iy] + da * dx[ix];
             ix = ix + incx;
             iy = iy + incy;
@@ -388,10 +388,10 @@ void daxpy
     */
     else {
         m = n % 4;
-        for(i=0; i<m; i++) {
+        for(i = 0; i < m; i++) {
             dy[i] = dy[i] + da * dx[i];
         }
-        for(i=m; i<n; i=i+4) {
+        for(i = m; i < n; i = i + 4) {
             dy[i  ] = dy[i  ] + da * dx[i  ];
             dy[i+1] = dy[i+1] + da * dx[i+1];
             dy[i+2] = dy[i+2] + da * dx[i+2];
@@ -483,7 +483,7 @@ double ddot
         } else {
             iy = ( - n + 1 ) * incy;
         }
-        for(i=0; i<n; i++) {
+        for(i = 0; i < n; i++) {
             dtemp = dtemp + dx[ix] * dy[iy];
             ix = ix + incx;
             iy = iy + incy;
@@ -494,10 +494,10 @@ double ddot
     */
     else {
         m = n % 5;
-        for(i=0; i<m; i++) {
+        for(i = 0; i < m; i++) {
             dtemp = dtemp + dx[i] * dy[i];
         }
-        for(i=m; i<n; i=i+5) {
+        for(i = m; i < n; i = i + 5) {
             dtemp = dtemp + dx[i  ] * dy[i  ]
                     + dx[i+1] * dy[i+1]
                     + dx[i+2] * dy[i+2]
@@ -574,7 +574,7 @@ double dnrm2
         scale = 0.0;
         ssq = 1.0;
         ix = 0;
-        for(i=0; i<n; i++) {
+        for(i = 0; i < n; i++) {
             if
             ( x[ix] != 0.0 ) {
                 absxi = r8_abs ( x[ix] );
@@ -675,7 +675,7 @@ void dqrank
     int job;
     int k;
     double *work;
-    for(i=0; i<n; i++) {
+    for(i = 0; i < n; i++) {
         jpvt[i] = 0;
     }
     work = ( double * ) malloc ( n * sizeof ( double ) );
@@ -683,7 +683,7 @@ void dqrank
     dqrdc ( a, lda, m, n, qraux, jpvt, work, job );
     *kr = 0;
     k = i4_min ( m, n );
-    for(j=0; j<k; j++) {
+    for(j = 0; j < k; j++) {
         if
         ( r8_abs ( a[j+j*lda] ) <= tol * r8_abs ( a[0+0*lda] ) ) {
             return;
@@ -796,7 +796,7 @@ void dqrdc
     */
     if
     ( job != 0 ) {
-        for(j=1; j<=p; j++) {
+        for(j = 1; j <= p; j++) {
             swapj = ( 0 < jpvt[j-1] );
             if
             ( jpvt[j-1] < 0 ) {
@@ -816,7 +816,7 @@ void dqrdc
             }
         }
         pu = p;
-        for(j=p; 1<=j; j--) {
+        for(j = p; 1 <= j; j--) {
             if
             ( jpvt[j-1] < 0 ) {
                 jpvt[j-1] = -jpvt[j-1];
@@ -834,17 +834,17 @@ void dqrdc
     /*
       Compute the norms of the free columns.
     */
-    for(j=pl; j<=pu; j++) {
+    for(j = pl; j <= pu; j++) {
         qraux[j-1] = dnrm2 ( n, a+0+(j-1)*lda, 1 );
     }
-    for(j=pl; j<=pu; j++) {
+    for(j = pl; j <= pu; j++) {
         work[j-1] = qraux[j-1];
     }
     /*
       Perform the Householder reduction of A.
     */
     lup = i4_min ( n, p );
-    for(l=1; l<=lup; l++) {
+    for(l = 1; l <= lup; l++) {
         /*
           Bring the column of largest norm into the pivot position.
         */
@@ -852,7 +852,7 @@ void dqrdc
         ( pl <= l && l < pu ) {
             maxnrm = 0.0;
             maxj = l;
-            for(j=l; j<=pu; j++) {
+            for(j = l; j <= pu; j++) {
                 if
                 ( maxnrm < qraux[j-1] ) {
                     maxnrm = qraux[j-1];
@@ -887,7 +887,7 @@ void dqrdc
                 /*
                   Apply the transformation to the remaining columns, updating the norms.
                 */
-                for(j=l+1; j<=p; j++) {
+                for(j = l + 1; j <= p; j++) {
                     t = -ddot ( n-l+1, a+l-1+(l-1)*lda, 1, a+l-1+(j-1)*lda, 1 )
                         / a[l-1+(l-1)*lda];
                     daxpy ( n-l+1, t, a+l-1+(l-1)*lda, 1, a+l-1+(j-1)*lda, 1 );
@@ -1157,13 +1157,13 @@ void dqrlss
         job = 110;
         info = dqrsl ( a, lda, m, kr, qraux, b, rsd, rsd, x, rsd, rsd, job );
     }
-    for(i=0; i<n; i++) {
+    for(i = 0; i < n; i++) {
         jpvt[i] = - jpvt[i];
     }
-    for(i=kr; i<n; i++) {
+    for(i = kr; i < n; i++) {
         x[i] = 0.0;
     }
-    for(j=1; j<=n; j++) {
+    for(j = 1; j <= n; j++) {
         if
         ( jpvt[j-1] <= 0 ) {
             k = - jpvt[j-1];
@@ -1384,13 +1384,13 @@ int dqrsl
     */
     if
     ( cqy ) {
-        for(i=1; i<=n; i++) {
+        for(i = 1; i <= n; i++) {
             qy[i-1] = y[i-1];
         }
     }
     if
     ( cqty ) {
-        for(i=1; i<=n; i++) {
+        for(i = 1; i <= n; i++) {
             qty[i-1] = y[i-1];
         }
     }
@@ -1399,7 +1399,7 @@ int dqrsl
     */
     if
     ( cqy ) {
-        for(jj=1; jj<=ju; jj++) {
+        for(jj = 1; jj <= ju; jj++) {
             j = ju - jj + 1;
             if
             ( qraux[j-1] != 0.0 ) {
@@ -1416,7 +1416,7 @@ int dqrsl
     */
     if
     ( cqty ) {
-        for(j=1; j<=ju; j++) {
+        for(j = 1; j <= ju; j++) {
             if
             ( qraux[j-1] != 0.0 ) {
                 temp = a[j-1+(j-1)*lda];
@@ -1432,31 +1432,31 @@ int dqrsl
     */
     if
     ( cb ) {
-        for(i=1; i<=k; i++) {
+        for(i = 1; i <= k; i++) {
             b[i-1] = qty[i-1];
         }
     }
     if
     ( cab ) {
-        for(i=1; i<=k; i++) {
+        for(i = 1; i <= k; i++) {
             ab[i-1] = qty[i-1];
         }
     }
     if
     ( cr && k < n ) {
-        for(i=k+1; i<=n; i++) {
+        for(i = k+1; i <= n; i++) {
             rsd[i-1] = qty[i-1];
         }
     }
     if
     ( cab && k+1 <= n ) {
-        for(i=k+1; i<=n; i++) {
+        for(i = k+1; i <= n; i++) {
             ab[i-1] = 0.0;
         }
     }
     if
     ( cr ) {
-        for(i=1; i<=k; i++) {
+        for(i = 1; i <= k; i++) {
             rsd[i-1] = 0.0;
         }
     }
@@ -1465,7 +1465,7 @@ int dqrsl
     */
     if
     ( cb ) {
-        for(jj=1; jj<=k; jj++) {
+        for(jj = 1; jj <= k; jj++) {
             j = k - jj + 1;
             if
             ( a[j-1+(j-1)*lda] == 0.0 ) {
@@ -1485,7 +1485,7 @@ int dqrsl
     */
     if
     ( cr || cab ) {
-        for(jj=1; jj<=ju; jj++) {
+        for(jj = 1; jj <= ju; jj++) {
             j = ju - jj + 1;
             if
             ( qraux[j-1] != 0.0 ) {
@@ -1564,10 +1564,10 @@ void dscal
     } else if
     ( incx == 1 ) {
         m = n % 5;
-        for(i=0; i<m; i++) {
+        for(i = 0; i < m; i++) {
             x[i] = sa * x[i];
         }
-        for(i=m; i<n; i=i+5) {
+        for(i = m; i < n; i = i + 5) {
             x[i]   = sa * x[i];
             x[i+1] = sa * x[i+1];
             x[i+2] = sa * x[i+2];
@@ -1581,7 +1581,7 @@ void dscal
         } else {
             ix = ( - n + 1 ) * incx;
         }
-        for(i=0; i<n; i++) {
+        for(i = 0; i < n; i++) {
             x[ix] = sa * x[ix];
             ix = ix + incx;
         }
@@ -1646,12 +1646,12 @@ void dswap
     } else if
     ( incx == 1 && incy == 1 ) {
         m = n % 3;
-        for(i=0; i<m; i++) {
+        for(i = 0; i < m; i++) {
             temp = x[i];
             x[i] = y[i];
             y[i] = temp;
         }
-        for(i=m; i<n; i=i+3) {
+        for(i = m; i < n; i = i + 3) {
             temp = x[i];
             x[i] = y[i];
             y[i] = temp;
@@ -1675,7 +1675,7 @@ void dswap
         } else {
             iy = ( - n + 1 ) * incy;
         }
-        for(i=0; i<n; i++) {
+        for(i = 0; i < n; i++) {
             temp = x[ix];
             x[ix] = y[iy];
             y[iy] = temp;
@@ -1689,7 +1689,7 @@ void dswap
 
 /******************************************************************************/
 /******************************************************************************/
-double *
+double * qr_solve
 ( int m, int n, double a[], double b[] )
 /******************************************************************************/
 /*

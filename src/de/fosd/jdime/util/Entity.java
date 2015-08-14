@@ -61,6 +61,7 @@ public class Entity {
         terminal.add("undef");
         terminal.add("error");
         terminal.add("include");
+        terminal.add("member_list");
 
 /* head entity of
  function : (return type+function name)

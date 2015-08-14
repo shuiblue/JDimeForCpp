@@ -7,6 +7,7 @@
 #include "language.h"
 #endif
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
+CardReader::CardReader
 ()
 {
 
@@ -40,13 +41,13 @@ autostart_atmillis=millis()+5000;
 }
 
 
-char * (char *buffer,const dir_t &p)
+char * createFilename
 (char *buffer,const dir_t &p)
 //buffer>12characters
 {
 
 char *pos=buffer;
-for(uint8_ti=0;i<11;i++)
+for(uint8_t i = 0;i < 11;i++)
 
 {
 
@@ -86,8 +87,7 @@ void CardReader::lsDive
 
 dir_t p;
 uint8_t cnt=0;
-while  
-  
+while 
 (parent.readDir(p, longFilename) > 0)
 {
 
@@ -384,8 +384,9 @@ void CardReader::initsd
   
 
 
+
 #endif
-}
+
 void CardReader::setroot
 ()
 {
@@ -541,7 +542,6 @@ if
 
 dirname_start=strchr(name,'/')+1;
 while 
-    
 (dirname_start>0)
 {
 
@@ -699,7 +699,6 @@ if
 
 dirname_start=strchr(name,'/')+1;
 while 
-    
 (dirname_start>0)
 {
 
@@ -886,17 +885,16 @@ return;
 
 char autoname[30];
 sprintf_P(autoname, PSTR("auto%i.g"), lastnr);
-for(int8_ti=0;i++autoname[i]=tolower(autoname[i]);)
+for(int8_t i=0;i<(int8_t)strlen(autoname);i++)
 
 dir_t p;
 root.rewind();
 bool found=false;
-while   
-  
+while 
 (root.readDir(p, NULL) > 0)
 {
 
-for(int8_ti=0;i++p.name[i]=tolower(p.name[i]);)
+for(int8_t i=0;i<(int8_t)strlen((char*)p.name);i++)
 
 //Serial.print((char*)p.name);
 //Serial.print(" ");
@@ -1022,7 +1020,7 @@ if
 (workDirDepth < MAX_DIR_DEPTH)
 {
 
-for(intd=++workDirDepth;d--;))
+for(int d = ++workDirDepth;d--;)
 
 
 workDirParents[0]=*parent;
@@ -1048,7 +1046,7 @@ if
 --workDirDepth;
 workDir = workDirParents[0];
 int d;
-for(intd=0;d<workDirDepth;d++)
+for(int d = 0;d < workDirDepth;d++)
 
 
 }

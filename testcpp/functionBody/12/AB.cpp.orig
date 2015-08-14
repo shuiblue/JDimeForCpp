@@ -2,7 +2,6 @@
 void a
 ()
 {
-
 a=0;
 #if defined (A) && defined (X) || defined (B)
 while 
@@ -15,7 +14,6 @@ while
 
 
 #endif
-
 #if defined (B)
 
     string1[x] = string2[x];
@@ -26,5 +24,4 @@ while
 }
 #endif
 }
-
 #endif

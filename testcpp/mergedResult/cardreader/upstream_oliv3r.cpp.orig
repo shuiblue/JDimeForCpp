@@ -12,6 +12,7 @@
 #include "language.h"
 #endif
 #if defined (A) && defined (SDSUPPORT) || defined (B) && defined (SDSUPPORT)
+CardReader::CardReader
 ()
 {
 
@@ -48,13 +49,13 @@ autostart_atmillis=millis()+5000;
 }
 
 
-char * (char *buffer,const dir_t &p)
+char * createFilename
 (char *buffer,const dir_t &p)
 //buffer>12characters
 {
 
 char *pos=buffer;
-for(uint8_ti=0;i<11;i++)
+for(uint8_t i = 0;i < 11;i++)
 
 {
 
@@ -94,8 +95,7 @@ void CardReader::lsDive
 
 dir_t p;
 uint8_t cnt=0;
-while  
-  
+while 
 (parent.readDir(p, longFilename) > 0)
 {
 
@@ -392,8 +392,9 @@ void CardReader::initsd
 
 
 
+
 #endif
-}
+
 void CardReader::setroot
 ()
 {
@@ -587,68 +588,82 @@ if
 {
 
 dirname_start=strchr(name,'/')+1;
-while 
-    
-
 #if defined (A)
-(dirname_start>0)
+while(dirname_start>0)
+    {
+      dirname_end=strchr(dirname_start,'/');
+      //SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
+      //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
+      if(dirname_end>0 && dirname_end>dirname_start)
+      {
+        char subdirname[13];
+        strncpy(subdirname, dirname_start, dirname_end-dirname_start);
+        subdirname[dirname_end-dirname_start]=0;
+        SERIAL_ECHOLN(subdirname);
+        if(!myDir.open(curDir,subdirname,O_READ))
+        {
+          SERIAL_PROTOCOLPGM(MSG_SD_OPEN_FILE_FAIL);
+          SERIAL_PROTOCOL(subdirname);
+          SERIAL_PROTOCOLLNPGM(".");
+          return;
+        }
+        else
+        {
+          //SERIAL_ECHOLN("dive ok");
+        }
+          
+        curDir=&myDir; 
+        dirname_start=dirname_end+1;
+      }
+      else // the reminder after all /fsa/fdsa/ is the filename
+      {
+        fname=dirname_start;
+        //SERIAL_ECHOLN("remaider");
+        //SERIAL_ECHOLN(fname);
+        break;
+      }
+      
+    }
 #endif
 #if defined (B)
-(dirname_start>(char*)1)
+while(dirname_start>(char*)1)
+    {
+      dirname_end=strchr(dirname_start,'/');
+      //SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
+      //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
+      if(dirname_end>0 && dirname_end>dirname_start)
+      {
+        char subdirname[13];
+        strncpy(subdirname, dirname_start, dirname_end-dirname_start);
+        subdirname[dirname_end-dirname_start]=0;
+        SERIAL_ECHOLN(subdirname);
+        if(!myDir.open(curDir,subdirname,O_READ))
+        {
+          SERIAL_PROTOCOLPGM(MSG_SD_OPEN_FILE_FAIL);
+          SERIAL_PROTOCOL(subdirname);
+          SERIAL_PROTOCOLLNPGM(".");
+          return;
+        }
+        else
+        {
+          //SERIAL_ECHOLN("dive ok");
+        }
+
+        curDir=&myDir;
+        dirname_start=dirname_end+1;
+      }
+      else // the reminder after all /fsa/fdsa/ is the filename
+      {
+        fname=dirname_start;
+        //SERIAL_ECHOLN("remaider");
+        //SERIAL_ECHOLN(fname);
+        break;
+      }
+
+    }
+
 
 #endif
-
-
-{
-
-dirname_end=strchr(dirname_start,'/');
-//SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
-//SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
-if 
-(dirname_end>0 && dirname_end>dirname_start)
-{
-
-char subdirname[13];
-strncpy(subdirname, dirname_start, dirname_end-dirname_start);
-subdirname[dirname_end-dirname_start]=0;
-SERIAL_ECHOLN(subdirname);
-if 
-(!myDir.open(curDir,subdirname,O_READ))
-{
-
-SERIAL_PROTOCOLPGM(MSG_SD_OPEN_FILE_FAIL);
-SERIAL_PROTOCOL(subdirname);
-SERIAL_PROTOCOLLNPGM(".");
-return;
-}
-
-
-else {
-
-//SERIAL_ECHOLN("dive ok");
-}
-
-
-
-curDir=&myDir;
-dirname_start=dirname_end+1;
-}
-
-
-else {
-
-// the reminder after all /fsa/fdsa/ is the filename
-fname=dirname_start;
-//SERIAL_ECHOLN("remaider");
-//SERIAL_ECHOLN(fname);
-break;
-}
-
-
-}
-
-
-
 }
 
 
@@ -772,7 +787,6 @@ if
 
 dirname_start=strchr(name,'/')+1;
 while 
-    
 (dirname_start>0)
 {
 
@@ -974,17 +988,16 @@ return;
 
 char autoname[30];
 sprintf_P(autoname, PSTR("auto%i.g"), lastnr);
-for(int8_ti=0;i++autoname[i]=tolower(autoname[i]);)
+for(int8_t i=0;i<(int8_t)strlen(autoname);i++)
 
 dir_t p;
 root.rewind();
 bool found=false;
-while   
-  
+while 
 (root.readDir(p, NULL) > 0)
 {
 
-for(int8_ti=0;i++p.name[i]=tolower(p.name[i]);)
+for(int8_t i=0;i<(int8_t)strlen((char*)p.name);i++)
 
 //Serial.print((char*)p.name);
 //Serial.print(" ");
@@ -1112,7 +1125,7 @@ if
 (workDirDepth < MAX_DIR_DEPTH)
 {
 
-for(intd=++workDirDepth;d--;))
+for(int d = ++workDirDepth;d--;)
 
 
 workDirParents[0]=*parent;

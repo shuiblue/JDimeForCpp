@@ -5,10 +5,7 @@ class Computer
     :public bar
 
 
-
-
 {
-
     while
     ( i-- > 0 ) {
         x = f( i );
@@ -23,6 +20,4 @@ class Computer
         }
         y += x * x;
     }
-
-
 }

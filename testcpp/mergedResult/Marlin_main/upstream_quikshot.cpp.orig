@@ -646,7 +646,7 @@ servos[3].attach(SERVO3_PIN);
 #endif
 // Set position of Servo Endstops that are defined
 #if defined (A) && defined (SERVO_ENDSTOPS) || defined (B) && defined (SERVO_ENDSTOPS)
-for(int8_ti=0;i<3;i++)
+for(int8_t i = 0;i < 3;i++)
 
 {
 
@@ -716,7 +716,7 @@ SERIAL_ECHOPGM(MSG_FREE_MEMORY);
 SERIAL_ECHO(freeMemory());
 SERIAL_ECHOPGM(MSG_PLANNER_BUFFER_BYTES);
 SERIAL_ECHOLN((int)sizeof(block_t)*BLOCK_BUFFER_SIZE);
-for(int8_ti=0;i<BUFSIZE;i++)
+for(int8_t i = 0;i < BUFSIZE;i++)
 
 {
 
@@ -839,7 +839,7 @@ void get_command
 ()
 {
 
-while  
+while 
 ( MYSERIAL.available() > 0  && buflen < BUFSIZE)
 {
 
@@ -899,7 +899,7 @@ if
 
 byte checksum = 0;
 byte count = 0;
-while  
+while 
 (cmdbuffer[bufindw][count] != '*')
 checksum = checksum^cmdbuffer[bufindw][count++];
 
@@ -1060,7 +1060,7 @@ if
 (buflen==0)
 stop_buffering=false;
 
-while  
+while 
 ( !card.eof()  && buflen < BUFSIZE && !stop_buffering)
 {
 
@@ -2967,7 +2967,7 @@ if
 st_synchronize();
 
 
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -6360,8 +6360,9 @@ case 404:  //M404 Enter the nominal filament width (3mm, 1.75mm ) N<3.0> or disp
     }
   
 
+
 #endif
-}
+
 
 else if 
 (code_seen('T'))
@@ -6480,7 +6481,7 @@ delayed_move_time = 0;
 #if defined (A) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) ) || defined (B) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) )
 // Offset extruder (only by XY)
 int i;
-for(i=0;i<2;i++)
+for(i = 0;i < 2;i++)
 
 {
 
@@ -6577,7 +6578,7 @@ void get_coordinates
 {
 
 bool seen[4]={false,false,false,false};
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -6817,7 +6818,7 @@ for (int s = 1; s <= steps; s++) {
 #endif
 #if defined (A) && defined (DELTA) || defined (B) && defined (DELTA)
 float difference[NUM_AXIS];
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -6849,12 +6850,12 @@ int steps = max(1, int(delta_segments_per_second * seconds));
 // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
 // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
 // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-for(ints=1;s<=steps;s++)
+for(int s = 1;s <= steps;s++)
 
 {
 
 float fraction = float(s) / float(steps);
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -6963,7 +6964,7 @@ plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], 
 #if defined (B)
 //else DELTA
 #endif
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -6985,7 +6986,7 @@ mc_arc(current_position, destination, offset, X_AXIS, Y_AXIS, Z_AXIS, feedrate*f
 // As far as the parser is concerned, the position is now == target. In reality the
 // motion control system might still be processing the action and the real tool position
 // in any intermediate location.
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -7139,7 +7140,7 @@ if
 
 stat_update += 500;
 // Update every 0.5s
-for(int8_tcur_extruder=0;cur_extruder<EXTRUDERS;++cur_extruder)
+for(int8_t cur_extruder = 0;cur_extruder < EXTRUDERS;++cur_extruder)
 
 {
 
@@ -7422,7 +7423,7 @@ cli();
 // disable interrupts
 #endif
 suicide();
-while  
+while 
 (1)
 {
 
@@ -7605,8 +7606,9 @@ switch
 
   
 
+
 #endif
-}
+
 }
 
 

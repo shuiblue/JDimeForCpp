@@ -282,7 +282,7 @@ static void finISR
 static boolean isTimerActive
 (timer16_Sequence_t timer) {
 // returns true if any servo is active on this timer
-    for(uint8_tchannel=0; channel<SERVOS_PER_TIMER; channel++) {
+    for(uint8_t channel=0; channel < SERVOS_PER_TIMER; channel++) {
         if
         (SERVO(timer,channel).Pin.isActive == true)
             return true;
@@ -292,6 +292,7 @@ static boolean isTimerActive
 
 
 /****************** end of static functions ******************************/
+Servo::Servo
 () {
     if
     ( ServoCount < MAX_SERVOS) {

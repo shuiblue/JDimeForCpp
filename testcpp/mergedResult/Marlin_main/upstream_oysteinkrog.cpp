@@ -568,7 +568,7 @@ void servo_init
 #endif
 // Set position of Servo Endstops that are defined
 #if defined (A) && defined (SERVO_ENDSTOPS) || defined (B) && defined (SERVO_ENDSTOPS)
-    for(int8_ti=0; i<3; i++) {
+    for(int8_t i = 0; i < 3; i++) {
         if
         (servo_endstops[i] > -1) {
             servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
@@ -622,7 +622,7 @@ void setup
     SERIAL_ECHO(freeMemory());
     SERIAL_ECHOPGM(MSG_PLANNER_BUFFER_BYTES);
     SERIAL_ECHOLN((int)sizeof(block_t)*BLOCK_BUFFER_SIZE);
-    for(int8_ti=0; i<BUFSIZE; i++) {
+    for(int8_t i = 0; i < BUFSIZE; i++) {
         fromsd[i] = false;
     }
 // loads data from EEPROM if available else uses defaults (and resets step acceleration rate)
@@ -2560,7 +2560,7 @@ void process_commands
             if
             (!code_seen(axis_codes[E_AXIS]))
                 st_synchronize();
-            for(int8_ti=0; i<NUM_AXIS; i++) {
+            for(int8_t i=0; i < NUM_AXIS; i++) {
                 if
                 (code_seen(axis_codes[i])) {
                     if
@@ -5853,124 +5853,116 @@ Sigma_Exit:
         break;
     }
 #endif
-}
-
-else if
-(code_seen('T')) {
-    tmp_extruder = code_value();
-    if
-    (tmp_extruder >= EXTRUDERS) {
-        SERIAL_ECHO_START;
-        SERIAL_ECHO("T");
-        SERIAL_ECHO(tmp_extruder);
-        SERIAL_ECHOLN(MSG_INVALID_EXTRUDER);
-    } else {
-        boolean make_move = false;
+    else if
+    (code_seen('T')) {
+        tmp_extruder = code_value();
         if
-        (code_seen('F')) {
-            make_move = true;
-            next_feedrate = code_value();
+        (tmp_extruder >= EXTRUDERS) {
+            SERIAL_ECHO_START;
+            SERIAL_ECHO("T");
+            SERIAL_ECHO(tmp_extruder);
+            SERIAL_ECHOLN(MSG_INVALID_EXTRUDER);
+        } else {
+            boolean make_move = false;
             if
-            (next_feedrate > 0.0) {
-                feedrate = next_feedrate;
-            }
-        }
-#if defined (A) && EXTRUDERS > 1 || defined (B) && EXTRUDERS > 1
-        if
-        (tmp_extruder != active_extruder) {
-// Save current position to return to after applying extruder offset
-            memcpy(destination, current_position, sizeof(destination));
-#if defined (A) && (EXTRUDERS > 1 && defined (DUAL_X_CARRIAGE) ) || defined (B) && (EXTRUDERS > 1 && defined (DUAL_X_CARRIAGE) )
-            if
-            (dual_x_carriage_mode == DXC_AUTO_PARK_MODE && Stopped == false &&
-                    (delayed_move_time != 0 || current_position[X_AXIS] != x_home_pos(active_extruder))) {
-// Park old head: 1) raise 2) move to park position 3) lower
-                plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS] + TOOLCHANGE_PARK_ZLIFT,
-                                 current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
-                plan_buffer_line(x_home_pos(active_extruder), current_position[Y_AXIS], current_position[Z_AXIS] + TOOLCHANGE_PARK_ZLIFT,
-                                 current_position[E_AXIS], max_feedrate[X_AXIS], active_extruder);
-                plan_buffer_line(x_home_pos(active_extruder), current_position[Y_AXIS], current_position[Z_AXIS],
-                                 current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
-                st_synchronize();
-            }
-// apply Y & Z extruder offset (x offset is already used in determining home pos)
-            current_position[Y_AXIS] = current_position[Y_AXIS] -
-                                       extruder_offset[Y_AXIS][active_extruder] +
-                                       extruder_offset[Y_AXIS][tmp_extruder];
-            current_position[Z_AXIS] = current_position[Z_AXIS] -
-                                       extruder_offset[Z_AXIS][active_extruder] +
-                                       extruder_offset[Z_AXIS][tmp_extruder];
-            active_extruder = tmp_extruder;
-// This function resets the max/min values - the current position may be overwritten below.
-            axis_is_at_home(X_AXIS);
-            if
-            (dual_x_carriage_mode == DXC_FULL_CONTROL_MODE) {
-                current_position[X_AXIS] = inactive_extruder_x_pos;
-                inactive_extruder_x_pos = destination[X_AXIS];
-            } else if
-            (dual_x_carriage_mode == DXC_DUPLICATION_MODE) {
-                active_extruder_parked = (active_extruder == 0);
-// this triggers the second extruder to move into the duplication position
+            (code_seen('F')) {
+                make_move = true;
+                next_feedrate = code_value();
                 if
-                (active_extruder == 0 || active_extruder_parked)
-                    current_position[X_AXIS] = inactive_extruder_x_pos;
-                else
-                    current_position[X_AXIS] = destination[X_AXIS] + duplicate_extruder_x_offset;
-                inactive_extruder_x_pos = destination[X_AXIS];
-                extruder_duplication_enabled = false;
-            } else {
-// record raised toolhead position for use by unpark
-                memcpy(raised_parked_position, current_position, sizeof(raised_parked_position));
-                raised_parked_position[Z_AXIS] += TOOLCHANGE_UNPARK_ZLIFT;
-                active_extruder_parked = true;
-                delayed_move_time = 0;
+                (next_feedrate > 0.0) {
+                    feedrate = next_feedrate;
+                }
             }
+#if defined (A) && EXTRUDERS > 1 || defined (B) && EXTRUDERS > 1
+            if
+            (tmp_extruder != active_extruder) {
+// Save current position to return to after applying extruder offset
+                memcpy(destination, current_position, sizeof(destination));
+#if defined (A) && (EXTRUDERS > 1 && defined (DUAL_X_CARRIAGE) ) || defined (B) && (EXTRUDERS > 1 && defined (DUAL_X_CARRIAGE) )
+                if
+                (dual_x_carriage_mode == DXC_AUTO_PARK_MODE && Stopped == false &&
+                        (delayed_move_time != 0 || current_position[X_AXIS] != x_home_pos(active_extruder))) {
+// Park old head: 1) raise 2) move to park position 3) lower
+                    plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS] + TOOLCHANGE_PARK_ZLIFT,
+                                     current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+                    plan_buffer_line(x_home_pos(active_extruder), current_position[Y_AXIS], current_position[Z_AXIS] + TOOLCHANGE_PARK_ZLIFT,
+                                     current_position[E_AXIS], max_feedrate[X_AXIS], active_extruder);
+                    plan_buffer_line(x_home_pos(active_extruder), current_position[Y_AXIS], current_position[Z_AXIS],
+                                     current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+                    st_synchronize();
+                }
+// apply Y & Z extruder offset (x offset is already used in determining home pos)
+                current_position[Y_AXIS] = current_position[Y_AXIS] -
+                                           extruder_offset[Y_AXIS][active_extruder] +
+                                           extruder_offset[Y_AXIS][tmp_extruder];
+                current_position[Z_AXIS] = current_position[Z_AXIS] -
+                                           extruder_offset[Z_AXIS][active_extruder] +
+                                           extruder_offset[Z_AXIS][tmp_extruder];
+                active_extruder = tmp_extruder;
+// This function resets the max/min values - the current position may be overwritten below.
+                axis_is_at_home(X_AXIS);
+                if
+                (dual_x_carriage_mode == DXC_FULL_CONTROL_MODE) {
+                    current_position[X_AXIS] = inactive_extruder_x_pos;
+                    inactive_extruder_x_pos = destination[X_AXIS];
+                } else if
+                (dual_x_carriage_mode == DXC_DUPLICATION_MODE) {
+                    active_extruder_parked = (active_extruder == 0);
+// this triggers the second extruder to move into the duplication position
+                    if
+                    (active_extruder == 0 || active_extruder_parked)
+                        current_position[X_AXIS] = inactive_extruder_x_pos;
+                    else
+                        current_position[X_AXIS] = destination[X_AXIS] + duplicate_extruder_x_offset;
+                    inactive_extruder_x_pos = destination[X_AXIS];
+                    extruder_duplication_enabled = false;
+                } else {
+// record raised toolhead position for use by unpark
+                    memcpy(raised_parked_position, current_position, sizeof(raised_parked_position));
+                    raised_parked_position[Z_AXIS] += TOOLCHANGE_UNPARK_ZLIFT;
+                    active_extruder_parked = true;
+                    delayed_move_time = 0;
+                }
 #endif
 #if defined (A) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) ) || defined (B) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) )
 // Offset extruder (only by XY)
-            int i;
-            for(i=0; i<2; i++) {
-                current_position[i] = current_position[i] -
-                                      extruder_offset[i][active_extruder] +
-                                      extruder_offset[i][tmp_extruder];
-            }
+                int i;
+                for(i = 0; i < 2; i++) {
+                    current_position[i] = current_position[i] -
+                                          extruder_offset[i][active_extruder] +
+                                          extruder_offset[i][tmp_extruder];
+                }
 // Set the new active extruder and position
-            active_extruder = tmp_extruder;
+                active_extruder = tmp_extruder;
 #endif
 //else DUAL_X_CARRIAGE
 #if defined (A) && (EXTRUDERS > 1 && defined (DELTA) ) || defined (B) && (EXTRUDERS > 1 && defined (DELTA) )
-            calculate_delta(current_position);
+                calculate_delta(current_position);
 // change cartesian kinematic  to  delta kinematic;
 //sent position to plan_set_position();
-            plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS],current_position[E_AXIS]);
+                plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS],current_position[E_AXIS]);
 #endif
 #if defined (A) && (EXTRUDERS > 1 && !defined (DELTA) ) || defined (B) && (EXTRUDERS > 1 && !defined (DELTA) )
-            plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+                plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 #endif
 // Move to the old position if 'F' was in the parameters
-            if
-            (make_move && Stopped == false) {
-                prepare_move();
+                if
+                (make_move && Stopped == false) {
+                    prepare_move();
+                }
             }
-        }
 #endif
+            SERIAL_ECHO_START;
+            SERIAL_ECHO(MSG_ACTIVE_EXTRUDER);
+            SERIAL_PROTOCOLLN((int)active_extruder);
+        }
+    } else {
         SERIAL_ECHO_START;
-        SERIAL_ECHO(MSG_ACTIVE_EXTRUDER);
-        SERIAL_PROTOCOLLN((int)active_extruder);
+        SERIAL_ECHOPGM(MSG_UNKNOWN_COMMAND);
+        SERIAL_ECHO(cmdbuffer[bufindr]);
+        SERIAL_ECHOLNPGM("\"");
     }
-}
-
-
-else {
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPGM(MSG_UNKNOWN_COMMAND);
-    SERIAL_ECHO(cmdbuffer[bufindr]);
-    SERIAL_ECHOLNPGM("\"");
-}
-
-
-
-ClearToSend();
+    ClearToSend();
 }
 
 
@@ -6001,7 +5993,7 @@ void ClearToSend
 void get_coordinates
 () {
     bool seen[4]= {false,false,false,false};
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         if
         (code_seen(axis_codes[i])) {
             destination[i] = (float)code_value() + (axis_relative_modes[i] || relative_mode)*current_position[i];
@@ -6133,7 +6125,7 @@ void prepare_move
 #if defined (A) && defined (SCARA) || defined (B) && defined (SCARA)
 //for now same as delta-code
     float difference[NUM_AXIS];
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         difference[i] = destination[i] - current_position[i];
     }
     float cartesian_mm = sqrt(	sq(difference[X_AXIS]) +
@@ -6152,9 +6144,9 @@ void prepare_move
 //SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
 //SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
 //SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-    for(ints=1; s<=steps; s++) {
+    for(int s = 1; s <= steps; s++) {
         float fraction = float(s) / float(steps);
-        for(int8_ti=0; i<NUM_AXIS; i++) {
+        for(int8_t i=0; i < NUM_AXIS; i++) {
             destination[i] = current_position[i] + difference[i] * fraction;
         }
         calculate_delta(destination);
@@ -6172,7 +6164,7 @@ void prepare_move
 // SCARA
 #if defined (A) && defined (DELTA) || defined (B) && defined (DELTA)
     float difference[NUM_AXIS];
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         difference[i] = destination[i] - current_position[i];
     }
     float cartesian_mm = sqrt(sq(difference[X_AXIS]) +
@@ -6191,9 +6183,9 @@ void prepare_move
 // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
 // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
 // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-    for(ints=1; s<=steps; s++) {
+    for(int s = 1; s <= steps; s++) {
         float fraction = float(s) / float(steps);
-        for(int8_ti=0; i<NUM_AXIS; i++) {
+        for(int8_t i=0; i < NUM_AXIS; i++) {
             destination[i] = current_position[i] + difference[i] * fraction;
         }
         calculate_delta(destination);
@@ -6254,7 +6246,7 @@ void prepare_move
     }
 #endif
 // !(DELTA || SCARA)
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         current_position[i] = destination[i];
     }
 }
@@ -6269,7 +6261,7 @@ void prepare_arc_move
 // As far as the parser is concerned, the position is now == target. In reality the
 // motion control system might still be processing the action and the real tool position
 // in any intermediate location.
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         current_position[i] = destination[i];
     }
     previous_millis_cmd = millis();
@@ -6402,7 +6394,7 @@ void handle_status_leds
     (millis() > stat_update) {
         stat_update += 500;
 // Update every 0.5s
-        for(int8_tcur_extruder=0; cur_extruder<EXTRUDERS; ++cur_extruder) {
+        for(int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder) {
             max_temp = max(max_temp, degHotend(cur_extruder));
             max_temp = max(max_temp, degTargetHotend(cur_extruder));
         }
@@ -6573,7 +6565,7 @@ void kill
 // FMC small patch to update the LCD before ending
     sei();
 // enable interrupts
-    for(inti=5; i--; lcd_update()) {
+    for(int i=5; i--; lcd_update()) {
         delay(200);
     }
     cli();
@@ -6724,82 +6716,74 @@ void setPwmFrequency
 #endif
 #endif
     }
-}
-
-
 #endif
 //FAST_PWM_FAN
-bool setTargetedHotend
-(int code) {
-    tmp_extruder = active_extruder;
-    if
-    (code_seen('T')) {
-        tmp_extruder = code_value();
+    bool setTargetedHotend
+    (int code) {
+        tmp_extruder = active_extruder;
         if
-        (tmp_extruder >= EXTRUDERS) {
-            SERIAL_ECHO_START;
-            switch
-            (code) {
-            case
-                    104
-                    :
-                SERIAL_ECHO(MSG_M104_INVALID_EXTRUDER);
-                break;
-            case
-                    105
-                    :
-                SERIAL_ECHO(MSG_M105_INVALID_EXTRUDER);
-                break;
-            case
-                    109
-                    :
-                SERIAL_ECHO(MSG_M109_INVALID_EXTRUDER);
-                break;
-            case
-                    218
-                    :
-                SERIAL_ECHO(MSG_M218_INVALID_EXTRUDER);
-                break;
-            case
-                    221
-                    :
-                SERIAL_ECHO(MSG_M221_INVALID_EXTRUDER);
-                break;
+        (code_seen('T')) {
+            tmp_extruder = code_value();
+            if
+            (tmp_extruder >= EXTRUDERS) {
+                SERIAL_ECHO_START;
+                switch
+                (code) {
+                case
+                        104
+                        :
+                    SERIAL_ECHO(MSG_M104_INVALID_EXTRUDER);
+                    break;
+                case
+                        105
+                        :
+                    SERIAL_ECHO(MSG_M105_INVALID_EXTRUDER);
+                    break;
+                case
+                        109
+                        :
+                    SERIAL_ECHO(MSG_M109_INVALID_EXTRUDER);
+                    break;
+                case
+                        218
+                        :
+                    SERIAL_ECHO(MSG_M218_INVALID_EXTRUDER);
+                    break;
+                case
+                        221
+                        :
+                    SERIAL_ECHO(MSG_M221_INVALID_EXTRUDER);
+                    break;
+                }
+                SERIAL_ECHOLN(tmp_extruder);
+                return true;
             }
-            SERIAL_ECHOLN(tmp_extruder);
-            return true;
         }
+        return false;
     }
-    return false;
-}
-
-
-float calculate_volumetric_multiplier
-(float diameter) {
-    float area = .0;
-    float radius = .0;
-    radius = diameter * .5;
-    if
-    (! volumetric_enabled || radius == 0) {
-        area = 1;
-    } else {
-        area = M_PI * pow(radius, 2);
+    float calculate_volumetric_multiplier
+    (float diameter) {
+        float area = .0;
+        float radius = .0;
+        radius = diameter * .5;
+        if
+        (! volumetric_enabled || radius == 0) {
+            area = 1;
+        } else {
+            area = M_PI * pow(radius, 2);
+        }
+        return 1.0 / area;
     }
-    return 1.0 / area;
-}
-
-
-void calculate_volumetric_multipliers
-() {
-    volumetric_multiplier[0] = calculate_volumetric_multiplier(filament_size[0]);
+    void calculate_volumetric_multipliers
+    () {
+        volumetric_multiplier[0] = calculate_volumetric_multiplier(filament_size[0]);
 #if defined (A) && EXTRUDERS > 1 || defined (B) && EXTRUDERS > 1
-    volumetric_multiplier[1] = calculate_volumetric_multiplier(filament_size[1]);
+        volumetric_multiplier[1] = calculate_volumetric_multiplier(filament_size[1]);
 #endif
 #if defined (A) && (EXTRUDERS > 2 && EXTRUDERS > 1 ) || defined (B) && (EXTRUDERS > 2 && EXTRUDERS > 1 )
-    volumetric_multiplier[2] = calculate_volumetric_multiplier(filament_size[2]);
+        volumetric_multiplier[2] = calculate_volumetric_multiplier(filament_size[2]);
 #endif
-}
-
+    }
 }
 
 

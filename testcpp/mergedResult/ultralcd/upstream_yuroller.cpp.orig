@@ -549,7 +549,7 @@ void lcd_set_home_offsets
 ()
 {
 
-for(int8_ti=0;i<NUM_AXIS;i++)
+for(int8_t i=0;i < NUM_AXIS;i++)
 
 {
 
@@ -1421,7 +1421,7 @@ MENU_ITEM(function, LCD_STR_FOLDER "..", lcd_sd_updir);
 }
 
 
-for(uint16_ti=0;i++{if(_menuItemNr==_lineNr){#ifndefSDCARD_RATHERRECENTFIRSTcard.getfilename(i);#elsecard.getfilename(fileCnt-1-i);#endifif(card.filenameIsDir){MENU_ITEM(sddirectory,MSG_CARD_MENU,card.filename,card.longFilename);}else{MENU_ITEM(sdfile,MSG_CARD_MENU,card.filename,card.longFilename);}}else{MENU_ITEM_DUMMY();}})
+for(uint16_t i=0;i<fileCnt;i++)
 
 {
 
@@ -1635,7 +1635,7 @@ static void menu_action_sdfile
 char cmd[30];
 char* c;
 sprintf_P(cmd, PSTR("M23 %s"), filename);
-for(c=&cmd[4];*c;c++)
+for(c = &cmd[4];*c;c++)
 
 enquecommand(cmd);
 enquecommand_P(PSTR("M24"));
@@ -1997,8 +1997,9 @@ void lcd_finishstatus
   #endif
 
 
+
 #endif
-}
+
 void lcd_setstatus
 (const char* message)
 {
@@ -2092,7 +2093,7 @@ buttons |= slow_buttons;
 uint8_t newbutton_reprapworld_keypad=0;
 WRITE(SHIFT_LD,LOW);
 WRITE(SHIFT_LD,HIGH);
-for(int8_ti=0;i++{newbutton_reprapworld_keypad=newbutton_reprapworld_keypad>>1;if(READ(SHIFT_OUT))newbutton_reprapworld_keypad|=(1<<7);WRITE(SHIFT_CLK,HIGH);WRITE(SHIFT_CLK,LOW);})
+for(int8_t i=0;i<8;i++)
 
 {
 
@@ -2115,7 +2116,7 @@ uint8_t newbutton=0;
 WRITE(SHIFT_LD,LOW);
 WRITE(SHIFT_LD,HIGH);
 unsigned char tmp_buttons=0;
-for(int8_ti=0;i++{newbutton=newbutton>>1;if(READ(SHIFT_OUT))newbutton|=(1<<7);WRITE(SHIFT_CLK,HIGH);WRITE(SHIFT_CLK,LOW);})
+for(int8_t i=0;i<8;i++)
 
 {
 
@@ -2251,7 +2252,7 @@ return LCD_CLICKED;
 /********************************/
 //  convert float to string with +123.4 format
 char conv[8];
-char * (const float &x)
+char * ftostr3
 (const float &x)
 {
 
@@ -2259,7 +2260,7 @@ return itostr3((int)x);
 }
 
 
-char * (const uint8_t &x)
+char * itostr2
 (const uint8_t &x)
 {
 
@@ -2273,7 +2274,7 @@ return conv;
 
 
 // Convert float to string with 123.4 format, dropping sign
-char * (const float &x)
+char * ftostr31
 (const float &x)
 {
 
@@ -2291,7 +2292,7 @@ return conv;
 
 
 // Convert float to string with 123.4 format
-char * (const float &x)
+char * ftostr31ns
 (const float &x)
 {
 
@@ -2308,7 +2309,7 @@ return conv;
 }
 
 
-char * (const float &x)
+char * ftostr32
 (const float &x)
 {
 
@@ -2332,7 +2333,7 @@ return conv;
 
 
 // Convert float to string with 1.234 format
-char * (const float &x)
+char * ftostr43
 (const float &x)
 {
 
@@ -2355,7 +2356,7 @@ return conv;
 
 
 //Float to string with 1.23 format
-char * (const float &x)
+char * ftostr12ns
 (const float &x)
 {
 
@@ -2371,7 +2372,7 @@ return conv;
 
 
 //  convert float to space-padded string with -_23.4_ format
-char * (const float &x)
+char * ftostr32sp
 (const float &x)
 {
 
@@ -2456,7 +2457,7 @@ return conv;
 }
 
 
-char * (const int &xx)
+char * itostr31
 (const int &xx)
 {
 
@@ -2472,7 +2473,7 @@ return conv;
 
 
 // Convert int to rj string with 123 or -12 format
-char * (const int &x)
+char * itostr3
 (const int &x)
 {
 
@@ -2508,7 +2509,7 @@ return conv;
 
 
 // Convert int to lj string with 123 format
-char * (const int &xx)
+char * itostr3left
 (const int &xx)
 {
 
@@ -2546,7 +2547,7 @@ return conv;
 
 
 // Convert int to rj string with 1234 format
-char * (const int &xx)
+char * itostr4
 (const int &xx)
 {
 
@@ -2560,7 +2561,7 @@ return conv;
 
 
 // Convert float to rj string with 12345 format
-char * (const float &x)
+char * ftostr5
 (const float &x)
 {
 
@@ -2576,7 +2577,7 @@ return conv;
 
 
 // Convert float to string with +1234.5 format
-char * (const float &x)
+char * ftostr51
 (const float &x)
 {
 
@@ -2595,7 +2596,7 @@ return conv;
 
 
 // Convert float to string with +123.45 format
-char * (const float &x)
+char * ftostr52
 (const float &x)
 {
 

@@ -11,6 +11,4 @@ void a
 #endif
     } while ( x > 0 );
 }
-
-
 #endif

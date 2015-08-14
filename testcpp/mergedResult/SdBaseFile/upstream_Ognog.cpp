@@ -68,7 +68,7 @@ bool SdBaseFile::addDirCluster
 // zero first block of cluster
     memset(vol_->cacheBuffer_.data, 0, 512);
 // zero rest of cluster
-    for(uint8_ti=1; i<vol_->blocksPerCluster_; i++) {
+    for(uint8_t i = 1; i < vol_->blocksPerCluster_; i++) {
         if
         (!vol_->writeBlock(block + i, vol_->cacheBuffer_.data))
             goto fail;
@@ -128,7 +128,7 @@ bool SdBaseFile::contiguousRange
     if
     (firstCluster_ == 0)
         goto fail;
-    for(uint32_tc=firstCluster_;; c++) {
+    for(uint32_t c = firstCluster_;; c++) {
         uint32_t next;
         if
         (!vol_->fatGet(c, &next))
@@ -234,7 +234,7 @@ fail:
 void SdBaseFile::dirName
 (const dir_t& dir, char* name) {
     uint8_t j = 0;
-    for(uint8_ti=0; i<11; i++) {
+    for(uint8_t i = 0; i < 11; i++) {
         if
         (dir.name[i] == ' ')
             continue;
@@ -415,9 +415,9 @@ int8_t SdBaseFile::lsPrintNext
             break;
     }
 // indent for dir level
-    for(uint8_ti=0; i<indent; i++)
+    for(uint8_t i = 0; i < indent; i++)
 // print name
-        for(uint8_ti=0; i<11; i++) {
+        for(uint8_t i = 0; i < 11; i++) {
             if
             (dir.name[i] == ' ')
                 continue;
@@ -610,7 +610,7 @@ bool SdBaseFile::mkdir
 // make entry for '.'
     memcpy(&d, p, sizeof(d));
     d.name[0] = '.';
-    for(uint8_ti=1; i<11; i++)
+    for(uint8_t i = 1; i < 11; i++)
 // cache block for '.'  and '..'
         block = vol_->clusterStartBlock(firstCluster_);
     if
@@ -1150,7 +1150,7 @@ void SdBaseFile::printDirName
 (const dir_t& dir,
  uint8_t width, bool printSlash) {
     uint8_t w = 0;
-    for(uint8_ti=0; i<11; i++) {
+    for(uint8_t i = 0; i < 11; i++) {
         if
         (dir.name[i] == ' ')
             continue;
@@ -1746,6 +1746,7 @@ fail:
  * \param[in] oflag Values for \a oflag are constructed by a bitwise-inclusive
  * OR of open flags. see SdBaseFile::open(SdBaseFile*, const char*, uint8_t).
  */
+SdBaseFile::SdBaseFile
 (const char* path, uint8_t oflag) {
     type_ = FAT_FILE_TYPE_CLOSED;
     writeError = false;

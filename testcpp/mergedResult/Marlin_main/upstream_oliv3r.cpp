@@ -840,7 +840,7 @@ void servo_init
 #endif
 // Set position of Servo Endstops that are defined
 #if defined (A) && defined (SERVO_ENDSTOPS) || defined (B) && defined (SERVO_ENDSTOPS)
-    for(int8_ti=0; i<3; i++) {
+    for(int8_t i = 0; i < 3; i++) {
         if
         (servo_endstops[i] > -1) {
             servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
@@ -894,7 +894,7 @@ void setup
     SERIAL_ECHO(freeMemory());
     SERIAL_ECHOPGM(MSG_PLANNER_BUFFER_BYTES);
     SERIAL_ECHOLN((int)sizeof(block_t)*BLOCK_BUFFER_SIZE);
-    for(int8_ti=0; i<BUFSIZE; i++) {
+    for(int8_t i = 0; i < BUFSIZE; i++) {
         fromsd[i] = false;
     }
 // loads data from EEPROM if available else uses defaults (and resets step acceleration rate)
@@ -2239,7 +2239,7 @@ void process_commands
             if
             (!code_seen(axis_codes[E_AXIS]))
                 st_synchronize();
-            for(int8_ti=0; i<NUM_AXIS; i++) {
+            for(int8_t i=0; i < NUM_AXIS; i++) {
                 if
                 (code_seen(axis_codes[i])) {
                     if
@@ -4984,8 +4984,6 @@ Sigma_Exit:
 #endif//ENABLE_ULTILCD2
 }
 #endif
-}
-
 else if
 (code_seen('T')) {
     tmp_extruder = code_value();
@@ -5069,7 +5067,7 @@ else if
 #if defined (A) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) ) || defined (B) && EXTRUDERS > 1
 // Offset extruder (only by XY)
             int i;
-            for(i=0; i<2; i++) {
+            for(i = 0; i < 2; i++) {
                 current_position[i] = current_position[i] -
                                       extruder_offset[i][active_extruder] +
                                       extruder_offset[i][tmp_extruder];
@@ -5107,8 +5105,6 @@ else if
         SERIAL_PROTOCOLLN((int)active_extruder);
     }
 }
-
-
 #if defined (A)
 else {
     SERIAL_ECHO_START;
@@ -5126,17 +5122,10 @@ else if (strcmp_P(cmdbuffer[bufindr], PSTR("Electronics_test")) == 0) {
     SERIAL_ECHO(cmdbuffer[bufindr]);
     SERIAL_ECHOLNPGM("\"");
 }
-
-
 #endif
-
-
 #if defined (B)
-    printing_state = PRINT_STATE_NORMAL;
-
+printing_state = PRINT_STATE_NORMAL;
 #endif
-
-
 ClearToSend();
 }
 
@@ -5168,7 +5157,7 @@ void ClearToSend
 void get_coordinates
 () {
     bool seen[4]= {false,false,false,false};
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         if
         (code_seen(axis_codes[i])) {
             destination[i] = (float)code_value() + (axis_relative_modes[i] || relative_mode)*current_position[i];
@@ -5398,7 +5387,7 @@ void prepare_move
 #endif
 #if defined (A) && defined (DELTA) || defined (B) && defined (DELTA)
     float difference[NUM_AXIS];
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         difference[i] = destination[i] - current_position[i];
     }
     float cartesian_mm = sqrt(sq(difference[X_AXIS]) +
@@ -5424,9 +5413,9 @@ void prepare_move
 // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
 // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
 // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-    for(ints=1; s<=steps; s++) {
+    for(int s = 1; s <= steps; s++) {
         float fraction = float(s) / float(steps);
-        for(int8_ti=0; i<NUM_AXIS; i++) {
+        for(int8_t i=0; i < NUM_AXIS; i++) {
             destination[i] = current_position[i] + difference[i] * fraction;
         }
         calculate_delta(destination);
@@ -5487,7 +5476,7 @@ void prepare_move
 #if defined (A)
 // !(DELTA || SCARA)
 #endif
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         current_position[i] = destination[i];
     }
 }
@@ -5502,7 +5491,7 @@ void prepare_arc_move
 // As far as the parser is concerned, the position is now == target. In reality the
 // motion control system might still be processing the action and the real tool position
 // in any intermediate location.
-    for(int8_ti=0; i<NUM_AXIS; i++) {
+    for(int8_t i=0; i < NUM_AXIS; i++) {
         current_position[i] = destination[i];
     }
     previous_millis_cmd = millis();
@@ -6020,77 +6009,72 @@ void setPwmFrequency
 #endif
 #endif
     }
-}
-
-
 #endif
 //FAST_PWM_FAN
-bool setTargetedHotend
-(int code) {
-    tmp_extruder = active_extruder;
-    if
-    (code_seen('T')) {
-        tmp_extruder = code_value();
+    bool setTargetedHotend
+    (int code) {
+        tmp_extruder = active_extruder;
         if
-        (tmp_extruder >= EXTRUDERS) {
-            SERIAL_ECHO_START;
-            switch
-            (code) {
-            case
-                    104
-                    :
-                SERIAL_ECHO(MSG_M104_INVALID_EXTRUDER);
-                break;
-            case
-                    105
-                    :
-                SERIAL_ECHO(MSG_M105_INVALID_EXTRUDER);
-                break;
-            case
-                    109
-                    :
-                SERIAL_ECHO(MSG_M109_INVALID_EXTRUDER);
-                break;
-            case
-                    218
-                    :
-                SERIAL_ECHO(MSG_M218_INVALID_EXTRUDER);
-                break;
+        (code_seen('T')) {
+            tmp_extruder = code_value();
+            if
+            (tmp_extruder >= EXTRUDERS) {
+                SERIAL_ECHO_START;
+                switch
+                (code) {
+                case
+                        104
+                        :
+                    SERIAL_ECHO(MSG_M104_INVALID_EXTRUDER);
+                    break;
+                case
+                        105
+                        :
+                    SERIAL_ECHO(MSG_M105_INVALID_EXTRUDER);
+                    break;
+                case
+                        109
+                        :
+                    SERIAL_ECHO(MSG_M109_INVALID_EXTRUDER);
+                    break;
+                case
+                        218
+                        :
+                    SERIAL_ECHO(MSG_M218_INVALID_EXTRUDER);
+                    break;
 #if defined (A)
-            case 221:
-                SERIAL_ECHO(MSG_M221_INVALID_EXTRUDER);
-                break;
+                case 221:
+                    SERIAL_ECHO(MSG_M221_INVALID_EXTRUDER);
+                    break;
 #endif
+                }
+                SERIAL_ECHOLN(tmp_extruder);
+                return true;
             }
-            SERIAL_ECHOLN(tmp_extruder);
-            return true;
         }
+        return false;
     }
-    return false;
-}
-
-
 #if defined (A)
-float calculate_volumetric_multiplier(float diameter) {
-    float area = .0;
-    float radius = .0;
-    radius = diameter * .5;
-    if (! volumetric_enabled || radius == 0) {
-        area = 1;
-    } else {
-        area = M_PI * pow(radius, 2);
+    float calculate_volumetric_multiplier(float diameter) {
+        float area = .0;
+        float radius = .0;
+        radius = diameter * .5;
+        if (! volumetric_enabled || radius == 0) {
+            area = 1;
+        } else {
+            area = M_PI * pow(radius, 2);
+        }
+        return 1.0 / area;
     }
-    return 1.0 / area;
-}
-void calculate_volumetric_multipliers() {
-    volumetric_multiplier[0] = calculate_volumetric_multiplier(filament_size[0]);
+    void calculate_volumetric_multipliers() {
+        volumetric_multiplier[0] = calculate_volumetric_multiplier(filament_size[0]);
 #if EXTRUDERS > 1
-    volumetric_multiplier[1] = calculate_volumetric_multiplier(filament_size[1]);
+        volumetric_multiplier[1] = calculate_volumetric_multiplier(filament_size[1]);
 #if EXTRUDERS > 2
-    volumetric_multiplier[2] = calculate_volumetric_multiplier(filament_size[2]);
+        volumetric_multiplier[2] = calculate_volumetric_multiplier(filament_size[2]);
 #endif
 #endif
-}
+    }
 #endif
 }
 

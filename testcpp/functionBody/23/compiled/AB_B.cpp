@@ -5,10 +5,7 @@ class Computer
 
 
 
-
-
 {
-
     switch
     ( i ) {
     case
@@ -32,6 +29,4 @@ class Computer
         p++;
         break;
     }
-
-
 }

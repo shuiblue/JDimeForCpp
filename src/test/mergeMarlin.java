@@ -1,8 +1,12 @@
 package test;
 <<<<<<< origin/develop
+<<<<<<< origin/develop
 
 =======
 >>>>>>> HEAD~64
+=======
+import org.junit.Ignore;
+>>>>>>> HEAD~60
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -144,6 +148,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testdigipot_mcp4451() {
         String mergedFile = "digipot_mcp4451";
@@ -179,6 +184,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testMarlinSerial() {
         String mergedFile = "MarlinSerial";
@@ -196,6 +202,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testmotion_control() {
         String mergedFile = "motion_control";
@@ -232,6 +239,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testqr_solve() {
         String mergedFile = "qr_solve";
@@ -249,6 +257,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testSd2Card() {
         String mergedFile = "Sd2Card";
@@ -266,6 +275,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testSdBaseFile() {
         String mergedFile = "SdBaseFile";
@@ -283,6 +293,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testSdFatUtil() {
         String mergedFile = "SdFatUtil";
@@ -317,6 +328,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testSdVolume() {
         String mergedFile = "SdVolume";
@@ -334,6 +346,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testServo() {
         String mergedFile = "Servo";
@@ -351,6 +364,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void teststepper() {
         String mergedFile = "stepper";
@@ -368,23 +382,24 @@ public class mergeMarlin {
             }
         }
     }
-    @Test
-    public void testtemperature() {
-        String mergedFile = "temperature";
-        HashSet<String> forkNames = inputFileInit(mergedFile);
+//    @Test
+//    public void testtemperature() {
+//        String mergedFile = "temperature";
+//        HashSet<String> forkNames = inputFileInit(mergedFile);
+//
+//        // ----------------check Merged result equal to expect result
+//        for (String fork : forkNames) {
+//            sleep();
+//            System.out.println("2way : merge fork '" + fork + "' " + mergedFile + ".cpp file with upstream repo");
+//
+//
+//            if (!fork.equals("upstream")) {
+//                System.out.print(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile)!=null);
+//                assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile));
+//            }
+//        }
+//    }
 
-        // ----------------check Merged result equal to expect result
-        for (String fork : forkNames) {
-            sleep();
-            System.out.println("2way : merge fork '" + fork + "' " + mergedFile + ".cpp file with upstream repo");
-
-
-            if (!fork.equals("upstream")) {
-                System.out.print(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile)!=null);
-                assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, fork, mergedFile));
-            }
-        }
-    }
     @Test
     public void testultralcd() {
         String mergedFile = "ultralcd";
@@ -402,6 +417,7 @@ public class mergeMarlin {
             }
         }
     }
+    
     @Test
     public void testvector_3() {
         String mergedFile = "vector_3";
@@ -419,6 +435,7 @@ public class mergeMarlin {
             }
         }
     }
+      ///!!!!!
     @Test
     public void testwatchdog() {
         String mergedFile = "watchdog";

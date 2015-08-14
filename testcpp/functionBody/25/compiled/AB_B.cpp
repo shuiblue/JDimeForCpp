@@ -5,10 +5,7 @@ class Computer
 
 
 
-
-
 {
-
     while
     ( i-- > 0 ) {
         if
@@ -25,6 +22,4 @@ class Computer
             }
         }
     }
-
-
 }

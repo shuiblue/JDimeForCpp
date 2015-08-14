@@ -59,7 +59,7 @@ void digipot_i2c_init
     const float digipot_motor_current[] = DIGIPOT_I2C_MOTOR_CURRENTS;
     Wire.begin();
 // setup initial currents as defined in Configuration_adv.h
-    for(inti=0; i++ {digipot_i2c_set_current(i,digipot_motor_current[i]);}) {
+    for(int i=0; i<=sizeof(digipot_motor_current)/sizeof(float); i++) {
         digipot_i2c_set_current(i, digipot_motor_current[i]);
     }
 }

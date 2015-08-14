@@ -1501,7 +1501,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
         char cmd[30];
         char* c;
         sprintf_P(cmd, PSTR("M23 %s"), filename);
-        for(c=&cmd[4]; *c; c++)
+        for(c = &cmd[4]; *c; c++)
             enquecommand(cmd);
         enquecommand_P(PSTR("M24"));
         lcd_return_to_status();
@@ -1868,14 +1868,14 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
         WRITE(SHIFT_LD,LOW);
         WRITE(SHIFT_LD,HIGH);
         unsigned char tmp_buttons=0;
-        for(int8_ti=0; i++ {newbutton=newbutton>>1; if(READ(SHIFT_OUT))newbutton|=(1<<7); WRITE(SHIFT_CLK,HIGH); WRITE(SHIFT_CLK,LOW);}) {
-                newbutton = newbutton>>1;
-                if
-                (READ(SHIFT_OUT))
-                    newbutton|=(1<<7);
-                WRITE(SHIFT_CLK,HIGH);
-                WRITE(SHIFT_CLK,LOW);
-            }
+        for(int8_t i=0; i<8; i++) {
+            newbutton = newbutton>>1;
+            if
+            (READ(SHIFT_OUT))
+                newbutton|=(1<<7);
+            WRITE(SHIFT_CLK,HIGH);
+            WRITE(SHIFT_CLK,LOW);
+        }
         buttons=~newbutton;
 //invert it, because a pressed switch produces a logical 0
 #endif
@@ -1973,11 +1973,11 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
     /********************************/
 //  convert float to string with +123.4 format
     char conv[8];
-    char * (const float &x)
+    char * ftostr3
     (const float &x) {
         return itostr3((int)x);
     }
-    char * (const uint8_t &x)
+    char * itostr2
     (const uint8_t &x) {
 //sprintf(conv,"%5.1f",x);
         int xx=x;
@@ -1994,7 +1994,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 //  convert float to string with +123.4 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const float &x)
+    char * ftostr31
     (const float &x) {
         int xx=x*10;
         conv[0]=(xx>=0)?'+':'-';
@@ -2024,7 +2024,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
     }
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const float &x)
+    char * ftostr32
     (const float &x) {
         long xx=x*100;
         if
@@ -2109,7 +2109,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
     }
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const int &xx)
+    char * itostr31
     (const int &xx) {
         conv[0]=(xx>=0)?'+':'-';
         conv[1]=(xx/1000)%10+'0';
@@ -2175,7 +2175,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 // Convert int to lj string with 123 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const int &xx)
+    char * itostr3left
     (const int &xx) {
         if
         (xx >= 100) {
@@ -2199,7 +2199,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 // Convert int to rj string with 1234 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const int &xx)
+    char * itostr4
     (const int &xx) {
 #if defined (A)
         conv[0] = xx >= 1000 ? (xx / 1000) % 10 + '0' : ' ';
@@ -2245,7 +2245,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 //  convert float to string with 12345 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const float &x)
+    char * ftostr5
     (const float &x) {
         long xx = abs(x);
 #if defined (A)
@@ -2301,7 +2301,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 //  convert float to string with +1234.5 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const float &x)
+    char * ftostr51
     (const float &x) {
         long xx=x*10;
         conv[0]=(xx>=0)?'+':'-';
@@ -2323,7 +2323,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 //  convert float to string with +123.45 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-    char * (const float &x)
+    char * ftostr52
     (const float &x) {
         long xx=x*100;
         conv[0]=(xx>=0)?'+':'-';

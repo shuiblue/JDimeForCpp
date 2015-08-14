@@ -1,20 +1,12 @@
 #if defined (A) || defined (B)
-class Computer
-:public bar
+class Computer:public bar
 {
-
-if 
-( i > 0 )
+if ( i > 0 )
 {
-
 x = i;
 }
-
-
-else if 
-( i < 0)
+else if ( i < 0)
 x = q;
-
 #if defined (A)
 else 
     x = j;
@@ -22,11 +14,6 @@ else
 #if defined (B)
 else 
     x = s;
-
-
 #endif
-
 }
-
-
 #endif

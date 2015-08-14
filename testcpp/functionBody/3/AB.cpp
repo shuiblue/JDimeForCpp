@@ -1,8 +1,5 @@
 #if defined (A) || defined (B)
-void a
-() {
+void a() {
     i=0;
 }
-
-
 #endif

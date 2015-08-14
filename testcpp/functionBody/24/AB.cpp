@@ -3,12 +3,9 @@ class Computer
 
 #if defined (A)
     :public bar
-
 #endif
 
-
 {
-
     while
     ( i-- > 0 ) {
         x = f( i );
@@ -23,9 +20,5 @@ class Computer
         }
         y += x * x;
     }
-
-
 }
-
-
 #endif
