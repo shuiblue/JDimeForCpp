@@ -1,7 +1,6 @@
 #if defined (A) || defined (B)
 void a(){
 while(i>=0){
-	
 #if defined (A)
  string1[i] = string2[i];
 #endif

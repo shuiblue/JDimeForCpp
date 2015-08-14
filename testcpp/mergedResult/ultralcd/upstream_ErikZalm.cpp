@@ -405,7 +405,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
     void lcd_set_home_offsets
     () {
-        for(int8_ti=0; i<NUM_AXIS; i++) {
+        for(int8_t i=0; i < NUM_AXIS; i++) {
             if
             (i != E_AXIS) {
                 add_homing[i] -= current_position[i];
@@ -1040,38 +1040,27 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
         } else {
             MENU_ITEM(function, LCD_STR_FOLDER "..", lcd_sd_updir);
         }
-        for(uint16_ti=0; i++ {if(_menuItemNr==_lineNr) {
-#ifndefSDCARD_RATHERRECENTFIRSTcard.getfilename(i);#elsecard.getfilename(fileCnt-1-i);#endifif(card.filenameIsDir){MENU_ITEM(sddirectory,MSG_CARD_MENU,card.filename,card.longFilename);}else{MENU_ITEM(sdfile,MSG_CARD_MENU,card.filename,card.longFilename);}}else{MENU_ITEM_DUMMY();}})
-            {
-
-                if
-                    (_menuItemNr == _lineNr) {
+        for(uint16_t i=0; i<fileCnt; i++) {
+            if
+            (_menuItemNr == _lineNr) {
 #if defined (A) && (!defined (SDCARD_RATHERRECENTFIRST) && defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (!defined (SDCARD_RATHERRECENTFIRST) && defined (ULTRA_LCD) && defined (ULTIPANEL) )
-                        card.getfilename(i);
+                card.getfilename(i);
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) && defined (SDCARD_RATHERRECENTFIRST) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) && defined (SDCARD_RATHERRECENTFIRST) )
-                        card.getfilename(fileCnt-1-i);
+                card.getfilename(fileCnt-1-i);
 #endif
-                        if
-                        (card.filenameIsDir) {
-                            MENU_ITEM(sddirectory, MSG_CARD_MENU, card.filename, card.longFilename);
-                        } else {
-                            MENU_ITEM(sdfile, MSG_CARD_MENU, card.filename, card.longFilename);
-                        }
-                    }
-
-
-                    else {
-
-                        MENU_ITEM_DUMMY();
-                    }
-
-
+                if
+                (card.filenameIsDir) {
+                    MENU_ITEM(sddirectory, MSG_CARD_MENU, card.filename, card.longFilename);
+                } else {
+                    MENU_ITEM(sdfile, MSG_CARD_MENU, card.filename, card.longFilename);
                 }
-                END_MENU();
+            } else {
+                MENU_ITEM_DUMMY();
             }
-
-
+        }
+        END_MENU();
+    }
 #define menu_edit_type(_type, _name, _strFunc, scale) \
     void menu_edit_ ## _name () \
     { \
@@ -1120,173 +1109,143 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
     }
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-        menu_edit_type(float, float43, ftostr43, 1000)
+    menu_edit_type(float, float43, ftostr43, 1000)
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) )
-        static void reprapworld_keypad_move_z_up
-        () {
-            encoderPosition = 1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_z();
-        }
-
-
-        static void reprapworld_keypad_move_z_down
-        () {
-            encoderPosition = -1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_z();
-        }
-
-
-        static void reprapworld_keypad_move_x_left
-        () {
-            encoderPosition = -1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_x();
-        }
-
-
-        static void reprapworld_keypad_move_x_right
-        () {
-            encoderPosition = 1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_x();
-        }
-
-
-        static void reprapworld_keypad_move_y_down
-        () {
-            encoderPosition = 1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_y();
-        }
-
-
-        static void reprapworld_keypad_move_y_up
-        () {
-            encoderPosition = -1;
-            move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-            lcd_move_y();
-        }
-
-
-        static void reprapworld_keypad_move_home
-        () {
-            enquecommand_P((PSTR("G28")));
+    static void reprapworld_keypad_move_z_up
+    () {
+        encoderPosition = 1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_z();
+    }
+    static void reprapworld_keypad_move_z_down
+    () {
+        encoderPosition = -1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_z();
+    }
+    static void reprapworld_keypad_move_x_left
+    () {
+        encoderPosition = -1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_x();
+    }
+    static void reprapworld_keypad_move_x_right
+    () {
+        encoderPosition = 1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_x();
+    }
+    static void reprapworld_keypad_move_y_down
+    () {
+        encoderPosition = 1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_y();
+    }
+    static void reprapworld_keypad_move_y_up
+    () {
+        encoderPosition = -1;
+        move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+        lcd_move_y();
+    }
+    static void reprapworld_keypad_move_home
+    () {
+        enquecommand_P((PSTR("G28")));
 // move all axis home
-        }
-
-
+    }
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-        /** End of menus **/
-        static void lcd_quick_feedback
-        () {
-            lcdDrawUpdate = 2;
-            blocking_enc = millis() + 500;
-            lcd_implementation_quick_feedback();
-        }
-
-
-        /** Menu action functions **/
-        static void menu_action_back
-        (menuFunc_t data) {
-            lcd_goto_menu(data);
-        }
-
-
-        static void menu_action_submenu
-        (menuFunc_t data) {
-            lcd_goto_menu(data);
-        }
-
-
-        static void menu_action_gcode
-        (const char* pgcode) {
-            enquecommand_P(pgcode);
-        }
-
-
-        static void menu_action_function
-        (menuFunc_t data) {
-            (*data)();
-        }
-
-
-        static void menu_action_sdfile
-        (const char* filename, char* longFilename) {
-            char cmd[30];
-            char* c;
-            sprintf_P(cmd, PSTR("M23 %s"), filename);
-            for(c=&cmd[4]; *c; c++)
-                enquecommand(cmd);
-            enquecommand_P(PSTR("M24"));
-            lcd_return_to_status();
-        }
-
-
-        static void menu_action_sddirectory
-        (const char* filename, char* longFilename) {
-            card.chdir(filename);
-            encoderPosition = 0;
-        }
-
-
-        static void menu_action_setting_edit_bool
-        (const char* pstr, bool* ptr) {
-            *ptr = !(*ptr);
-        }
-
-
+    /** End of menus **/
+    static void lcd_quick_feedback
+    () {
+        lcdDrawUpdate = 2;
+        blocking_enc = millis() + 500;
+        lcd_implementation_quick_feedback();
+    }
+    /** Menu action functions **/
+    static void menu_action_back
+    (menuFunc_t data) {
+        lcd_goto_menu(data);
+    }
+    static void menu_action_submenu
+    (menuFunc_t data) {
+        lcd_goto_menu(data);
+    }
+    static void menu_action_gcode
+    (const char* pgcode) {
+        enquecommand_P(pgcode);
+    }
+    static void menu_action_function
+    (menuFunc_t data) {
+        (*data)();
+    }
+    static void menu_action_sdfile
+    (const char* filename, char* longFilename) {
+        char cmd[30];
+        char* c;
+        sprintf_P(cmd, PSTR("M23 %s"), filename);
+        for(c = &cmd[4]; *c; c++)
+            enquecommand(cmd);
+        enquecommand_P(PSTR("M24"));
+        lcd_return_to_status();
+    }
+    static void menu_action_sddirectory
+    (const char* filename, char* longFilename) {
+        card.chdir(filename);
+        encoderPosition = 0;
+    }
+    static void menu_action_setting_edit_bool
+    (const char* pstr, bool* ptr) {
+        *ptr = !(*ptr);
+    }
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-        static void menu_action_setting_edit_callback_bool(const char* pstr, bool* ptr, menuFunc_t callback) {
-            menu_action_setting_edit_bool(pstr, ptr);
-            (*callback)();
-        }
+    static void menu_action_setting_edit_callback_bool(const char* pstr, bool* ptr, menuFunc_t callback) {
+        menu_action_setting_edit_bool(pstr, ptr);
+        (*callback)();
+    }
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
 //ULTIPANEL
-        /** LCD API **/
-        void lcd_init
-        () {
-            lcd_implementation_init();
+    /** LCD API **/
+    void lcd_init
+    () {
+        lcd_implementation_init();
 #if defined (A) && (defined (NEWPANEL) && defined (ULTRA_LCD) ) || defined (B) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
-            SET_INPUT(BTN_EN1);
-            SET_INPUT(BTN_EN2);
-            WRITE(BTN_EN1,HIGH);
-            WRITE(BTN_EN2,HIGH);
+        SET_INPUT(BTN_EN1);
+        SET_INPUT(BTN_EN2);
+        WRITE(BTN_EN1,HIGH);
+        WRITE(BTN_EN2,HIGH);
 #endif
 #if defined (A) && (defined (NEWPANEL) && defined (ULTRA_LCD) && BTN_ENC > 0 ) || defined (B) && (defined (NEWPANEL) && defined (ULTRA_LCD) && BTN_ENC > 0 )
-            SET_INPUT(BTN_ENC);
-            WRITE(BTN_ENC,HIGH);
+        SET_INPUT(BTN_ENC);
+        WRITE(BTN_ENC,HIGH);
 #endif
 #if defined (A) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) ) || defined (B) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
-            pinMode(SHIFT_CLK,OUTPUT);
-            pinMode(SHIFT_LD,OUTPUT);
-            pinMode(SHIFT_OUT,INPUT);
-            WRITE(SHIFT_OUT,HIGH);
-            WRITE(SHIFT_LD,HIGH);
+        pinMode(SHIFT_CLK,OUTPUT);
+        pinMode(SHIFT_LD,OUTPUT);
+        pinMode(SHIFT_OUT,INPUT);
+        WRITE(SHIFT_OUT,HIGH);
+        WRITE(SHIFT_LD,HIGH);
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && !defined (NEWPANEL) ) || defined (B) && (defined (ULTRA_LCD) && !defined (NEWPANEL) )
 // Not NEWPANEL
 #endif
 #if defined (A) && (defined (SR_LCD_2W_NL) && defined (ULTRA_LCD) && !defined (NEWPANEL) ) || defined (B) && (defined (SR_LCD_2W_NL) && defined (ULTRA_LCD) && !defined (NEWPANEL) )
 // Non latching 2 wire shift register
-            pinMode (SR_DATA_PIN, OUTPUT);
-            pinMode (SR_CLK_PIN, OUTPUT);
+        pinMode (SR_DATA_PIN, OUTPUT);
+        pinMode (SR_CLK_PIN, OUTPUT);
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined(SHIFT_CLK) && !defined (NEWPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined(SHIFT_CLK) && !defined (NEWPANEL) )
-            pinMode(SHIFT_CLK,OUTPUT);
-            pinMode(SHIFT_LD,OUTPUT);
-            pinMode(SHIFT_EN,OUTPUT);
-            pinMode(SHIFT_OUT,INPUT);
-            WRITE(SHIFT_OUT,HIGH);
-            WRITE(SHIFT_LD,HIGH);
-            WRITE(SHIFT_EN,LOW);
+        pinMode(SHIFT_CLK,OUTPUT);
+        pinMode(SHIFT_LD,OUTPUT);
+        pinMode(SHIFT_EN,OUTPUT);
+        pinMode(SHIFT_OUT,INPUT);
+        WRITE(SHIFT_OUT,HIGH);
+        WRITE(SHIFT_LD,HIGH);
+        WRITE(SHIFT_EN,LOW);
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && !defined (NEWPANEL) && !defined(SHIFT_CLK) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && !defined (NEWPANEL) && !defined(SHIFT_CLK) && defined (ULTIPANEL) )
 #error ULTIPANEL requires an encoder
@@ -1296,195 +1255,189 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 #endif
 //!NEWPANEL
 #if defined (A) && ((defined (SDSUPPORT) && defined(SDCARDDETECT) && (SDCARDDETECT > 0) && )defined (ULTRA_LCD) ) || defined (B) && ((defined (SDSUPPORT) && defined(SDCARDDETECT) && (SDCARDDETECT > 0) && )defined (ULTRA_LCD) )
-            pinMode(SDCARDDETECT,INPUT);
-            WRITE(SDCARDDETECT, HIGH);
-            lcd_oldcardstatus = IS_SD_INSERTED;
+        pinMode(SDCARDDETECT,INPUT);
+        WRITE(SDCARDDETECT, HIGH);
+        lcd_oldcardstatus = IS_SD_INSERTED;
 #endif
 //(SDCARDDETECT > 0)
 #if defined (A) && (defined (ULTRA_LCD) && defined (LCD_HAS_SLOW_BUTTONS) ) || defined (B) && (defined (ULTRA_LCD) && defined (LCD_HAS_SLOW_BUTTONS) )
-            slow_buttons = 0;
+        slow_buttons = 0;
 #endif
-            lcd_buttons_update();
+        lcd_buttons_update();
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-            encoderDiff = 0;
+        encoderDiff = 0;
 #endif
-        }
-
-        void lcd_update
-        () {
-            static unsigned long timeoutToStatus = 0;
+    }
+    void lcd_update
+    () {
+        static unsigned long timeoutToStatus = 0;
 #if defined (A) && (defined (ULTRA_LCD) && defined (LCD_HAS_SLOW_BUTTONS) ) || defined (B) && (defined (ULTRA_LCD) && defined (LCD_HAS_SLOW_BUTTONS) )
-            slow_buttons = lcd_implementation_read_slow_buttons();
+        slow_buttons = lcd_implementation_read_slow_buttons();
 // buttons which take too long to read in interrupt context
 #endif
-            lcd_buttons_update();
+        lcd_buttons_update();
 #if defined (A) && (defined (ULTRA_LCD) && (SDCARDDETECT > 0) ) || defined (B) && (defined (ULTRA_LCD) && (SDCARDDETECT > 0) )
-            if
-            ((IS_SD_INSERTED != lcd_oldcardstatus && lcd_detected())) {
-                lcdDrawUpdate = 2;
-                lcd_oldcardstatus = IS_SD_INSERTED;
-                lcd_implementation_init( // to maybe revive the LCD if static electricity killed it.
+        if
+        ((IS_SD_INSERTED != lcd_oldcardstatus && lcd_detected())) {
+            lcdDrawUpdate = 2;
+            lcd_oldcardstatus = IS_SD_INSERTED;
+            lcd_implementation_init( // to maybe revive the LCD if static electricity killed it.
 #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
-                    currentMenu == lcd_status_screen
+                currentMenu == lcd_status_screen
 #endif
-                );
-                if
-                (lcd_oldcardstatus) {
-                    card.initsd();
-                    LCD_MESSAGEPGM(MSG_SD_INSERTED);
-                } else {
-                    card.release();
-                    LCD_MESSAGEPGM(MSG_SD_REMOVED);
-                }
+            );
+            if
+            (lcd_oldcardstatus) {
+                card.initsd();
+                LCD_MESSAGEPGM(MSG_SD_INSERTED);
+            } else {
+                card.release();
+                LCD_MESSAGEPGM(MSG_SD_REMOVED);
             }
+        }
 #endif
 //CARDINSERTED
-            if
-            (lcd_next_update_millis < millis()) {
+        if
+        (lcd_next_update_millis < millis()) {
 #if defined (A) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) )
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_Z_UP) {
-                    reprapworld_keypad_move_z_up();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_Z_DOWN) {
-                    reprapworld_keypad_move_z_down();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_X_LEFT) {
-                    reprapworld_keypad_move_x_left();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_X_RIGHT) {
-                    reprapworld_keypad_move_x_right();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_Y_DOWN) {
-                    reprapworld_keypad_move_y_down();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_Y_UP) {
-                    reprapworld_keypad_move_y_up();
-                }
-                if
-                (REPRAPWORLD_KEYPAD_MOVE_HOME) {
-                    reprapworld_keypad_move_home();
-                }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_Z_UP) {
+                reprapworld_keypad_move_z_up();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_Z_DOWN) {
+                reprapworld_keypad_move_z_down();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_X_LEFT) {
+                reprapworld_keypad_move_x_left();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_X_RIGHT) {
+                reprapworld_keypad_move_x_right();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_Y_DOWN) {
+                reprapworld_keypad_move_y_down();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_Y_UP) {
+                reprapworld_keypad_move_y_up();
+            }
+            if
+            (REPRAPWORLD_KEYPAD_MOVE_HOME) {
+                reprapworld_keypad_move_home();
+            }
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-                if
-                (abs(encoderDiff) >= ENCODER_PULSES_PER_STEP) {
-                    lcdDrawUpdate = 1;
-                    encoderPosition += encoderDiff / ENCODER_PULSES_PER_STEP;
-                    encoderDiff = 0;
-                    timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
-                }
-                if
-                (LCD_CLICKED)
-                    timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
+            if
+            (abs(encoderDiff) >= ENCODER_PULSES_PER_STEP) {
+                lcdDrawUpdate = 1;
+                encoderPosition += encoderDiff / ENCODER_PULSES_PER_STEP;
+                encoderDiff = 0;
+                timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
+            }
+            if
+            (LCD_CLICKED)
+                timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
 #endif
 //ULTIPANEL
 #if defined (A) && (defined (DOGLCD) && defined (ULTRA_LCD) ) || defined (B) && (defined (DOGLCD) && defined (ULTRA_LCD) )
 // Changes due to different driver architecture of the DOGM display
-                blink++;
+            blink++;
 // Variable for fan animation and alive dot
-                u8g.firstPage();
+            u8g.firstPage();
 #endif
-                {
+            {
 #if defined (A) && (defined (DOGLCD) && defined (ULTRA_LCD) ) || defined (B) && (defined (DOGLCD) && defined (ULTRA_LCD) )
-                    u8g.setFont(u8g_font_6x10_marlin);
-                    u8g.setPrintPos(125,0);
-                    if
-                    (blink % 2)
-                        u8g.setColorIndex(1);
-                    else
-                        u8g.setColorIndex(0);
-// Set color for the alive dot
-                    u8g.drawPixel(127,63);
-// draw alive dot
+                u8g.setFont(u8g_font_6x10_marlin);
+                u8g.setPrintPos(125,0);
+                if
+                (blink % 2)
                     u8g.setColorIndex(1);
+                else
+                    u8g.setColorIndex(0);
+// Set color for the alive dot
+                u8g.drawPixel(127,63);
+// draw alive dot
+                u8g.setColorIndex(1);
 // black on white
-                    (*currentMenu)();
-                    if
-                    (!lcdDrawUpdate)
-                        break;
-// Terminate display update, when nothing new to draw. This must be done before the last dogm.next()
-                    ( u8g.nextPage() )
-#endif
-                }
-#if defined (A) && (!defined (DOGLCD) && defined (ULTRA_LCD) ) || defined (B) && (!defined (DOGLCD) && defined (ULTRA_LCD) )
                 (*currentMenu)();
+                if
+                (!lcdDrawUpdate)
+                    break;
+// Terminate display update, when nothing new to draw. This must be done before the last dogm.next()
+                ( u8g.nextPage() )
+#endif
+            }
+#if defined (A) && (!defined (DOGLCD) && defined (ULTRA_LCD) ) || defined (B) && (!defined (DOGLCD) && defined (ULTRA_LCD) )
+            (*currentMenu)();
 #endif
 #if defined (A) && (defined (LCD_HAS_STATUS_INDICATORS) && defined (ULTRA_LCD) ) || defined (B) && (defined (LCD_HAS_STATUS_INDICATORS) && defined (ULTRA_LCD) )
-                lcd_implementation_update_indicators();
+            lcd_implementation_update_indicators();
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
-                if
-                (timeoutToStatus < millis() && currentMenu != lcd_status_screen) {
-                    lcd_return_to_status();
-                    lcdDrawUpdate = 2;
-                }
+            if
+            (timeoutToStatus < millis() && currentMenu != lcd_status_screen) {
+                lcd_return_to_status();
+                lcdDrawUpdate = 2;
+            }
 #endif
 //ULTIPANEL
-                if
-                (lcdDrawUpdate == 2)
-                    lcd_implementation_clear();
-                if
-                (lcdDrawUpdate)
-                    lcdDrawUpdate--;
-                lcd_next_update_millis = millis() + LCD_UPDATE_INTERVAL;
-            }
+            if
+            (lcdDrawUpdate == 2)
+                lcd_implementation_clear();
+            if
+            (lcdDrawUpdate)
+                lcdDrawUpdate--;
+            lcd_next_update_millis = millis() + LCD_UPDATE_INTERVAL;
         }
-
-
-        void lcd_ignore_click
-        (bool b) {
-            ignore_click = b;
-            wait_for_unclick = false;
-        }
-
-
-        void lcd_finishstatus
-        () {
+    }
+    void lcd_ignore_click
+    (bool b) {
+        ignore_click = b;
+        wait_for_unclick = false;
+    }
+    void lcd_finishstatus
+    () {
 #if defined (A) && defined (ULTRA_LCD)
-            int len = strlen(lcd_status_message);
-            if (len > 0) {
-                while (len < LCD_WIDTH) {
-                    lcd_status_message[len++] = ' ';
-                }
+        int len = strlen(lcd_status_message);
+        if (len > 0) {
+            while (len < LCD_WIDTH) {
+                lcd_status_message[len++] = ' ';
             }
-            lcd_status_message[LCD_WIDTH] = '\0';
+        }
+        lcd_status_message[LCD_WIDTH] = '\0';
 #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
 #if PROGRESS_MSG_EXPIRE > 0
-            messageTick =
+        messageTick =
 #endif
-                progressBarTick = millis();
+            progressBarTick = millis();
 #endif
-            lcdDrawUpdate = 2;
+        lcdDrawUpdate = 2;
 #ifdef FILAMENT_LCD_DISPLAY
-            message_millis = millis();  //get status message to show up for a while
+        message_millis = millis();  //get status message to show up for a while
 #endif
 #endif
 #if defined (B) && defined (ULTRA_LCD)
-            int len = strlen(lcd_status_message);
-            if (len > 0) {
-                while (len < LCD_WIDTH) {
-                    lcd_status_message[len++] = ' ';
-                }
+        int len = strlen(lcd_status_message);
+        if (len > 0) {
+            while (len < LCD_WIDTH) {
+                lcd_status_message[len++] = ' ';
             }
-            lcd_status_message[LCD_WIDTH] = '\0';
+        }
+        lcd_status_message[LCD_WIDTH] = '\0';
 #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
 #if PROGRESS_MSG_EXPIRE > 0
-            messageTick =
+        messageTick =
 #endif
-                progressBarTick = millis();
+            progressBarTick = millis();
 #endif
-            lcdDrawUpdate = 2;
+        lcdDrawUpdate = 2;
 #ifdef FILAMENT_LCD_DISPLAY
-            message_millis = millis();  //get status message to show up for a while
+        message_millis = millis();  //get status message to show up for a while
 #endif
 #endif
-        }
         void lcd_setstatus
         (const char* message) {
             if
@@ -1493,8 +1446,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             strncpy(lcd_status_message, message, LCD_WIDTH);
             lcd_finishstatus();
         }
-
-
         void lcd_setstatuspgm
         (const char* message) {
             if
@@ -1503,8 +1454,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             strncpy_P(lcd_status_message, message, LCD_WIDTH);
             lcd_finishstatus();
         }
-
-
         void lcd_setalertstatuspgm
         (const char* message) {
             lcd_setstatuspgm(message);
@@ -1514,14 +1463,10 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 #endif
 //ULTIPANEL
         }
-
-
         void lcd_reset_alert_level
         () {
             lcd_status_message_level = 0;
         }
-
-
 #endif
 #if defined (A) && (defined (DOGLCD) && defined (ULTRA_LCD) ) || defined (B) && (defined (DOGLCD) && defined (ULTRA_LCD) )
         void lcd_setcontrast
@@ -1529,8 +1474,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             lcd_contrast = value & 63;
             u8g.setContrast(lcd_contrast);
         }
-
-
 #endif
 #if defined (A) && (defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
         /* Warning: This function is called from interrupt context */
@@ -1561,14 +1504,14 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             uint8_t newbutton_reprapworld_keypad=0;
             WRITE(SHIFT_LD,LOW);
             WRITE(SHIFT_LD,HIGH);
-            for(int8_ti=0; i++ {newbutton_reprapworld_keypad=newbutton_reprapworld_keypad>>1; if(READ(SHIFT_OUT))newbutton_reprapworld_keypad|=(1<<7); WRITE(SHIFT_CLK,HIGH); WRITE(SHIFT_CLK,LOW);}) {
-                    newbutton_reprapworld_keypad = newbutton_reprapworld_keypad>>1;
-                    if
-                    (READ(SHIFT_OUT))
-                        newbutton_reprapworld_keypad|=(1<<7);
-                    WRITE(SHIFT_CLK,HIGH);
-                    WRITE(SHIFT_CLK,LOW);
-                }
+            for(int8_t i=0; i<8; i++) {
+                newbutton_reprapworld_keypad = newbutton_reprapworld_keypad>>1;
+                if
+                (READ(SHIFT_OUT))
+                    newbutton_reprapworld_keypad|=(1<<7);
+                WRITE(SHIFT_CLK,HIGH);
+                WRITE(SHIFT_CLK,LOW);
+            }
             buttons_reprapworld_keypad=~newbutton_reprapworld_keypad;
 //invert it, because a pressed switch produces a logical 0
 #endif
@@ -1578,14 +1521,14 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             WRITE(SHIFT_LD,LOW);
             WRITE(SHIFT_LD,HIGH);
             unsigned char tmp_buttons=0;
-            for(int8_ti=0; i++ {newbutton=newbutton>>1; if(READ(SHIFT_OUT))newbutton|=(1<<7); WRITE(SHIFT_CLK,HIGH); WRITE(SHIFT_CLK,LOW);}) {
-                    newbutton = newbutton>>1;
-                    if
-                    (READ(SHIFT_OUT))
-                        newbutton|=(1<<7);
-                    WRITE(SHIFT_CLK,HIGH);
-                    WRITE(SHIFT_CLK,LOW);
-                }
+            for(int8_t i=0; i<8; i++) {
+                newbutton = newbutton>>1;
+                if
+                (READ(SHIFT_OUT))
+                    newbutton|=(1<<7);
+                WRITE(SHIFT_CLK,HIGH);
+                WRITE(SHIFT_CLK,LOW);
+            }
             buttons=~newbutton;
 //invert it, because a pressed switch produces a logical 0
 #endif
@@ -1646,8 +1589,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             }
             lastEncoderBits = enc;
         }
-
-
         bool lcd_detected
         (void) {
 #if defined (A) && (defined (ULTRA_LCD) && ((defined(LCD_I2C_TYPE_MCP23017) || defined(LCD_I2C_TYPE_MCP23008)) && defined(DETECT_DEVICE) && )defined (ULTIPANEL) ) || defined (B) && (defined (ULTRA_LCD) && ((defined(LCD_I2C_TYPE_MCP23017) || defined(LCD_I2C_TYPE_MCP23008)) && defined(DETECT_DEVICE) && )defined (ULTIPANEL) )
@@ -1657,20 +1598,16 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             return true;
 #endif
         }
-
         void lcd_buzz
         (long duration, uint16_t freq) {
 #if defined (A) && (defined (LCD_USE_I2C_BUZZER) && defined (ULTRA_LCD) && defined (ULTIPANEL) ) || defined (B) && (defined (LCD_USE_I2C_BUZZER) && defined (ULTRA_LCD) && defined (ULTIPANEL) )
             lcd.buzz(duration,freq);
 #endif
         }
-
         bool lcd_clicked
         () {
             return LCD_CLICKED;
         }
-
-
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
 //ULTIPANEL
@@ -1679,13 +1616,11 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
         /********************************/
 //  convert float to string with +123.4 format
         char conv[8];
-        char * (const float &x)
+        char * ftostr3
         (const float &x) {
             return itostr3((int)x);
         }
-
-
-        char * (const uint8_t &x)
+        char * itostr2
         (const uint8_t &x) {
 //sprintf(conv,"%5.1f",x);
             int xx=x;
@@ -1694,10 +1629,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[2]=0;
             return conv;
         }
-
-
 // Convert float to string with 123.4 format, dropping sign
-        char * (const float &x)
+        char * ftostr31
         (const float &x) {
             int xx=x*10;
             conv[0]=(xx>=0)?'+':'-';
@@ -1710,10 +1643,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[6]=0;
             return conv;
         }
-
-
 // Convert float to string with 123.4 format
-        char * (const float &x)
+        char * ftostr31ns
         (const float &x) {
             int xx=x*10;
 //conv[0]=(xx>=0)?'+':'-';
@@ -1726,9 +1657,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[5]=0;
             return conv;
         }
-
-
-        char * (const float &x)
+        char * ftostr32
         (const float &x) {
             long xx=x*100;
             if
@@ -1745,8 +1674,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[6]=0;
             return conv;
         }
-
-
 #endif
 #if defined (A) && defined (ULTRA_LCD)
 // Convert float to string with 1.234 format
@@ -1772,7 +1699,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
 //Float to string with 1.23 format
 #endif
 #if defined (A) && defined (ULTRA_LCD) || defined (B) && defined (ULTRA_LCD)
-        char * (const float &x)
+        char * ftostr12ns
         (const float &x) {
             long xx=x*100;
             xx=abs(xx);
@@ -1783,10 +1710,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[4]=0;
             return conv;
         }
-
-
 //  convert float to space-padded string with -_23.4_ format
-        char * (const float &x)
+        char * ftostr32sp
         (const float &x) {
             long xx = abs(x * 100);
             uint8_t dig;
@@ -1833,9 +1758,7 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[6] = '\0';
             return conv;
         }
-
-
-        char * (const int &xx)
+        char * itostr31
         (const int &xx) {
             conv[0]=(xx>=0)?'+':'-';
             conv[1]=(xx/1000)%10+'0';
@@ -1846,10 +1769,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[6]=0;
             return conv;
         }
-
-
 // Convert int to rj string with 123 or -12 format
-        char * (const int &x)
+        char * itostr3
         (const int &x) {
             int xx = x;
             if
@@ -1870,10 +1791,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[3]=0;
             return conv;
         }
-
-
 // Convert int to lj string with 123 format
-        char * (const int &xx)
+        char * itostr3left
         (const int &xx) {
             if
             (xx >= 100) {
@@ -1892,10 +1811,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             }
             return conv;
         }
-
-
 // Convert int to rj string with 1234 format
-        char * (const int &xx)
+        char * itostr4
         (const int &xx) {
             conv[0] = xx >= 1000 ? (xx / 1000) % 10 + '0' : ' ';
             conv[1] = xx >= 100 ? (xx / 100) % 10 + '0' : ' ';
@@ -1904,10 +1821,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[4] = 0;
             return conv;
         }
-
-
 // Convert float to rj string with 12345 format
-        char * (const float &x)
+        char * ftostr5
         (const float &x) {
             long xx = abs(x);
             conv[0] = xx >= 10000 ? (xx / 10000) % 10 + '0' : ' ';
@@ -1918,10 +1833,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[5] = 0;
             return conv;
         }
-
-
 // Convert float to string with +1234.5 format
-        char * (const float &x)
+        char * ftostr51
         (const float &x) {
             long xx=x*10;
             conv[0]=(xx>=0)?'+':'-';
@@ -1935,10 +1848,8 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[7]=0;
             return conv;
         }
-
-
 // Convert float to string with +123.45 format
-        char * (const float &x)
+        char * ftostr52
         (const float &x) {
             long xx=x*100;
             conv[0]=(xx>=0)?'+':'-';
@@ -1952,8 +1863,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             conv[7]=0;
             return conv;
         }
-
-
 // Callback for after editing PID i value
 // grab the PID i value out of the temp variable; scale it; then update the PID driver
         void copy_and_scalePID_i
@@ -1963,7 +1872,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             updatePID();
 #endif
         }
-
 // Callback for after editing PID d value
 // grab the PID d value out of the temp variable; scale it; then update the PID driver
         void copy_and_scalePID_d
@@ -1973,7 +1881,6 @@ static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool 
             updatePID();
 #endif
         }
-
 #endif
 #if defined (A) || defined (B)
 //ULTRA_LCD

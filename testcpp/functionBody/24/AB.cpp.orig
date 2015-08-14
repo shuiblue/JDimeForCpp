@@ -3,21 +3,16 @@ class Computer
 
 #if defined (A)
 :public bar
-
 #endif
 
-
 {
-
 while 
 ( i-- > 0 )
 {
-
 x = f( i );
 if 
 ( x == 1 )
 {
-
 #if defined (A)
 
         continue;
@@ -31,12 +26,7 @@ if
 
 #endif
 }
-
 y += x * x;
 }
-
-
 }
-
-
 #endif

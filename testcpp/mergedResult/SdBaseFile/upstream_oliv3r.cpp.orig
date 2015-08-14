@@ -80,7 +80,7 @@ vol_->cacheSetBlockNumber(block, true);
 // zero first block of cluster
 memset(vol_->cacheBuffer_.data, 0, 512);
 // zero rest of cluster
-for(uint8_ti=1;i<vol_->blocksPerCluster_;i++)
+for(uint8_t i = 1;i < vol_->blocksPerCluster_;i++)
 
 {
 
@@ -154,7 +154,7 @@ if
 (firstCluster_ == 0)
 goto fail;
 
-for(uint32_tc=firstCluster_;;c++)
+for(uint32_t c = firstCluster_;;c++)
 
 {
 
@@ -286,7 +286,7 @@ void SdBaseFile::dirName
 {
 
 uint8_t j = 0;
-for(uint8_ti=0;i<11;i++)
+for(uint8_t i = 0;i < 11;i++)
 
 {
 
@@ -355,7 +355,7 @@ int16_t SdBaseFile::fgets
 char ch;
 int16_t n = 0;
 int16_t r = -1;
-while   
+while 
 ((n + 1) < num && (r = read(&ch, 1)) == 1)
 {
 
@@ -483,7 +483,7 @@ void SdBaseFile::ls
 
 rewind();
 int8_t status;
-while   
+while 
 ((status = lsPrintNext( flags, indent)))
 {
 
@@ -517,7 +517,7 @@ int8_t SdBaseFile::lsPrintNext
 
 dir_t dir;
 uint8_t w = 0;
-while   
+while 
 (1)
 {
 
@@ -539,10 +539,10 @@ break;
 
 
 // indent for dir level
-for(uint8_ti=0;i<indent;i++)
+for(uint8_t i = 0;i < indent;i++)
 
 // print name
-for(uint8_ti=0;i<11;i++)
+for(uint8_t i = 0;i < 11;i++)
 
 {
 
@@ -577,7 +577,7 @@ if
 (flags & (LS_DATE | LS_SIZE))
 {
 
-while   
+while 
 (w++ < 14)
 MYSERIAL.write(' ');
 
@@ -622,11 +622,11 @@ uint8_t n = 7;
 // max index for part before dot
 uint8_t i = 0;
 // blank fill name and extension
-while   
+while 
 (i < 11)
 name[i++] = ' ';
 i = 0;
-while   
+while 
 (*str != '\0' && *str != '/')
 {
 
@@ -653,7 +653,7 @@ else {
 // illegal FAT characters
 PGM_P p = PSTR("|<>^+=?/[];,*\"\\");
 uint8_t b;
-while   
+while 
 ((b = pgm_read_byte(p++)))
 if 
 (b == c)
@@ -714,7 +714,7 @@ if
 (*path == '/')
 {
 
-while   
+while 
 (*path == '/')
 path++;
 
@@ -735,7 +735,7 @@ parent = &dir2;
 }
 
 
-while   
+while 
 (1)
 {
 
@@ -743,7 +743,7 @@ if
 (!make83Name(path, dname, &path))
 goto fail;
 
-while   
+while 
 (*path == '/')
 path++;
 if 
@@ -821,7 +821,7 @@ p->attributes = DIR_ATT_DIRECTORY;
 // make entry for '.'
 memcpy(&d, p, sizeof(d));
 d.name[0] = '.';
-for(uint8_ti=1;i<11;i++)
+for(uint8_t i = 1;i < 11;i++)
 
 // cache block for '.'  and '..'
 block = vol_->clusterStartBlock(firstCluster_);
@@ -949,7 +949,7 @@ if
 (*path == '/')
 {
 
-while   
+while 
 (*path == '/')
 path++;
 
@@ -970,7 +970,7 @@ parent = &dir2;
 }
 
 
-while   
+while 
 (1)
 {
 
@@ -978,7 +978,7 @@ if
 (!make83Name(path, dname, &path))
 goto fail;
 
-while   
+while 
 (*path == '/')
 path++;
 if 
@@ -1018,7 +1018,7 @@ dir_t* p;
 vol_ = dirFile->vol_;
 dirFile->rewind();
 // search for file
-while   
+while 
 (dirFile->curPosition_ < dirFile->fileSize_)
 {
 
@@ -1319,7 +1319,7 @@ if
 goto fail;
 
 vol_ = dirFile->vol_;
-while   
+while 
 (1)
 {
 
@@ -1571,7 +1571,7 @@ void SdBaseFile::printDirName
 {
 
 uint8_t w = 0;
-for(uint8_ti=0;i<11;i++)
+for(uint8_t i = 0;i < 11;i++)
 
 {
 
@@ -1602,7 +1602,7 @@ w++;
 }
 
 
-while   
+while 
 (w < width)
 {
 
@@ -1749,7 +1749,7 @@ nbyte = fileSize_ - curPosition_;
 
 // amount left to read
 toRead = nbyte;
-while   
+while 
 (toRead > 0)
 {
 
@@ -1874,7 +1874,7 @@ longFilename[0] = '\0';
 }
 
 
-while   
+while 
 (1)
 {
 
@@ -2296,7 +2296,7 @@ goto fail;
 
 rewind();
 // make sure directory is empty
-while   
+while 
 (curPosition_ < fileSize_)
 {
 
@@ -2355,7 +2355,7 @@ bool SdBaseFile::rmRfStar
 uint16_t index;
 SdBaseFile f;
 rewind();
-while   
+while 
 (curPosition_ < fileSize_)
 {
 
@@ -2453,6 +2453,7 @@ return false;
  * \param[in] oflag Values for \a oflag are constructed by a bitwise-inclusive
  * OR of open flags. see SdBaseFile::open(SdBaseFile*, const char*, uint8_t).
  */
+SdBaseFile::SdBaseFile
 (const char* path, uint8_t oflag)
 {
 
@@ -2518,7 +2519,7 @@ nNew -= nCur;
 }
 
 
-while   
+while 
 (nNew--)
 {
 
@@ -2908,7 +2909,7 @@ goto fail;
 }
 
 
-while   
+while 
 (nToWrite > 0)
 {
 

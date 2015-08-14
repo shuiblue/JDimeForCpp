@@ -516,10 +516,7 @@ void Config_ResetDefault
     float tmp1[]=DEFAULT_AXIS_STEPS_PER_UNIT;
     float tmp2[]=DEFAULT_MAX_FEEDRATE;
     long tmp3[]=DEFAULT_MAX_ACCELERATION;
-    for(shorti=0; i++ {axis_steps_per_unit[i]=tmp1[i]; max_feedrate[i]=tmp2[i]; max_acceleration_units_per_sq_second[i]=tmp3[i]; #ifdefSCARAaxis_scaling[i]=1;#endif})
-
-    {
-
+    for(short i=0; i<4; i++) {
         axis_steps_per_unit[i]=tmp1[i];
         max_feedrate[i]=tmp2[i];
         max_acceleration_units_per_sq_second[i]=tmp3[i];
@@ -527,7 +524,6 @@ void Config_ResetDefault
         axis_scaling[i]=1;
 #endif
     }
-
 // steps per sq second need to be updated to agree with the units per sq second
     reset_acceleration_rates();
     acceleration=DEFAULT_ACCELERATION;
@@ -618,4 +614,6 @@ void Config_ResetDefault
     SERIAL_ECHO_START;
     SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
 }
+
+
 #endif

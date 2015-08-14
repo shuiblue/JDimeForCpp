@@ -5,10 +5,7 @@ class Computer
     :public bar
 
 
-
-
 {
-
     switch
     ( i ) {
     case
@@ -32,6 +29,4 @@ class Computer
         p++;
         break;
     }
-
-
 }

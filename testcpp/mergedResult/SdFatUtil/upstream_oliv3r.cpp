@@ -84,7 +84,7 @@ int SdFatUtil::FreeRam
  */
 void SdFatUtil::print_P
 ( PGM_P str) {
-    for(uint8_tc; (c=pgm_read_byte(str)); str++)
+    for(uint8_t c; (c = pgm_read_byte(str)); str++)
     }
 
 

@@ -3,12 +3,9 @@ class Computer
 
 #if defined (A)
     :public bar
-
 #endif
 
-
 {
-
     if
     ( i > 0 ) {
         x = i;
@@ -16,17 +13,11 @@ class Computer
         y=s;
 #endif
     }
-
-
 #if defined (A)
     else {
         s=2;
         s=3;
     }
-
-
 #endif
 }
-
-
 #endif

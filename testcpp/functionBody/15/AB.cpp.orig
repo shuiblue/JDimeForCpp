@@ -2,14 +2,12 @@
 void a
 ()
 {
-
 do 
 {
 #if defined (A)
 x--;
 
 #endif
-
 #if defined (B)
 
 	y--;
@@ -19,6 +17,4 @@ s++;
 }
 while ( x > 0 );
 }
-
-
 #endif

@@ -231,11 +231,9 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *pTc, uint8_t channel);
 
 #endif
 #if defined (B) && (defined (NUM_SERVOS) && defined (_useTimer1) )
-
-oid HANDLER_FOR_TIMER1(void) {
+void HANDLER_FOR_TIMER1(void) {
     Servo_Handler(_timer1, TC_FOR_TIMER1, CHANNEL_FOR_TIMER1);
-
-
+}
 #endif
 #if defined (A)
 SIGNAL (TIMER3_COMPA_vect)
@@ -253,11 +251,9 @@ void HANDLER_FOR_TIMER2(void) {
 
 #endif
 #if defined (B) && (defined (NUM_SERVOS) && defined (_useTimer3) )
-
-oid HANDLER_FOR_TIMER3(void) {
+void HANDLER_FOR_TIMER3(void) {
     Servo_Handler(_timer3, TC_FOR_TIMER3, CHANNEL_FOR_TIMER3);
-
-
+}
 #endif
 #if defined (A)
 SIGNAL (TIMER4_COMPA_vect)
@@ -275,11 +271,9 @@ void HANDLER_FOR_TIMER4(void) {
 
 #endif
 #if defined (B) && (defined (NUM_SERVOS) && defined (_useTimer5) )
-
-oid HANDLER_FOR_TIMER5(void) {
+void HANDLER_FOR_TIMER5(void) {
     Servo_Handler(_timer5, TC_FOR_TIMER5, CHANNEL_FOR_TIMER5);
-
-
+}
 #endif
 #if defined (A)
 SIGNAL (TIMER5_COMPA_vect)
@@ -324,8 +318,7 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel)
 
 #endif
 #if defined (B) && defined (NUM_SERVOS)
-
-tatic void _initISR(Tc *tc, uint32_t channel, uint32_t id, IRQn_Type irqn)
+static void _initISR(Tc *tc, uint32_t channel, uint32_t id, IRQn_Type irqn)
 {
     pmc_enable_periph_clk(id);
     TC_Configure(tc, channel,
@@ -343,8 +336,7 @@ tatic void _initISR(Tc *tc, uint32_t channel, uint32_t id, IRQn_Type irqn)
 
     // Enables the timer clock and performs a software reset to start the counting
     TC_Start(tc, channel);
-
-
+}
 #endif
 #if defined (A) && (defined (NUM_SERVOS) && defined WIRING )
 // Interrupt handlers for Wiring
@@ -527,7 +519,7 @@ static boolean isTimerActive
 {
 
 // returns true if any servo is active on this timer
-for(uint8_tchannel=0;channel<SERVOS_PER_TIMER;channel++)
+for(uint8_t channel=0;channel < SERVOS_PER_TIMER;channel++)
 
 {
 

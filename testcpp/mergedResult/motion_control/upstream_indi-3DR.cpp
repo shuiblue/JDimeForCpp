@@ -113,7 +113,7 @@ void mc_arc
     arc_target[axis_linear] = position[axis_linear];
 // Initialize the extruder axis
     arc_target[E_AXIS] = position[E_AXIS];
-    for(i=1; i<segments; i++) {
+    for(i = 1; i<segments; i++) {
 // Increment (segments-1)
         if
         (count < N_ARC_CORRECTION) {

@@ -5,10 +5,7 @@ class Computer
     :public bar
 
 
-
-
 {
-
     if
     ( i > 0 ) {
         x = i;
@@ -16,6 +13,4 @@ class Computer
         y=s;
 
     }
-
-
 }

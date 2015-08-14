@@ -64,7 +64,7 @@ static inline __attribute__((always_inline))
 void spiRead(uint8_t* buf, uint16_t nbyte) {
     if (nbyte-- == 0) return;
     SPDR = 0XFF;
-    for(uint16_ti=0; i<nbyte; i++) {
+    for(uint16_t i = 0; i < nbyte; i++) {
         while
         (!(SPSR & (1 << SPIF))) {
             /* Intentionally left empty */
@@ -121,7 +121,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
                 cli();
 // output pin high - like sending 0XFF
                 fastDigitalWrite(SPI_MOSI_PIN, HIGH);
-                for(uint8_ti=0; i<8; i++) {
+                for(uint8_t i = 0; i < 8; i++) {
                     fastDigitalWrite(SPI_SCK_PIN, HIGH);
 // adjust so SCK is nice
                     nop;
@@ -140,7 +140,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
             /** Soft SPI read data */
             static void spiRead
             (uint8_t* buf, uint16_t nbyte) {
-                for(uint16_ti=0; i<nbyte; i++) {
+                for(uint16_t i = 0; i < nbyte; i++) {
                     buf[i] = spiRec();
                 }
             }
@@ -150,7 +150,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
             (uint8_t data) {
 // no interrupts during byte send - about 8 us
                 cli();
-                for(uint8_ti=0; i<8; i++) {
+                for(uint8_t i = 0; i < 8; i++) {
                     fastDigitalWrite(SPI_SCK_PIN, LOW);
                     fastDigitalWrite(SPI_MOSI_PIN, data & 0X80);
                     data <<= 1;
@@ -170,7 +170,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
             void spiSendBlock
             (uint8_t token, const uint8_t* buf) {
                 spiSend(token);
-                for(uint16_ti=0; i<512; i++) {
+                for(uint16_t i = 0; i < 512; i++) {
                     spiSend(buf[i]);
                 }
             }
@@ -188,7 +188,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
 // send command
                 spiSend(cmd | 0x40);
 // send argument
-                for(int8_ts=24; s>=0; s-=8)
+                for(int8_t s = 24; s >= 0; s -= 8)
 // send CRC
                     uint8_t crc = 0XFF;
                 if
@@ -205,7 +205,7 @@ void spiRead(uint8_t* buf, uint16_t nbyte) {
                 (cmd == CMD12)
                     spiRec();
 // wait for response
-                for(uint8_ti=0; ((status_=spiRec())&0X80)&&i!=0XFF; i++) {
+                for(uint8_t i = 0; ((status_ = spiRec()) & 0X80) && i != 0XFF; i++) {
                     /* Intentionally left empty */
                 }
                 return status_;
@@ -358,7 +358,7 @@ fail:
 #endif
 // SOFTWARE_SPI
 // must supply min of 74 clock cycles with CS high.
-                for(uint8_ti=0; i<10; i++)
+                for(uint8_t i = 0; i < 10; i++)
 // command to go idle in SPI mode
                     while
                     ((status_ = cardCommand(CMD0, 0)) != R1_IDLE_STATE) {
@@ -373,7 +373,7 @@ fail:
                     type(SD_CARD_TYPE_SD1);
                 } else {
 // only need last byte of r7 response
-                    for(uint8_ti=0; i<4; i++)
+                    for(uint8_t i = 0; i < 4; i++)
                         if
                         (status_ != 0XAA) {
                             error(SD_CARD_ERROR_CMD8);
@@ -401,7 +401,7 @@ fail:
                     ((spiRec() & 0XC0) == 0XC0)
                         type(SD_CARD_TYPE_SDHC);
 // discard rest of ocr - contains allowed voltage range
-                    for(uint8_ti=0; i<3; i++)
+                    for(uint8_t i = 0; i < 3; i++)
                     }
                 chipSelectHigh();
 #if defined (A) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) ) || defined (B) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) )
@@ -523,7 +523,7 @@ fail:
             static uint16_t CRC_CCITT
             (const uint8_t* data, size_t n) {
                 uint16_t crc = 0;
-                for(size_ti=0; i<n; i++) {
+                for(size_t i = 0; i < n; i++) {
                     crc = pgm_read_word(&crctab[(crc >> 8 ^ data[i]) & 0XFF]) ^ (crc << 8);
                 }
                 return crc;

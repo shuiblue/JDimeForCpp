@@ -138,9 +138,8 @@ public class TestInitial {
         inputFilePaths.add(fork + "/Marlin/Marlin/");
         String outputPath = outputPath_pre + "upstream_" + fork;
         runMain4Marlin(inputFilePaths, outputPath, mergedFile);
-
         try {
-            result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+                result = readResult( outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
             e.printStackTrace();
 
@@ -150,8 +149,6 @@ public class TestInitial {
     }
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
-
-
         for (int i = 0; i < inputFilePaths.size(); i++) {
             String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                     + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
@@ -159,7 +156,6 @@ public class TestInitial {
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
             }
-
             String[] arg = commandLine.split(",");
             try {
                 Main.main(arg);
@@ -270,12 +266,6 @@ public class TestInitial {
      * @return
      */
     public boolean testEveryConfig(HashSet<String> config, HashSet<String> fileNameSet, String output, String path, String testNum) {
-//        try {
-//            Thread.sleep(100);                 //1000 milliseconds is one second.
-//        } catch (InterruptedException ex) {
-//            Thread.currentThread().interrupt();
-//        }
-
         Set<Set<String>> configuration = getAllConfigurations(config);
         Set<String> feature = new HashSet<>();
         for (String file : fileNameSet) {
@@ -344,13 +334,6 @@ public class TestInitial {
 
     }
 
-    public HashSet<String> inputFileInit(int i) {
-        HashSet<String> fileName = new HashSet<>();
-        char A = 'A';
-        fileName.add("A");
-        for (int j = 1; j < i; j++) {
-            fileName.add(String.valueOf(++A));
-        }
-        return fileName;
-    }
+
+
 }

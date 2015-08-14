@@ -6,7 +6,6 @@ void a
 #endif
 #if defined (B)
     (xx)
-
 #endif
 
 
