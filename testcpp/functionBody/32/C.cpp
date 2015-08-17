@@ -136,7 +136,7 @@ void  CardReader::lsDive(const char *prepend,SdFile parent)
 void CardReader::ls() 
 {
   lsAction=LS_SerialPrint;
-  if (lsAction==LS_Count)
+  if(lsAction==LS_Count)
   nrFiles=0;
 
   root.rewind();
@@ -437,7 +437,7 @@ void CardReader::removeFile(char* name)
     if (file.remove(curDir, fname)) 
     {
       SERIAL_PROTOCOLPGM("File deleted:");
-      SERIAL_PROTOCOL(fname);
+      SERIAL_PROTOCOLLN(fname);
       sdpos = 0;
     }
     else

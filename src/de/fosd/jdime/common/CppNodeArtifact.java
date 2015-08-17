@@ -150,7 +150,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 break;
             }
         }
-        Boolean ifBeforeEndif = ifLoc <=endifLoc;
+        Boolean ifBeforeEndif = ifLoc <= endifLoc;
 
         //-----tricky way
         Boolean elseNum = (else_num <= (ifdef_num + ifndef_num + if_num));
@@ -250,6 +250,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     private void initializeChildren(Revision parentRevision) {
         ArtifactList<CppNodeArtifact> children = new ArtifactList<>();
         if (astnode != null) {
+            ArrayList<String> blankLine = new ArrayList<>();
 
             for (int i = 0; i < astnode.getChildCount(); i++) {
                 Node node = astnode.getChild(i);
@@ -295,7 +296,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                             if (localName.equals("else")) {
                                 if (namespace_prefix.equals("cpp")) {
-//                                    System.out.println("!!!!" + node.getParent().toXML());
                                     String condition = conditionStack.pop();
                                     if (condition.contains("!")) {
                                         conditionStack.push(condition.substring(1));
@@ -306,6 +306,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 }
                             }
                         }
+
                         if (!entity.getHeadEntity().contains(localName)) {
                             Revision revision = new Revision(getRevision().getName());
                             revision.conditions.addAll(parentRevision.conditions);
@@ -326,6 +327,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                         }
                     }
+                } else {
+                    blankLine.add(node.getValue());
                 }
             }
         }
@@ -897,9 +900,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             newResult += printNodeWithoutHeadandEnd(e, 1);
                         }
                     } else {
-                        newResult += e ;
-                        if(!e.endsWith("\n")) {
-                         newResult+=   "\n";
+                        newResult += e;
+                        if (!e.endsWith("\n")) {
+                            newResult += "\n";
                         }
                     }
                 }
@@ -1003,7 +1006,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 res += "";
                             }
                         } else {
-                            res += "\n" + presicePrettyprint(printChoice(c), blockCondition) + "\n";
+                            res += presicePrettyprint(printChoice(c), blockCondition) + "\n";
                         }
                     }
                 }
@@ -1195,10 +1198,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     if (condition.length() > 0) {
                         s += " && " + condition + "\n";
                     }
-                    if(c.variants.get(str).astnode.getValue().startsWith("{")) {
+                    if (c.variants.get(str).astnode.getValue().startsWith("{")) {
                         s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
-                    }else{
-                        s+=c.variants.get(str).astnode.getValue();
+                    } else {
+                        s += c.variants.get(str).astnode.getValue();
                     }
 
                 } else {

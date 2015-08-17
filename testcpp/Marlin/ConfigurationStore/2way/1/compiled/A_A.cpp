@@ -1,5 +1,0 @@
-
-
-void Config_PrintSettings()
-{
-}

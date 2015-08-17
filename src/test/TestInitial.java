@@ -139,7 +139,28 @@ public class TestInitial {
         String outputPath = outputPath_pre + "upstream_" + fork;
         runMain4Marlin(inputFilePaths, outputPath, mergedFile);
         try {
-                result = readResult( outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+            result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+        return result;
+    }
+
+    public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        String result = "";
+        int n = combination.size()+1;
+        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/"+n+"-wayMerge/";
+        String outputPath = outputPath_pre + "upstream" ;
+        for (String fork : combination) {
+            inputFilePaths.add(fork + "/Marlin/Marlin/");
+            outputPath +="_"+fork;
+        }
+        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+        try {
+            result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
             e.printStackTrace();
 
@@ -149,13 +170,21 @@ public class TestInitial {
     }
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
+        String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
+                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
+        int n = inputFilePaths.size()+1;
+
+        System.out.print( n+ " way merge: "+mergedFile+".cpp file. 'upstream' repo merge with fork '") ;
+
         for (int i = 0; i < inputFilePaths.size(); i++) {
-            String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
-                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
             commandLine += prefix + inputFilePaths.get(i) + mergedFile + suffix;
+            System.out.print(inputFilePaths.get(i).split("/")[0]+ "' ");
+
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
+                System.out.print(" , ");
             }
+        }
             String[] arg = commandLine.split(",");
             try {
                 Main.main(arg);
@@ -167,7 +196,6 @@ public class TestInitial {
                 e.printStackTrace();
             }
         }
-    }
 
     /**
      * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
@@ -288,7 +316,7 @@ public class TestInitial {
      * @param features
      * @return
      */
-    private Set<Set<String>> getAllConfigurations(HashSet<String> features) {
+    public Set<Set<String>> getAllConfigurations(HashSet<String> features) {
         Set<Set<String>> configurations = new HashSet<Set<String>>();
         configurations.add(new HashSet());
         for (String feature : features) {
@@ -303,6 +331,18 @@ public class TestInitial {
 
         return configurations;
     }
+
+    public Set<Set<String>> getAllConfigurations(HashSet<String> features, int combineNum) {
+        Set<Set<String>> combinations = new HashSet<Set<String>>() ;
+        Set<Set<String>> configurations = getAllConfigurations(features);
+        for(Set<String> s :configurations){
+            if(s.size()==combineNum-1){
+                combinations.add(s);
+            }
+        }
+        return  combinations;
+    }
+
 
     /**
      * clean temp file ".xml" and compiled folders
@@ -333,6 +373,7 @@ public class TestInitial {
         }
 
     }
+
 
 
 
