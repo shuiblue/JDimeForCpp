@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/IFDEF/forCompile/26/A.cpp"><cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>X</name>&gt;0) || <call><name>defined</name><argument_list>(<argument><expr><name>Y</name></expr></argument>)</argument_list></call></expr></cpp:if>
-<expr_stmt><expr><name>a</name> = 1</expr>;</expr_stmt>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
-</unit>

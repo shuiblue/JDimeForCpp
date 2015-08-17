@@ -1,10 +1,8 @@
 #if defined (A) || defined (B)
 class Computer
-
 #if defined (A)
     :public bar
 #endif
-
 {
     while
     ( i-- > 0 ) {
