@@ -162,9 +162,22 @@ public class TestInitial {
         String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/"+n+"-wayMerge/";
         String outputPath = outputPath_pre + "upstream" ;
         for (String fork : combination) {
+
+            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile + ".cpp";
+            File f = new File(filePath);
+
+            if (f.exists()) {
+                System.out.println(filePath + " not exist!");
+
             inputFilePaths.add(fork + "/Marlin/Marlin/");
             outputPath +="_"+fork;
+            } else {
+                outputPath += "_no_" + fork;
         }
+
+
+        }
+        if (inputFilePaths.size() > 0) {
         runMain4Marlin(inputFilePaths, outputPath, mergedFile);
         try {
             result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
@@ -172,7 +185,7 @@ public class TestInitial {
             e.printStackTrace();
 
         }
-
+        }
         return result;
     }
 
@@ -381,8 +394,6 @@ public class TestInitial {
         }
 
     }
-
-
 
 
 }

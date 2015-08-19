@@ -320,6 +320,9 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
                 // leftChild is a choice node
                 if (leftChild.isChoice()) {
                     T matchedVariant = rightChild.getMatching(l).getMatchingArtifact(rightChild);
+
+
+
                     leftChild.addVariant(r.getName(), matchedVariant);
                     AddOperation<T> addOp = new AddOperation<>(leftChild, target, triple, null);
                     leftChild.setMerged();
