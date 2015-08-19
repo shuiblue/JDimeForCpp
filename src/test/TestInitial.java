@@ -151,51 +151,64 @@ public class TestInitial {
     public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
-        int n = combination.size()+1;
-        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/"+n+"-wayMerge/";
-        String outputPath = outputPath_pre + "upstream" ;
+        int n = combination.size() + 1;
+        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/" + n + "-wayMerge/";
+        String outputPath = outputPath_pre + "upstream";
         for (String fork : combination) {
-            inputFilePaths.add(fork + "/Marlin/Marlin/");
-            outputPath +="_"+fork;
-        }
-        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
-        try {
-            result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile + ".cpp";
+            File f = new File(filePath);
+
+            if (f.exists()) {
+                System.out.println(filePath + " not exist!");
+
+                inputFilePaths.add(fork + "/Marlin/Marlin/");
+                outputPath += "_" + fork;
+            } else {
+                outputPath += "_no_" + fork;
+            }
+
 
         }
+        if (inputFilePaths.size() > 0) {
+            runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+            try {
+                result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+            } catch (IOException e) {
+                e.printStackTrace();
 
+            }
+        }
         return result;
     }
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
         String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
-        int n = inputFilePaths.size()+1;
+        int n = inputFilePaths.size() + 1;
 
-        System.out.print( n+ " way merge: "+mergedFile+".cpp file. 'upstream' repo merge with fork '") ;
+        System.out.print(n + " way merge: " + mergedFile + ".cpp file. 'upstream' repo merge with fork '");
 
         for (int i = 0; i < inputFilePaths.size(); i++) {
             commandLine += prefix + inputFilePaths.get(i) + mergedFile + suffix;
-            System.out.print(inputFilePaths.get(i).split("/")[0]+ "' ");
+            System.out.print(inputFilePaths.get(i).split("/")[0] + "' ");
 
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
                 System.out.print(" , ");
             }
         }
-            String[] arg = commandLine.split(",");
-            try {
-                Main.main(arg);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        String[] arg = commandLine.split(",");
+        try {
+            Main.main(arg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
 
     /**
      * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
@@ -333,14 +346,14 @@ public class TestInitial {
     }
 
     public Set<Set<String>> getAllConfigurations(HashSet<String> features, int combineNum) {
-        Set<Set<String>> combinations = new HashSet<Set<String>>() ;
+        Set<Set<String>> combinations = new HashSet<Set<String>>();
         Set<Set<String>> configurations = getAllConfigurations(features);
-        for(Set<String> s :configurations){
-            if(s.size()==combineNum-1){
+        for (Set<String> s : configurations) {
+            if (s.size() == combineNum - 1) {
                 combinations.add(s);
             }
         }
-        return  combinations;
+        return combinations;
     }
 
 
@@ -373,8 +386,6 @@ public class TestInitial {
         }
 
     }
-
-
 
 
 }

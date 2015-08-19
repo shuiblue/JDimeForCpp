@@ -24,25 +24,25 @@ public class mergeMarlin {
     public HashSet<String> inputFileInit() {
 //        mergedFiles.add("cardreader");
 //        mergedFiles.add("Marlin_main");
-        mergedFiles.add("BlinkM");
+//        mergedFiles.add("BlinkM");
         mergedFiles.add("ConfigurationStore");
-        mergedFiles.add("digipot_mcp4451");
-        mergedFiles.add("LiquidCrystalRus");
-        mergedFiles.add("MarlinSerial");
-        mergedFiles.add("motion_control");
-        mergedFiles.add("planner");
-        mergedFiles.add("qr_solve");
-        mergedFiles.add("Sd2Card");
-        mergedFiles.add("SdFatUtil");
-        mergedFiles.add("SdBaseFile");
-        mergedFiles.add("SdFile");
-        mergedFiles.add("SdVolume");
-        mergedFiles.add("stepper");
-        mergedFiles.add("Servo");
-        mergedFiles.add("ultralcd");
-        mergedFiles.add("watchdog");
-        mergedFiles.add("vector_3");
-        
+//        mergedFiles.add("digipot_mcp4451");
+//        mergedFiles.add("LiquidCrystalRus");
+//        mergedFiles.add("MarlinSerial");
+//        mergedFiles.add("motion_control");
+//        mergedFiles.add("planner");
+//        mergedFiles.add("qr_solve");
+//        mergedFiles.add("Sd2Card");
+//        mergedFiles.add("SdFatUtil");
+//        mergedFiles.add("SdBaseFile");
+//        mergedFiles.add("SdFile");
+//        mergedFiles.add("SdVolume");
+//        mergedFiles.add("stepper");
+//        mergedFiles.add("Servo");
+//        mergedFiles.add("ultralcd");
+//        mergedFiles.add("watchdog");
+//        mergedFiles.add("vector_3");
+
         File dir = new File(path);
         String[] names = dir.list();
         for (String name : names) {
@@ -56,8 +56,6 @@ public class mergeMarlin {
         return forkName;
     }
 
-  
-    
 
     public void afterTest() {
         try {
@@ -76,26 +74,27 @@ public class mergeMarlin {
         }
     }
 
-    
-    
-//    @Ignore
+
+    //    @Ignore
     @Test
-    public void NWayMerge(){
+    public void NWayMerge() {
         HashSet<String> forkNames = inputFileInit();
-        for(String fileToBeMerged : mergedFiles){
+        for (String fileToBeMerged : mergedFiles) {
 //            for (int i = 2; i <= 4; i++) {
-                sleep();
-                Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 4);
-                for (Set<String> combination : combinationFiles) {
-                    assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged));
-                }
+            sleep();
+            Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 4);
+            for (Set<String> combination : combinationFiles) {
+                assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged));
+
 //            }
+            }
         }
-        
+
 //        afterTest();
     }
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testCardReader() {
         String mergedFile = "cardreader";
         HashSet<String> forkNames = inputFileInit();
@@ -109,8 +108,8 @@ public class mergeMarlin {
     }
 
 
-    
-    @Ignore  @Test
+    @Ignore
+    @Test
     public void testMarlinMain() {
         String mergedFile = "Marlin_main";
         HashSet<String> forkNames = inputFileInit();
@@ -128,8 +127,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testBlinkM() {
         String mergedFile = "BlinkM";
         HashSet<String> forkNames = inputFileInit();
@@ -147,8 +147,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testConfigurationStore() {
         String mergedFile = "ConfigurationStore";
         HashSet<String> forkNames = inputFileInit();
@@ -166,8 +167,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testdigipot_mcp4451() {
         String mergedFile = "digipot_mcp4451";
         HashSet<String> forkNames = inputFileInit();
@@ -185,8 +187,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testLiquidCrystalRus() {
         String mergedFile = "LiquidCrystalRus";
         HashSet<String> forkNames = inputFileInit();
@@ -204,8 +207,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testMarlinSerial() {
         String mergedFile = "MarlinSerial";
         HashSet<String> forkNames = inputFileInit();
@@ -223,8 +227,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testmotion_control() {
         String mergedFile = "motion_control";
         HashSet<String> forkNames = inputFileInit();
@@ -243,8 +248,8 @@ public class mergeMarlin {
     }
 
 
-    
-    @Ignore  @Test
+    @Ignore
+    @Test
     public void testplanner() {
         String mergedFile = "planner";
         HashSet<String> forkNames = inputFileInit();
@@ -262,8 +267,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testqr_solve() {
         String mergedFile = "qr_solve";
         HashSet<String> forkNames = inputFileInit();
@@ -281,8 +287,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testSd2Card() {
         String mergedFile = "Sd2Card";
         HashSet<String> forkNames = inputFileInit();
@@ -300,8 +307,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testSdBaseFile() {
         String mergedFile = "SdBaseFile";
         HashSet<String> forkNames = inputFileInit();
@@ -319,8 +327,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testSdFatUtil() {
         String mergedFile = "SdFatUtil";
         HashSet<String> forkNames = inputFileInit();
@@ -338,8 +347,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testSdFile() {
         String mergedFile = "SdFile";
         HashSet<String> forkNames = inputFileInit();
@@ -357,8 +367,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testSdVolume() {
         String mergedFile = "SdVolume";
         HashSet<String> forkNames = inputFileInit();
@@ -376,8 +387,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testServo() {
         String mergedFile = "Servo";
         HashSet<String> forkNames = inputFileInit();
@@ -395,8 +407,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void teststepper() {
         String mergedFile = "stepper";
         HashSet<String> forkNames = inputFileInit();
@@ -431,8 +444,9 @@ public class mergeMarlin {
 //        }
 //    }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testultralcd() {
         String mergedFile = "ultralcd";
         HashSet<String> forkNames = inputFileInit();
@@ -450,8 +464,9 @@ public class mergeMarlin {
         }
     }
 
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testvector_3() {
         String mergedFile = "vector_3";
         HashSet<String> forkNames = inputFileInit();
@@ -470,8 +485,9 @@ public class mergeMarlin {
     }
 
     ///!!!!!
-    
-    @Ignore  @Test
+
+    @Ignore
+    @Test
     public void testwatchdog() {
         String mergedFile = "watchdog";
         HashSet<String> forkNames = inputFileInit();

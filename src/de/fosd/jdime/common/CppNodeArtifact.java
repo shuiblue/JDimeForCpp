@@ -710,7 +710,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         CppNodeArtifact target = operation.getTarget();
         boolean safeMerge = true;
 
-        if (!isRoot()) {
+        if (!isRoot()   && ! entity.getMatchedEntity().contains(((Element)this.astnode).getLocalName())) {
             // this language element has a fixed number of children, we need to
             // be careful with this one
             boolean leftChanges = left.isChange();
@@ -738,6 +738,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         .getName());
                 conflictOp.apply(context);
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
         if (safeMerge) {
             astNodeStrategy.merge(operation, context);
@@ -1225,7 +1242,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
 
-    public String printNodeWithoutHeadandEnd(String s, int head) {
+    public String  printNodeWithoutHeadandEnd(String s, int head) {
         String blockString = "";
         if (s.endsWith(":")) {
             for (int i = head; i < s.split("\n").length - 2; i++) {

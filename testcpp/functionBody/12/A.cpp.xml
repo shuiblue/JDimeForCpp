@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/12/A.cpp"><function><type><name>void</name></type> <name>a</name><parameter_list>()</parameter_list><block>{
+	<expr_stmt><expr><name>a</name>=0</expr>;</expr_stmt>
+	<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>X</name></cpp:ifdef>
+<while>while <condition>( <expr><name>i</name> &gt;= 0</expr> )</condition> 
+<block>{
+    <expr_stmt><expr><name><name>string1</name><index>[<expr><name>i</name></expr>]</index></name> = <name><name>string2</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</expr_stmt>
+}</block></while>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+
+</unit>
