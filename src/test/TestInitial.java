@@ -167,11 +167,12 @@ public class TestInitial {
             File f = new File(filePath);
 
             if (f.exists()) {
-                System.out.println(filePath + " not exist!");
+
 
             inputFilePaths.add(fork + "/Marlin/Marlin/");
             outputPath +="_"+fork;
             } else {
+                System.out.println(filePath + " not exist!");
                 outputPath += "_no_" + fork;
         }
 
@@ -374,7 +375,8 @@ public class TestInitial {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.getFileName().toString().endsWith("xml") || file.getFileName().toString().contains("_")) {
+//                    if (file.getFileName().toString().endsWith("xml") || file.getFileName().toString().contains("_")) {
+                    if (file.getFileName().toString().endsWith("xml")) {
                         Files.delete(file);
                     }
                     return FileVisitResult.CONTINUE;

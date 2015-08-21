@@ -10,12 +10,12 @@ if ( i > 0 )
 else if( i < 0)
     x = q;
 
+else
 #if defined (A)
-else 
+ 
     x=j;
     #endif
     #if defined(B)
-else 
        x = s;
     #endif
  

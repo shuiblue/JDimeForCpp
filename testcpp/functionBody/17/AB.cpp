@@ -10,16 +10,12 @@ class Foo
 #if defined (B) && defined (X)
     int t=0;
 #endif
-#if defined (A)
   protected:
+#if defined (A)
     int s = 1;
-
-
 #endif
 #if defined (B)
-  protected:
     int s = 0;
-
 #endif
 }
 #endif

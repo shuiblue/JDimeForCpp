@@ -1,4 +1,15 @@
+void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
+{
 
-void a(){
-	b=0;
+  if(read)
+  {
+    if (file.open(curDir, fname, O_READ)) 
+    {
+     
+      lcd_setstatus(fname);
+    }
+
+  }
+
+  
 }

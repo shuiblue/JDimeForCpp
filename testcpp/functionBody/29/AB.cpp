@@ -7,13 +7,12 @@ class Computer
     } else if
     ( i < 0)
         x = q;
-#if defined (A)
     else
+#if defined (A)
         x = j;
 #endif
 #if defined (B)
-    else
-        x = s;
+    x = s;
 #endif
 }
 #endif

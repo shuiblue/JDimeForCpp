@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/33/B.cpp"><cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>x</name></cpp:ifdef>
+
+<function><type><name>void</name></type> <name>a</name><parameter_list>(<param><decl><type><name>xx</name></type></decl></param>)</parameter_list><block>{
+  <expr_stmt><expr><name>b</name>++</expr>;</expr_stmt>
+}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+</unit>

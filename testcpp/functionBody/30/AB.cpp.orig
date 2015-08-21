@@ -12,19 +12,14 @@ if
 ( i < 0)
 {
 #if defined (A)
-
-		x = q;
-	
-
+x = q;
 #endif
 #if defined (B)
-
-		x = s;
-	
-
+x = s;
 #endif
 }
-else if 
+else 
+if 
 (i==0)
 {
 x = j;

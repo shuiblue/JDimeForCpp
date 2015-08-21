@@ -7,13 +7,13 @@ class Computer
     if
     ( i > 0 ) {
         x = i;
-    }
+    } else
 
-    else if(i<0) {
-        s=2;
-    } else {
-        t=0;
-    }
+        if(i<0) {
+            s=2;
+        } else {
+            t=0;
+        }
 
 
 
