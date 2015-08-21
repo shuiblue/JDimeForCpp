@@ -6,13 +6,10 @@ do
 {
 #if defined (A)
 x--;
-
 #endif
 #if defined (B)
-
-	y--;
+y--;
 s++;
-
 #endif
 }
 while ( x > 0 );

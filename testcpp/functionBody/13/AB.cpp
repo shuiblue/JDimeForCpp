@@ -1,13 +1,13 @@
 #if defined (A) || defined (B)
 void a
 () {
+    if
 #if defined (A)
-    if(x > 5)
-        y+=4
+    (x > 5)
 #endif
 #if defined (B)
-           if(x > 4)
-               y+=4
+        (x > 4)
 #endif
-        }
+        y+=4
+    }
 #endif

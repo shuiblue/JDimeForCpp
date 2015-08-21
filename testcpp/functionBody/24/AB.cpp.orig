@@ -12,16 +12,10 @@ if
 ( x == 1 )
 {
 #if defined (A)
-
-        continue;
-    
-
+continue;
 #endif
 #if defined (B)
-
-       t++;
-    
-
+t++;
 #endif
 }
 y += x * x;

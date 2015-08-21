@@ -155,9 +155,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         //-----tricky way
         Boolean elseNum = (else_num <= (ifdef_num + ifndef_num + if_num));
         //----------
-        if (!matched) {
-            System.out.println("warning!----------" + node.getBaseURI() + "\n");
-        }
+//        if (!matched) {
+//            System.out.println("warning!----------" + node.getBaseURI() + "\n");
+//        }
         return matched && elseNum && ifBeforeEndif;
     }
 
@@ -605,7 +605,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (localEqual) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
 
-                    if (this.children == null && other.children == null) {
+//                    if ((this.children == null&& other.children == null)||(this.children.size()>0&&other.children.size()==0 )||(this.children.size()==0&&other.children.size()>0 )){
+                    if (this.children == null&& other.children == null){
                         return false;
                     }
                     return true;
@@ -711,6 +712,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         boolean safeMerge = true;
 
         if (!isRoot()   && ! entity.getMatchedEntity().contains(((Element)this.astnode).getLocalName())) {
+//        if (!isRoot()) {
             // this language element has a fixed number of children, we need to
             // be careful with this one
             boolean leftChanges = left.isChange();
@@ -738,24 +740,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         .getName());
                 conflictOp.apply(context);
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
+       }
         if (safeMerge) {
             astNodeStrategy.merge(operation, context);
         }
@@ -813,11 +798,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
+
         if (this.children != null && this.children.size() > 0) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
+
+
                 CppNodeArtifact child = it.next();
                 String child_localName = ((Element) child.astnode).getLocalName();
+
+                if (child.variants != null|| child.matches != null){
+                    if (this.astnode.getClass().getName().contains("Element")) {
+                        String localName = ((Element) this.astnode).getLocalName();
+
+                        if( (localName.equals("public") || localName.equals("protected"))&&!res.contains("protected")&&!res.contains("public")) {
+                            res += localName + ":\n+-+-+-\n";
+                        }
+                    }
+
                 if (child.variants != null) {
                     if (entity.getNonTerminal().contains(child_localName)) {
                         res += printChoice(child) + "+-+-+-\n";
@@ -827,22 +825,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         CppNodeArtifact var = child.getVariants().get(key);
                         res += var.prettyPrint();
                     }
+
+
                 } else if (child.matches != null) {
                     if (entity.getNonTerminal().contains(child_localName)) {
                         res += printBlock(child);
                         continue;
                     }
-                    if (this.astnode.getClass().getName().contains("Element")) {
-                        String localName = ((Element) this.astnode).getLocalName();
-
-                        if (localName.equals("public") || localName.equals("protected")) {
-                            res += localName + ":\n+-+-+-\n";
-                        }
-                    }
                     res += printMatchNode(child);
                     res += "+-+-+-\n";
-                } else {
-//                    res+= printSingleNode(child)printSingleNode(child);
+                } }else {
                     res += printChoice(this);
                     continue;
                 }
@@ -980,9 +972,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             String ast_name = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
             res += "class " + ast_name;
         } else if (nodeLocalName.equals("if")) {
-            if (((Element) cppNoArt.getParent().astnode).getLocalName().equals("else")) {
-                res += "else ";
-            }
+//            if (((Element) cppNoArt.getParent().astnode).getLocalName().equals("else")) {
+//                res += "else ";
+//            }
             res += "if ";
         } else if (nodeLocalName.equals("switch")) {
             res += "switch";
@@ -1047,7 +1039,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                         blockString += "{\n";
                                     }
                                 } else {
-                                    blockString += "";
+//                                    blockString += "";
+                                    blockString += "else ";
                                 }
                             } else {
                                 if (c_localName.equals("then") && !child_localName.equals("block")) {
@@ -1208,13 +1201,32 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             int var_size = c.variants.size();
             for (int i = 0; i < var_size; i++) {
                 String str = c.variants.keySet().toArray()[i].toString();
-                s += "#if defined (" + str + ")";
+
+
+//                if(c.variants.get(str).hasMatches()){
+//                    s+=printMatchCondition(c.variants.get(str));
+//                }else {
+//
+//                    s += "#if defined (" + str + ")";
+//                }
+//                s += "#if defined (" + str + ")";
                 String c_local = ((Element) c.astnode).getLocalName();
                 if (c_local.equals("block")) {
                     String condition = printCondition(c.variants.get(str).getRevision());
-                    if (condition.length() > 0) {
-                        s += " && " + condition + "\n";
+
+                    if(c.variants.get(str).hasMatches()){
+                        s+=printMatchCondition(c.variants.get(str));
+                    }else {
+
+                        s += "#if defined (" + str + ")";
+                        if ( condition.length() > 0) {
+                            s += " && " + condition;
+                        }
                     }
+
+//                    if (condition.length() > 0) {
+//                        s += " && " + condition + "\n";
+//                    }
                     if (c.variants.get(str).astnode.getValue().startsWith("{")) {
                         s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
                     } else {
@@ -1223,9 +1235,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                 } else {
                     String condition = printCondition(c.variants.get(str).getRevision());
-                    if (var_size == 1 && condition.length() > 0) {
-                        s += " && " + condition;
+//                    if (var_size == 1 && condition.length() > 0) {
+
+                    if(c.variants.get(str).hasMatches()){
+                        s+=printMatchCondition(c.variants.get(str));
+                    }else {
+
+                        s += "#if defined (" + str + ")";
+                        if ( condition.length() > 0) {
+                            s += " && " + condition;
+                        }
                     }
+
+
+//                    if ( condition.length() > 0) {
+//                        s += " && " + condition;
+//                    }
                     s += "\n" + c.variants.get(str);
                 }
                 s += printCondition(c.getRevision());

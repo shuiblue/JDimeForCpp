@@ -10,20 +10,15 @@ if
 {
 a++;
 }
-else if 
+else 
+if 
 (a==0)
 {
 #if defined (A)
-
-            b++;
-        
-
+b++;
 #endif
 #if defined (B)
-
-    	c++;
-    
-
+c++;
 #endif
 }
 }

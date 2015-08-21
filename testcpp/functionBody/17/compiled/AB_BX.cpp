@@ -9,8 +9,12 @@ class Foo
     int y=0;
 
     int t=0;
-  protected:
-    int s = 0;
 
+  protected:
+
+
+
+
+    int s = 0;
 
 }

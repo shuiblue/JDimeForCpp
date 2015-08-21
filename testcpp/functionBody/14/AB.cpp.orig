@@ -8,16 +8,10 @@ if
 ( line[i] == ' ' )
 {
 #if defined (A)
-
-      aaa++;
-  
-
+aaa++;
 #endif
 #if defined (B)
-
-      space++;
-  
-
+space++;
 #endif
 }
 if 

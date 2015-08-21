@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/33/D.cpp"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"cardreader.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"ultralcd.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"stepper.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"temperature.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"language.h"</cpp:file></cpp:include>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+
+
+<function><type><name>void</name></type> <name><name>CardReader</name>::<name>openFile</name></name><parameter_list>(<param><decl><type><name>char</name>*</type> <name>name</name></decl></param>,<param><decl><type><name>bool</name></type> <name>read</name></decl></param>)</parameter_list>
+<block>{
+  <if>if<condition>(<expr>!<name>cardOK</name></expr>)</condition><then>
+    <return>return;</return></then></if>
+  <expr_stmt><expr><call><name><name>file</name>.<name>close</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><name>sdprinting</name> = false</expr>;</expr_stmt>
+  
+  
+  
+  <if>if<condition>(<expr><name>read</name></expr>)</condition><then>
+  <block>{
+    <if>if <condition>(<expr><call><name><name>file</name>.<name>open</name></name><argument_list>(<argument><expr><name>curDir</name></expr></argument>, <argument><expr><name>fname</name></expr></argument>, <argument><expr><name>O_READ</name></expr></argument>)</argument_list></call></expr>)</condition><then> 
+    <block>{
+     
+      
+      <expr_stmt><expr><call><name>SERIAL_PROTOCOLLNPGM</name><argument_list>(<argument><expr><name>MSG_SD_FILE_SELECTED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if>
+  
+  }</block></then></if>
+ 
+}</block></function>
+
+
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//SDSUPPORT</comment>
+</unit>

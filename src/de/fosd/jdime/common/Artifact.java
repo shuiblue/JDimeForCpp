@@ -383,9 +383,21 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
             if (rev.alternatives.size() > 0) {
                 Iterator<String> iter = rev.alternatives.iterator();
                 while (iter.hasNext()) {
-                    Revision tmpRev = new Revision(iter.next());
-                    if (matches.get(tmpRev) != null)
-                        return matches.get(tmpRev);
+                    Revision tmpRev=null ;
+//                    Revision tmpRev = new Revision(iter.next());
+
+
+
+                    for (String s : iter.next().split("\\|\\|")) {
+                         tmpRev = new Revision(s.replace(" ",""));
+
+                        if (matches.get(tmpRev) != null)
+                            return matches.get(tmpRev);
+                    }
+
+
+//                    if (matches.get(tmpRev) != null)
+//                        return matches.get(tmpRev);
                 }
             }
             return null;
@@ -534,6 +546,17 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
      */
     public final boolean hasMatching(Revision rev) {
         boolean hasMatching = matches != null && matches.containsKey(rev);
+//if(matches!=null) {
+//    if (rev.alternatives.size() != 0) {
+//        Iterator<String> iter = rev.alternatives.iterator();
+//        while (iter.hasNext()) {
+//            for (String s : iter.next().split("\\|\\|")) {
+//                hasMatching = matches.containsKey(s);
+//                if (hasMatching == true) return hasMatching;
+//            }
+//        }
+//    }
+//}
 
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest(getId() + ".hasMatching(" + rev + ")");

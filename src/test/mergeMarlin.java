@@ -22,10 +22,10 @@ public class mergeMarlin {
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-//        mergedFiles.add("cardreader");
+        mergedFiles.add("cardreader");
 //        mergedFiles.add("Marlin_main");
 //        mergedFiles.add("BlinkM");
-        mergedFiles.add("ConfigurationStore");
+//        mergedFiles.add("ConfigurationStore");
 //        mergedFiles.add("digipot_mcp4451");
 //        mergedFiles.add("LiquidCrystalRus");
 //        mergedFiles.add("MarlinSerial");
@@ -82,7 +82,7 @@ public class mergeMarlin {
         for (String fileToBeMerged : mergedFiles) {
 //            for (int i = 2; i <= 4; i++) {
             sleep();
-            Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 4);
+            Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 5);
             for (Set<String> combination : combinationFiles) {
                 assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged));
 

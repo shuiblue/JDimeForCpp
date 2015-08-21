@@ -8,12 +8,14 @@ if
 SERIAL_PROTOCOL(prepend);
 SERIAL_PROTOCOLLN(filename);
 }
-else if 
+else 
+if 
 (lsAction==LS_Count)
 {
 nrFiles++;
 }
-else if 
+else 
+if 
 (lsAction==LS_GetFilename)
 {
 #if defined (A)

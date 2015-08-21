@@ -101,9 +101,17 @@ public class Revision {
         if (alternatives.size() != 0) {
             Iterator<String> iter = alternatives.iterator();
             while (iter.hasNext()) {
-                result |= artifact != null && artifact.hasMatching(new Revision(iter.next()));
+                for (String s : iter.next().split("\\|\\|")) {
+                    result |= artifact != null && artifact.hasMatching(new Revision(s.replace(" ","")));
+                }
+
+//                result |= artifact != null && artifact.hasMatching(new Revision(iter.next()));
             }
         }
+
+
+
+
         return result;
     }
 
