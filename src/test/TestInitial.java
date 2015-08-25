@@ -15,7 +15,6 @@ import java.util.Set;
  */
 public class TestInitial {
     public String prefix = "";
-//    public String suffix = ".cpp";
     public String suffix = "";
     public String output_prefix = "";
     String compile_path = "compiled/";
@@ -39,7 +38,6 @@ public class TestInitial {
      * @throws IOException e
      */
     public String readResult(String filePath) throws IOException {
-
         BufferedReader result_br = new BufferedReader(new FileReader(filePath));
         String result = "";
         try {
@@ -120,17 +118,15 @@ public class TestInitial {
 //            Thread.currentThread().interrupt();
 //        }
         ArrayList<String> inputFilePaths = new ArrayList<>();
-
         for (String s : fileName) {
             inputFilePaths.add(testNum + s);
         }
-
         String outputPath = testNum + output;
         String expectResultPath = testNum + "expect";
-
         return checkMerge(inputFilePaths, outputPath, expectResultPath);
     }
 
+<<<<<<< origin/develop
     /**
 <<<<<<< origin/develop
 =======
@@ -155,6 +151,8 @@ public class TestInitial {
 
         return result;
     }
+=======
+>>>>>>> HEAD~55
 
     public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
@@ -163,29 +161,20 @@ public class TestInitial {
         String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/"+n+"-wayMerge/";
         String outputPath = outputPath_pre + "upstream" ;
         for (String fork : combination) {
-
-//            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile + ".cpp";
             String filePath = path + fork + "/Marlin/Marlin/" + mergedFile ;
             File f = new File(filePath);
 
             if (f.exists()) {
-
-
             inputFilePaths.add(fork + "/Marlin/Marlin/");
             outputPath +="_"+fork;
             } else {
                 System.out.println(filePath + " not exist!");
                 outputPath += "_no_" + fork;
         }
-
-
         }
-
-
-
-        if(mergedFile.endsWith("cpp"))
-        { suffix = ".cpp";}
-        else{
+        if (mergedFile.endsWith("cpp")) {
+            suffix = ".cpp";
+        } else {
             suffix=".h";
         }
         if (inputFilePaths.size() > 0) {
@@ -194,37 +183,26 @@ public class TestInitial {
             result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
             e.printStackTrace();
-
         }
         }
         return result;
     }
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
-
             String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
-//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
         int n = inputFilePaths.size()+1;
-
-//        String title = n + " way merge: " + mergedFile + ".cpp file. 'upstream' repo merge with fork '";
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
-//        System.out.print(title);
-
         for (int i = 0; i < inputFilePaths.size(); i++) {
             commandLine += prefix + inputFilePaths.get(i) + mergedFile ;
             title+=inputFilePaths.get(i).split("/")[0] + "' ";
-//            System.out.print(inputFilePaths.get(i).split("/")[0] + "' ");
-
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
                 title+=" , ";
-//                System.out.print(" , ");
             }
             }
             String[] arg = commandLine.split(",");
             try {
-
             long start = System.currentTimeMillis();
                 Main.main(arg);
             long end = System.currentTimeMillis();
@@ -237,14 +215,11 @@ public class TestInitial {
             if (!file.exists()) {
                 file.createNewFile();
             }
-
             FileWriter fw = new FileWriter(file.getAbsoluteFile(),true);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(title+"\n");
             bw.write(String.valueOf(runTime)+"\n");
             bw.close();
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -298,13 +273,10 @@ public class TestInitial {
                    s= s.replace('<','l');
                    s= s.replace('>','b');
                    s= s.replace('=','e');
-
                 }
-
                 if (s.startsWith("!")) {
                     compiledPath += "not" + s.substring(1);
                     cmd_compiling += ",-U" + s.substring(1);
-
                 } else{
                     compiledPath += s;
                     cmd_compiling += ",-D" + s;
@@ -325,7 +297,6 @@ public class TestInitial {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return compiledPath;
     }
 
@@ -356,7 +327,6 @@ public class TestInitial {
         Set<String> feature = new HashSet<>();
         for (String file : fileNameSet) {
             for (Set<String> c : configuration) {
-
                 feature.addAll(c);
                 feature.add(file);
                 System.out.println("## running config " + feature.toString());
@@ -411,27 +381,14 @@ public class TestInitial {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-//                    if (file.getFileName().toString().endsWith("xml") || file.getFileName().toString().contains("_")) {
                     if (file.getFileName().toString().endsWith("xml")) {
                         Files.delete(file);
                     }
                     return FileVisitResult.CONTINUE;
                 }
-
-//                @Override
-//                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-//                    if (dir.getFileName().toString().equals("compiled")) {
-//                        Files.delete(dir);
-//                    }
-//                    return FileVisitResult.CONTINUE;
-//                }
-
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-
 }
