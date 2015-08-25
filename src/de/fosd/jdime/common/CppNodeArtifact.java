@@ -40,7 +40,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         setRevision(artifact.getRevision());
 
         String filePath = artifact.getPath();
-        if (filePath.contains(".cpp")) {
+        if (filePath.contains(".cpp")||filePath.contains(".h")) {
             xmlDoc = getXmlDom(getXmlFile(filePath));
         }
         this.astnode = xmlDoc.getChild(0);

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/10/A.cpp"><function><type><name>void</name></type> <name>a</name><parameter_list>()</parameter_list><block>{
-	
-	<decl_stmt><decl><type><name>int</name></type> <name>i</name><init>=<expr>0</expr></init></decl>;</decl_stmt>
-
-}</block></function>
-</unit>

@@ -4,6 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,31 +18,24 @@ import static org.junit.Assert.assertNotNull;
  */
 public class mergeMarlin {
     String path = "testcpp/originMarlin/";
+    String main_repo = "testcpp/originMarlin/upstream/Marlin/Marlin/";
     TestInitial testInitial = new TestInitial(path);
     HashSet<String> forkName = new HashSet<>();
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-        mergedFiles.add("cardreader");
-//        mergedFiles.add("Marlin_main");
-//        mergedFiles.add("BlinkM");
-//        mergedFiles.add("ConfigurationStore");
-//        mergedFiles.add("digipot_mcp4451");
-//        mergedFiles.add("LiquidCrystalRus");
-//        mergedFiles.add("MarlinSerial");
-//        mergedFiles.add("motion_control");
-//        mergedFiles.add("planner");
-//        mergedFiles.add("qr_solve");
-//        mergedFiles.add("Sd2Card");
-//        mergedFiles.add("SdFatUtil");
-//        mergedFiles.add("SdBaseFile");
-//        mergedFiles.add("SdFile");
-//        mergedFiles.add("SdVolume");
-//        mergedFiles.add("stepper");
-//        mergedFiles.add("Servo");
-//        mergedFiles.add("ultralcd");
-//        mergedFiles.add("watchdog");
-//        mergedFiles.add("vector_3");
+        File upstream = new File(main_repo);
+        File[] matches = upstream.listFiles(new FilenameFilter()
+        {
+            public boolean accept(File dir, String name)
+            {
+                return name.endsWith(".h") || name.endsWith(".cpp");
+            }
+        });
+
+        for(File f: matches){
+            mergedFiles.add(f.getName());
+        }
 
         File dir = new File(path);
         String[] names = dir.list();
@@ -75,19 +69,20 @@ public class mergeMarlin {
     }
 
 
+
     //    @Ignore
     @Test
     public void NWayMerge() {
         HashSet<String> forkNames = inputFileInit();
         for (String fileToBeMerged : mergedFiles) {
-//            for (int i = 2; i <= 4; i++) {
+//            for (int i = 2; i <= 19; i++) {
             sleep();
-            Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 5);
+            Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 2);
             for (Set<String> combination : combinationFiles) {
                 assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged));
 
-//            }
             }
+//            }
         }
 
 //        afterTest();

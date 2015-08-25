@@ -383,21 +383,13 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T> {
             if (rev.alternatives.size() > 0) {
                 Iterator<String> iter = rev.alternatives.iterator();
                 while (iter.hasNext()) {
-                    Revision tmpRev=null ;
-//                    Revision tmpRev = new Revision(iter.next());
-
-
-
+                    Revision tmpRev;
                     for (String s : iter.next().split("\\|\\|")) {
                          tmpRev = new Revision(s.replace(" ",""));
-
                         if (matches.get(tmpRev) != null)
                             return matches.get(tmpRev);
                     }
 
-
-//                    if (matches.get(tmpRev) != null)
-//                        return matches.get(tmpRev);
                 }
             }
             return null;
