@@ -15,7 +15,8 @@ import java.util.Set;
  */
 public class TestInitial {
     public String prefix = "";
-    public String suffix = ".cpp";
+//    public String suffix = ".cpp";
+    public String suffix = "";
     public String output_prefix = "";
     String compile_path = "compiled/";
 
@@ -163,7 +164,8 @@ public class TestInitial {
         String outputPath = outputPath_pre + "upstream" ;
         for (String fork : combination) {
 
-            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile + ".cpp";
+//            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile + ".cpp";
+            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile ;
             File f = new File(filePath);
 
             if (f.exists()) {
@@ -178,6 +180,14 @@ public class TestInitial {
 
 
         }
+
+
+
+        if(mergedFile.endsWith("cpp"))
+        { suffix = ".cpp";}
+        else{
+            suffix=".h";
+        }
         if (inputFilePaths.size() > 0) {
         runMain4Marlin(inputFilePaths, outputPath, mergedFile);
         try {
@@ -191,24 +201,50 @@ public class TestInitial {
     }
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
+
             String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
-                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
+//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ".cpp,";
+                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
         int n = inputFilePaths.size()+1;
 
-        System.out.print( n+ " way merge: "+mergedFile+".cpp file. 'upstream' repo merge with fork '") ;
+//        String title = n + " way merge: " + mergedFile + ".cpp file. 'upstream' repo merge with fork '";
+        String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
+//        System.out.print(title);
 
         for (int i = 0; i < inputFilePaths.size(); i++) {
-            commandLine += prefix + inputFilePaths.get(i) + mergedFile + suffix;
-            System.out.print(inputFilePaths.get(i).split("/")[0]+ "' ");
+            commandLine += prefix + inputFilePaths.get(i) + mergedFile ;
+            title+=inputFilePaths.get(i).split("/")[0] + "' ";
+//            System.out.print(inputFilePaths.get(i).split("/")[0] + "' ");
 
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
-                System.out.print(" , ");
+                title+=" , ";
+//                System.out.print(" , ");
             }
             }
             String[] arg = commandLine.split(",");
             try {
+
+            long start = System.currentTimeMillis();
                 Main.main(arg);
+            long end = System.currentTimeMillis();
+
+            long runTime = end-start;
+
+            File file = new File("testcpp/mergedResult/runTime.txt");
+
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(),true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(title+"\n");
+            bw.write(String.valueOf(runTime)+"\n");
+            bw.close();
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -382,13 +418,13 @@ public class TestInitial {
                     return FileVisitResult.CONTINUE;
                 }
 
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (dir.getFileName().toString().equals("compiled")) {
-                        Files.delete(dir);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
+//                @Override
+//                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+//                    if (dir.getFileName().toString().equals("compiled")) {
+//                        Files.delete(dir);
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
 
             });
         } catch (IOException e) {
