@@ -27,7 +27,8 @@ public class mergeMarlin {
         File upstream = new File(main_repo);
         File[] matches = upstream.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".h") || name.endsWith(".cpp");
+                return  name.endsWith(".cpp");
+//                return name.endsWith(".h") || name.endsWith(".cpp");
             }
         });
 
@@ -62,14 +63,14 @@ public class mergeMarlin {
     }
 
     @Test
-    public void NWayMerge() {
+    public void NWayMerge_Rev() {
         HashSet<String> forkNames = inputFileInit();
         for (String fileToBeMerged : mergedFiles) {
 //            for (int i = 2; i <= 19; i++) {
             sleep();
             Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 2);
             for (Set<String> combination : combinationFiles) {
-                assertNotNull(testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged));
+               testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged);
 
             }
 //            }
@@ -77,4 +78,6 @@ public class mergeMarlin {
 
 //        afterTest();
     }
+
+
 }
