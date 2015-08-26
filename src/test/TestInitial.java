@@ -160,7 +160,7 @@ public class TestInitial {
 
     public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile){
         String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
-                + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
+                + prefix +"/mocRepo/"+mergedFile + "+upstream_fork1_fork1commit1,";
 //                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
         int n = inputFilePaths.size() + 1;
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
