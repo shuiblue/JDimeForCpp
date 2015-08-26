@@ -446,12 +446,14 @@ public final class Main {
             char cond = 'A';
             boolean targetIsFile = true;
             for (Object filename : cmd.getArgList()) {
+//                FileArtifact newArtifact = new FileArtifact(new File(
+//                        (String) filename));
 				FileArtifact newArtifact = new FileArtifact(new File(
-						(String) filename));
+                        ((String) filename).split("\\+")[0]));
 				 
                     if (context.isConditionalMerge()) {
-					newArtifact
-							.setRevision(new Revision(String.valueOf(cond++)));
+//                    newArtifact                        .setRevision(new Revision(String.valueOf(cond++)));
+                    newArtifact.setRevision(new Revision(((String) filename).split("\\+")[1]));
                     }
                     if (targetIsFile) {
                         targetIsFile = !newArtifact.isDirectory();

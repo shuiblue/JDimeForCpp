@@ -1,0 +1,10 @@
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1214
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+856
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+850
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+852
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+860

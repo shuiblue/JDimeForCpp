@@ -165,7 +165,8 @@ public class TestInitial {
             File f = new File(filePath);
 
             if (f.exists()) {
-            inputFilePaths.add(fork + "/Marlin/Marlin/");
+                inputFilePaths.add(fork + "/Marlin/Marlin/+"+fork);
+//                inputFilePaths.add(fork + "/Marlin/Marlin/");
             outputPath +="_"+fork;
             } else {
                 System.out.println(filePath + " not exist!");
@@ -178,7 +179,8 @@ public class TestInitial {
             suffix=".h";
         }
         if (inputFilePaths.size() > 0) {
-        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+//            runMain4Marlin(inputFilePaths, outputPath, mergedFile);
+            runMain4Marlin_withRevision(inputFilePaths, outputPath, mergedFile);
         try {
             result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
@@ -187,6 +189,49 @@ public class TestInitial {
         }
         return result;
     }
+
+    public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile){
+        String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
+                + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
+//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
+        int n = inputFilePaths.size() + 1;
+        String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
+        for (int i = 0; i < inputFilePaths.size(); i++) {
+            commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile+"+"+inputFilePaths.get(i).split("\\+")[1];
+            title += inputFilePaths.get(i).split("/")[0] + "' ";
+            if (i < inputFilePaths.size() - 1) {
+                commandLine += ",";
+                title += " , ";
+            }
+        }
+        String[] arg = commandLine.split(",");
+        try {
+            long start = System.currentTimeMillis();
+            Main.main(arg);
+            long end = System.currentTimeMillis();
+
+            long runTime = end - start;
+
+            File file = new File("testcpp/mergedResult/runTime.txt");
+
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(title + "\n");
+            bw.write(String.valueOf(runTime) + "\n");
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
             String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
