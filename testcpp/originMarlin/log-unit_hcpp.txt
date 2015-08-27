@@ -21,6 +21,7 @@
 ******* file:///Users/shuruiz/Work/originMarlin/johnnyr/Marlin/Marlin/LiquidCrystalRus.cpp.xml
 ******* file:///Users/shuruiz/Work/originMarlin/johnnyr/Marlin/Marlin/planner.cpp.xml
 ******* file:///Users/shuruiz/Work/originMarlin/johnnyr/Marlin/Marlin/temperature.cpp.xml
+******* file:///Users/shuruiz/Work/originMarlin/marlin4Due/Marlin/Marlin/example_configurations/coreXY_RADDS/Configuration.h.xml
 ******* file:///Users/shuruiz/Work/originMarlin/marlin4Due/Marlin/Marlin/planner.cpp.xml
 ******* file:///Users/shuruiz/Work/originMarlin/mattsch/Marlin/Marlin/LiquidCrystalRus.cpp.xml
 ******* file:///Users/shuruiz/Work/originMarlin/mattsch/Marlin/Marlin/planner.cpp.xml

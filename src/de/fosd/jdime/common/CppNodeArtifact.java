@@ -148,14 +148,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 
         if (!matched) {
-            File log = new File("/Users/shuruiz/Work/originMarlin/log-unit.txt");
+            File log = new File("/Users/shuruiz/Work/originMarlin/log-unit_hcpp.txt");
             try{
                 if(log.exists()==false){
                     System.out.println("We had to make a new file.");
                     log.createNewFile();
                 }
                 PrintWriter out = new PrintWriter(new FileWriter(log,true));
-                out.append("******* " + node.getBaseURI() +"******* " + "\n");
+                out.append("******* " + node.getBaseURI()  + "\n");
 //                out.append(node.toXML());
                 out.close();
             }catch(IOException e){

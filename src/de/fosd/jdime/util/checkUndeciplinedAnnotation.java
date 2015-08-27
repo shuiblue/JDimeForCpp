@@ -9,7 +9,9 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -23,8 +25,8 @@ public class checkUndeciplinedAnnotation {
         public static void main (String[]args)throws IOException {
 //            clearTmpFile();
             File dir = new File("/Users/shuruiz/Work/originMarlin");
-            String[] extensions = new String[]{"cpp"};
-//            String[] extensions = new String[]{"cpp", "h"};
+//            String[] extensions = new String[]{"cpp"};
+            String[] extensions = new String[]{"cpp", "h"};
             System.out.println("Getting all .cpp files in " + dir.getCanonicalPath()
                     + " including those in subdirectories");
             List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
@@ -41,6 +43,28 @@ public class checkUndeciplinedAnnotation {
         String outXmlFile = inputFile + ".xml";
         if (new File(inputFile).isFile()) {
             try {
+
+
+                try {
+                    File file = new File((String)inputFile);
+
+                    // if file doesnt exists, then create it
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write("\n");
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
+
                 Process process = new ProcessBuilder("/usr/local/bin/src2srcml",
                         inputFile, "-o", outXmlFile).start();
                 sleep();

@@ -381,6 +381,12 @@ public final class Main {
             char cond = 'A';
             boolean targetIsFile = true;
             for (Object filename : cmd.getArgList()) {
+
+
+
+
+
+
                 FileArtifact newArtifact = new FileArtifact(new File(
                         (String) filename));
 
