@@ -40,6 +40,29 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return;
         }
         setRevision(artifact.getRevision());
+<<<<<<< origin/develop
+=======
+
+        if(!artifact.getRevision().getName().equals("upstream")) {
+            try {
+                File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+
+                // if file doesnt exists, then create it
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("fork : " + artifact.getRevision().getName() + "\n");
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+>>>>>>> HEAD~53
         String filePath = artifact.getPath();
         if (filePath.contains(".cpp") || filePath.contains(".h")) {
             xmlDoc = getXmlDom(getXmlFile(filePath));
@@ -203,11 +226,55 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifndef")) {
                                 String condition = childValue.substring(8);
                                 conditionStack.push("!defined (" + condition + ")");
+
+
+                                if(!this.getRevision().getName().equals("upstream")) {
+                                    try {
+                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+
+                                        // if file doesnt exists, then create it
+                                        if (!file.exists()) {
+                                            file.createNewFile();
+                                        }
+                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                        BufferedWriter bw = new BufferedWriter(fw);
+                                        bw.write(childValue + "\n");
+                                        bw.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
                                 continue;
                             }
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
+<<<<<<< origin/develop
+=======
+
+
+                                if(!this.getRevision().getName().equals("upstream")) {
+
+                                    try {
+                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+
+                                        // if file doesnt exists, then create it
+                                        if (!file.exists()) {
+                                            file.createNewFile();
+                                        }
+                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                        BufferedWriter bw = new BufferedWriter(fw);
+                                        bw.write(childValue + "\n");
+                                        bw.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+
+
+>>>>>>> HEAD~53
                                 continue;
                             }
 
@@ -286,11 +353,56 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifndef")) {
                                 String condition = childValue.substring(8);
                                 conditionStack.push("!defined (" + condition + ")");
+
+
+                                if(!this.getRevision().getName().equals("upstream")) {
+
+                                    try {
+                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+
+                                        // if file doesnt exists, then create it
+                                        if (!file.exists()) {
+                                            file.createNewFile();
+                                        }
+                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                        BufferedWriter bw = new BufferedWriter(fw);
+                                        bw.write(childValue + "\n");
+                                        bw.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+
+
                                 continue;
                             }
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
+
+                                if(!this.getRevision().getName().equals("upstream")) {
+
+                                    try {
+                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+
+                                        // if file doesnt exists, then create it
+                                        if (!file.exists()) {
+                                            file.createNewFile();
+                                        }
+                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                        BufferedWriter bw = new BufferedWriter(fw);
+                                        bw.write(childValue + "\n");
+                                        bw.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+
+
+
+
                                 continue;
                             }
 
@@ -623,10 +735,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (astnode_Class.contains("Element")) {
             if (localEqual) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
+<<<<<<< origin/develop
                     if ((this.children == null && other.children == null)
                             || (this.children == null && other.children != null)
                             || (this.children != null && other.children == null)) {
                         return match;
+=======
+
+//                    if ((this.children == null&& other.children == null)||(this.children.size()>0&&other.children.size()==0 )||(this.children.size()==0&&other.children.size()>0 )){
+                    if (this.children == null&& other.children == null){
+                        return match;
+//                        return false;
+>>>>>>> HEAD~53
                     }
                     return true;
                 } else if (ast_localName.equals("function")

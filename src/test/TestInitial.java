@@ -205,6 +205,7 @@ public class TestInitial {
             }
         }
         String[] arg = commandLine.split(",");
+
         try {
             long start = System.currentTimeMillis();
             Main.main(arg);
@@ -223,6 +224,8 @@ public class TestInitial {
             bw.write(title + "\n");
             bw.write(String.valueOf(runTime) + "\n");
             bw.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {

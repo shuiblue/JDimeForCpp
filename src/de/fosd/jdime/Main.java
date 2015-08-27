@@ -448,9 +448,34 @@ public final class Main {
             for (Object filename : cmd.getArgList()) {
 //                FileArtifact newArtifact = new FileArtifact(new File(
 //                        (String) filename));
+
+
+                try {
+                    File file = new File(((String) filename).split("\\+")[0]);
+
+                    // if file doesnt exists, then create it
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write("\n");
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
 				FileArtifact newArtifact = new FileArtifact(new File(
                         ((String) filename).split("\\+")[0]));
 				 
+
+
+
+
+
+
                     if (context.isConditionalMerge()) {
 //                    newArtifact                        .setRevision(new Revision(String.valueOf(cond++)));
                     newArtifact.setRevision(new Revision(((String) filename).split("\\+")[1]));
