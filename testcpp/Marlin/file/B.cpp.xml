@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/B.cpp">
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+
+<constructor><name><name>CardReader</name>::<name>CardReader</name></name><parameter_list>()</parameter_list> <block>{
+  <expr_stmt><expr><name>filesize</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><name>sdpos</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><name>sdprinting</name> = false</expr>;</expr_stmt>
+  <expr_stmt><expr><name>cardOK</name> = false</expr>;</expr_stmt>
+  <expr_stmt><expr><name>saving</name> = false</expr>;</expr_stmt>
+  <expr_stmt><expr><name>logging</name> = false</expr>;</expr_stmt>
+  <expr_stmt><expr><name>workDirDepth</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><name>file_subcall_ctr</name> = 0</expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>memset</name><argument_list>(<argument><expr><name>workDirParents</name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><sizeof>sizeof<argument_list>(<argument><expr><name>workDirParents</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+}</block></constructor>
+
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+
+
+
+
+
+
+
+</unit>

@@ -41,6 +41,8 @@ public class testMarlin {
     //----------------2 WAY-----------------------------
     String output_2way = "AB";
 
+
+
     /*
   A : upstream
   B : ut7
@@ -52,9 +54,6 @@ public class testMarlin {
         TestInitial testInitial = new TestInitial(path);
         inputFileInit(2);
 
-
-
-        config.add("SDSUPPORT");
         String testNum = "1/";
         System.out.println("------test 1-----------");
         // ----------------check Merged result equal to expect result

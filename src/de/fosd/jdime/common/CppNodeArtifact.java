@@ -39,27 +39,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         setRevision(artifact.getRevision());
 
-        if(!artifact.getRevision().getName().equals("upstream")) {
-            try {
-                File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+//        if(!artifact.getRevision().getName().equals("upstream")) {
+        try {
+            File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
-                // if file doesnt exists, then create it
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write("fork : " + artifact.getRevision().getName() + "\n");
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
             }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("fork : " + artifact.getRevision().getName() + "\n");
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
+//        }
 
 
         String filePath = artifact.getPath();
-        if (filePath.contains(".cpp")||filePath.contains(".h")) {
+        if (filePath.contains(".cpp") || filePath.contains(".h")) {
             xmlDoc = getXmlDom(getXmlFile(filePath));
         }
         this.astnode = xmlDoc.getChild(0);
@@ -174,9 +173,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         //-----tricky way
         Boolean elseNum = (else_num <= (ifdef_num + ifndef_num + if_num));
         //----------
-//        if (!matched) {
-//            System.out.println("warning!----------" + node.getBaseURI() + "\n");
-//        }
+
         return matched && elseNum && ifBeforeEndif;
     }
 
@@ -217,22 +214,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 conditionStack.push("!defined (" + condition + ")");
 
 
-                                if(!this.getRevision().getName().equals("upstream")) {
-                                    try {
-                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+//                                if(!this.getRevision().getName().equals("upstream")) {
+                                try {
+                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
-                                        // if file doesnt exists, then create it
-                                        if (!file.exists()) {
-                                            file.createNewFile();
-                                        }
-                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                        BufferedWriter bw = new BufferedWriter(fw);
-                                        bw.write(childValue + "\n");
-                                        bw.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    // if file doesnt exists, then create it
+                                    if (!file.exists()) {
+                                        file.createNewFile();
                                     }
+                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                    BufferedWriter bw = new BufferedWriter(fw);
+                                    bw.write(childValue + "\n");
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
+//                                }
 
                                 continue;
                             }
@@ -241,25 +238,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 conditionStack.push("defined (" + condition + ")");
 
 
-                                if(!this.getRevision().getName().equals("upstream")) {
+//                                if(!this.getRevision().getName().equals("upstream")) {
 
-                                    try {
-                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+                                try {
+                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
-                                        // if file doesnt exists, then create it
-                                        if (!file.exists()) {
-                                            file.createNewFile();
-                                        }
-                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                        BufferedWriter bw = new BufferedWriter(fw);
-                                        bw.write(childValue + "\n");
-                                        bw.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    // if file doesnt exists, then create it
+                                    if (!file.exists()) {
+                                        file.createNewFile();
                                     }
+                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                    BufferedWriter bw = new BufferedWriter(fw);
+                                    bw.write(childValue + "\n");
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-
-
+//                                }
 
                                 continue;
                             }
@@ -340,24 +335,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 conditionStack.push("!defined (" + condition + ")");
 
 
-                                if(!this.getRevision().getName().equals("upstream")) {
+//                                if(!this.getRevision().getName().equals("upstream")) {
 
-                                    try {
-                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+                                try {
+                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
-                                        // if file doesnt exists, then create it
-                                        if (!file.exists()) {
-                                            file.createNewFile();
-                                        }
-                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                        BufferedWriter bw = new BufferedWriter(fw);
-                                        bw.write(childValue + "\n");
-                                        bw.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    // if file doesnt exists, then create it
+                                    if (!file.exists()) {
+                                        file.createNewFile();
                                     }
+                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                    BufferedWriter bw = new BufferedWriter(fw);
+                                    bw.write(childValue + "\n");
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+//                                    }
                                 }
-
 
 
                                 continue;
@@ -366,26 +360,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
 
-                                if(!this.getRevision().getName().equals("upstream")) {
+//                                if(!this.getRevision().getName().equals("upstream")) {
 
-                                    try {
-                                        File file = new File("testcpp/mergedResult/parseIFDEF.txt");
+                                try {
+                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
-                                        // if file doesnt exists, then create it
-                                        if (!file.exists()) {
-                                            file.createNewFile();
-                                        }
-                                        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                        BufferedWriter bw = new BufferedWriter(fw);
-                                        bw.write(childValue + "\n");
-                                        bw.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    // if file doesnt exists, then create it
+                                    if (!file.exists()) {
+                                        file.createNewFile();
                                     }
+                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                                    BufferedWriter bw = new BufferedWriter(fw);
+                                    bw.write(childValue + "\n");
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-
-
-
+//                                }
 
 
                                 continue;
@@ -710,18 +701,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
 
 //                    if ((this.children == null&& other.children == null)||(this.children.size()>0&&other.children.size()==0 )||(this.children.size()==0&&other.children.size()>0 )){
-                    if (this.children == null&& other.children == null){
+                    if (this.children == null && other.children == null) {
                         return match;
 //                        return false;
                     }
                     return true;
                 } else if (ast_localName.equals("function")
                         || ast_localName.equals("constructor")) {
-                    String astnode_type = astnode.getChild(0).getValue();
-                    String astnode_func_name = (astnode).getChild(2).getValue();
+                    String astnode_type = clearBlank(astnode.getChild(0).getValue());
+                    String astnode_func_name = clearBlank((astnode).getChild(2).getValue());
 
-                    String other_type = (other.getCppNode()).getChild(0).getValue();
-                    String other_func_name = (other.getCppNode()).getChild(2).getValue();
+                    String other_type = clearBlank((other.getCppNode()).getChild(0).getValue());
+                    String other_func_name = clearBlank((other.getCppNode()).getChild(2).getValue());
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
                 } else if (ast_localName.equals("switch") || ast_localName.equals("case")) {
@@ -741,8 +732,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     return ast_condition.equals(other_condition) || ast_then.equals(other_then);
 
                 } else if (ast_localName.equals("while") || ast_localName.equals("do")) {
-                    String ast_condition = (((Element) astnode).getChildElements("condition", xmlns)).get(0).getValue();
-                    String other_condition = (((Element) other.getCppNode()).getChildElements("condition", xmlns)).get(0).getValue();
+                    String ast_condition = clearBlank((((Element) astnode).getChildElements("condition", xmlns)).get(0).getValue());
+                    String other_condition = clearBlank((((Element) other.getCppNode()).getChildElements("condition", xmlns)).get(0).getValue());
                     Boolean conditionMatch = ast_condition.equals(other_condition);
 
                     String ast_block;
@@ -752,8 +743,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     Boolean blockMatch;
                     if (ast_block_elements.size() > 0 && other_block_elements.size() > 0) {
-                        ast_block = ast_block_elements.get(0).getValue();
-                        other_block = other_block_elements.get(0).getValue();
+                        ast_block = clearBlank(ast_block_elements.get(0).getValue());
+                        other_block = clearBlank(other_block_elements.get(0).getValue());
                         blockMatch = ast_block.equals(other_block);
                     } else {
                         blockMatch = false;
@@ -816,7 +807,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         CppNodeArtifact target = operation.getTarget();
         boolean safeMerge = true;
 
-        if (!isRoot()   && ! entity.getMatchedEntity().contains(((Element)this.astnode).getLocalName())) {
+        if (!isRoot() && !entity.getMatchedEntity().contains(((Element) this.astnode).getLocalName())) {
 //        if (!isRoot()) {
             // this language element has a fixed number of children, we need to
             // be careful with this one
@@ -845,7 +836,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         .getName());
                 conflictOp.apply(context);
             }
-       }
+        }
         if (safeMerge) {
             astNodeStrategy.merge(operation, context);
         }
@@ -912,34 +903,35 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 CppNodeArtifact child = it.next();
                 String child_localName = ((Element) child.astnode).getLocalName();
 
-                if (child.variants != null|| child.matches != null){
+                if (child.variants != null || child.matches != null) {
                     if (this.astnode.getClass().getName().contains("Element")) {
                         String localName = ((Element) this.astnode).getLocalName();
 
-                        if( (localName.equals("public") || localName.equals("protected"))&&!res.contains("protected")&&!res.contains("public")) {
+                        if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
                             res += localName + ":\n+-+-+-\n";
                         }
                     }
 
-                if (child.variants != null) {
-                    if (entity.getNonTerminal().contains(child_localName)) {
-                        res += printChoice(child) + "+-+-+-\n";
-                        continue;
-                    }
-                    for (String key : child.variants.keySet()) {
-                        CppNodeArtifact var = child.getVariants().get(key);
-                        res += var.prettyPrint();
-                    }
+                    if (child.variants != null) {
+                        if (entity.getNonTerminal().contains(child_localName)) {
+                            res += printChoice(child) + "+-+-+-\n";
+                            continue;
+                        }
+                        for (String key : child.variants.keySet()) {
+                            CppNodeArtifact var = child.getVariants().get(key);
+                            res += var.prettyPrint();
+                        }
 
 
-                } else if (child.matches != null) {
-                    if (entity.getNonTerminal().contains(child_localName)) {
-                        res += printBlock(child);
-                        continue;
+                    } else if (child.matches != null) {
+                        if (entity.getNonTerminal().contains(child_localName)) {
+                            res += printBlock(child);
+                            continue;
+                        }
+                        res += printMatchNode(child);
+                        res += "+-+-+-\n";
                     }
-                    res += printMatchNode(child);
-                    res += "+-+-+-\n";
-                } }else {
+                } else {
                     res += printChoice(this);
                     continue;
                 }
@@ -1136,7 +1128,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         blockString += printChoice(c) + "\n";
                     } else if (c.hasMatches()) { // c has matched with other node
                         if (c.children != null && c.children.size() > 0) {
-                            String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+
+                            String child_localName;
+                            if (((Element) c.astnode).getChildElements().size() > 0) {
+                                child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+                            } else {
+                                child_localName = "";
+                            }
+
+
                             if (c_localName.equals("else")) {
                                 if (!child_localName.equals("if")) {
                                     blockString += "else ";
@@ -1186,7 +1186,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     }
                     if (c.children != null && c.children.size() > 0) {
 
-                        String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+//                        String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+
+                        String child_localName;
+                        if (((Element) c.astnode).getChildElements().size() > 0) {
+                            child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
+                        } else {
+                            child_localName = "";
+                        }
+
                         blockString += "+-+-+-\n";
                         if (c.hasMatches()) {
                             if (c_localName.equals("else")) {
@@ -1255,7 +1263,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
         }
         res += tmpCondition;
-        res += "\n" + toString() + "\n";
+        res += "\n" + this.toString() + "\n";
         res += "#endif\n";
         return res;
     }
@@ -1319,12 +1327,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (c_local.equals("block")) {
                     String condition = printCondition(c.variants.get(str).getRevision());
 
-                    if(c.variants.get(str).hasMatches()){
-                        s+=printMatchCondition(c.variants.get(str));
-                    }else {
+                    if (c.variants.get(str).hasMatches()) {
+                        s += printMatchCondition(c.variants.get(str));
+                    } else {
 
                         s += "#if defined (" + str + ")";
-                        if ( condition.length() > 0) {
+                        if (condition.length() > 0) {
                             s += " && " + condition;
                         }
                     }
@@ -1342,12 +1350,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     String condition = printCondition(c.variants.get(str).getRevision());
 //                    if (var_size == 1 && condition.length() > 0) {
 
-                    if(c.variants.get(str).hasMatches()){
-                        s+=printMatchCondition(c.variants.get(str));
-                    }else {
+                    if (c.variants.get(str).hasMatches()) {
+                        s += printMatchCondition(c.variants.get(str));
+                    } else {
 
                         s += "#if defined (" + str + ")";
-                        if ( condition.length() > 0) {
+                        if (condition.length() > 0) {
                             s += " && " + condition;
                         }
                     }
@@ -1372,7 +1380,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
 
-    public String  printNodeWithoutHeadandEnd(String s, int head) {
+    public String printNodeWithoutHeadandEnd(String s, int head) {
         String blockString = "";
         if (s.endsWith(":")) {
             for (int i = head; i < s.split("\n").length - 2; i++) {

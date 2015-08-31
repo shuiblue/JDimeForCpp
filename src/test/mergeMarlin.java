@@ -23,23 +23,20 @@ public class mergeMarlin {
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-//        File upstream = new File(main_repo);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return  name.endsWith(".cpp");
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            mergedFiles.add(f.getName());
-//        }
+        File upstream = new File(main_repo);
+        File[] matches = upstream.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return  name.endsWith(".cpp");
+//                return name.endsWith(".h") || name.endsWith(".cpp");
+            }
+        });
+
+        for (File f : matches) {
+            mergedFiles.add(f.getName());
+        }
 
 
-//        mergedFiles.add("LiquidCrystalRus.cpp");
-        mergedFiles.add("SdVolume.cpp");
-
-
+//        mergedFiles.add("cardReader.cpp");
         File dir = new File(path);
         String[] names = dir.list();
         for (String name : names) {
@@ -53,6 +50,14 @@ public class mergeMarlin {
         return forkName;
     }
 
+
+
+    public HashSet<String> inputFileInit_1(){
+        mergedFiles.add("cardReader.cpp");
+        forkName.add("marlin4Due");
+
+        return forkName;
+    }
 
 
 
@@ -70,11 +75,9 @@ public class mergeMarlin {
 
     @Test
     public void NWayMerge_Rev() {
-        HashSet<String> forkNames = inputFileInit();
+//        HashSet<String> forkNames = inputFileInit();
+        HashSet<String> forkNames = inputFileInit_1();
         for (String fileToBeMerged : mergedFiles) {
-
-
-
            try {
                     File file = new File("testcpp/mergedResult/parseIFDEF.txt");
 
@@ -90,17 +93,10 @@ public class mergeMarlin {
                     e.printStackTrace();
                 }
 
-
-
-
 //            for (int i = 2; i <= 19; i++) {
             sleep();
             Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 2);
             for (Set<String> combination : combinationFiles) {
-
-
-
-
                testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged);
 
             }

@@ -1,70 +1,1292 @@
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-1171
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1199
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
 867
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
-910
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+851
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+875
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+865
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
 849
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oliv3r' 
-843
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+842
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+848
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+847
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+849
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ut7' 
+845
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+839
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1380
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc' 
+1250
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1195
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1139
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1122
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1127
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1117
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1090
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1062
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'timor' 
+1094
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1141
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1056
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1412
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1328
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1055
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1049
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1052
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ut7' 
+1139
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1084
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1404
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc' 
+1345
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1198
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1338
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1150
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1281
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1106
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1108
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1131
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1159
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1228
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1130
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1215
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1189
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1122
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1042
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ut7' 
+1014
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc' 
+849
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
 841
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'Ognog' 
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'quikshot' 
+840
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+839
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'Ognog' 
+836
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'alromh87' 
+845
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
 843
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+846
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+842
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'yuroller' 
+838
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ut7' 
+841
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+841
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+894
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
+859
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
+859
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'quikshot' 
+854
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+868
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+876
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'Ognog' 
+851
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'alromh87' 
+848
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'akadamson' 
+875
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+848
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'drsdre' 
+891
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+870
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+887
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+846
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+847
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'yuroller' 
+852
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ut7' 
+851
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+13846
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc' 
+14180
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+16790
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'quikshot' 
+14111
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+11805
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+16630
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'Ognog' 
+14022
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'alromh87' 
+13940
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'akadamson' 
+9399
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+16217
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'drsdre' 
+9495
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+9065
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+9655
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+16636
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+13460
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'yuroller' 
+11760
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'ut7' 
+16100
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+11070
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+914
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'bobc' 
+934
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+910
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'quikshot' 
+906
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+909
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+903
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'Ognog' 
+915
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'alromh87' 
+906
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'akadamson' 
+906
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'timor' 
+909
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+909
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'drsdre' 
+906
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+911
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+917
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+912
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+905
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'yuroller' 
+913
+2 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'ut7' 
+904
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+882
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'bobc' 
+875
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'mattsch' 
+876
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'quikshot' 
+876
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+894
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+876
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'Ognog' 
+874
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'alromh87' 
+874
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'akadamson' 
+881
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'timor' 
+876
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+896
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'drsdre' 
+868
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+874
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+880
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+880
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+878
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'yuroller' 
+890
+2 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'ut7' 
+895
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+929
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'bobc' 
+948
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'mattsch' 
+949
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'quikshot' 
+961
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+919
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+966
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'Ognog' 
+944
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'alromh87' 
+959
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'akadamson' 
+930
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'timor' 
+916
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+951
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'drsdre' 
+914
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+923
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+911
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+897
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+938
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'yuroller' 
+902
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'ut7' 
+978
+2 way merge: planner.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+977
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'bobc' 
+1458
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1383
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1349
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1404
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1357
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1339
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1352
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1343
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1361
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1349
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'ut7' 
+1350
+2 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1339
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1141
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'bobc' 
+1195
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1176
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1166
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1167
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1180
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1160
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1201
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1142
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'timor' 
+1134
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1165
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1139
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1145
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1149
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1164
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1182
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1152
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'ut7' 
+1168
+2 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1122
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+2124
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'bobc' 
+2079
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2112
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2054
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+2121
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+2115
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'Ognog' 
+2127
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2048
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'akadamson' 
+2060
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'timor' 
+2075
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+2036
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'drsdre' 
+2078
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+2034
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+2055
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+2077
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2083
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2048
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'ut7' 
+2090
+2 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+2159
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+846
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'bobc' 
+838
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'mattsch' 
+843
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'quikshot' 
+841
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+844
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+837
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'Ognog' 
+844
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'alromh87' 
+842
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'akadamson' 
+841
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'timor' 
+840
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+840
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'drsdre' 
+841
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+844
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+844
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+845
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+836
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'yuroller' 
+839
+2 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'ut7' 
+838
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+840
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'bobc' 
+844
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+841
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'quikshot' 
+841
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+845
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+844
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'Ognog' 
+843
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'alromh87' 
+839
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'akadamson' 
+846
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'timor' 
+831
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+844
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'drsdre' 
+841
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+842
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+841
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+840
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+837
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'yuroller' 
+844
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'ut7' 
+844
+2 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+841
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+981
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'bobc' 
+1017
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'mattsch' 
+982
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1026
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+990
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+984
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1022
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'alromh87' 
+985
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1022
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'timor' 
+996
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+999
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1029
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+975
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1034
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+983
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+992
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1013
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'ut7' 
+981
+2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1035
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+968
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'bobc' 
+986
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'mattsch' 
+963
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'quikshot' 
+966
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+979
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+969
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'Ognog' 
+956
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'alromh87' 
+993
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+971
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+969
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+991
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'yuroller' 
+978
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'ut7' 
+961
+2 way merge: Servo.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+954
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1891
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'bobc' 
+2088
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1772
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2130
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1887
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1764
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'Ognog' 
+2104
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2159
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1754
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'timor' 
+1767
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+2105
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1755
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1783
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1780
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+2170
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2124
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1742
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'ut7' 
+1756
+2 way merge: stepper.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1395
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+989
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'bobc' 
+1002
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1006
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'quikshot' 
+979
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+991
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1002
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'Ognog' 
+996
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'alromh87' 
+978
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'akadamson' 
+941
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'timor' 
+932
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+996
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'drsdre' 
+955
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+953
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+968
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+923
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+979
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1000
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'ut7' 
+1003
+2 way merge: temperature.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+942
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+2305
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'bobc' 
+2472
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2648
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2523
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+2329
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+2660
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'Ognog' 
+2551
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2485
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'akadamson' 
+2525
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+2464
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'drsdre' 
+2010
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+2004
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+2185
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+2622
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2478
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2822
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'ut7' 
+2477
+2 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+3071
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'bobc' 
+874
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'mattsch' 
+863
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'quikshot' 
+863
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+866
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'Ognog' 
+877
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'alromh87' 
+866
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+864
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+868
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+861
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'yuroller' 
+868
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'ut7' 
+866
+2 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+865
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+846
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'bobc' 
+840
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'mattsch' 
+842
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'quikshot' 
+840
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+837
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+832
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'Ognog' 
+835
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'alromh87' 
+837
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'akadamson' 
+840
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+843
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'drsdre' 
+839
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+841
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+840
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+839
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+841
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'yuroller' 
+841
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'ut7' 
+844
+2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+843
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+5441
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5123
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , ut7'  , marlin4Due' 
+5106
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5067
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5059
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5457
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5460
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5438
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5460
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5043
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , marlin4Due' 
+5026
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5012
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5468
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5424
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , yuroller'  , ut7'  , marlin4Due' 
+5001
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5022
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5427
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5026
+12 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5002
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+13815
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13625
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , ut7'  , marlin4Due' 
+13638
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13059
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13260
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12957
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13451
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13167
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12681
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12709
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , marlin4Due' 
+13342
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13201
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12689
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13332
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , yuroller'  , ut7'  , marlin4Due' 
+13203
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13797
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12761
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12937
+19 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+13233
+18 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+12054
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+11245
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , ut7' 
+11188
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+11201
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10729
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10823
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10850
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10497
+18 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+11446
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , johnnyr'  , yuroller'  , ut7' 
+10684
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller' 
+10755
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10821
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10763
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10674
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , yuroller'  , ut7' 
+10774
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10800
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10844
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10754
+17 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+10820
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+5092
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5096
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , ut7'  , marlin4Due' 
+5111
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5087
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5090
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5549
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5532
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5510
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5531
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5091
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , marlin4Due' 
+5093
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5097
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5512
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5507
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , yuroller'  , ut7'  , marlin4Due' 
+5109
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5088
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5495
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5110
+12 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5092
+18 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7565
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7098
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , ut7' 
+7090
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7086
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7072
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7095
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7138
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7085
+18 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7499
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , johnnyr'  , yuroller'  , ut7' 
+7091
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller' 
+7097
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7091
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7083
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7147
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , yuroller'  , ut7' 
+7097
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7101
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7079
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7086
+17 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7094
+18 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+1899242
+18 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+1535054
+18 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , ut7'  , marlin4Due' 
+1687584
+18 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+1624658
+13 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5885
+20 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+15833
+18 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+12831
+13 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5576
+18 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+7578
+19 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+2133816
+19 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+9951
+19 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+8849
+20 way merge: planner.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+11743
+13 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+12309
+20 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+16045
+20 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+35896
+19 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7' 
+8280
+20 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+8547
+20 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+11778
+15 way merge: Servo.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+8265
+20 way merge: stepper.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+69226
+20 way merge: temperature.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , timor'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+9936
+19 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+51577
+13 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'bobc'  , mattsch'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , hampussandberg'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+5892
+19 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'bobc'  , indi-RichCattell'  , mattsch'  , oliv3r'  , quikshot'  , ErikZalm'  , Ognog'  , alromh87'  , akadamson'  , hampussandberg'  , drsdre'  , indi-3DR'  , gregor2005'  , oysteinkrog'  , johnnyr'  , yuroller'  , ut7'  , marlin4Due' 
+8149
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1644
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+880
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+865
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+854
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+857
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+852
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+851
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+857
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+868
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+888
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ut7' 
+848
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+849
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1338
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc' 
+1258
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1327
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1220
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1286
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1136
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1134
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1120
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1047
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'timor' 
+1146
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1203
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1083
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1117
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1058
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1077
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1061
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1093
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ut7' 
+1056
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1056
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1082
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc' 
+1055
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1093
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1064
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1026
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1050
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1032
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1026
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1002
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1018
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'drsdre' 
+988
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+993
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+985
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1064
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1056
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1059
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ut7' 
+1019
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc' 
+851
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+844
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'quikshot' 
+843
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+843
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'Ognog' 
+847
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'alromh87' 
+847
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+844
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+844
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+841
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'yuroller' 
+844
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ut7' 
+842
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+842
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+900
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
+857
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
+864
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'quikshot' 
+859
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+944
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+856
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'Ognog' 
+856
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'alromh87' 
+858
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'akadamson' 
+866
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+861
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'drsdre' 
+931
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+926
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+886
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+899
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+942
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'yuroller' 
+865
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ut7' 
+858
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+14865
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1274
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+870
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+865
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+848
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+858
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+849
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+844
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+847
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+843
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+839
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ut7' 
+841
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+836
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1123
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+872
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+869
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+868
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+882
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+851
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+861
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+847
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+846
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+858
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ut7' 
+839
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+851
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1393
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc' 
+1316
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1313
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1168
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1174
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1138
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1185
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1066
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1056
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'timor' 
+1101
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1064
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1027
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1038
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1032
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1055
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1035
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1060
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ut7' 
+1051
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1055
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1154
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc' 
+1146
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1124
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1094
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1093
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1147
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1175
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1083
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1063
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1098
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1054
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1068
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1057
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1133
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1042
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1088
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'ut7' 
+1073
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'bobc' 
+842
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+849
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'quikshot' 
+851
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+850
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'Ognog' 
+845
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'alromh87' 
+839
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+841
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+850
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+844
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'yuroller' 
+880
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'ut7' 
+843
+2 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+841
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+999
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
+859
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
+856
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'quikshot' 
+862
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+966
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+852
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'Ognog' 
+856
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'alromh87' 
 859
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'akadamson' 
-837
+971
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
-838
+857
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'drsdre' 
-831
+965
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
-832
+871
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'gregor2005' 
-833
+983
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
-832
+854
 2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'johnnyr' 
-835
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-90627
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-1250
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
-883
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
-862
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'quikshot' 
-848
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'oliv3r' 
-853
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
-845
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'Ognog' 
-844
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'alromh87' 
-837
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'akadamson' 
-837
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
-835
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-80850
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
-139549
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-1095
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'bobc' 
-876
-2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'mattsch' 
-870
-2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
-1739
-2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'bobc' 
-1200
-2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'mattsch' 
-1146
-2 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'quikshot' 
-1103
+857
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'yuroller' 
+864
+2 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'ut7' 
+950
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+15588
+2 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'bobc' 
+16220
+2 way merge: cardReader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+101597

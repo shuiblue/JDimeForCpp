@@ -384,7 +384,7 @@ public final class Main {
 //                FileArtifact newArtifact = new FileArtifact(new File(
 //                        (String) filename));
 
-
+// add blank line to the end of each file to get rid of undisciplined annotation
                 try {
                     File file = new File(((String) filename).split("\\+")[0]);
 
@@ -404,12 +404,6 @@ public final class Main {
 
                 FileArtifact newArtifact = new FileArtifact(new File(
                         ((String) filename).split("\\+")[0]));
-
-
-
-
-
-
 
                 if (context.isConditionalMerge()) {
 //                    newArtifact                        .setRevision(new Revision(String.valueOf(cond++)));
