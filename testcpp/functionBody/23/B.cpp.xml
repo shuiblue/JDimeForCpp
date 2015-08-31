@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/functionBody/23/B.cpp"><class>class <name>Computer</name> <block>{<private type="default">
+<switch>switch<condition>( <expr><name>i</name></expr> )</condition> 
+<block>{
+    <case>case <expr>-1</expr>:
+        <expr_stmt><expr><name>p</name>++</expr>;</expr_stmt>
+        <break>break;</break>
+    </case><case>case <expr>0</expr> :
+        <expr_stmt><expr><name>z</name>++</expr>;</expr_stmt>
+        <break>break;</break>
+    </case><case>case <expr>1</expr> :
+        <expr_stmt><expr><name>p</name>++</expr>;</expr_stmt>
+        <break>break;</break>
+</case>}</block></switch>
+</private>}</block><decl/></class></unit>

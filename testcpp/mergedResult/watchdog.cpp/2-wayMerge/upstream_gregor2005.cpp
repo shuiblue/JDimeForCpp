@@ -1,0 +1,56 @@
+#if defined (upstream) || defined (gregor2005)
+    #include "Marlin.h"
+#endif
+#if defined (upstream) && defined (USE_WATCHDOG) || defined (gregor2005) && defined (USE_WATCHDOG)
+#include <avr/wdt.h>
+#include "watchdog.h"
+#include "ultralcd.h"
+//===========================================================================
+//=============================private variables  ============================
+//===========================================================================
+//===========================================================================
+//=============================functinos         ============================
+//===========================================================================
+/// intialise watch dog with a 4 sec interrupt time
+void watchdog_init
+() {
+#if defined (upstream) && (defined (WATCHDOG_RESET_MANUAL) && defined (USE_WATCHDOG) ) || defined (gregor2005) && (defined (WATCHDOG_RESET_MANUAL) && defined (USE_WATCHDOG) )
+//We enable the watchdog timer, but only for the interrupt.
+//Take care, as this requires the correct order of operation, with interrupts disabled. See the datasheet of any AVR chip for details.
+    wdt_reset();
+    _WD_CONTROL_REG = _BV(_WD_CHANGE_BIT) | _BV(WDE);
+    _WD_CONTROL_REG = _BV(WDIE) | WDTO_4S;
+#endif
+#if defined (upstream) && (!defined (WATCHDOG_RESET_MANUAL) && defined (USE_WATCHDOG) ) || defined (gregor2005) && (!defined (WATCHDOG_RESET_MANUAL) && defined (USE_WATCHDOG) )
+    wdt_enable(WDTO_4S);
+#endif
+}
+/// reset watchdog. MUST be called every 1s after init or avr will reset.
+void watchdog_reset
+() {
+    wdt_reset();
+}
+//===========================================================================
+//=============================ISR               ============================
+//===========================================================================
+//Watchdog timer interrupt, called if main program blocks >1sec and manual reset is enabled.
+#endif
+#if defined (upstream) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) ) || defined (gregor2005) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) )
+    //TODO: This message gets overwritten by the kill() call
+    LCD_ALERTMESSAGEPGM("ERR:Please Reset");
+    //16 characters so it fits on a 16x2 display
+    lcd_update();
+    SERIAL_ERROR_START;
+    SERIAL_ERRORLNPGM("Something is wrong, please turn off the printer.");
+    kill();
+    //kill blocks
+    while
+    (1)
+    //wait for user or serial reset
+#endif
+#if defined (upstream) && defined (USE_WATCHDOG) || defined (gregor2005) && defined (USE_WATCHDOG)
+    //RESET_MANUAL
+#endif
+#if defined (upstream) || defined (gregor2005)
+    //USE_WATCHDOG
+#endif

@@ -34,6 +34,7 @@ import de.fosd.jdime.common.Artifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.Revision;
+import de.fosd.jdime.common.operations.AddOperation;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.DeleteOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
@@ -41,10 +42,8 @@ import de.fosd.jdime.matcher.Color;
 import de.fosd.jdime.matcher.Matching;
 
 /**
+ * @param <T> type of artifact
  * @author Olaf Lessenich
- *
- * @param <T>
- *            type of artifact
  */
 public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
 
@@ -59,7 +58,6 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
      *
      * @param operation the <code>MergeOperation</code> to perform
      * @param context the <code>MergeContext</code>
-     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -115,6 +113,13 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
 
             if (m.getScore() == 0) {
                 LOG.fine(() -> String.format("%s and %s have no matches.", left.getId(), right.getId()));
+
+                    ConflictOperation<T> conflictOp = new ConflictOperation<>(
+                            left, right, target, l.getName(), r.getName());
+                    conflictOp.apply(context);
+
+
+
                 return;
             }
         }
@@ -151,6 +156,15 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
 
 				if ((leftChildren==null || rightChildren==null)||( leftChildren.isEmpty() || rightChildren.isEmpty())) {
                 LOG.finest(() -> String.format("%s and [%s] have no children", prefix(left), right.getId()));
+
+
+
+                AddOperation<T> addOp = new AddOperation<>(
+                        left,  target, null);
+                addOp.apply(context);
+
+
+
                 return;
             } else if (leftChildren.isEmpty()) {
                 LOG.finest(() -> String.format("%s has no children", prefix(left)));
@@ -243,8 +257,7 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
     /**
      * Returns the logging prefix.
      *
-     * @param artifact
-     *            artifact that is subject of the logging
+     * @param artifact artifact that is subject of the logging
      * @return logging prefix
      */
     private String prefix(T artifact) {
