@@ -398,62 +398,42 @@ void CardReader::initsd
         if
         (name[0]=='/') {
             dirname_start=strchr(name,'/')+1;
+            while
 #if defined (upstream) && defined (SDSUPPORT)
-            while(dirname_start>0) {
-                dirname_end=strchr(dirname_start,'/');
-                //SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
-                //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
-                if(dirname_end>0 && dirname_end>dirname_start) {
-                    char subdirname[13];
-                    strncpy(subdirname, dirname_start, dirname_end-dirname_start);
-                    subdirname[dirname_end-dirname_start]=0;
-                    SERIAL_ECHOLN(subdirname);
-                    if(!myDir.open(curDir,subdirname,O_READ)) {
-                        SERIAL_PROTOCOLPGM(MSG_SD_OPEN_FILE_FAIL);
-                        SERIAL_PROTOCOL(subdirname);
-                        SERIAL_PROTOCOLLNPGM(".");
-                        return;
-                    } else {
-                        //SERIAL_ECHOLN("dive ok");
-                    }
-                    curDir=&myDir;
-                    dirname_start=dirname_end+1;
-                } else { // the reminder after all /fsa/fdsa/ is the filename
-                    fname=dirname_start;
-                    //SERIAL_ECHOLN("remaider");
-                    //SERIAL_ECHOLN(fname);
-                    break;
-                }
-            }
+            (dirname_start>0)
 #endif
 #if defined (oliv3r) && defined (SDSUPPORT)
-            while(dirname_start>(char*)1) {
+                (dirname_start>(char*)1)
+#endif
+            {
                 dirname_end=strchr(dirname_start,'/');
-                //SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
-                //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
-                if(dirname_end>0 && dirname_end>dirname_start) {
+//SERIAL_ECHO("start:");SERIAL_ECHOLN((int)(dirname_start-name));
+//SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
+                if
+                (dirname_end>0 && dirname_end>dirname_start) {
                     char subdirname[13];
                     strncpy(subdirname, dirname_start, dirname_end-dirname_start);
                     subdirname[dirname_end-dirname_start]=0;
                     SERIAL_ECHOLN(subdirname);
-                    if(!myDir.open(curDir,subdirname,O_READ)) {
+                    if
+                    (!myDir.open(curDir,subdirname,O_READ)) {
                         SERIAL_PROTOCOLPGM(MSG_SD_OPEN_FILE_FAIL);
                         SERIAL_PROTOCOL(subdirname);
                         SERIAL_PROTOCOLLNPGM(".");
                         return;
                     } else {
-                        //SERIAL_ECHOLN("dive ok");
+//SERIAL_ECHOLN("dive ok");
                     }
                     curDir=&myDir;
                     dirname_start=dirname_end+1;
-                } else { // the reminder after all /fsa/fdsa/ is the filename
+                } else {
+// the reminder after all /fsa/fdsa/ is the filename
                     fname=dirname_start;
-                    //SERIAL_ECHOLN("remaider");
-                    //SERIAL_ECHOLN(fname);
+//SERIAL_ECHOLN("remaider");
+//SERIAL_ECHOLN(fname);
                     break;
                 }
             }
-#endif
         } else {
 //relative path
             curDir=&workDir;

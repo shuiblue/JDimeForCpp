@@ -1,20 +1,48 @@
+/*
+  blinkm.cpp - Library for controlling a BlinkM over i2c
+  Created by Tim Koster, August 21 2013.
+*/
+#include "Marlin.h"
+#ifdef BLINKM
 
-#ifdef SDSUPPORT
+#include "blinkm.h"
 
-CardReader::CardReader() {
-  filesize = 0;
-  sdpos = 0;
-  sdprinting = false;
-  cardOK = false;
-  saving = false;
-  logging = false;
-  workDirDepth = 0;
-  file_subcall_ctr = 0;
-  memset(workDirParents, 0, sizeof(workDirParents));
-
+void SendColors(byte red, byte grn, byte blu) {
+  Wire.begin(); 
+  Wire.beginTransmission(0x09);
+  Wire.write('o');                    //to disable ongoing script, only needs to be used once
+  Wire.write('n');
+  Wire.write(red);
+  Wire.write(grn);
+  Wire.write(blu);
+  Wire.endTransmission();
 }
 
-#endif
+#endif //BLINKM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

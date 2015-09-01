@@ -41,6 +41,12 @@ import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
 
 import de.fosd.jdime.matcher.Matching;
+<<<<<<< origin/develop
+=======
+import de.fosd.jdime.stats.MergeTripleStats;
+import de.fosd.jdime.stats.Stats;
+import de.fosd.jdime.util.PrintFunction;
+>>>>>>> HEAD~51
 import nu.xom.Document;
 
 
@@ -52,7 +58,7 @@ import nu.xom.Document;
 public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
     private static final Logger LOG = Logger.getLogger(NWayStrategy.class.getCanonicalName());
-
+    PrintFunction printFunction = new PrintFunction();
     /**
      * The source <code>FileArtifacts</code> are extracted from the
      * <code>MergeOperation</code>, parsed by the <code>JastAddJ</code> parser
@@ -240,14 +246,33 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     conditionStack.pop();
                     conditionStack.push(tmp[0]);
                     newResult +="#endif\n";
+
+                        //-------------------
+                        String countIfdef = "#endif\n++++++\n";
+                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                        //-------------------
+
                 }
             }
             conditionStack.push(tmp[0]);
-            newResult += tmp[0] + "\n";
-            for (int i = 1; i < tmp.length - 1; i++) {
-                newResult += tmp[i] + "\n";
+//                newResult += tmp[0] + "\n";
+//                for (int i = 1; i < tmp.length - 1; i++) {
+//                    newResult += tmp[i] + "\n";
+//                }
+                newResult +=printFunction.printNodeWithoutHeadandEnd(e,0);
+
+                //-------------------
+                    if (!(tmp[0].contains("defined (A)") && tmp[0].contains("defined (B)"))) {
+                        String countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
+                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                    }
+                //-------------------
             }
-        }}
+            }
+        //-------------------
+        String countIfdef = "#endif\n++++++\n";
+        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+        //-------------------
         return newResult+"#endif\n";
     }
 

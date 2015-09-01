@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by shuruiz on 8/31/15.
@@ -25,6 +24,7 @@ public class testMergeMain {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         inputFilePaths.add(path+"A.cpp+A");
         inputFilePaths.add(path + "B.cpp+B");
+        inputFilePaths.add(path + "C.cpp+C");
 
         String commandLine = "-mode,nway,-output," +  output+ ",";
         for (int i = 0; i < inputFilePaths.size(); i++) {

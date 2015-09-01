@@ -1290,3 +1290,77 @@
 16220
 2 way merge: cardReader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
 101597
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+1099
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+874
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+858
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+855
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'Ognog' 
+883
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+850
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+850
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+854
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+848
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+847
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'ut7' 
+852
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+848
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1337
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'bobc' 
+1269
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1135
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1152
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1106
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ErikZalm' 
+1350
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'Ognog' 
+1122
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1090
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'akadamson' 
+1056
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'timor' 
+1088
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'hampussandberg' 
+1104
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1077
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'indi-3DR' 
+1041
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'gregor2005' 
+1051
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'oysteinkrog' 
+1067
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1065
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1061
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'ut7' 
+1053
+2 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
+1089
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'indi-RichCattell' 
+1086
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'bobc' 
+1030
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1041
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1024
+2 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'oliv3r' 
+1018
+2 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'bobc' 
+3314
