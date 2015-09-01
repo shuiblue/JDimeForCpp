@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/A.cpp"><comment type="block">/*
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/C.cpp"><comment type="block">/*
   BlinkM.cpp - Library for controlling a BlinkM over i2c
   Created by Tim Koster, August 21 2013.
 */</comment>
@@ -27,90 +27,6 @@
 }</block></function>
 
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//BLINKM</comment>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -43,6 +43,7 @@ import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.stats.MergeTripleStats;
 import de.fosd.jdime.stats.Stats;
+import de.fosd.jdime.util.PrintFunction;
 import nu.xom.Document;
 
 /**
@@ -53,7 +54,7 @@ import nu.xom.Document;
 public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
     private static final Logger LOG = Logger.getLogger(NWayStrategy.class.getCanonicalName());
-
+    PrintFunction printFunction = new PrintFunction();
     /**
      * The source <code>FileArtifacts</code> are extracted from the
      * <code>MergeOperation</code>, parsed by the <code>JastAddJ</code> parser
@@ -194,7 +195,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
                 try {
                     Process process = new ProcessBuilder("astyle/bin/astyle",
-                            "--style=google","--indent-preproc-block","-xe",context.getOutputFile().getPath()).start();
+                            "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -220,39 +221,58 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
 
     public String presicePrettyprint(String res) {
-       while(res.contains("#endif+-+-+-")){
-           res = res.replace("#endif+-+-+-","#endif");
+        while (res.contains("#endif+-+-+-")) {
+            res = res.replace("#endif+-+-+-", "#endif");
 
-       }
+        }
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
         String s = "";
         for (String e : elements) {
             if (e.length() > 0) {
-            String[] tmp = e.split("\n");
-            if (conditionStack.size() > 0) {
-                String lastCon = conditionStack.lastElement();
-                if (lastCon.equals(tmp[0])) {
-                    String x = "";
-                    for (int i = 1; i < tmp.length - 1; i++) {
-                        x += tmp[i]+"\n";
+                String[] tmp = e.split("\n");
+                if (conditionStack.size() > 0) {
+                    String lastCon = conditionStack.lastElement();
+                    if (lastCon.equals(tmp[0])) {
+                        String x = "";
+                        for (int i = 1; i < tmp.length - 1; i++) {
+                            x += tmp[i] + "\n";
+                        }
+                        newResult += x;
+                        continue;
+                    } else {
+                        conditionStack.pop();
+                        conditionStack.push(tmp[0]);
+                        newResult += "#endif\n";
+
+                        //-------------------
+                        String countIfdef = "#endif\n++++++\n";
+                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                        //-------------------
+
                     }
-                    newResult += x;
-                    continue;
-                } else {
-                    conditionStack.pop();
-                    conditionStack.push(tmp[0]);
-                    newResult +="#endif\n";
                 }
+                conditionStack.push(tmp[0]);
+//                newResult += tmp[0] + "\n";
+//                for (int i = 1; i < tmp.length - 1; i++) {
+//                    newResult += tmp[i] + "\n";
+//                }
+                newResult +=printFunction.printNodeWithoutHeadandEnd(e,0);
+
+                //-------------------
+                    if (!(tmp[0].contains("defined (A)") && tmp[0].contains("defined (B)"))) {
+                        String countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
+                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                    }
+                //-------------------
             }
-            conditionStack.push(tmp[0]);
-            newResult += tmp[0] + "\n";
-            for (int i = 1; i < tmp.length - 1; i++) {
-                newResult += tmp[i] + "\n";
-            }
-        }}
-        return newResult+"#endif\n";
+        }
+        //-------------------
+        String countIfdef = "#endif\n++++++\n";
+        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+        //-------------------
+        return newResult + "#endif\n";
     }
 
     @Override

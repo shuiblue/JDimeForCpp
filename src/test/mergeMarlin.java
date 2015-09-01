@@ -35,8 +35,6 @@ public class mergeMarlin {
             mergedFiles.add(f.getName());
         }
 
-
-//        mergedFiles.add("cardReader.cpp");
         File dir = new File(path);
         String[] names = dir.list();
         for (String name : names) {
@@ -49,16 +47,6 @@ public class mergeMarlin {
         }
         return forkName;
     }
-
-
-
-    public HashSet<String> inputFileInit_1(){
-        mergedFiles.add("cardReader.cpp");
-        forkName.add("marlin4Due");
-
-        return forkName;
-    }
-
 
 
     public void afterTest() {
@@ -75,23 +63,8 @@ public class mergeMarlin {
 
     @Test
     public void NWayMerge_Rev() {
-//        HashSet<String> forkNames = inputFileInit();
-        HashSet<String> forkNames = inputFileInit_1();
+        HashSet<String> forkNames = inputFileInit();
         for (String fileToBeMerged : mergedFiles) {
-           try {
-                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-                    // if file doesnt exists, then create it
-                    if (!file.exists()) {
-                        file.createNewFile();
-                    }
-                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                    BufferedWriter bw = new BufferedWriter(fw);
-                    bw.write("\n------"+fileToBeMerged + "\n");
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
 //            for (int i = 2; i <= 19; i++) {
             sleep();

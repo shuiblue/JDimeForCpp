@@ -13,13 +13,14 @@ import de.fosd.jdime.matcher.Matching;
 import de.fosd.jdime.strategy.CPPNodeStrategy;
 import de.fosd.jdime.strategy.MergeStrategy;
 import de.fosd.jdime.util.Entity;
+import de.fosd.jdime.util.PrintFunction;
 
 
 /**
  * @author shuruiz
  */
 public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
-
+    PrintFunction printFunction = new PrintFunction();
     private Node astnode = null;
     private Document xmlDoc = null;
     Stack<String> conditionStack = new Stack<>();
@@ -38,25 +39,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             return;
         }
         setRevision(artifact.getRevision());
-
-//        if(!artifact.getRevision().getName().equals("upstream")) {
-        try {
-            File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-            // if file doesnt exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("fork : " + artifact.getRevision().getName() + "\n");
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        }
-
-
         String filePath = artifact.getPath();
         if (filePath.contains(".cpp") || filePath.contains(".h")) {
             xmlDoc = getXmlDom(getXmlFile(filePath));
@@ -212,50 +194,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifndef")) {
                                 String condition = childValue.substring(8);
                                 conditionStack.push("!defined (" + condition + ")");
-
-
-//                                if(!this.getRevision().getName().equals("upstream")) {
-                                try {
-                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-                                    // if file doesnt exists, then create it
-                                    if (!file.exists()) {
-                                        file.createNewFile();
-                                    }
-                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                    BufferedWriter bw = new BufferedWriter(fw);
-                                    bw.write(childValue + "\n");
-                                    bw.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-//                                }
-
                                 continue;
                             }
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
-
-
-//                                if(!this.getRevision().getName().equals("upstream")) {
-
-                                try {
-                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-                                    // if file doesnt exists, then create it
-                                    if (!file.exists()) {
-                                        file.createNewFile();
-                                    }
-                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                    BufferedWriter bw = new BufferedWriter(fw);
-                                    bw.write(childValue + "\n");
-                                    bw.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-//                                }
-
                                 continue;
                             }
 
@@ -333,52 +276,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (localName.equals("ifndef")) {
                                 String condition = childValue.substring(8);
                                 conditionStack.push("!defined (" + condition + ")");
-
-
-//                                if(!this.getRevision().getName().equals("upstream")) {
-
-                                try {
-                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-                                    // if file doesnt exists, then create it
-                                    if (!file.exists()) {
-                                        file.createNewFile();
-                                    }
-                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                    BufferedWriter bw = new BufferedWriter(fw);
-                                    bw.write(childValue + "\n");
-                                    bw.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-//                                    }
-                                }
-
-
                                 continue;
                             }
                             if (localName.equals("ifdef")) {
                                 String condition = childValue.substring(7);
                                 conditionStack.push("defined (" + condition + ")");
-
-//                                if(!this.getRevision().getName().equals("upstream")) {
-
-                                try {
-                                    File file = new File("testcpp/mergedResult/parseIFDEF.txt");
-
-                                    // if file doesnt exists, then create it
-                                    if (!file.exists()) {
-                                        file.createNewFile();
-                                    }
-                                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                                    BufferedWriter bw = new BufferedWriter(fw);
-                                    bw.write(childValue + "\n");
-                                    bw.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-//                                }
-
-
                                 continue;
                             }
 
@@ -898,8 +800,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (this.children != null && this.children.size() > 0) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
-
-
                 CppNodeArtifact child = it.next();
                 String child_localName = ((Element) child.astnode).getLocalName();
 
@@ -921,8 +821,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             CppNodeArtifact var = child.getVariants().get(key);
                             res += var.prettyPrint();
                         }
-
-
                     } else if (child.matches != null) {
                         if (entity.getNonTerminal().contains(child_localName)) {
                             res += printBlock(child);
@@ -947,6 +845,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return res;
     }
 
+    String countIfdef = "";
 
     /**
      * This function presice the pretty print result of a block when:
@@ -969,16 +868,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
                     if (lastCon.equals(tmp[0])) {
-                        String x = "";
-                        for (int i = 1; i < tmp.length - 1; i++) {
-                            x += tmp[i] + "\n";
-                        }
-                        newResult += x;
+//                        String x = "";
+//                        for (int i = 1; i < tmp.length - 1; i++) {
+//                            x += tmp[i] + "\n";
+//                        }
+//                        newResult += x;
+                        newResult += printFunction.printNodeWithoutHeadandEnd(e, 1);
                         continue;
                     } else {
                         conditionStack.pop();
                         if (tmp[0].equals(blockCondition.replace("\n", ""))) {
                             newResult += "#endif\n";
+//-----------------------
+                            countIfdef = "#endif\n++++++\n";
+                            printFunction.writeTofile(countIfdef, "countIfdef.txt");
+//-----------------------
+
+
                             if (tmp.length > 3) {
                                 for (int i = 1; i < tmp.length - 1; i++) {
                                     newResult += tmp[i] + "\n";
@@ -989,11 +895,23 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             continue;
                         } else {
                             newResult += "#endif\n";
+                            //-------------------
+                            countIfdef = "#endif\n++++++\n";
+                            printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                            //-------------------
+
                             if (!tmp[0].startsWith("#if defined")) {
                                 newResult += e;
                             } else {
-                                newResult += printNodeWithoutHeadandEnd(e, 0);
+                                newResult += printFunction.printNodeWithoutHeadandEnd(e, 0);
                                 conditionStack.push(tmp[0]);
+
+                                //-------------------
+                                countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
+                                printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                                //-------------------
+
+
                             }
                         }
                     }
@@ -1001,9 +919,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     if (tmp[0].startsWith("#if defined")) {
                         if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
                             conditionStack.push(tmp[0]);
-                            newResult += printNodeWithoutHeadandEnd(e, 0);
+                            newResult += printFunction.printNodeWithoutHeadandEnd(e, 0);
+
+                            //-------------------
+                            if (blockCondition.contains("defined (A)") && blockCondition.contains("defined (B)") && e.split("#if").length < 3) {
+                                countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
+                                printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                            }
+                            //-------------------
+
                         } else {
-                            newResult += printNodeWithoutHeadandEnd(e, 1);
+                            newResult += printFunction.printNodeWithoutHeadandEnd(e, 1);
                         }
                     } else {
                         newResult += e;
@@ -1017,9 +943,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (conditionStack.size() > 0) {
             conditionStack.pop();
             newResult += "#endif\n";
+
+//-----------------------
+            countIfdef = "#endif\n++++++\n";
+            printFunction.writeTofile(countIfdef, "countIfdef.txt");
+//-----------------------
         }
         return newResult;
     }
+
 
     /**
      * This function pretty print the non-terminal node.
@@ -1040,17 +972,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
     /**
-     * This function print the  content in a block
-     * ∂
-     *
+     * this function add the prefix of element to the print result.
+     * @param nodeLocalName element's name
      * @param cppNoArt
      * @return
      */
-    private String printBlock(CppNodeArtifact cppNoArt) {
-        String res = "";
-
-        String blockCondition = printMatchCondition(cppNoArt);
-        String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
+    public String addElementPrefix(String nodeLocalName, CppNodeArtifact cppNoArt) {
+        String res="";
         if (nodeLocalName.equals("function")) {
             String returnType = (((Element) cppNoArt.astnode).getChildElements("type", xmlns)).get(0).getValue();
             String funcName = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
@@ -1069,9 +997,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             String ast_name = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
             res += "class " + ast_name;
         } else if (nodeLocalName.equals("if")) {
-//            if (((Element) cppNoArt.getParent().astnode).getLocalName().equals("else")) {
-//                res += "else ";
-//            }
             res += "if ";
         } else if (nodeLocalName.equals("switch")) {
             res += "switch";
@@ -1083,9 +1008,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             String ast_name = cppNoArt.astnode.getChild(0).getValue();
             res += ast_name;
         }
+        return  res;
+    }
+
+
+    /**
+     * This function print the  content in a block
+     * ∂
+     *
+     * @param cppNoArt
+     * @return
+     */
+    private String printBlock(CppNodeArtifact cppNoArt) {
+        String res = "";
+        String blockCondition = printMatchCondition(cppNoArt);
+        String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
+        res += addElementPrefix(nodeLocalName, cppNoArt);
 
         if (cppNoArt.children == null) {
-
             res += res += "+-+-+-\n" + cppNoArt.prettyPrint();
         } else {
             Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
@@ -1144,7 +1084,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                         blockString += "{\n";
                                     }
                                 } else {
-//                                    blockString += "";
                                     blockString += "else ";
                                 }
                             } else {
@@ -1254,13 +1193,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             tmpCondition += printCondition(c.getRevision());
         } else {
             tmpCondition += "#if " + "defined (" + c.getRevision().alternatives.toArray()[0] + ")";
-
-//            if (c.getRevision().conditions.size() > 0) {
-//                tmpCondition += " && ";
-//            }
-//            tmpCondition += printCondition(c.getRevision());
-//            tmpCondition += printCondition(c.getRevision().alternatives.toArray()[0]);
-
         }
         res += tmpCondition;
         res += "\n" + this.toString() + "\n";
@@ -1314,15 +1246,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             int var_size = c.variants.size();
             for (int i = 0; i < var_size; i++) {
                 String str = c.variants.keySet().toArray()[i].toString();
-
-
-//                if(c.variants.get(str).hasMatches()){
-//                    s+=printMatchCondition(c.variants.get(str));
-//                }else {
-//
-//                    s += "#if defined (" + str + ")";
-//                }
-//                s += "#if defined (" + str + ")";
                 String c_local = ((Element) c.astnode).getLocalName();
                 if (c_local.equals("block")) {
                     String condition = printCondition(c.variants.get(str).getRevision());
@@ -1336,10 +1259,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             s += " && " + condition;
                         }
                     }
-
-//                    if (condition.length() > 0) {
-//                        s += " && " + condition + "\n";
-//                    }
                     if (c.variants.get(str).astnode.getValue().startsWith("{")) {
                         s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
                     } else {
@@ -1348,8 +1267,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                 } else {
                     String condition = printCondition(c.variants.get(str).getRevision());
-//                    if (var_size == 1 && condition.length() > 0) {
-
                     if (c.variants.get(str).hasMatches()) {
                         s += printMatchCondition(c.variants.get(str));
                     } else {
@@ -1359,11 +1276,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             s += " && " + condition;
                         }
                     }
-
-
-//                    if ( condition.length() > 0) {
-//                        s += " && " + condition;
-//                    }
                     s += "\n" + c.variants.get(str);
                 }
                 s += printCondition(c.getRevision());
@@ -1378,23 +1290,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         return s;
     }
-
-
-    public String printNodeWithoutHeadandEnd(String s, int head) {
-        String blockString = "";
-        if (s.endsWith(":")) {
-            for (int i = head; i < s.split("\n").length - 2; i++) {
-                blockString += s.split("\n")[i] + "\n";
-            }
-            blockString += ":";
-        } else {
-            for (int i = head; i < s.split("\n").length - 1; i++) {
-                blockString += s.split("\n")[i] + "\n";
-            }
-        }
-        return blockString;
-    }
-
     /**
      * This function print the match node
      *

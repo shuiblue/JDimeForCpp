@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/B.cpp">
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>SDSUPPORT</name></cpp:ifdef>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/B.cpp"><comment type="block">/*
+  blinkm.cpp - Library for controlling a BlinkM over i2c
+  Created by Tim Koster, August 21 2013.
+*/</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BLINKM</name></cpp:ifdef>
 
-<constructor><name><name>CardReader</name>::<name>CardReader</name></name><parameter_list>()</parameter_list> <block>{
-  <expr_stmt><expr><name>filesize</name> = 0</expr>;</expr_stmt>
-  <expr_stmt><expr><name>sdpos</name> = 0</expr>;</expr_stmt>
-  <expr_stmt><expr><name>sdprinting</name> = false</expr>;</expr_stmt>
-  <expr_stmt><expr><name>cardOK</name> = false</expr>;</expr_stmt>
-  <expr_stmt><expr><name>saving</name> = false</expr>;</expr_stmt>
-  <expr_stmt><expr><name>logging</name> = false</expr>;</expr_stmt>
-  <expr_stmt><expr><name>workDirDepth</name> = 0</expr>;</expr_stmt>
-  <expr_stmt><expr><name>file_subcall_ctr</name> = 0</expr>;</expr_stmt>
-  <expr_stmt><expr><call><name>memset</name><argument_list>(<argument><expr><name>workDirParents</name></expr></argument>, <argument><expr>0</expr></argument>, <argument><expr><sizeof>sizeof<argument_list>(<argument><expr><name>workDirParents</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"blinkm.h"</cpp:file></cpp:include>
 
-}</block></constructor>
+<function><type><name>void</name></type> <name>SendColors</name><parameter_list>(<param><decl><type><name>byte</name></type> <name>red</name></decl></param>, <param><decl><type><name>byte</name></type> <name>grn</name></decl></param>, <param><decl><type><name>byte</name></type> <name>blu</name></decl></param>)</parameter_list> <block>{
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>begin</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>beginTransmission</name></name><argument_list>(<argument><expr>0x09</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr>'o'</expr></argument>)</argument_list></call></expr>;</expr_stmt>                    <comment type="line">//to disable ongoing script, only needs to be used once</comment>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr>'n'</expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>red</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>grn</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>blu</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name><name>Wire</name>.<name>endTransmission</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
 
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//BLINKM</comment>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
