@@ -2,6 +2,7 @@ package test;
 
 import de.fosd.jdime.Main;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.file.*;
@@ -87,7 +88,7 @@ public class TestInitial {
         char cond = 'A';
         for (int i = 0; i < inputFilePaths.size(); i++) {
 
-            commandLine += prefix + inputFilePaths.get(i) +suffix+"+"+String.valueOf(cond);
+            commandLine += prefix + inputFilePaths.get(i) + suffix + "+" + String.valueOf(cond);
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
             }
@@ -411,12 +412,12 @@ public class TestInitial {
      * clean temp file ".xml" and compiled folders
      */
     public void clearTmpFile() {
-        Path directory = Paths.get("testcpp/mergedResult/");
+        Path directory = Paths.get("testcpp/");
         try {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.getFileName().toString().endsWith("xml")) {
+                    if ( file.getFileName().toString().endsWith("xml")) {
                         Files.delete(file);
                     }
                     return FileVisitResult.CONTINUE;
@@ -425,8 +426,10 @@ public class TestInitial {
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (dir.getFileName().toString().startsWith("19")) {
-                        Files.delete(dir);
+                    if (dir.getFileName().toString().startsWith("compiled")) {
+//                        Files.delete(dir);
+                        FileUtils.deleteDirectory(new File(String.valueOf(dir)));
+
                     }
                     return FileVisitResult.CONTINUE;
                 }

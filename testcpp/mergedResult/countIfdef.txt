@@ -11374,3 +11374,1262 @@ i=1;
 int z=0;
 #endif
 ++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+if 
+#if defined (A)
+(x > 5)
+#endif
+#if defined (B)
+(x > 4)
+#endif
+y+=4
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+for(i = 0;i < max;i++)
+{
+if 
+( line[i] == ' ' )
+{
+#if defined (A)
+aaa++;
+#endif
+#if defined (B)
+space++;
+#endif
+}
+if 
+( line[i] == '\t' )
+{
+tab++;
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+if 
+#if defined (A)
+(x > 5)
+#endif
+#if defined (B)
+(x > 4)
+#endif
+y+=4
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+#if defined (A)
+()
+#endif
+#if defined (B)
+(xx)
+#endif
+{
+int i=0;
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+while 
+( i >= 0 )
+{
+#if defined (A)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[j] = string2[j];
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a=0;
+#if defined (A) && defined (X) || defined (B)
+while 
+( i >= 0 )
+{
+#if defined (A) && defined (X)
+string1[i] = string2[i];
+#endif
+#if defined (B)
+string1[x] = string2[x];
+#endif
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+if 
+#if defined (A)
+(x > 5)
+#endif
+#if defined (B)
+(x > 4)
+#endif
+y+=4
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+for(i = 0;i < max;i++)
+{
+if 
+( line[i] == ' ' )
+{
+#if defined (A)
+aaa++;
+#endif
+#if defined (B)
+space++;
+#endif
+}
+if 
+( line[i] == '\t' )
+{
+tab++;
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+do 
+{
+#if defined (A)
+x--;
+#endif
+#if defined (B)
+y--;
+s++;
+#endif
+}
+while ( x > 0 );
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Foo
+#if defined (A)
+:public bar
+#endif
+{
+int i=0;
+#if defined (A)
+long a=0;
+int y=0;
+protected: 
+	int s = 0;
+
+
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Foo
+#if defined (A)
+:public bar
+#endif
+{
+int i=0;
+long a=0;
+int y=0;
+#if defined (B) && defined (X)
+int t=0;
+#endif
+protected:
+#if defined (A)
+int s = 1;
+#endif
+#if defined (B)
+int s = 0;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Foo
+#if defined (A)
+:public bar
+#endif
+{
+int i=0;
+long a=0;
+int y=0;
+#if defined (B) && defined (X)
+int t=0;
+#endif
+protected:
+int s = 1;
+#if defined (A)
+int ss=0;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+int i=0;
+long a=0;
+int y=0;
+#if defined (B) && defined (X)
+int t=0;
+#endif
+protected:
+int s = 1;
+#if defined (A)
+int ss=0;
+#endif
+public:
+Computer();
+#if defined (A)
+// Constructor
+~Computer();
+// Destructor
+void setspeed ( int p );
+int readspeed();
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+if 
+( i > 0 )
+{
+x = i;
+#if defined (A)
+y=s;
+#endif
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+if 
+( i > 0 )
+{
+x = i;
+#if defined (A)
+y=s;
+#endif
+}
+#if defined (A)
+else{
+	s=2;
+	s=3;
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+if 
+( i > 0 )
+{
+x = i;
+}
+else 
+#if defined (A)
+if(i<0){
+	s=2;
+}else{
+	t=0;
+}
+#endif
+#if defined (B)
+{
+	t=0;
+}
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+switch
+( i )
+{
+case 
+-1
+:#if defined (A)
+n++;
+#endif
+#if defined (B)
+p++;
+#endif
+break;
+case 
+0
+:z++;
+break;
+case 
+1
+:p++;
+break;
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+while 
+( i-- > 0 )
+{
+x = f( i );
+if 
+( x == 1 )
+{
+#if defined (A)
+continue;
+#endif
+#if defined (B)
+t++;
+#endif
+}
+y += x * x;
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+#if defined (A)
+:public bar
+#endif
+{
+while 
+( i-- > 0 )
+{
+if 
+( x == 1 )
+{
+a++;
+if 
+(x>0)
+{
+b++;
+#if defined (A)
+if(x<0){
+        		c++;
+        	}
+#endif
+}
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+while 
+( i-- > 0 )
+{
+if 
+( x == 1 )
+{
+a++;
+if 
+(x>0)
+{
+b++;
+}
+#if defined (B)
+else{
+            c++;
+        }
+#endif
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+while 
+( i-- > 0 )
+{
+if 
+( x == 1 )
+{
+a++;
+if 
+(x>0)
+{
+b++;
+#if defined (A)
+if(x==0){
+        		c++;
+        	}
+#endif
+}
+#if defined (B)
+else{
+            c++;
+        }
+#endif
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+while 
+( i-- > 0 )
+{
+if 
+( x == 1 )
+{
+a++;
+}
+else 
+if 
+(a==0)
+{
+#if defined (A)
+b++;
+#endif
+#if defined (B)
+c++;
+#endif
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+if 
+( i > 0 )
+{
+x = i;
+}
+else 
+if 
+( i < 0)
+x = q;
+else 
+#if defined (A)
+x = j;
+#endif
+#if defined (B)
+x = s;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+if 
+( i > 0 )
+{
+x = i;
+}
+else {
+if 
+( i < 0)
+{
+#if defined (A)
+x = q;
+#endif
+#if defined (B)
+x = s;
+#endif
+}
+else 
+if 
+(i==0)
+{
+x = j;
+}
+else {
+a++;
+}
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+class Computer
+:public bar
+{
+if 
+(lsAction==LS_SerialPrint)
+{
+SERIAL_PROTOCOL(prepend);
+SERIAL_PROTOCOLLN(filename);
+}
+else 
+if 
+(lsAction==LS_Count)
+{
+nrFiles++;
+}
+else 
+if 
+(lsAction==LS_GetFilename)
+{
+#if defined (A)
+if (match != NULL) {
+          if (strcasecmp(match, filename) == 0) return;
+        }
+        else if (cnt == nrFiles) return;
+#endif
+#if defined (B)
+if(cnt==nrFiles)
+          return;
+#endif
+cnt++;
+}
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+i=0;
+#if defined (B)
+j=0;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A)
+i=0;
+#endif
+#if defined (B)
+i=2;
+j=0;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+i=0;
+}
+#endif
+++++++
+#if defined (A)
+int x=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+int x=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A) && defined (X)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+#if defined (A)
+j=2;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+int x=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A) && defined (X)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+#if defined (A)
+j=2;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+int x=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+void aa(){
+j=0;
+}
+#endif
+++++++
+#if defined (A)
+int x=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+int z=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+int x=0;
+#endif
+++++++
+#if defined (A)
+int y=0;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+#if defined (A)
+i=0;
+#endif
+#if defined (B)
+i=1;
+#endif
+}
+#endif
+++++++
+#if defined (A)
+int z=0;
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B) && defined (X)
+
+void a();
+#endif
+++++++
+#if defined (C)
+void c();
+#endif
+++++++
+#if defined (A) || defined (B) && defined (Y)
+
+void b();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B) && defined (X)
+
+void a();
+#endif
+++++++
+#if defined (C) && defined (Y)
+void c();
+#endif
+++++++
+#if defined (A) || defined (B) && defined (Y)
+
+void b();
+#endif
+++++++
+#if defined (A) && !defined (X)
+void a();
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && !defined (X) || defined (B)
+void a();
+#endif
+++++++
+#if defined (A) && !defined (X)
+void a();
+#endif
+++++++
+#if defined (B) && defined (Y)
+void b();
+#endif
+++++++
+#if defined (A) && !defined (X)
+void a();
+#endif
+++++++
+#if defined (B) && defined (X)
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) && defined(Y))
+void a();
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) && defined(Y))
+void a();
+#endif
+++++++
+#if defined (B) && defined(Z)
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) && !defined(Y))
+void a();
+#endif
+++++++
+#if defined (B) && defined(Z)
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) || defined(Y))
+void a();
+#endif
+++++++
+#if defined (B) && defined(Z)
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) || defined(Y))
+void a();
+#endif
+++++++
+#if defined (B) && (defined(Z) && defined(Y))
+void b();
+#endif
+++++++
+#if defined (A) && (defined(X) || !defined(Y))
+void a();
+#endif
+++++++
+#if defined (B) && (defined(Z) && defined(Y))
+void b();
+#endif
+++++++
+#if defined (A)
+#define P 0
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && defined(X)
+void a();
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && !defined (X)
+void t();
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (B) && defined (Y)
+void b();
+#endif
+++++++
+#if defined (A) && !defined (X)
+void t();
+#endif
+++++++
+#if defined (B) && !defined (Y)
+void s();
+#endif
+++++++
+#if defined (A) && ((X>0) && defined(Y))
+a = 1;
+#endif
+++++++
+#if defined (B)
+a=3;
+#endif
+++++++
+#if defined (A) && ((X>0) || defined(Y))
+a = 1;
+#endif
+++++++
+#if defined (B)
+a=3;
+#endif
+++++++
+#if defined (A) && ((X>0 && defined(X)) || (Y>0 && defined(Y)))
+a = 1;
+#endif
+++++++
+#if defined (B)
+a=3;
+#endif
+++++++
+#if defined (A)
+if (x<0)
+  {
+     a = 1;
+     b = 2;
+   }
+   else
+   {
+     a=2;
+     b =3;
+  }
+#endif
+++++++
+#if defined (B)
+a=1;
+#endif
+++++++
+#if defined (A)
+void a()
+{
+#ifdef SDSLOW
+  if (X)
+#else
+  if (Y)
+#endif
+  {
+    cardOK = true;
+  }
+
+}
+#endif
+++++++
+#if defined (B)
+void b()
+{
+#ifdef SDSLOW
+  if (z)
+#else
+  if (b)
+#endif
+  {
+    cardOK = true;
+  }
+
+}
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B)
+void a();
+#endif
+++++++
+#if defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B)
+void a();
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (B) && defined (X)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (B) && defined (Y)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X)
+void a();
+#endif
+++++++
+#if defined (A) || defined (B)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B) && defined (X)
+void a();
+#endif
+++++++
+#if defined (A) || defined (B) && defined (X)
+void b();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B) && defined (X)
+void a();
+#endif
+++++++
+#if defined (A)
+void b();
+#endif
+++++++
+#if defined (B)
+void c();
+#endif
+++++++
+#if defined (A) && defined (X) || defined (B) && defined (X)
+void a();
+#endif
+++++++
+#if defined (A) || defined (B) && defined (Y)
+void b();
+#endif
+++++++

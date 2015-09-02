@@ -348,7 +348,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @throws IOException e
      */
     public static String getXmlFile(String inputFile) {
-        String outXmlFile = inputFile + ".xml";
+//        String outXmlFile = inputFile + ".xml";
+        String outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("testcpp", "") + ".xml";
+       String[] paths = inputFile.replace("testcpp", "").split("/");
+        String dir_suffix ="";
+        for(int i=1;i<paths.length-1;i++){
+            dir_suffix +="/"+paths[i];
+        }
+
+        if (!new File(outXmlFile).exists()) {
+            new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
+        }
         if (new File(inputFile).isFile()) {
             try {
                 new ProcessBuilder("/usr/local/bin/src2srcml",
