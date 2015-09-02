@@ -331,8 +331,16 @@ public class TestInitial {
      * @return output path
      */
     public String compileCpp(HashSet<String> config, String file, String filePath) {
+        String suffix = ".cpp";
         String originPath = filePath + file + suffix;
-        String compiledPath = filePath + compile_path + file + "_";
+
+        String compileDir = "/Users/shuruiz/Work/tmpXMLFile/" +filePath.replace("testcpp/","") +compile_path;
+        String compiledPath = compileDir+ file + "_";
+
+        if (!new File(compileDir).exists()) {
+            new File(compileDir).mkdirs();
+        }
+
 
         String cmd_compiling = "g++,-E,-P";
 
@@ -450,7 +458,7 @@ public class TestInitial {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.getFileName().toString().endsWith("xml")) {
+                    if ( file.getFileName().toString().endsWith("xml")||file.getFileName().toString().endsWith("orig")) {
                         Files.delete(file);
                     }
                     return FileVisitResult.CONTINUE;
@@ -460,7 +468,6 @@ public class TestInitial {
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                     if (dir.getFileName().toString().startsWith("compiled")) {
-//                        Files.delete(dir);
                         FileUtils.deleteDirectory(new File(String.valueOf(dir)));
 
                     }
