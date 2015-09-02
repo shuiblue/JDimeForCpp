@@ -800,41 +800,24 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
-        if(this.isChoice()){
+        if (this.isChoice()) {
             res += printChoice(this);
-
-        }else if (this.children != null) {
+        } else if (this.children != null) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
-                String child_localName = ((Element) child.astnode).getLocalName();
 
-                if (child.variants != null || child.matches != null) {
-                    if (this.astnode.getClass().getName().contains("Element")) {
-                        String localName = ((Element) this.astnode).getLocalName();
-
-                        if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
-                            res += localName + ":\n+-+-+-\n";
-                        }
+                //print 'protected' and 'public' before there children
+                if (this.astnode.getClass().getName().contains("Element")) {
+                    String localName = ((Element) this.astnode).getLocalName();
+                    if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
+                        res += localName + ":\n+-+-+-\n";
                     }
-
-                    if (child.variants != null) {
-                        if (entity.getNonTerminal().contains(child_localName)) {
-                            res += printChoice(child) + "+-+-+-\n";
-                            continue;
-                        }
-                        for (String key : child.variants.keySet()) {
-                            CppNodeArtifact var = child.getVariants().get(key);
-                            res += var.prettyPrint();
-                        }
-                    } else if (child.matches != null) {
-                        if (entity.getNonTerminal().contains(child_localName)) {
-                            res += printBlock(child);
-                            continue;
-                        }
-                        res += printMatchNode(child);
-                        res += "+-+-+-\n";
-                    }
+                }
+                if (child.variants != null) {
+                    res += child.prettyPrint();
+                } else {
+                    res += printMatch(child);
                 }
             }
         } else {
@@ -1337,13 +1320,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return s;
     }
 
+
+    public String printMatch(CppNodeArtifact c) {
+        String res = "";
+        String c_localName = ((Element) c.astnode).getLocalName();
+        if (entity.getNonTerminal().contains(c_localName)) {
+            res += printBlock(c);
+        } else {
+            res += printMatchSingleNode(c);
+            res += "+-+-+-\n";
+        }
+        return res;
+    }
+
     /**
      * This function print the match node
      *
      * @param c
      * @return
      */
-    public String printMatchNode(CppNodeArtifact c) {
+    public String printMatchSingleNode(CppNodeArtifact c) {
         String res = "";
         res += printMatchCondition(c);
         res += c.toString() + "\n";
