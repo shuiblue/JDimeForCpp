@@ -1,0 +1,93 @@
+#if defined (A) || defined (B)
+void a();
+#endif
+++++++
+#if defined (A)
+a++;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a();
+#endif
+++++++
+#if defined (A)
+a++;
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++
+#if defined (A) || defined (B)
+void a
+()
+{
+a++;
+#if defined (A)
+b++;
+#endif
+}
+#endif
+++++++

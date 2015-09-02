@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/B.cpp"><comment type="block">/*
-  blinkm.cpp - Library for controlling a BlinkM over i2c
-  Created by Tim Koster, August 21 2013.
-*/</comment>
-<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
-<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BLINKM</name></cpp:ifdef>
-
-<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"blinkm.h"</cpp:file></cpp:include>
-
-<function><type><name>void</name></type> <name>SendColors</name><parameter_list>(<param><decl><type><name>byte</name></type> <name>red</name></decl></param>, <param><decl><type><name>byte</name></type> <name>grn</name></decl></param>, <param><decl><type><name>byte</name></type> <name>blu</name></decl></param>)</parameter_list> <block>{
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>begin</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>beginTransmission</name></name><argument_list>(<argument><expr>0x09</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/B.cpp"><function><type><name>void</name></type> <name>a</name><parameter_list>()</parameter_list><block>{
+	<expr_stmt><expr><name>a</name>++</expr>;</expr_stmt>
 }</block></function>
 
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//BLINKM</comment>
+
+
 
 
 
