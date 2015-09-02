@@ -10,4 +10,7 @@
 </private><protected>protected: 
 	<decl_stmt><decl><type><name>int</name></type> <name>s</name> <init>= <expr>1</expr></init></decl>;</decl_stmt>
 </protected>}</block>
+
+
+
 <decl/></class></unit>

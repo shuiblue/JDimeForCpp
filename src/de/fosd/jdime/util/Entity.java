@@ -52,7 +52,7 @@ public class Entity {
         terminal.add("destructor_decl");
         terminal.add("template");
         terminal.add("super");
-//        terminal.add("expr");
+        terminal.add("expr");
         terminal.add("break");
         terminal.add("continue");
         terminal.add("comment");

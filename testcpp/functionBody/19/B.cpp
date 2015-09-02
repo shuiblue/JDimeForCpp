@@ -10,3 +10,6 @@ protected:
 	public:
  Computer();
 }
+
+
+

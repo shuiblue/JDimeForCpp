@@ -837,11 +837,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     continue;
                 }
             }
-        } else if (this.isChoice()) {
-            res += printChoice(this);
-        } else if (this.matches != null) {
-            res += printMatchNode(this);
-        } else {
+        }
+//        else if (this.isChoice()) {
+//            res += printChoice(this);
+//        } else if (this.matches != null) {
+//            res += printMatchNode(this);
+//        }
+        else {
             res += printSingleNode(this);
         }
         res += "+-+-+-\n";

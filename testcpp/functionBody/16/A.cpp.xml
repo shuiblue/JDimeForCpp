@@ -9,4 +9,7 @@
 	<decl_stmt><decl><type><name>int</name></type> <name>s</name> <init>= <expr>0</expr></init></decl>;</decl_stmt>
 
 </protected>}</block>
+
+
+
 <decl/></class></unit>
