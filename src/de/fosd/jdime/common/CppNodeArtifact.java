@@ -412,7 +412,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public CppNodeArtifact addChild(CppNodeArtifact child) throws IOException {
         child.setParent(this);
         if (checkIfEndifMatched(child.astnode)) {
-                String localName = ((Element) astnode).getLocalName();
+                String localName = ((Element) child.astnode).getLocalName();
             if (!entity.getTerminal().contains(localName)) {
                 child.initializeChildren();
 

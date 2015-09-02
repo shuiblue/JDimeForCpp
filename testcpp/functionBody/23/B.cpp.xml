@@ -12,4 +12,5 @@
         <expr_stmt><expr><name>p</name>++</expr>;</expr_stmt>
         <break>break;</break>
 </case>}</block></switch>
-</private>}</block><decl/></class></unit>
+</private>}</block>
+<decl/></class></unit>

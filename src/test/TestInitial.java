@@ -82,13 +82,16 @@ public class TestInitial {
      * @param outputPath     output merged file
      */
     public void runMain(ArrayList<String> inputFilePaths, String outputPath) {
+        String suffix = ".cpp";
         String commandLine = "-mode,nway,-output," + prefix + outputPath + suffix + ",";
+        char cond = 'A';
         for (int i = 0; i < inputFilePaths.size(); i++) {
 
-            commandLine += prefix + inputFilePaths.get(i) + suffix;
+            commandLine += prefix + inputFilePaths.get(i) +suffix+"+"+String.valueOf(cond);
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
             }
+            cond++;
         }
         String[] arg = commandLine.split(",");
         try {
@@ -111,6 +114,7 @@ public class TestInitial {
      * @return true/false
      */
     public boolean checkMerge(ArrayList<String> inputFilePaths, String outputPath, String expectResultPath) {
+        String suffix = ".cpp";
         runMain(inputFilePaths, outputPath);
         String result = "";
         String expect_result = "";

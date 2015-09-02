@@ -8,8 +8,8 @@ switch
 ( i )
 {
 case 
--1
-:#if defined (A)
+:
+#if defined (A)
 n++;
 #endif
 #if defined (B)
@@ -17,12 +17,12 @@ p++;
 #endif
 break;
 case 
-0
-:z++;
+:
+z++;
 break;
 case 
-1
-:p++;
+:
+p++;
 break;
 }
 }
