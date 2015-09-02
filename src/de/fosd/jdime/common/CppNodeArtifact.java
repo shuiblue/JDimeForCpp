@@ -348,17 +348,18 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @throws IOException e
      */
     public static String getXmlFile(String inputFile) {
-//        String outXmlFile = inputFile + ".xml";
+        // create dir for store xml files
         String outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("testcpp", "") + ".xml";
-       String[] paths = inputFile.replace("testcpp", "").split("/");
-        String dir_suffix ="";
-        for(int i=1;i<paths.length-1;i++){
-            dir_suffix +="/"+paths[i];
+        String[] paths = inputFile.replace("testcpp", "").split("/");
+        String dir_suffix = "";
+        for (int i = 1; i < paths.length - 1; i++) {
+            dir_suffix += "/" + paths[i];
         }
-
         if (!new File(outXmlFile).exists()) {
             new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
         }
+
+        //run srcML
         if (new File(inputFile).isFile()) {
             try {
                 new ProcessBuilder("/usr/local/bin/src2srcml",
@@ -385,7 +386,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             File file = new File(xmlFilePath);
             sleep();
             doc = builder.build(file);
-
         } catch (ParsingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -810,9 +810,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
+        // choice node
         if (this.isChoice()) {
             res += printChoice(this);
-        } else if (this.children != null) {
+        } else if (this.children != null) {     // matched node
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
@@ -830,7 +831,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     res += printMatch(child);
                 }
             }
-        } else {
+        } else {    //single node
             res += printSingleNode(this);
         }
         res += "+-+-+-\n";
@@ -870,7 +871,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @param blockCondition condition of the block
      * @return presiced result
      */
-    public String presicePrettyprint(String res, String blockCondition) {
+    public String precisePrettyprint(String res, String blockCondition) {
         //-----------------------
         String testPath = "testcpp/mergedResult/countIfdef.txt";
         inputFileInit();
@@ -1094,7 +1095,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 res += "";
                             }
                         } else {
-                            res += presicePrettyprint(printChoice(c), blockCondition) + "\n";
+                            res += precisePrettyprint(printChoice(c), blockCondition) + "\n";
                         }
                     }
                 }
@@ -1203,15 +1204,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     }
                     blockString += "+-+-+-\n";
-                    res += presicePrettyprint(blockString, blockCondition);
+                    res += precisePrettyprint(blockString, blockCondition);
                 } else if (entity.getNonTerminal().contains(c_localName)) {
                     String s = printNonTerminalNode(c);
-                    s = presicePrettyprint(s, blockCondition);
+                    s = precisePrettyprint(s, blockCondition);
                     res += s;
                 }
             }
         }
-        res = "+-+-+-\n" + blockCondition + presicePrettyprint(res, blockCondition) + "#endif\n";
+        res = "+-+-+-\n" + blockCondition + precisePrettyprint(res, blockCondition) + "#endif\n";
         res += "+-+-+-\n";
         return res;
     }
@@ -1281,51 +1282,28 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public String printChoice(CppNodeArtifact c) {
         String s = "";
-        if (c.variants != null) {
-            int var_size = c.variants.size();
-            for (int i = 0; i < var_size; i++) {
-                String str = c.variants.keySet().toArray()[i].toString();
-                String c_local = ((Element) c.astnode).getLocalName();
-                if (c_local.equals("block")) {
-                    String condition = printCondition(c.variants.get(str).getRevision());
+        int var_size = c.variants.size();
+        for (int i = 0; i < var_size; i++) {
 
-                    if (c.variants.get(str).hasMatches()) {
-                        s += printMatchCondition(c.variants.get(str));
-                    } else {
+            //str is the Revision of each variants
+            String str = c.variants.keySet().toArray()[i].toString();
+            String condition = printCondition(c.variants.get(str).getRevision());
 
-                        s += "#if defined (" + str + ")";
-                        if (condition.length() > 0) {
-                            s += " && " + condition;
-                        }
-                    }
-                    if (c.variants.get(str).astnode.getValue().startsWith("{")) {
-                        s += "\n" + c.variants.get(str).astnode.getValue().substring(1, c.variants.get(str).astnode.getValue().length() - 1) + "\n";
-                    } else {
-                        s += c.variants.get(str).astnode.getValue();
-                    }
-
-                } else {
-                    String condition = printCondition(c.variants.get(str).getRevision());
-                    if (c.variants.get(str).hasMatches()) {
-                        s += printMatchCondition(c.variants.get(str));
-                    } else {
-
-                        s += "#if defined (" + str + ")";
-                        if (condition.length() > 0) {
-                            s += " && " + condition;
-                        }
-                    }
-                    s += "\n" + c.variants.get(str);
-                }
-                s += printCondition(c.getRevision());
-                s += "\n#endif\n";
-
-                if (var_size > 1) {
-                    s += "+-+-+-\n";
+            if (c.variants.get(str).hasMatches()) {
+                s += printMatchCondition(c.variants.get(str));
+            } else {
+                s += "#if defined (" + str + ")";
+                if (condition.length() > 0) {
+                    s += " && " + condition;
                 }
             }
-        } else {
-            s += printSingleNode(this);
+            s += "\n" + c.variants.get(str);
+            s += printCondition(c.getRevision());
+            s += "\n#endif\n";
+
+            if (var_size > 1) {
+                s += "+-+-+-\n";
+            }
         }
         return s;
     }
