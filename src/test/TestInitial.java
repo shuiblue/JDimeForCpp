@@ -2,6 +2,7 @@ package test;
 
 import de.fosd.jdime.Main;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.file.*;
@@ -444,7 +445,7 @@ public class TestInitial {
      * clean temp file ".xml" and compiled folders
      */
     public void clearTmpFile() {
-        Path directory = Paths.get("testcpp/mergedResult/");
+        Path directory = Paths.get("testcpp/");
         try {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
@@ -458,8 +459,10 @@ public class TestInitial {
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (dir.getFileName().toString().startsWith("19")) {
-                        Files.delete(dir);
+                    if (dir.getFileName().toString().startsWith("compiled")) {
+//                        Files.delete(dir);
+                        FileUtils.deleteDirectory(new File(String.valueOf(dir)));
+
                     }
                     return FileVisitResult.CONTINUE;
                 }
