@@ -4,4 +4,5 @@
   	<expr_stmt><expr><name>x</name> = <name>i</name></expr>;</expr_stmt>  
 }</block></then></if>
 
-</private>}</block><decl/></class></unit>
+</private>}</block>
+<decl/></class></unit>

@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/A.cpp"><function><type><name>void</name></type> <name>a</name><parameter_list>()</parameter_list><block>{
-	<expr_stmt><expr><name>a</name>++</expr>;</expr_stmt>
-	<expr_stmt><expr><name>b</name>++</expr>;</expr_stmt>
-}</block></function>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/Marlin/file/A.cpp">
+<expr_stmt><expr><name>i</name>++</expr>;</expr_stmt>
+<expr_stmt><expr><name>b</name>++</expr>;</expr_stmt>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

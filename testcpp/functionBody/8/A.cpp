@@ -7,3 +7,4 @@ int z=0;
 void aa(){
 j=0;
 }
+

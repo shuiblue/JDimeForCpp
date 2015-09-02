@@ -6,4 +6,5 @@
 	<expr_stmt><expr><name>t</name>=0</expr>;</expr_stmt>
 }</block></else></if>
 
-</private>}</block><decl/></class></unit>
+</private>}</block>
+<decl/></class></unit>

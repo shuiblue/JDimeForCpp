@@ -7,7 +7,6 @@ class Computer
     switch
     ( i ) {
     case
-            -1
             :
 #if defined (A)
         n++;
@@ -17,12 +16,10 @@ class Computer
 #endif
         break;
     case
-            0
             :
         z++;
         break;
     case
-            1
             :
         p++;
         break;
