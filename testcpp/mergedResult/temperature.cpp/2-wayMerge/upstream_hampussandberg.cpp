@@ -1619,6 +1619,31 @@ float unscalePID_d(float d) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if defined (hampussandberg)
 /*
@@ -2882,6 +2907,8 @@ float unscalePID_d(float d) {
 }
 
 #endif //PIDTEMP
+
+
 
 
 

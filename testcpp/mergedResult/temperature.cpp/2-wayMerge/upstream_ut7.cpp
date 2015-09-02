@@ -1626,6 +1626,35 @@ float unscalePID_d(float d) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if defined (ut7)
 /*
@@ -2979,6 +3008,8 @@ float unscalePID_d(float d) {
 }
 
 #endif //PIDTEMP
+
+
 
 
 

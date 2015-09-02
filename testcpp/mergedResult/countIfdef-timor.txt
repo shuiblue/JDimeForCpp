@@ -1,0 +1,819 @@
+!!!fork: timor
+
+**--**-**--merge: BlinkM.cpp
+
+
+
+**--**-**--merge: cardreader.cpp
+
+#if defined (upstream) && defined (SDSUPPORT)
+logging = false;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+workDirDepth = 0;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+//the SD start is delayed, because otherwise the serial cannot answer fast enough to make contact with the host software.
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+//the sd start is delayed, because otherwise the serial cannot answer fast enought to make contact with the hostsoftware.
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(const char *prepend, SdFile parent, const char * const match/*=NULL*/)
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+(const char *prepend,SdFile parent)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char pn0 = p.name[0];
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(pn0 == DIR_NAME_FREE)
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+(p.name[0] == DIR_NAME_FREE)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(pn0 == DIR_NAME_DELETED || pn0 == '.' || pn0 == '_')
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+(p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_')
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char lf0 = longFilename[0];
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+if ( p.name[0] == '.')
+      {
+        if ( p.name[1] != '.')
+        continue;
+      }
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (lf0 == '.' || lf0 == '_') continue;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (match != NULL) {
+          if (strcasecmp(match, filename) == 0) return;
+        }
+        else if (cnt == nrFiles) return;
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+if(cnt==nrFiles)
+          return;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char pn0 = p.name[0];
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(char* name,bool read, bool replace_current/*=true*/)
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+(char* name,bool read)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+
+          //SERIAL_ECHOLN("dive ok");
+        
+
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+//SERIAL_ECHOLN("dive ok");
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+//SERIAL_ECHOLN("dive ok");
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+getfilename(0, fname);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+LCD_MESSAGE(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lcd_setstatus(longFilename[0] ? longFilename : fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lcd_setstatus(fname);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+LCD_MESSAGE(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(file.isOpen())  //replacing current file by new file, or subfile call
+  {
+    if(!replace_current)
+    {
+     if((int)file_subcall_ctr>(int)SD_PROCEDURE_DEPTH-1)
+     {
+       SERIAL_ERROR_START;
+       SERIAL_ERRORPGM("trying to call sub-gcode files with too many levels. MAX level is:");
+       SERIAL_ERRORLN(SD_PROCEDURE_DEPTH);
+       kill();
+       return;
+     }
+     
+     SERIAL_ECHO_START;
+     SERIAL_ECHOPGM("SUBROUTINE CALL target:\"");
+     SERIAL_ECHO(name);
+     SERIAL_ECHOPGM("\" parent:\"");
+     
+     //store current filename and position
+     getAbsFilename(filenames[file_subcall_ctr]);
+     
+     SERIAL_ECHO(filenames[file_subcall_ctr]);
+     SERIAL_ECHOPGM("\" pos");
+     SERIAL_ECHOLN(sdpos);
+     filespos[file_subcall_ctr]=sdpos;
+     file_subcall_ctr++;
+    }
+    else
+    {
+     SERIAL_ECHO_START;
+     SERIAL_ECHOPGM("Now doing file: ");
+     SERIAL_ECHOLN(name);
+    }
+    file.close();
+  }
+  else //opening fresh file
+  {
+    file_subcall_ctr=0; //resetting procedure depth in case user cancels print while in procedure
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPGM("Now fresh file: ");
+    SERIAL_ECHOLN(name);
+  }
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+file.close();
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+
+          //SERIAL_ECHOLN("dive ok");
+        
+
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+//SERIAL_ECHOLN("dive ok");
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+//SERIAL_ECHOLN("dive ok");
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+SERIAL_PROTOCOLLN(fname);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+SERIAL_PROTOCOL(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+sprintf_P(cmd, PSTR("M23 %s"), autoname);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+sprintf(cmd,"M23 %s",autoname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+enquecommand_P(PSTR("M24"));
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+enquecommand("M24");
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+sprintf_P(autoname, PSTR("auto%i.g"), lastnr);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+sprintf(autoname,"auto%i.g",lastnr);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(bool store_location)
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+()
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+logging = false;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(uint16_t nr, const char * const match/*=NULL*/)
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+(const uint8_t nr)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lsDive("",*curDir,match);
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+lsDive("",*curDir);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (workDirDepth < MAX_DIR_DEPTH) {
+      for (int d = ++workDirDepth; d--;)
+        workDirParents[d+1] = workDirParents[d];
+      workDirParents[0]=*parent;
+    }
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+workDirParentParent=workDirParent;
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+workDirParent=*parent;
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+workDirParent=*parent;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(workDirDepth > 0)
+  {
+    --workDirDepth;
+    workDir = workDirParents[0];
+    int d;
+    for (int d = 0; d < workDirDepth; d++)
+      workDirParents[d] = workDirParents[d+1];
+  }
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+if(!workDir.isRoot())
+  {
+    workDir=workDirParent;
+    workDirParent=workDirParentParent;
+  }
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(file_subcall_ctr>0) //heading up to a parent file that called current as a procedure.
+    {
+      file.close();
+      file_subcall_ctr--;
+      openFile(filenames[file_subcall_ctr],true,true);
+      setIndex(filespos[file_subcall_ctr]);
+      startFileprint();
+    }
+    else
+    {
+      quickStop();
+      file.close();
+      sdprinting = false;
+      if(SD_FINISHED_STEPPERRELEASE)
+      {
+          //finishAndDisableSteppers();
+          enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
+      }
+      autotempShutdown();
+    }
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+quickStop();
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+void CardReader::openLogFile(char* name)
+{
+  logging = true;
+  openFile(name, false);
+}
+#endif
+++++++
+
+
+**--**-**--merge: ConfigurationStore.cpp
+
+
+
+**--**-**--merge: digipot_mcp4451.cpp
+
+
+
+**--**-**--merge: LiquidCrystalRus.cpp
+
+
+
+**--**-**--merge: Marlin_main.cpp
+
+
+
+**--**-**--merge: MarlinSerial.cpp
+
+#if defined (upstream) && (defined(M_USARTx_RX_vect) && (defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+unsigned char c  =  M_UDRx;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && MOTHERBOARD != 8 && defined(UDR0) )
+unsigned char c  =  UDR0;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && MOTHERBOARD != 8 && defined(UDR) )
+unsigned char c  =  UDR;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && MOTHERBOARD != 8 && defined(UDR) )
+//  atmega8, atmega32
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && !defined(UDR) && MOTHERBOARD != 8 )
+#error UDR not defined
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && MOTHERBOARD != 8 && defined(UDR) )
+unsigned char c  =  UDR;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && !defined(UDR) && MOTHERBOARD != 8 )
+#error UDR not defined
+#endif
+++++++
+#if defined (upstream) && ((F_CPU == 16000000UL && SERIAL_PORT == 0 && )(defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+useU2X = false;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )F_CPU == 16000000UL && MOTHERBOARD != 8 )
+useU2X0 = false;
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+bool useU2X = true;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+bool useU2X0 = true;
+#endif
+++++++
+#if defined (upstream) && ((F_CPU == 16000000UL && SERIAL_PORT == 0 && )(defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+// hard-coded exception for compatibility with the bootloader shipped
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )F_CPU == 16000000UL && MOTHERBOARD != 8 )
+// hardcoded exception for compatibility with the bootloader shipped
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+if (useU2X) {
+    M_UCSRxA = 1 << M_U2Xx;
+    baud_setting = (F_CPU / 4 / baud - 1) / 2;
+  } else {
+    M_UCSRxA = 0;
+    baud_setting = (F_CPU / 8 / baud - 1) / 2;
+  }
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+if (useU2X0) {
+    UCSR0A = 1 << U2X0;
+    baud_setting = (F_CPU / 4 / baud - 1) / 2;
+  } else {
+    UCSR0A = 0;
+    baud_setting = (F_CPU / 8 / baud - 1) / 2;
+  }
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+M_UBRRxH = baud_setting >> 8;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+UBRR0H = baud_setting >> 8;
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+M_UBRRxL = baud_setting;
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+UBRR0L = baud_setting;
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+sbi(M_UCSRxB, M_RXENx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+sbi(UCSR0B, RXEN0);
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+sbi(M_UCSRxB, M_TXENx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+sbi(UCSR0B, TXEN0);
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+sbi(M_UCSRxB, M_RXCIEx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+sbi(UCSR0B, RXCIE0);
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+cbi(M_UCSRxB, M_RXENx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+cbi(UCSR0B, RXEN0);
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+cbi(M_UCSRxB, M_TXENx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+cbi(UCSR0B, TXEN0);
+#endif
+++++++
+#if defined (upstream) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+cbi(M_UCSRxB, M_RXCIEx);
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+cbi(UCSR0B, RXCIE0);
+#endif
+++++++
+#if defined (timor) && MOTHERBOARD != 8
+// !teensylu
+#endif
+++++++
+#if defined (upstream) && !defined (AT90USB)
+// this is so I can support Attiny series and any other chip without a UART
+#endif
+++++++
+#if defined (timor) && MOTHERBOARD != 8
+// this is so I can support Attiny series and any other chip without a uart
+#endif
+++++++
+#if defined (upstream) && (defined(M_USARTx_RX_vect) && (defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+SIGNAL(M_USARTx_RX_vect)
+#endif
+++++++
+#if defined (timor) && ((defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )defined(USART0_RX_vect) && MOTHERBOARD != 8 )
+SIGNAL(USART0_RX_vect)
+#endif
+++++++
+#if defined (upstream)
+// !AT90USB
+#endif
+++++++
+#if defined (timor)
+//teensylu
+#endif
+++++++
+#if defined (upstream)
+// For AT90USB targets use the UART for BT interfacing
+#endif
+++++++
+#if defined (upstream) && (defined(AT90USB) && defined (BTENABLED))
+HardwareSerial bt;
+#endif
+++++++
+
+
+**--**-**--merge: motion_control.cpp
+
+#if defined (upstream)
+//20141002:full circle for G03 did not work, e.g. G03 X80 Y80 I20 J0 F2000 is giving an Angle of zero so head is not moving
+#endif
+++++++
+
+
+**--**-**--merge: planner.cpp
+
+
+
+**--**-**--merge: qr_solve.cpp
+
+
+
+**--**-**--merge: Sd2Card.cpp
+
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) );
+#endif
+++++++
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) );
+#endif
+++++++
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) );
+#endif
+++++++
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) );
+#endif
+++++++
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) );
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT);
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+uint8_t retryCnt = 3;
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+
+    uint16_t calcCrc = CRC_CCITT(dst, count);
+    uint16_t recvCrc = spiRec() << 8;
+    recvCrc |= spiRec();
+    if (calcCrc != recvCrc)
+    {
+        error(SD_CARD_ERROR_CRC);
+        goto fail;
+    }
+  
+
+#endif
+++++++
+#if defined (upstream) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) )
+static inline __attribute__((always_inline))
+  void spiSendBlock(uint8_t token, const uint8_t* buf) {
+  SPDR = token;
+  for (uint16_t i = 0; i < 512; i += 2) {
+    while (!(SPSR & (1 << SPIF))) { /* Intentionally left empty */ }
+    SPDR = buf[i];
+#endif
+++++++
+#if defined (timor) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) )
+static inline __attribute__((always_inline))
+  void spiSendBlock(uint8_t token, const uint8_t* buf) {
+  SPDR = token;
+  for (uint16_t i = 0; i < 512; i += 2) {
+    while (!(SPSR & (1 << SPIF)));
+    SPDR = buf[i];
+    while (!(SPSR & (1 << SPIF)));
+    SPDR = buf[i + 1];
+  }
+#endif
+++++++
+#if defined (upstream) && (!defined (SOFTWARE_SPI) && defined (SDSUPPORT) )
+SPDR = buf[i + 1];
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+static const uint16_t crctab[] PROGMEM = {
+  0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
+  0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
+  0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+  0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE,
+  0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485,
+  0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+  0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4,
+  0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC,
+  0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+  0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B,
+  0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12,
+  0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+  0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41,
+  0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49,
+  0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+  0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78,
+  0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F,
+  0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+  0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E,
+  0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256,
+  0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+  0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405,
+  0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C,
+  0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+  0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB,
+  0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3,
+  0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+  0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92,
+  0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9,
+  0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+  0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
+  0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+};
+#endif
+++++++
+
+
+**--**-**--merge: SdBaseFile.cpp
+
+#if defined (upstream) && defined (SDSUPPORT)
+name[i++] = (c < 'a' || c > 'z') ?  (c) : (c + ('A' - 'a'));
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+name[i++] = c < 'a' || c > 'z' ?  c : c + ('A' - 'a');
+#endif
+++++++
+
+
+**--**-**--merge: SdFatUtil.cpp
+
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+char top;
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+extern int  __bss_end;
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+return __brkval ? &top - __brkval : &top - &__bss_end;
+#endif
+++++++
+#if defined (timor) && defined (SDSUPPORT)
+extern int* __brkval;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+/** Amount of free RAM
+ * \return The number of free bytes.
+ */
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (__arm__) )
+extern "C" char* sbrk(int incr);
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+// __arm__
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+// __arm
+#endif
+++++++
+
+
+**--**-**--merge: SdFile.cpp
+
+
+
+**--**-**--merge: SdVolume.cpp
+
+
+
+**--**-**--merge: Servo.cpp
+
+
+
+**--**-**--merge: stepper.cpp
+
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "X");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "X");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Y");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Y");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Z");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Z");
+#endif
+++++++
+#if defined (upstream) && (defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && defined(SDSUPPORT))
+if (abort_on_endstop_hit)
+   {
+     card.sdprinting = false;
+     card.closefile();
+     quickStop();
+     setTargetHotend0(0);
+     setTargetHotend1(0);
+     setTargetHotend2(0);
+   }
+#endif
+++++++
+#if defined (upstream) && (defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && defined(SDSUPPORT))
+if (abort_on_endstop_hit)
+   {
+     card.sdprinting = false;
+     card.closefile();
+     quickStop();
+     setTargetHotend0(0);
+     setTargetHotend1(0);
+     setTargetHotend2(0);
+   }
+#endif
+++++++
+#if defined (upstream)
+MYSERIAL.print(MSG_STEPPER_TOO_HIGH);
+#endif
+++++++
+#if defined (timor)
+MYSERIAL.print(MSG_STEPPER_TO_HIGH);
+#endif
+++++++
+#if defined (upstream)
+// make a note of the number of step loops required at nominal speed
+#endif
+++++++
+#if defined (upstream)
+#include "cardreader.h"
+#endif
+++++++
+#if defined (upstream) && (defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1)
+#include <SPI.h>
+#endif
+++++++
+#if defined (upstream)
+static unsigned short step_loops_nominal;
+#endif
+++++++
+#if defined (upstream) && defined (ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+bool abort_on_endstop_hit = false;
+#endif
+++++++
+#if defined (upstream) && defined (MOTOR_CURRENT_PWM_XY_PIN)
+int motor_current_setting[3] = DEFAULT_PWM_MOTOR_CURRENT;
+#endif
+++++++
+#if defined (upstream)
+volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1};
+#endif
+++++++
+#if defined (timor)
+volatile char count_direction[NUM_AXIS] = { 1, 1, 1, 1};
+#endif
+++++++
+#if defined (timor) && defined (ADVANCE)
+unsigned char old_OCR0A;
+#endif
+++++++
+#if defined (timor)
+// ADVANCE
+#endif
+++++++
+
+
+**--**-**--merge: temperature.cpp
+
+
+
+**--**-**--merge: ultralcd.cpp
+
+
+
+**--**-**--merge: vector_3.cpp
+
+
+
+**--**-**--merge: watchdog.cpp
+

@@ -554,6 +554,30 @@ uint8_t LiquidCrystalRus::readNbits(uint8_t n) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if defined (indi-3DR)
 #include "LiquidCrystalRus.h"
@@ -905,6 +929,7 @@ uint8_t LiquidCrystalRus::readNbits(uint8_t n) {
     digitalWrite(_enable_pin, LOW);
     return retval;
 }
+
 
 
 

@@ -24,11 +24,10 @@ public class testMergeMain {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         inputFilePaths.add(path+"A.cpp+A");
         inputFilePaths.add(path + "B.cpp+B");
-        inputFilePaths.add(path + "C.cpp+C");
+//        inputFilePaths.add(path + "C.cpp+C");
 
         String commandLine = "-mode,nway,-output," +  output+ ",";
         for (int i = 0; i < inputFilePaths.size(); i++) {
-
             commandLine +=inputFilePaths.get(i);
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";

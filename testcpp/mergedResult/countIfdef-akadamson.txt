@@ -1,0 +1,5729 @@
+!!!fork: akadamson
+
+**--**-**--merge: BlinkM.cpp
+
+
+
+**--**-**--merge: cardreader.cpp
+
+#if defined (upstream) && defined (SDSUPPORT)
+logging = false;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+workDirDepth = 0;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+//the SD start is delayed, because otherwise the serial cannot answer fast enough to make contact with the host software.
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+//the sd start is delayed, because otherwise the serial cannot answer fast enought to make contact with the hostsoftware.
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(const char *prepend, SdFile parent, const char * const match/*=NULL*/)
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+(const char *prepend,SdFile parent)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char pn0 = p.name[0];
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(pn0 == DIR_NAME_FREE)
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+(p.name[0] == DIR_NAME_FREE)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(pn0 == DIR_NAME_DELETED || pn0 == '.' || pn0 == '_')
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+(p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_')
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char lf0 = longFilename[0];
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+if ( p.name[0] == '.')
+      {
+        if ( p.name[1] != '.')
+        continue;
+      }
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (lf0 == '.' || lf0 == '_') continue;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (match != NULL) {
+          if (strcasecmp(match, filename) == 0) return;
+        }
+        else if (cnt == nrFiles) return;
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+if(cnt==nrFiles)
+          return;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+char pn0 = p.name[0];
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(char* name,bool read, bool replace_current/*=true*/)
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+(char* name,bool read)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+getfilename(0, fname);
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+LCD_MESSAGE(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lcd_setstatus(longFilename[0] ? longFilename : fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lcd_setstatus(fname);
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+LCD_MESSAGE(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(file.isOpen())  //replacing current file by new file, or subfile call
+  {
+    if(!replace_current)
+    {
+     if((int)file_subcall_ctr>(int)SD_PROCEDURE_DEPTH-1)
+     {
+       SERIAL_ERROR_START;
+       SERIAL_ERRORPGM("trying to call sub-gcode files with too many levels. MAX level is:");
+       SERIAL_ERRORLN(SD_PROCEDURE_DEPTH);
+       kill();
+       return;
+     }
+     
+     SERIAL_ECHO_START;
+     SERIAL_ECHOPGM("SUBROUTINE CALL target:\"");
+     SERIAL_ECHO(name);
+     SERIAL_ECHOPGM("\" parent:\"");
+     
+     //store current filename and position
+     getAbsFilename(filenames[file_subcall_ctr]);
+     
+     SERIAL_ECHO(filenames[file_subcall_ctr]);
+     SERIAL_ECHOPGM("\" pos");
+     SERIAL_ECHOLN(sdpos);
+     filespos[file_subcall_ctr]=sdpos;
+     file_subcall_ctr++;
+    }
+    else
+    {
+     SERIAL_ECHO_START;
+     SERIAL_ECHOPGM("Now doing file: ");
+     SERIAL_ECHOLN(name);
+    }
+    file.close();
+  }
+  else //opening fresh file
+  {
+    file_subcall_ctr=0; //resetting procedure depth in case user cancels print while in procedure
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPGM("Now fresh file: ");
+    SERIAL_ECHOLN(name);
+  }
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+file.close();
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+SERIAL_PROTOCOLLN(fname);
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+SERIAL_PROTOCOL(fname);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(bool store_location)
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+()
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+logging = false;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+(uint16_t nr, const char * const match/*=NULL*/)
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+(const uint8_t nr)
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+lsDive("",*curDir,match);
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+lsDive("",*curDir);
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if (workDirDepth < MAX_DIR_DEPTH) {
+      for (int d = ++workDirDepth; d--;)
+        workDirParents[d+1] = workDirParents[d];
+      workDirParents[0]=*parent;
+    }
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+workDirParentParent=workDirParent;
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+workDirParent=*parent;
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+workDirParent=*parent;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(workDirDepth > 0)
+  {
+    --workDirDepth;
+    workDir = workDirParents[0];
+    int d;
+    for (int d = 0; d < workDirDepth; d++)
+      workDirParents[d] = workDirParents[d+1];
+  }
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+if(!workDir.isRoot())
+  {
+    workDir=workDirParent;
+    workDirParent=workDirParentParent;
+  }
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(file_subcall_ctr>0) //heading up to a parent file that called current as a procedure.
+    {
+      file.close();
+      file_subcall_ctr--;
+      openFile(filenames[file_subcall_ctr],true,true);
+      setIndex(filespos[file_subcall_ctr]);
+      startFileprint();
+    }
+    else
+    {
+      quickStop();
+      file.close();
+      sdprinting = false;
+      if(SD_FINISHED_STEPPERRELEASE)
+      {
+          //finishAndDisableSteppers();
+          enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
+      }
+      autotempShutdown();
+    }
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+quickStop();
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+void CardReader::openLogFile(char* name)
+{
+  logging = true;
+  openFile(name, false);
+}
+#endif
+++++++
+
+
+**--**-**--merge: ConfigurationStore.cpp
+
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_WRITE_VAR(i,add_homing);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+EEPROM_WRITE_VAR(i,add_homeing);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,endstop_adj);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_WRITE_VAR(i,zprobe_zoffset);
+#endif
+++++++
+#if defined (upstream) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+float dummy = 3000.0f;
+#endif
+++++++
+#if defined (akadamson) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,3000);
+#endif
+++++++
+#if defined (upstream) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,dummy);
+#endif
+++++++
+#if defined (akadamson) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,0);
+#endif
+++++++
+#if defined (upstream) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+dummy = 0.0f;
+#endif
+++++++
+#if defined (akadamson) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,0);
+#endif
+++++++
+#if defined (upstream) && (!defined (PIDTEMP) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,dummy);
+#endif
+++++++
+#if defined (upstream) && (!defined (DOGLCD) && defined (EEPROM_SETTINGS) )
+int lcd_contrast = 32;
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_WRITE_VAR(i,lcd_contrast);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i,axis_scaling);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_WRITE_VAR(i,autoretract_enabled);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_WRITE_VAR(i,retract_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_WRITE_VAR(i,retract_feedrate);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_WRITE_VAR(i,retract_recover_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_WRITE_VAR(i,retract_recover_feedrate);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// Save filament sizes
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i, filament_size[1]);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 2 && EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_WRITE_VAR(i, filament_size[2]);
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && !defined (DISABLE_M503) )
+SERIAL_ECHOLNPGM("Scaling factors:");
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR("  M92 X",axis_steps_per_unit[0]);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && !defined (DISABLE_M503) )
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Y",axis_steps_per_unit[1]);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR("  M365 X",axis_scaling[X_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Z",axis_steps_per_unit[2]);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" Y",axis_scaling[Y_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" E",axis_steps_per_unit[3]);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" Z",axis_scaling[Z_AXIS]);
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR("  M203 X", max_feedrate[X_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR("  M203 X",max_feedrate[0]);
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" Y", max_feedrate[Y_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Y",max_feedrate[1] );
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" Z", max_feedrate[Z_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Z", max_feedrate[2] );
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" E", max_feedrate[E_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" E", max_feedrate[3]);
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR("  M201 X" ,max_acceleration_units_per_sq_second[X_AXIS] );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR("  M201 X" ,max_acceleration_units_per_sq_second[0] );
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" Y" , max_acceleration_units_per_sq_second[Y_AXIS] );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Y" , max_acceleration_units_per_sq_second[1] );
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" Z" ,max_acceleration_units_per_sq_second[Z_AXIS] );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Z" ,max_acceleration_units_per_sq_second[2] );
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOPAIR(" E" ,max_acceleration_units_per_sq_second[E_AXIS]);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" E" ,max_acceleration_units_per_sq_second[3]);
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHOLNPGM("Advanced variables: S=Min feedrate (mm/s), T=Min travel feedrate (mm/s), B=minimum segment time (ms), X=maximum XY jerk (mm/s),  Z=maximum Z jerk (mm/s),  E=maximum E jerk (mm/s)");
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOLNPGM("Advanced variables: S=Min feedrate (mm/s), T=Min travel feedrate (mm/s), B=minimum segment time (ms), X=maximum xY jerk (mm/s),  Z=maximum Z jerk (mm/s)");
+#endif
+++++++
+#if defined (upstream) && !defined (DISABLE_M503)
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && !defined (DISABLE_M503) )
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR("  M665 L",delta_diagonal_rod );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR("  M206 X",add_homeing[0] );
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" R" ,delta_radius );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Y" ,add_homeing[1] );
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" S" ,delta_segments_per_second );
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_CHITCHAT)
+SERIAL_ECHOPAIR(" Z" ,add_homeing[2] );
+#endif
+++++++
+#if defined (upstream) && (defined (PIDTEMP) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" I" ,unscalePID_i(Ki));
+#endif
+++++++
+#if defined (akadamson) && (defined (EEPROM_CHITCHAT) && defined (PIDTEMP) )
+SERIAL_ECHOPAIR(" I" ,Ki/PID_dT);
+#endif
+++++++
+#if defined (upstream) && (defined (PIDTEMP) && !defined (DISABLE_M503) )
+SERIAL_ECHOPAIR(" D" ,unscalePID_d(Kd));
+#endif
+++++++
+#if defined (akadamson) && (defined (EEPROM_CHITCHAT) && defined (PIDTEMP) )
+SERIAL_ECHOPAIR(" D" ,Kd*PID_dT);
+#endif
+++++++
+#if defined (upstream) && (defined (PIDTEMP) && !defined (DISABLE_M503) )
+SERIAL_ECHOLN("");
+#endif
+++++++
+#if defined (upstream) && (!defined (DISABLE_M503) && defined (FWRETRACT) )
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && !defined (DISABLE_M503) && defined (FWRETRACT) )
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && (!defined (DISABLE_M503) && defined (FWRETRACT) )
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+reset_acceleration_rates();
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,add_homing);
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,add_homeing);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,endstop_adj);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,delta_radius);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,delta_diagonal_rod);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,delta_segments_per_second);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,zprobe_zoffset);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// do not need to scale PID values as the values in EEPROM are already scaled		
+#endif
+++++++
+#if defined (upstream) && (!defined (DOGLCD) && defined (EEPROM_SETTINGS) )
+int lcd_contrast;
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,lcd_contrast);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,axis_scaling);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,autoretract_enabled);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_length);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_feedrate);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_zlift);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_recover_length);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_recover_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_recover_feedrate);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i, volumetric_enabled);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i, filament_size[0]);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i, filament_size[1]);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 2 && EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i, filament_size[2]);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+calculate_volumetric_multipliers();
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// Call updatePID (similar to when we have processed M301)
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+updatePID();
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+SERIAL_ECHOLNPGM("Stored settings retrieved");
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+SERIAL_ECHOLNPGM("Stored settings retreived:");
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,endstop_adj);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,zprobe_zoffset);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+// do not need to scale PID values as the values in EEPROM are already scaled		
+#endif
+++++++
+#if defined (upstream) && (!defined (DOGLCD) && defined (EEPROM_SETTINGS) )
+int lcd_contrast;
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i,lcd_contrast);
+#endif
+++++++
+#if defined (upstream) && (defined (SCARA) && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i,axis_scaling);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,autoretract_enabled);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_feedrate);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_recover_length_swap);
+#endif
+++++++
+#if defined (upstream) && (defined (EEPROM_SETTINGS) && defined (FWRETRACT) )
+EEPROM_READ_VAR(i,retract_recover_feedrate);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+EEPROM_READ_VAR(i, volumetric_enabled);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i, filament_size[1]);
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 2 && EXTRUDERS > 1 && defined (EEPROM_SETTINGS) )
+EEPROM_READ_VAR(i, filament_size[2]);
+#endif
+++++++
+#if defined (upstream) && defined (EEPROM_SETTINGS)
+calculate_volumetric_multipliers();
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+SERIAL_ECHOLN("Using Default settings:");
+#endif
+++++++
+#if defined (akadamson) && defined (EEPROM_SETTINGS)
+SERIAL_ECHO_START;
+#endif
+++++++
+#if defined (akadamson)
+for (short i=0;i<4;i++) 
+    {
+        axis_steps_per_unit[i]=tmp1[i];  
+        max_feedrate[i]=tmp2[i];  
+        max_acceleration_units_per_sq_second[i]=tmp3[i];
+    }
+#endif
+++++++
+#if defined (upstream)
+// steps per sq second need to be updated to agree with the units per sq second
+#endif
+++++++
+#if defined (upstream)
+add_homing[X_AXIS] = add_homing[Y_AXIS] = add_homing[Z_AXIS] = 0;
+#endif
+++++++
+#if defined (akadamson)
+add_homeing[0] = add_homeing[1] = add_homeing[2] = 0;
+#endif
+++++++
+#if defined (upstream) && defined (DELTA)
+endstop_adj[X_AXIS] = endstop_adj[Y_AXIS] = endstop_adj[Z_AXIS] = 0;
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
+#endif
+++++++
+#if defined (upstream) && defined (DOGLCD)
+lcd_contrast = DEFAULT_LCD_CONTRAST;
+#endif
+++++++
+#if defined (upstream) && defined (PIDTEMP)
+Ki = scalePID_i(DEFAULT_Ki);
+#endif
+++++++
+#if defined (akadamson) && defined (PIDTEMP)
+Ki = (DEFAULT_Ki*PID_dT);
+#endif
+++++++
+#if defined (upstream) && defined (PIDTEMP)
+Kd = scalePID_d(DEFAULT_Kd);
+#endif
+++++++
+#if defined (akadamson) && defined (PIDTEMP)
+Kd = (DEFAULT_Kd/PID_dT);
+#endif
+++++++
+#if defined (upstream) && defined (PIDTEMP)
+// call updatePID (similar to when we have processed M301)
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+autoretract_enabled = false;
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (FWRETRACT) )
+retract_length_swap = RETRACT_LENGTH_SWAP;
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+retract_feedrate = RETRACT_FEEDRATE;
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (FWRETRACT) )
+retract_recover_length_swap = RETRACT_RECOVER_LENGTH_SWAP;
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+retract_recover_feedrate = RETRACT_RECOVER_FEEDRATE;
+#endif
+++++++
+#if defined (upstream)
+volumetric_enabled = false;
+#endif
+++++++
+#if defined (upstream) && EXTRUDERS > 1
+filament_size[1] = DEFAULT_NOMINAL_FILAMENT_DIA;
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 2 && EXTRUDERS > 1 )
+filament_size[2] = DEFAULT_NOMINAL_FILAMENT_DIA;
+#endif
+++++++
+#if defined (upstream)
+calculate_volumetric_multipliers();
+#endif
+++++++
+#if defined (upstream)
+#define EEPROM_VERSION "V13"
+#endif
+++++++
+#if defined (akadamson)
+#define EEPROM_VERSION "V07"
+#endif
+++++++
+
+
+**--**-**--merge: digipot_mcp4451.cpp
+
+
+
+**--**-**--merge: LiquidCrystalRus.cpp
+
+#if defined (upstream)
+#include "LiquidCrystalRus.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
+#include <avr/pgmspace.h>
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include "Arduino.h"
+#else
+  #include "WProgram.h"
+#endif
+
+// it is a Russian alphabet translation
+// except 0401 --> 0xa2 = â, 0451 --> 0xb5
+const PROGMEM uint8_t utf_recode[] = 
+       { 0x41,0xa0,0x42,0xa1,0xe0,0x45,0xa3,0xa4,0xa5,0xa6,0x4b,0xa7,0x4d,0x48,0x4f,
+         0xa8,0x50,0x43,0x54,0xa9,0xaa,0x58,0xe1,0xab,0xac,0xe2,0xad,0xae,0x62,0xaf,0xb0,0xb1,
+         0x61,0xb2,0xb3,0xb4,0xe3,0x65,0xb6,0xb7,0xb8,0xb9,0xba,0xbb,0xbc,0xbd,0x6f,
+         0xbe,0x70,0x63,0xbf,0x79,0xe4,0x78,0xe5,0xc0,0xc1,0xe6,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7
+        };     
+
+// When the display powers up, it is configured as follows:
+//
+// 1. Display clear
+// 2. Function set: 
+//    DL = 1; 8-bit interface data 
+//    N = 0; 1-line display 
+//    F = 0; 5x8 dot character font 
+// 3. Display on/off control: 
+//    D = 0; Display off 
+//    C = 0; Cursor off 
+//    B = 0; Blinking off 
+// 4. Entry mode set: 
+//    I/D = 1; Increment by 1 
+//    S = 0; No shift 
+//
+// Note, however, that resetting the Arduino doesn't reset the LCD, so we
+// can't assume that it's in that state when a sketch starts (and the
+// LiquidCrystal constructor is called).
+// 
+// modified 27 Jul 2011
+// by Ilya V. Danilov http://mk90.ru/
+
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			     uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  init(0, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			     uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  init(0, rs, 255, enable, d0, d1, d2, d3, d4, d5, d6, d7);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+{
+  init(1, rs, rw, enable, d0, d1, d2, d3, 0, 0, 0, 0);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs,  uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+{
+  init(1, rs, 255, enable, d0, d1, d2, d3, 0, 0, 0, 0);
+}
+
+void LiquidCrystalRus::init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t enable,
+			 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			 uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  _rs_pin = rs;
+  _rw_pin = rw;
+  _enable_pin = enable;
+  
+  _data_pins[0] = d0;
+  _data_pins[1] = d1;
+  _data_pins[2] = d2;
+  _data_pins[3] = d3; 
+  _data_pins[4] = d4;
+  _data_pins[5] = d5;
+  _data_pins[6] = d6;
+  _data_pins[7] = d7; 
+
+  pinMode(_rs_pin, OUTPUT);
+  // we can save 1 pin by not using RW. Indicate by passing 255 instead of pin#
+  if (_rw_pin != 255) { 
+    pinMode(_rw_pin, OUTPUT);
+  }
+  pinMode(_enable_pin, OUTPUT);
+  
+  if (fourbitmode)
+    _displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  else 
+    _displayfunction = LCD_8BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  
+  begin(16, 1);  
+}
+
+void LiquidCrystalRus::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
+  if (lines > 1) {
+    _displayfunction |= LCD_2LINE;
+  }
+  _numlines = lines;
+  _currline = 0;
+
+  // for some 1 line displays you can select a 10 pixel high font
+  if ((dotsize != 0) && (lines == 1)) {
+    _displayfunction |= LCD_5x10DOTS;
+  }
+
+  // SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
+  // according to datasheet, we need at least 40ms after power rises above 2.7V
+  // before sending commands. Arduino can turn on way before 4.5V so we'll wait 50
+  delayMicroseconds(50000); 
+  // Now we pull both RS and R/W low to begin commands
+  digitalWrite(_rs_pin, LOW);
+  digitalWrite(_enable_pin, LOW);
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, LOW);
+  }
+  
+  //put the LCD into 4 bit or 8 bit mode
+  if (! (_displayfunction & LCD_8BITMODE)) {
+    // this is according to the Hitachi HD44780 datasheet
+    // figure 24, pg 46
+
+    // we start in 8bit mode, try to set 4 bit mode
+    writeNbits(0x03,4);
+    delayMicroseconds(4500); // wait min 4.1ms
+
+    // second try
+    writeNbits(0x03,4);
+    delayMicroseconds(4500); // wait min 4.1ms
+    
+    // third go!
+    writeNbits(0x03,4); 
+    delayMicroseconds(150);
+
+    // finally, set to 8-bit interface
+    writeNbits(0x02,4); 
+  } else {
+    // this is according to the Hitachi HD44780 datasheet
+    // page 45 figure 23
+
+    // Send function set command sequence
+    command(LCD_FUNCTIONSET | _displayfunction);
+    delayMicroseconds(4500);  // wait more than 4.1ms
+
+    // second try
+    command(LCD_FUNCTIONSET | _displayfunction);
+    delayMicroseconds(150);
+
+    // third go
+    command(LCD_FUNCTIONSET | _displayfunction);
+  }
+
+  // finally, set # lines, font size, etc.
+  command(LCD_FUNCTIONSET | _displayfunction);  
+
+  // turn the display on with no cursor or blinking default
+  _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
+  display();
+
+  // clear it off
+  clear();
+
+  // Initialize to default text direction (for romance languages)
+  _displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+  // set the entry mode
+  command(LCD_ENTRYMODESET | _displaymode);
+
+}
+
+void LiquidCrystalRus::setDRAMModel(uint8_t model) {
+  _dram_model = model;
+}
+
+/********** high level commands, for the user! */
+void LiquidCrystalRus::clear()
+{
+  command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
+  delayMicroseconds(2000);  // this command takes a long time!
+}
+
+void LiquidCrystalRus::home()
+{
+  command(LCD_RETURNHOME);  // set cursor position to zero
+  delayMicroseconds(2000);  // this command takes a long time!
+}
+
+void LiquidCrystalRus::setCursor(uint8_t col, uint8_t row)
+{
+  int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+  if ( row >= _numlines ) {
+    row = _numlines-1;    // we count rows starting w/0
+  }
+  
+  command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
+}
+
+// Turn the display on/off (quickly)
+void LiquidCrystalRus::noDisplay() {
+  _displaycontrol &= ~LCD_DISPLAYON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::display() {
+  _displaycontrol |= LCD_DISPLAYON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// Turns the underline cursor on/off
+void LiquidCrystalRus::noCursor() {
+  _displaycontrol &= ~LCD_CURSORON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::cursor() {
+  _displaycontrol |= LCD_CURSORON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// Turn on and off the blinking cursor
+void LiquidCrystalRus::noBlink() {
+  _displaycontrol &= ~LCD_BLINKON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::blink() {
+  _displaycontrol |= LCD_BLINKON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// These commands scroll the display without changing the RAM
+void LiquidCrystalRus::scrollDisplayLeft(void) {
+  command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+}
+void LiquidCrystalRus::scrollDisplayRight(void) {
+  command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+}
+
+// This is for text that flows Left to Right
+void LiquidCrystalRus::leftToRight(void) {
+  _displaymode |= LCD_ENTRYLEFT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This is for text that flows Right to Left
+void LiquidCrystalRus::rightToLeft(void) {
+  _displaymode &= ~LCD_ENTRYLEFT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This will 'right justify' text from the cursor
+void LiquidCrystalRus::autoscroll(void) {
+  _displaymode |= LCD_ENTRYSHIFTINCREMENT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This will 'left justify' text from the cursor
+void LiquidCrystalRus::noAutoscroll(void) {
+  _displaymode &= ~LCD_ENTRYSHIFTINCREMENT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// Allows us to fill the first 8 CGRAM locations
+// with custom characters
+void LiquidCrystalRus::createChar(uint8_t location, uint8_t charmap[]) {
+  location &= 0x7; // we only have 8 locations 0-7
+  command(LCD_SETCGRAMADDR | (location << 3));
+  for (int i=0; i<8; i++) {
+    write(charmap[i]);
+  }
+}
+
+/*********** mid level commands, for sending data/cmds */
+
+inline void LiquidCrystalRus::command(uint8_t value) {
+  send(value, LOW);
+}
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  size_t LiquidCrystalRus::write(uint8_t value)
+#else
+  void   LiquidCrystalRus::write(uint8_t value)
+#endif
+{
+  uint8_t out_char=value;
+
+  if (_dram_model == LCD_DRAM_WH1601) {  
+    uint8_t ac=recv(LOW) & 0x7f;
+    if (ac>7 && ac<0x14) command(LCD_SETDDRAMADDR | (0x40+ac-8));
+  }
+
+  if (value>=0x80) { // UTF-8 handling
+    if (value >= 0xc0) {
+      utf_hi_char = value - 0xd0;
+    } else {
+      value &= 0x3f;
+      if (!utf_hi_char && (value == 1)) 
+        send(0xa2,HIGH); // â
+      else if ((utf_hi_char == 1) && (value == 0x11)) 
+        send(0xb5,HIGH); // â¦
+      else 
+        send(pgm_read_byte_near(utf_recode + value + (utf_hi_char<<6) - 0x10), HIGH);
+    }    
+  } else send(out_char, HIGH);
+#if defined(ARDUINO) && ARDUINO >= 100
+  return 1; // assume success 
+#endif
+}
+
+/************ low level data pushing commands **********/
+
+// write either command or data, with automatic 4/8-bit selection
+void LiquidCrystalRus::send(uint8_t value, uint8_t mode) {
+  digitalWrite(_rs_pin, mode);
+
+  // if there is a RW pin indicated, set it low to Write
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, LOW);
+  }
+  
+  if (_displayfunction & LCD_8BITMODE) {
+    writeNbits(value,8); 
+  } else {
+    writeNbits(value>>4,4);
+    writeNbits(value,4);
+  }
+}
+
+// read  data, with automatic 4/8-bit selection
+uint8_t LiquidCrystalRus::recv(uint8_t mode) {
+  uint8_t retval;
+  digitalWrite(_rs_pin, mode);
+
+  // if there is a RW pin indicated, set it low to Write
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, HIGH);
+  }
+  
+  if (_displayfunction & LCD_8BITMODE) {
+    retval = readNbits(8); 
+  } else {
+    retval = readNbits(4) << 4;
+    retval |= readNbits(4);
+  }
+  return retval;
+}
+void LiquidCrystalRus::pulseEnable() {
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(1);    
+  digitalWrite(_enable_pin, HIGH);
+  delayMicroseconds(1);    // enable pulse must be >450ns
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(100);   // commands need > 37us to settle
+}
+
+void LiquidCrystalRus::writeNbits(uint8_t value, uint8_t n) {
+  for (int i = 0; i < n; i++) {
+    pinMode(_data_pins[i], OUTPUT);
+    digitalWrite(_data_pins[i], (value >> i) & 0x01);
+  }
+
+  pulseEnable();
+}
+
+uint8_t LiquidCrystalRus::readNbits(uint8_t n) {
+  uint8_t retval=0;
+  for (int i = 0; i < n; i++) {
+    pinMode(_data_pins[i], INPUT);
+  }
+
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(1);    
+  digitalWrite(_enable_pin, HIGH);
+  delayMicroseconds(1);    // enable pulse must be >450ns
+  
+  for (int i = 0; i < n; i++) {
+    retval |= (digitalRead(_data_pins[i]) == HIGH)?(1 << i):0;
+  }
+
+  digitalWrite(_enable_pin, LOW);
+
+  return retval;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif
+++++++
+#if defined (akadamson)
+#include "LiquidCrystalRus.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
+#include <avr/pgmspace.h>
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include "Arduino.h"
+#else
+  #include "WProgram.h"
+#endif
+
+// it is a russian alphabet translation
+// except 0401 --> 0xa2 = â, 0451 --> 0xb5
+const PROGMEM uint8_t utf_recode[] = 
+       { 0x41,0xa0,0x42,0xa1,0xe0,0x45,0xa3,0xa4,0xa5,0xa6,0x4b,0xa7,0x4d,0x48,0x4f,
+         0xa8,0x50,0x43,0x54,0xa9,0xaa,0x58,0xe1,0xab,0xac,0xe2,0xad,0xae,0x62,0xaf,0xb0,0xb1,
+         0x61,0xb2,0xb3,0xb4,0xe3,0x65,0xb6,0xb7,0xb8,0xb9,0xba,0xbb,0xbc,0xbd,0x6f,
+         0xbe,0x70,0x63,0xbf,0x79,0xe4,0x78,0xe5,0xc0,0xc1,0xe6,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7
+        };     
+
+// When the display powers up, it is configured as follows:
+//
+// 1. Display clear
+// 2. Function set: 
+//    DL = 1; 8-bit interface data 
+//    N = 0; 1-line display 
+//    F = 0; 5x8 dot character font 
+// 3. Display on/off control: 
+//    D = 0; Display off 
+//    C = 0; Cursor off 
+//    B = 0; Blinking off 
+// 4. Entry mode set: 
+//    I/D = 1; Increment by 1 
+//    S = 0; No shift 
+//
+// Note, however, that resetting the Arduino doesn't reset the LCD, so we
+// can't assume that its in that state when a sketch starts (and the
+// LiquidCrystal constructor is called).
+// 
+// modified 27 Jul 2011
+// by Ilya V. Danilov http://mk90.ru/
+
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			     uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  init(0, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			     uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  init(0, rs, 255, enable, d0, d1, d2, d3, d4, d5, d6, d7);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+{
+  init(1, rs, rw, enable, d0, d1, d2, d3, 0, 0, 0, 0);
+}
+
+LiquidCrystalRus::LiquidCrystalRus(uint8_t rs,  uint8_t enable,
+			     uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+{
+  init(1, rs, 255, enable, d0, d1, d2, d3, 0, 0, 0, 0);
+}
+
+void LiquidCrystalRus::init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t enable,
+			 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+			 uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+{
+  _rs_pin = rs;
+  _rw_pin = rw;
+  _enable_pin = enable;
+  
+  _data_pins[0] = d0;
+  _data_pins[1] = d1;
+  _data_pins[2] = d2;
+  _data_pins[3] = d3; 
+  _data_pins[4] = d4;
+  _data_pins[5] = d5;
+  _data_pins[6] = d6;
+  _data_pins[7] = d7; 
+
+  pinMode(_rs_pin, OUTPUT);
+  // we can save 1 pin by not using RW. Indicate by passing 255 instead of pin#
+  if (_rw_pin != 255) { 
+    pinMode(_rw_pin, OUTPUT);
+  }
+  pinMode(_enable_pin, OUTPUT);
+  
+  if (fourbitmode)
+    _displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  else 
+    _displayfunction = LCD_8BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  
+  begin(16, 1);  
+}
+
+void LiquidCrystalRus::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
+  if (lines > 1) {
+    _displayfunction |= LCD_2LINE;
+  }
+  _numlines = lines;
+  _currline = 0;
+
+  // for some 1 line displays you can select a 10 pixel high font
+  if ((dotsize != 0) && (lines == 1)) {
+    _displayfunction |= LCD_5x10DOTS;
+  }
+
+  // SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
+  // according to datasheet, we need at least 40ms after power rises above 2.7V
+  // before sending commands. Arduino can turn on way befer 4.5V so we'll wait 50
+  delayMicroseconds(50000); 
+  // Now we pull both RS and R/W low to begin commands
+  digitalWrite(_rs_pin, LOW);
+  digitalWrite(_enable_pin, LOW);
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, LOW);
+  }
+  
+  //put the LCD into 4 bit or 8 bit mode
+  if (! (_displayfunction & LCD_8BITMODE)) {
+    // this is according to the hitachi HD44780 datasheet
+    // figure 24, pg 46
+
+    // we start in 8bit mode, try to set 4 bit mode
+    writeNbits(0x03,4);
+    delayMicroseconds(4500); // wait min 4.1ms
+
+    // second try
+    writeNbits(0x03,4);
+    delayMicroseconds(4500); // wait min 4.1ms
+    
+    // third go!
+    writeNbits(0x03,4); 
+    delayMicroseconds(150);
+
+    // finally, set to 8-bit interface
+    writeNbits(0x02,4); 
+  } else {
+    // this is according to the hitachi HD44780 datasheet
+    // page 45 figure 23
+
+    // Send function set command sequence
+    command(LCD_FUNCTIONSET | _displayfunction);
+    delayMicroseconds(4500);  // wait more than 4.1ms
+
+    // second try
+    command(LCD_FUNCTIONSET | _displayfunction);
+    delayMicroseconds(150);
+
+    // third go
+    command(LCD_FUNCTIONSET | _displayfunction);
+  }
+
+  // finally, set # lines, font size, etc.
+  command(LCD_FUNCTIONSET | _displayfunction);  
+
+  // turn the display on with no cursor or blinking default
+  _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
+  display();
+
+  // clear it off
+  clear();
+
+  // Initialize to default text direction (for romance languages)
+  _displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+  // set the entry mode
+  command(LCD_ENTRYMODESET | _displaymode);
+
+}
+
+void LiquidCrystalRus::setDRAMModel(uint8_t model) {
+  _dram_model = model;
+}
+
+/********** high level commands, for the user! */
+void LiquidCrystalRus::clear()
+{
+  command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
+  delayMicroseconds(2000);  // this command takes a long time!
+}
+
+void LiquidCrystalRus::home()
+{
+  command(LCD_RETURNHOME);  // set cursor position to zero
+  delayMicroseconds(2000);  // this command takes a long time!
+}
+
+void LiquidCrystalRus::setCursor(uint8_t col, uint8_t row)
+{
+  int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+  if ( row >= _numlines ) {
+    row = _numlines-1;    // we count rows starting w/0
+  }
+  
+  command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
+}
+
+// Turn the display on/off (quickly)
+void LiquidCrystalRus::noDisplay() {
+  _displaycontrol &= ~LCD_DISPLAYON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::display() {
+  _displaycontrol |= LCD_DISPLAYON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// Turns the underline cursor on/off
+void LiquidCrystalRus::noCursor() {
+  _displaycontrol &= ~LCD_CURSORON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::cursor() {
+  _displaycontrol |= LCD_CURSORON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// Turn on and off the blinking cursor
+void LiquidCrystalRus::noBlink() {
+  _displaycontrol &= ~LCD_BLINKON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+void LiquidCrystalRus::blink() {
+  _displaycontrol |= LCD_BLINKON;
+  command(LCD_DISPLAYCONTROL | _displaycontrol);
+}
+
+// These commands scroll the display without changing the RAM
+void LiquidCrystalRus::scrollDisplayLeft(void) {
+  command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+}
+void LiquidCrystalRus::scrollDisplayRight(void) {
+  command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+}
+
+// This is for text that flows Left to Right
+void LiquidCrystalRus::leftToRight(void) {
+  _displaymode |= LCD_ENTRYLEFT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This is for text that flows Right to Left
+void LiquidCrystalRus::rightToLeft(void) {
+  _displaymode &= ~LCD_ENTRYLEFT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This will 'right justify' text from the cursor
+void LiquidCrystalRus::autoscroll(void) {
+  _displaymode |= LCD_ENTRYSHIFTINCREMENT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// This will 'left justify' text from the cursor
+void LiquidCrystalRus::noAutoscroll(void) {
+  _displaymode &= ~LCD_ENTRYSHIFTINCREMENT;
+  command(LCD_ENTRYMODESET | _displaymode);
+}
+
+// Allows us to fill the first 8 CGRAM locations
+// with custom characters
+void LiquidCrystalRus::createChar(uint8_t location, uint8_t charmap[]) {
+  location &= 0x7; // we only have 8 locations 0-7
+  command(LCD_SETCGRAMADDR | (location << 3));
+  for (int i=0; i<8; i++) {
+    write(charmap[i]);
+  }
+}
+
+/*********** mid level commands, for sending data/cmds */
+
+inline void LiquidCrystalRus::command(uint8_t value) {
+  send(value, LOW);
+}
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  size_t LiquidCrystalRus::write(uint8_t value)
+#else
+  void   LiquidCrystalRus::write(uint8_t value)
+#endif
+{
+  uint8_t out_char=value;
+
+  if (_dram_model == LCD_DRAM_WH1601) {  
+    uint8_t ac=recv(LOW) & 0x7f;
+    if (ac>7 && ac<0x14) command(LCD_SETDDRAMADDR | (0x40+ac-8));
+  }
+
+  if (value>=0x80) { // UTF-8 handling
+    if (value >= 0xc0) {
+      utf_hi_char = value - 0xd0;
+    } else {
+      value &= 0x3f;
+      if (!utf_hi_char && (value == 1)) 
+        send(0xa2,HIGH); // â
+      else if ((utf_hi_char == 1) && (value == 0x11)) 
+        send(0xb5,HIGH); // â¦
+      else 
+        send(pgm_read_byte_near(utf_recode + value + (utf_hi_char<<6) - 0x10), HIGH);
+    }    
+  } else send(out_char, HIGH);
+#if defined(ARDUINO) && ARDUINO >= 100
+  return 1; // assume sucess 
+#endif
+}
+
+/************ low level data pushing commands **********/
+
+// write either command or data, with automatic 4/8-bit selection
+void LiquidCrystalRus::send(uint8_t value, uint8_t mode) {
+  digitalWrite(_rs_pin, mode);
+
+  // if there is a RW pin indicated, set it low to Write
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, LOW);
+  }
+  
+  if (_displayfunction & LCD_8BITMODE) {
+    writeNbits(value,8); 
+  } else {
+    writeNbits(value>>4,4);
+    writeNbits(value,4);
+  }
+}
+
+// read  data, with automatic 4/8-bit selection
+uint8_t LiquidCrystalRus::recv(uint8_t mode) {
+  uint8_t retval;
+  digitalWrite(_rs_pin, mode);
+
+  // if there is a RW pin indicated, set it low to Write
+  if (_rw_pin != 255) { 
+    digitalWrite(_rw_pin, HIGH);
+  }
+  
+  if (_displayfunction & LCD_8BITMODE) {
+    retval = readNbits(8); 
+  } else {
+    retval = readNbits(4) << 4;
+    retval |= readNbits(4);
+  }
+  return retval;
+}
+void LiquidCrystalRus::pulseEnable() {
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(1);    
+  digitalWrite(_enable_pin, HIGH);
+  delayMicroseconds(1);    // enable pulse must be >450ns
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(100);   // commands need > 37us to settle
+}
+
+void LiquidCrystalRus::writeNbits(uint8_t value, uint8_t n) {
+  for (int i = 0; i < n; i++) {
+    pinMode(_data_pins[i], OUTPUT);
+    digitalWrite(_data_pins[i], (value >> i) & 0x01);
+  }
+
+  pulseEnable();
+}
+
+uint8_t LiquidCrystalRus::readNbits(uint8_t n) {
+  uint8_t retval=0;
+  for (int i = 0; i < n; i++) {
+    pinMode(_data_pins[i], INPUT);
+  }
+
+  digitalWrite(_enable_pin, LOW);
+  delayMicroseconds(1);    
+  digitalWrite(_enable_pin, HIGH);
+  delayMicroseconds(1);    // enable pulse must be >450ns
+  
+  for (int i = 0; i < n; i++) {
+    retval |= (digitalRead(_data_pins[i]) == HIGH)?(1 << i):0;
+  }
+
+  digitalWrite(_enable_pin, LOW);
+
+  return retval;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif
+++++++
+
+
+**--**-**--merge: Marlin_main.cpp
+
+#if defined (upstream)
+//this is dangerous if a mixing of serial and this happens
+#endif
+++++++
+#if defined (akadamson)
+//this is dangerous if a mixing of serial and this happsens
+#endif
+++++++
+#if defined (upstream)
+SERIAL_ECHOPGM(MSG_Enqueing);
+#endif
+++++++
+#if defined (akadamson)
+SERIAL_ECHOPGM("enqueing \"");
+#endif
+++++++
+#if defined (upstream)
+//this is dangerous if a mixing of serial and this happens
+#endif
+++++++
+#if defined (akadamson)
+//this is dangerous if a mixing of serial and this happsens
+#endif
+++++++
+#if defined (upstream)
+SERIAL_ECHOPGM(MSG_Enqueing);
+#endif
+++++++
+#if defined (akadamson)
+SERIAL_ECHOPGM("enqueing \"");
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+SET_INPUT(KILL_PIN);
+#endif
+++++++
+#if defined (akadamson) &&  KILL_PIN>-1 )
+pinMode(KILL_PIN,INPUT);
+#endif
+++++++
+#if defined (upstream) && (defined(PS_ON_PIN) && PS_ON_PIN > -1)
+SET_OUTPUT(PS_ON_PIN);
+#endif
+++++++
+#if defined (upstream) && (defined(PS_DEFAULT_OFF) && (defined(PS_ON_PIN) && PS_ON_PIN > -1 &)
+WRITE(PS_ON_PIN, PS_ON_ASLEEP);
+#endif
+++++++
+#if defined (upstream) && ((defined(PS_ON_PIN) && PS_ON_PIN > -1 && )!defined(PS_DEFAULT_OFF) )
+WRITE(PS_ON_PIN, PS_ON_AWAKE);
+#endif
+++++++
+#if defined (upstream)
+// loads data from EEPROM if available else uses defaults (and resets step acceleration rate)
+#endif
+++++++
+#if defined (akadamson)
+// loads data from EEPROM if available
+#endif
+++++++
+#if defined (upstream)
+servo_init();
+#endif
+++++++
+#if defined (akadamson)
+LCD_INIT;
+#endif
+++++++
+#if defined (upstream)
+lcd_init();
+#endif
+++++++
+#if defined (upstream) && (defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1)
+SET_OUTPUT(CONTROLLERFAN_PIN);
+#endif
+++++++
+#if defined (upstream) && defined (DIGIPOT_I2C)
+digipot_i2c_init();
+#endif
+++++++
+#if defined (upstream) && defined (Z_PROBE_SLED)
+pinMode(SERVO0_PIN, OUTPUT);
+#endif
+++++++
+#if defined (upstream)
+// Z_PROBE_SLED
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+if(card.logging)
+          {
+            process_commands();
+          }
+          else
+          {
+            SERIAL_PROTOCOLLNPGM(MSG_OK);
+          }
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+SERIAL_PROTOCOLLNPGM(MSG_OK);
+#endif
+++++++
+#if defined (upstream)
+lcd_update();
+#endif
+++++++
+#if defined (akadamson)
+LCD_STATUS;
+#endif
+++++++
+#if defined (upstream)
+if (Stopped == true) {
+              SERIAL_ERRORLNPGM(MSG_ERR_STOPPED);
+              LCD_MESSAGEPGM(MSG_STOPPED);
+            }
+#endif
+++++++
+#if defined (upstream)
+//If command was e-stop process now
+#endif
+++++++
+#if defined (upstream)
+if(strcmp(cmdbuffer[bufindw], "M112") == 0)
+          kill();
+#endif
+++++++
+#if defined (upstream)
+//If command was e-stop process now
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+//'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+while( !card.eof()  && buflen < BUFSIZE) {
+    int16_t n=card.get();
+    serial_char = (char)n;
+    if(serial_char == '\n' || 
+       serial_char == '\r' || 
+       (serial_char == ':' && comment_mode == false) || 
+       serial_count >= (MAX_CMD_SIZE - 1)||n==-1) 
+    {
+      if(card.eof()){
+        SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
+        stoptime=millis();
+        char time[30];
+        unsigned long t=(stoptime-starttime)/1000;
+        int sec,min;
+        min=t/60;
+        sec=t%60;
+        sprintf_P(time, PSTR("%i min, %i sec"),min,sec);
+        SERIAL_ECHO_START;
+        SERIAL_ECHOLN(time);
+        LCD_MESSAGE(time);
+        card.printingHasFinished();
+        card.checkautostart(true);
+        
+      }
+      if(!serial_count)
+      {
+        comment_mode = false; //for new command
+        return; //if empty line
+      }
+      cmdbuffer[bufindw][serial_count] = 0; //terminate string
+//      if(!comment_mode){
+        fromsd[bufindw] = true;
+        buflen += 1;
+        bufindw = (bufindw + 1)%BUFSIZE;
+//      }     
+      comment_mode = false; //for new command
+      serial_count = 0; //clear buffer
+    }
+    else
+    {
+      if(serial_char == ';') comment_mode = true;
+      if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
+    }
+  }
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+// if it occurs, stop_buffering is triggered and the buffer is ran dry.
+#endif
+++++++
+#if defined (upstream) && defined (DUAL_X_CARRIAGE)
+if (axis == X_AXIS) {
+    if (active_extruder != 0) {
+      current_position[X_AXIS] = x_home_pos(active_extruder);
+      min_pos[X_AXIS] =          X2_MIN_POS;
+      max_pos[X_AXIS] =          max(extruder_offset[X_AXIS][1], X2_MAX_POS);
+      return;
+    }
+    else if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0) {
+      current_position[X_AXIS] = base_home_pos(X_AXIS) + add_homing[X_AXIS];
+      min_pos[X_AXIS] =          base_min_pos(X_AXIS) + add_homing[X_AXIS];
+      max_pos[X_AXIS] =          min(base_max_pos(X_AXIS) + add_homing[X_AXIS],
+                                  max(extruder_offset[X_AXIS][1], X2_MAX_POS) - duplicate_extruder_x_offset);
+      return;
+    }
+  }
+#endif
+++++++
+#if defined (akadamson)
+current_position[axis] = base_home_pos(axis) + add_homeing[axis];
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+float homeposition[3];
+#endif
+++++++
+#if defined (akadamson)
+min_pos[axis] =          base_min_pos(axis) + add_homeing[axis];
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+char i;
+#endif
+++++++
+#if defined (akadamson)
+max_pos[axis] =          base_max_pos(axis) + add_homeing[axis];
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+if (axis < 2)
+   {
+   
+     for (i=0; i<3; i++)
+     {
+        homeposition[i] = base_home_pos(i); 
+     }  
+	// SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
+   //  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
+   // Works out real Homeposition angles using inverse kinematics, 
+   // and calculates homing offset using forward kinematics
+     calculate_delta(homeposition);
+     
+    // SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+     
+     for (i=0; i<2; i++)
+     {
+        delta[i] -= add_homing[i];
+     } 
+     
+    // SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);
+	// SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);
+    // SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+      
+     calculate_SCARA_forward_Transform(delta);
+     
+    // SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);
+     
+    current_position[axis] = delta[axis];
+    
+    // SCARA home positions are based on configuration since the actual limits are determined by the 
+    // inverse kinematic transform.
+    min_pos[axis] =          base_min_pos(axis); // + (delta[axis] - base_home_pos(axis));
+    max_pos[axis] =          base_max_pos(axis); // + (delta[axis] - base_home_pos(axis));
+   } 
+   else
+   {
+      current_position[axis] = base_home_pos(axis) + add_homing[axis];
+      min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
+      max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
+   }
+#endif
+++++++
+#if defined (upstream) && !defined (SCARA)
+current_position[axis] = base_home_pos(axis) + add_homing[axis];
+#endif
+++++++
+#if defined (akadamson)
+return;
+#endif
+++++++
+#if defined (akadamson)
+return;
+#endif
+++++++
+#if defined (upstream)
+break;
+#endif
+++++++
+#if defined (upstream)
+break;
+#endif
+++++++
+#if defined (upstream) && EXTRUDERS > 1
+retracted_swap[active_extruder]=(code_seen('S') && code_value_long() == 1);
+#endif
+++++++
+#if defined (akadamson)
+if(!retracted) 
+      {
+        destination[X_AXIS]=current_position[X_AXIS];
+        destination[Y_AXIS]=current_position[Y_AXIS];
+        destination[Z_AXIS]=current_position[Z_AXIS]; 
+        current_position[Z_AXIS]+=-retract_zlift;
+        destination[E_AXIS]=current_position[E_AXIS]-retract_length; 
+        feedrate=retract_feedrate;
+        retracted=true;
+        prepare_move();
+      }
+#endif
+++++++
+#if defined (upstream) && EXTRUDERS > 1
+// checks for swap retract argument
+#endif
+++++++
+#if defined (upstream) && EXTRUDERS > 1
+retract(true,retracted_swap[active_extruder]);
+#endif
+++++++
+#if defined (upstream) && !EXTRUDERS > 1
+retract(true);
+#endif
+++++++
+#if defined (upstream) && !EXTRUDERS > 1
+retract(true);
+#endif
+++++++
+#if defined (upstream)
+
+#endif
+++++++
+#if defined (upstream)
+
+#endif
+++++++
+#if defined (upstream)
+
+#endif
+++++++
+#if defined (upstream)
+
+#endif
+++++++
+#if defined (upstream)
+
+#endif
+:#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+if (i == X_AXIS || i == Y_AXIS) {
+                	current_position[i] = code_value();  
+		}
+		else {
+                current_position[i] = code_value()+add_homing[i];  
+            	}
+#endif
+++++++
+#if defined (akadamson)
+current_position[i] = code_value()+add_homeing[i];
+#endif
+++++++
+#if defined (upstream) && !defined (SCARA)
+current_position[i] = code_value()+add_homing[i];
+#endif
+++++++
+#if defined (upstream) && !defined (SCARA)
+current_position[i] = code_value()+add_homing[i];
+#endif
+++++++
+#if defined (upstream)
+boolean make_move = false;
+#endif
+++++++
+#if defined (akadamson)
+active_extruder = tmp_extruder;
+#endif
+++++++
+#if defined (upstream)
+if(code_seen('F')) {
+        make_move = true;
+        next_feedrate = code_value();
+        if(next_feedrate > 0.0) {
+          feedrate = next_feedrate;
+        }
+      }
+#endif
+++++++
+#if defined (akadamson) && defined (FWRETRACT)
+if(autoretract_enabled)
+  if( !(seen[X_AXIS] || seen[Y_AXIS] || seen[Z_AXIS]) && seen[E_AXIS])
+  {
+    float echange=destination[E_AXIS]-current_position[E_AXIS];
+    if(echange<-MIN_RETRACT) //retract
+    {
+      if(!retracted) 
+      {
+      
+      destination[Z_AXIS]+=retract_zlift; //not sure why chaninging current_position negatively does not work.
+      //if slicer retracted by echange=-1mm and you want to retract 3mm, corrrectede=-2mm additionally
+      float correctede=-echange-retract_length;
+      //to generate the additional steps, not the destination is changed, but inversely the current position
+      current_position[E_AXIS]+=-correctede; 
+      feedrate=retract_feedrate;
+      retracted=true;
+      }
+      
+    }
+    else 
+      if(echange>MIN_RETRACT) //retract_recover
+    {
+      if(retracted) 
+      {
+      //current_position[Z_AXIS]+=-retract_zlift;
+      //if slicer retracted_recovered by echange=+1mm and you want to retract_recover 3mm, corrrectede=2mm additionally
+      float correctede=-echange+1*retract_length+retract_recover_length; //total unretract=retract_length+retract_recover_length[surplus]
+      current_position[E_AXIS]+=correctede; //to generate the additional steps, not the destination is changed, but inversely the current position
+      feedrate=retract_recover_feedrate;
+      retracted=false;
+      }
+    }
+    
+  }
+#endif
+++++++
+#if defined (akadamson)
+//FWRETRACT
+#endif
+++++++
+#if defined (upstream)
+float negative_z_offset = 0;
+#endif
+++++++
+#if defined (akadamson)
+if (target[Z_AXIS] < min_pos[Z_AXIS]) target[Z_AXIS] = min_pos[Z_AXIS];
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+if (Z_PROBE_OFFSET_FROM_EXTRUDER < 0) negative_z_offset = negative_z_offset + Z_PROBE_OFFSET_FROM_EXTRUDER;
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+if (add_homing[Z_AXIS] < 0) negative_z_offset = negative_z_offset + add_homing[Z_AXIS];
+#endif
+++++++
+#if defined (upstream)
+if (target[Z_AXIS] < min_pos[Z_AXIS]+negative_z_offset) target[Z_AXIS] = min_pos[Z_AXIS]+negative_z_offset;
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+if (Z_PROBE_OFFSET_FROM_EXTRUDER < 0) negative_z_offset = negative_z_offset + Z_PROBE_OFFSET_FROM_EXTRUDER;
+#endif
+++++++
+#if defined (upstream)
+if (target[Z_AXIS] < min_pos[Z_AXIS]+negative_z_offset) target[Z_AXIS] = min_pos[Z_AXIS]+negative_z_offset;
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+//for now same as delta-code
+#endif
+++++++
+#if defined (upstream)
+// SCARA
+#endif
+++++++
+#if defined (upstream) && defined (DELTA)
+float difference[NUM_AXIS];
+#endif
+++++++
+#if defined (upstream)
+// DELTA
+#endif
+++++++
+#if defined (upstream) && defined (DUAL_X_CARRIAGE)
+if (active_extruder_parked)
+  {
+    if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && active_extruder == 0)
+    {
+      // move duplicate extruder into correct duplication position.
+      plan_set_position(inactive_extruder_x_pos, current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      plan_buffer_line(current_position[X_AXIS] + duplicate_extruder_x_offset, current_position[Y_AXIS], current_position[Z_AXIS],
+          current_position[E_AXIS], max_feedrate[X_AXIS], 1);
+      plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      st_synchronize();
+      extruder_duplication_enabled = true;
+      active_extruder_parked = false;
+    }
+    else if (dual_x_carriage_mode == DXC_AUTO_PARK_MODE) // handle unparking of head
+    {
+      if (current_position[E_AXIS] == destination[E_AXIS])
+      {
+        // this is a travel move - skit it but keep track of current position (so that it can later
+        // be used as start of first non-travel move)
+        if (delayed_move_time != 0xFFFFFFFFUL)
+        {
+          memcpy(current_position, destination, sizeof(current_position));
+          if (destination[Z_AXIS] > raised_parked_position[Z_AXIS])
+            raised_parked_position[Z_AXIS] = destination[Z_AXIS];
+          delayed_move_time = millis();
+          return;
+        }
+      }
+      delayed_move_time = 0;
+      // unpark extruder: 1) raise, 2) move into starting XY position, 3) lower
+      plan_buffer_line(raised_parked_position[X_AXIS], raised_parked_position[Y_AXIS], raised_parked_position[Z_AXIS],    current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], raised_parked_position[Z_AXIS],
+          current_position[E_AXIS], min(max_feedrate[X_AXIS],max_feedrate[Y_AXIS]), active_extruder);
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS],
+          current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+      active_extruder_parked = false;
+    }
+  }
+#endif
+++++++
+#if defined (upstream)
+//DUAL_X_CARRIAGE
+#endif
+++++++
+#if defined (upstream)
+// !(DELTA || SCARA)
+#endif
+++++++
+#if defined (upstream) && (defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1)
+if ((millis() - lastMotor) >= (CONTROLLERFAN_SECS*1000UL) || lastMotor == 0) //If the last time any driver was enabled, is longer since than CONTROLLERSEC...
+    {
+        digitalWrite(CONTROLLERFAN_PIN, 0);
+        analogWrite(CONTROLLERFAN_PIN, 0);
+    }
+    else
+    {
+        // allows digital or PWM fan output to be used (see M42 handling)
+        digitalWrite(CONTROLLERFAN_PIN, CONTROLLERFAN_SPEED);
+        analogWrite(CONTROLLERFAN_PIN, CONTROLLERFAN_SPEED);
+    }
+#endif
+++++++
+#if defined (akadamson) && defined (CONTROLLERFAN_PIN)
+if ((millis() - lastMotor) >= (CONTROLLERFAN_SEC*1000UL) || lastMotor == 0) //If the last time any driver was enabled, is longer since than CONTROLLERSEC...   
+    {
+      WRITE(CONTROLLERFAN_PIN, LOW); //... turn the fan off
+    }
+    else
+    {
+      WRITE(CONTROLLERFAN_PIN, HIGH); //... turn the fan on
+    }
+#endif
+++++++
+#if defined (upstream)
+(bool ignore_stepper_queue/*=false*/)
+#endif
+++++++
+#if defined (akadamson)
+()
+#endif
+++++++
+#if defined (upstream)
+//default argument set in Marlin.h
+#endif
+++++++
+#if defined (upstream)
+(blocks_queued() == false && ignore_stepper_queue == false)
+#endif
+++++++
+#if defined (akadamson)
+(blocks_queued() == false)
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+
+       killCount++;
+    
+
+#endif
+++++++
+#if defined (akadamson) &&  KILL_PIN>-1 )kill();
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+else if (killCount > 0)
+    {
+       killCount--;
+    }
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+else if (killCount > 0)
+    {
+       killCount--;
+    }
+#endif
+++++++
+#if defined (upstream) && defined (EXTRUDER_RUNOUT_PREVENT)
+plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS],
+                      destination[E_AXIS]+EXTRUDER_RUNOUT_EXTRUDE*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS],
+                      EXTRUDER_RUNOUT_SPEED/60.*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], active_extruder);
+#endif
+++++++
+#if defined (akadamson) && defined (EXTRUDER_RUNOUT_PREVENT)
+plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], 
+                      current_position[E_AXIS]+EXTRUDER_RUNOUT_EXTRUDE*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], 
+                      EXTRUDER_RUNOUT_SPEED/60.*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], active_extruder);
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+static int killCount = 0;
+#endif
+++++++
+#if defined (upstream) && (defined(HOME_PIN) && HOME_PIN > -1)
+static int homeDebounceCount = 0;
+#endif
+++++++
+#if defined (upstream)
+if(buflen < (BUFSIZE-1))
+    get_command();
+#endif
+++++++
+#if defined (upstream) && defined (CHDK)
+//Check if pin should be set to LOW after M240 set it to HIGH
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+// Check if the kill button was pressed and wait just in case it was an accidental
+#endif
+++++++
+#if defined (upstream) && (defined(KILL_PIN) && KILL_PIN > -1)
+// Exceeded threshold and we can confirm that it was not accidental
+#endif
+++++++
+#if defined (upstream) && (defined(HOME_PIN) && HOME_PIN > -1)
+// Check to see if we have to home, use poor man's debouncer
+#endif
+++++++
+#if defined (upstream) && defined(DUAL_X_CARRIAGE)
+// handle delayed move timeout
+#endif
+++++++
+#if defined (upstream) && defined (TEMP_STAT_LEDS)
+handle_status_leds();
+#endif
+++++++
+#if defined (upstream) && (defined(PS_ON_PIN) && PS_ON_PIN > -1)
+pinMode(PS_ON_PIN,INPUT);
+#endif
+++++++
+#if defined (akadamson)
+if(PS_ON_PIN > -1) pinMode(PS_ON_PIN,INPUT);
+#endif
+++++++
+#if defined (upstream)
+// FMC small patch to update the LCD before ending
+#endif
+++++++
+#if defined (upstream)
+case 218:
+          SERIAL_ECHO(MSG_M218_INVALID_EXTRUDER);
+          break;
+        
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+float x_tmp, y_tmp, z_tmp, real_z;
+#endif
+++++++
+#if defined (upstream) && defined (DELTA)
+void recalc_delta_settings(float radius, float diagonal_rod)
+{
+	 delta_tower1_x= -SIN_60*radius; // front left tower
+	 delta_tower1_y= -COS_60*radius;	   
+	 delta_tower2_x=  SIN_60*radius; // front right tower
+	 delta_tower2_y= -COS_60*radius;	   
+	 delta_tower3_x= 0.0;                  // back middle tower
+	 delta_tower3_y= radius;
+	 delta_diagonal_rod_2= sq(diagonal_rod);
+}
+#endif
+++++++
+#if defined (upstream) && (defined(FAN_PIN) && CONTROLLERFAN_PIN == FAN_PIN && (defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1 &)
+#error "You cannot set CONTROLLERFAN_PIN equal to FAN_PIN"
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+void calculate_SCARA_forward_Transform(float f_scara[3])
+{
+  // Perform forward kinematics, and place results in delta[3]
+  // The maths and first version has been done by QHARLEY . Integrated into masterbranch 06/2014 and slightly restructured by Joachim Cerny in June 2014
+  
+  float x_sin, x_cos, y_sin, y_cos;
+  
+    //SERIAL_ECHOPGM("f_delta x="); SERIAL_ECHO(f_scara[X_AXIS]);
+    //SERIAL_ECHOPGM(" y="); SERIAL_ECHO(f_scara[Y_AXIS]);
+  
+    x_sin = sin(f_scara[X_AXIS]/SCARA_RAD2DEG) * Linkage_1;
+    x_cos = cos(f_scara[X_AXIS]/SCARA_RAD2DEG) * Linkage_1;
+    y_sin = sin(f_scara[Y_AXIS]/SCARA_RAD2DEG) * Linkage_2;
+    y_cos = cos(f_scara[Y_AXIS]/SCARA_RAD2DEG) * Linkage_2;
+   
+  //  SERIAL_ECHOPGM(" x_sin="); SERIAL_ECHO(x_sin);
+  //  SERIAL_ECHOPGM(" x_cos="); SERIAL_ECHO(x_cos);
+  //  SERIAL_ECHOPGM(" y_sin="); SERIAL_ECHO(y_sin);
+  //  SERIAL_ECHOPGM(" y_cos="); SERIAL_ECHOLN(y_cos);
+  
+    delta[X_AXIS] = x_cos + y_cos + SCARA_offset_x;  //theta
+    delta[Y_AXIS] = x_sin + y_sin + SCARA_offset_y;  //theta+phi
+	
+    //SERIAL_ECHOPGM(" delta[X_AXIS]="); SERIAL_ECHO(delta[X_AXIS]);
+    //SERIAL_ECHOPGM(" delta[Y_AXIS]="); SERIAL_ECHOLN(delta[Y_AXIS]);
+}
+#endif
+++++++
+#if defined (upstream) && defined (TEMP_STAT_LEDS)
+static bool blue_led = false;
+#endif
+++++++
+#if defined (upstream)
+float calculate_volumetric_multiplier(float diameter) {
+	float area = .0;
+	float radius = .0;
+
+	radius = diameter * .5;
+	if (! volumetric_enabled || radius == 0) {
+		area = 1;
+	}
+	else {
+		area = M_PI * pow(radius, 2);
+	}
+
+	return 1.0 / area;
+}
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+#include "vector_3.h"
+#endif
+++++++
+#if defined (upstream) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) )
+#include "qr_solve.h"
+#endif
+++++++
+#if defined (upstream)
+// ENABLE_AUTO_BED_LEVELING
+#endif
+++++++
+#if defined (upstream)
+#include "math.h"
+#endif
+++++++
+#if defined (upstream) && defined (BLINKM)
+#include "BlinkM.h"
+#endif
+++++++
+#if defined (upstream) && NUM_SERVOS > 0
+#include "Servo.h"
+#endif
+++++++
+#if defined (upstream)
+#define VERSION_STRING  "1.0.2"
+#endif
+++++++
+#if defined (akadamson)
+#define VERSION_STRING  "1.0.0"
+#endif
+++++++
+#if defined (upstream)
+// look here for descriptions of G-codes: http://linuxcnc.org/handbook/gcode/g-code.html
+#endif
+++++++
+#if defined (akadamson)
+// look here for descriptions of gcodes: http://linuxcnc.org/handbook/gcode/g-code.html
+#endif
+++++++
+#if defined (upstream)
+// G29 - Detailed Z-Probe, probes the bed at 3 or more points.  Will fail if you haven't homed yet.
+#endif
+++++++
+#if defined (upstream)
+// G92 - Set current position to coordinates given
+#endif
+++++++
+#if defined (akadamson)
+// G92 - Set current position to cordinates given
+#endif
+++++++
+#if defined (upstream)
+// M Codes
+#endif
+++++++
+#if defined (akadamson)
+//RepRap M Codes
+#endif
+++++++
+#if defined (akadamson)
+// M104 - Set extruder target temp
+#endif
+++++++
+#if defined (upstream)
+// M32  - Select file and start SD print (Can be used _while_ printing from SD card files):
+#endif
+++++++
+#if defined (akadamson)
+// M42  - Change pin status via gcode
+#endif
+++++++
+#if defined (upstream)
+//        syntax "M32 /path/filename#", or "M32 S<startpos bytes> !filename#"
+#endif
+++++++
+#if defined (upstream)
+// M104 - Set extruder target temp
+#endif
+++++++
+#if defined (upstream)
+// M126 - Solenoid Air Valve Open (BariCUDA support by jmil)
+#endif
+++++++
+#if defined (upstream)
+// M150 - Set BlinkM Color Output R: Red<0-255> U(!): Green<0-255> B: Blue<0-255> over i2c, G for green does not work.
+#endif
+++++++
+#if defined (akadamson)
+// M190 - Wait for bed current temp to reach target temp.
+#endif
+++++++
+#if defined (upstream)
+// M190 - Sxxx Wait for bed current temp to reach target temp. Waits only when heating
+#endif
+++++++
+#if defined (akadamson)
+// M200 - Set filament diameter
+#endif
+++++++
+#if defined (upstream)
+//        Rxxx Wait for bed current temp to reach target temp. Waits when heating and cooling
+#endif
+++++++
+#if defined (upstream)
+// M204 - Set default acceleration: S normal moves T filament only moves (M204 S3000 T7000) in mm/sec^2  also sets minimum segment time in ms (B20000) to prevent buffer under-runs and M20 minimum feedrate
+#endif
+++++++
+#if defined (akadamson)
+// M204 - Set default acceleration: S normal moves T filament only moves (M204 S3000 T7000) im mm/sec^2  also sets minimum segment time in ms (B20000) to prevent buffer underruns and M20 minimum feedrate
+#endif
+++++++
+#if defined (upstream)
+// M206 - set additional homing offset
+#endif
+++++++
+#if defined (akadamson)
+// M206 - set additional homeing offset
+#endif
+++++++
+#if defined (upstream)
+// M207 - set retract length S[positive mm] F[feedrate mm/min] Z[additional zlift/hop], stays in mm regardless of M200 setting
+#endif
+++++++
+#if defined (akadamson)
+// M207 - set retract length S[positive mm] F[feedrate mm/sec] Z[additional zlift/hop]
+#endif
+++++++
+#if defined (upstream)
+// M218 - set hotend offset (in mm): T<extruder_number> X<offset_on_X> Y<offset_on_Y>
+#endif
+++++++
+#if defined (upstream)
+// M226 P<pin number> S<pin state>- Wait until the specified pin reaches the state required
+#endif
+++++++
+#if defined (upstream)
+// M250 - Set LCD contrast C<contrast value> (value 0..63)
+#endif
+++++++
+#if defined (upstream)
+// M302 - Allow cold extrudes, or set the minimum extrude S<temperature>.
+#endif
+++++++
+#if defined (akadamson)
+// M302 - Allow cold extrudes
+#endif
+++++++
+#if defined (upstream)
+// M401 - Lower z-probe if present
+#endif
+++++++
+#if defined (akadamson)
+// M500 - stores paramters in EEPROM
+#endif
+++++++
+#if defined (upstream)
+// M402 - Raise z-probe if present
+#endif
+++++++
+#if defined (upstream)
+// M503 - print the current settings (from memory not from EEPROM)
+#endif
+++++++
+#if defined (akadamson)
+// M503 - print the current settings (from memory not from eeprom)
+#endif
+++++++
+#if defined (upstream)
+// M540 - Use S[0|1] to enable or disable the stop SD card print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+#endif
+++++++
+#if defined (upstream)
+// ************ SCARA Specific - This can change to suit future G-code regulations
+#endif
+++++++
+#if defined (upstream)
+int feedmultiply=100;
+#endif
+++++++
+#if defined (akadamson)
+volatile int feedmultiply=100;
+#endif
+++++++
+#if defined (upstream)
+int extrudemultiply=100;
+#endif
+++++++
+#if defined (akadamson)
+volatile bool feedmultiplychanged=false;
+#endif
+++++++
+#if defined (upstream)
+int extruder_multiply[EXTRUDERS] = {100
+  #if EXTRUDERS > 1
+    , 100
+    #if EXTRUDERS > 2
+      , 100
+    #endif
+  #endif
+};
+#endif
+++++++
+#if defined (upstream)
+float add_homing[3]={0,0,0};
+#endif
+++++++
+#if defined (akadamson)
+float add_homeing[3]={0,0,0};
+#endif
+++++++
+#if defined (upstream) && defined (DELTA)
+float endstop_adj[3]={0,0,0};
+#endif
+++++++
+#if defined (upstream)
+bool axis_known_position[3] = {false, false, false};
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && !defined (DUAL_X_CARRIAGE) )
+#define NUM_EXTRUDER_OFFSETS 2
+#endif
+++++++
+#if defined (upstream) && (EXTRUDERS > 1 && defined (DUAL_X_CARRIAGE) )
+#define NUM_EXTRUDER_OFFSETS 3
+#endif
+++++++
+#if defined (upstream) && EXTRUDERS > 1
+float extruder_offset[NUM_EXTRUDER_OFFSETS][EXTRUDERS] = {
+#if defined(EXTRUDER_OFFSET_X) && defined(EXTRUDER_OFFSET_Y)
+  EXTRUDER_OFFSET_X, EXTRUDER_OFFSET_Y
+#endif
+};
+#endif
+++++++
+#if defined (upstream)
+int fanSpeed=0;
+#endif
+++++++
+#if defined (akadamson)
+unsigned char FanSpeed=0;
+#endif
+++++++
+#if defined (upstream) && defined (SERVO_ENDSTOPS)
+int servo_endstops[] = SERVO_ENDSTOPS;
+#endif
+++++++
+#if defined (akadamson) && defined (FWRETRACT)
+bool autoretract_enabled=true;
+#endif
+++++++
+#if defined (upstream) && defined (SERVO_ENDSTOPS)
+int servo_endstop_angles[] = SERVO_ENDSTOP_ANGLES;
+#endif
+++++++
+#if defined (akadamson) && defined (FWRETRACT)
+bool retracted=false;
+#endif
+++++++
+#if defined (upstream) && defined (BARICUDA)
+int ValvePressure=0;
+#endif
+++++++
+#if defined (akadamson) && defined (FWRETRACT)
+float retract_length=3, retract_feedrate=17*60, retract_zlift=0.8;
+#endif
+++++++
+#if defined (upstream) && defined (BARICUDA)
+int EtoPPressure=0;
+#endif
+++++++
+#if defined (akadamson) && defined (FWRETRACT)
+float retract_recover_length=0, retract_recover_feedrate=8*60;
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+bool autoretract_enabled=false;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTIPANEL) && defined (PS_DEFAULT_OFF) )
+bool powersupply = false;
+#endif
+++++++
+#if defined (upstream) && (!defined (PS_DEFAULT_OFF) && defined (ULTIPANEL) )
+bool powersupply = true;
+#endif
+++++++
+#if defined (upstream) && defined (DELTA)
+float delta[3] = {0.0, 0.0, 0.0};
+#endif
+++++++
+#if defined (upstream) && defined (SCARA)
+// Build size scaling
+#endif
+++++++
+#if defined (upstream)
+bool cancel_heatup = false ;
+#endif
+++++++
+#if defined (upstream) && defined (FILAMENT_SENSOR)
+//Variables for Filament Sensor input 
+#endif
+++++++
+#if defined (upstream)
+const char errormagic[] PROGMEM = "Error:";
+#endif
+++++++
+#if defined (upstream)
+//=============================Private Variables=============================
+#endif
+++++++
+#if defined (akadamson)
+//=============================private variables=============================
+#endif
+++++++
+#if defined (upstream) && !defined (DELTA)
+static float delta[3] = {0.0, 0.0, 0.0};
+#endif
+++++++
+#if defined (upstream)
+// just a pointer to find chars in the command string like X, Y, Z, E, etc
+#endif
+++++++
+#if defined (akadamson)
+// just a pointer to find chars in the cmd string like X, Y, Z, E, etc
+#endif
+++++++
+#if defined (upstream) && NUM_SERVOS > 0
+Servo servos[NUM_SERVOS];
+#endif
+++++++
+#if defined (upstream)
+bool CooldownNoWait = true;
+#endif
+++++++
+#if defined (upstream) && defined (CHDK)
+unsigned long chdkHigh = 0;
+#endif
+++++++
+#if defined (upstream)
+//=============================Routines======================================
+#endif
+++++++
+#if defined (akadamson)
+//=============================ROUTINES=============================
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+#include "SdFatUtil.h"
+#endif
+++++++
+#if defined (upstream)
+//!SDSUPPORT
+#endif
+++++++
+#if defined (upstream)
+// Set home pin
+#endif
+++++++
+#if defined (upstream)
+void servo_init()
+{
+  #if (NUM_SERVOS >= 1) && defined(SERVO0_PIN) && (SERVO0_PIN > -1)
+    servos[0].attach(SERVO0_PIN);
+  #endif
+  #if (NUM_SERVOS >= 2) && defined(SERVO1_PIN) && (SERVO1_PIN > -1)
+    servos[1].attach(SERVO1_PIN);
+  #endif
+  #if (NUM_SERVOS >= 3) && defined(SERVO2_PIN) && (SERVO2_PIN > -1)
+    servos[2].attach(SERVO2_PIN);
+  #endif
+  #if (NUM_SERVOS >= 4) && defined(SERVO3_PIN) && (SERVO3_PIN > -1)
+    servos[3].attach(SERVO3_PIN);
+  #endif
+  #if (NUM_SERVOS >= 5)
+    #error "TODO: enter initalisation code for more servos"
+  #endif
+
+  // Set position of Servo Endstops that are defined
+  #ifdef SERVO_ENDSTOPS
+  for(int8_t i = 0; i < 3; i++)
+  {
+    if(servo_endstops[i] > -1) {
+      servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
+    }
+  }
+  #endif
+
+  #if defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0)
+  delay(PROBE_SERVO_DEACTIVATION_DELAY);
+  servos[servo_endstops[Z_AXIS]].detach();
+  #endif
+}
+#endif
+++++++
+#if defined (upstream) && (defined (DUAL_X_CARRIAGE) && (EXTRUDERS == 1 || defined(COREXY) \
+      || !defined(X2_ENABLE_PIN) || !defined(X2_STEP_PIN) || !defined(X2_DIR_PIN) \
+      || !defined(X2_HOME_POS) || !defined(X2_MIN_POS) || !defined(X2_MAX_POS) \
+      || !defined(X_MAX_PIN) || X_MAX_PIN < 0 &)
+#error "Missing or invalid definitions for DUAL_X_CARRIAGE mode."
+#endif
+++++++
+#if defined (upstream) && (defined (DUAL_X_CARRIAGE) && (X_HOME_DIR != -1 || X2_HOME_DIR != 1 &)
+#error "Please use canonical x-carriage assignment"
+#endif
+++++++
+#if defined (upstream) && defined (DUAL_X_CARRIAGE)
+#define DXC_FULL_CONTROL_MODE 0
+#endif
+++++++
+#if defined (upstream)
+//DUAL_X_CARRIAGE
+#endif
+++++++
+#if defined (upstream) && (defined (ENABLE_AUTO_BED_LEVELING) && defined (AUTO_BED_LEVELING_GRID) )
+static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
+{
+    vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
+    planeNormal.debug("planeNormal");
+    plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
+    //bedLevel.debug("bedLevel");
+
+    //plan_bed_level_matrix.debug("bed level before");
+    //vector_3 uncorrected_position = plan_get_position_mm();
+    //uncorrected_position.debug("position before");
+
+    vector_3 corrected_position = plan_get_position();
+//    corrected_position.debug("position after");
+    current_position[X_AXIS] = corrected_position.x;
+    current_position[Y_AXIS] = corrected_position.y;
+    current_position[Z_AXIS] = corrected_position.z;
+
+    // put the bed at 0 so we don't go below it.
+    current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
+
+    plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+}
+#endif
+++++++
+#if defined (upstream) && (!defined (AUTO_BED_LEVELING_GRID) && defined (ENABLE_AUTO_BED_LEVELING) )
+// not AUTO_BED_LEVELING_GRID
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+// AUTO_BED_LEVELING_GRID
+#endif
+++++++
+#if defined (upstream)
+// #ifdef ENABLE_AUTO_BED_LEVELING
+#endif
+++++++
+#if defined (upstream)
+void refresh_cmd_timeout(void)
+{
+  previous_millis_cmd = millis();
+}
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+void retract(bool retracting, bool swapretract = false) {
+    if(retracting && !retracted[active_extruder]) {
+      destination[X_AXIS]=current_position[X_AXIS];
+      destination[Y_AXIS]=current_position[Y_AXIS];
+      destination[Z_AXIS]=current_position[Z_AXIS];
+      destination[E_AXIS]=current_position[E_AXIS];
+      if (swapretract) {
+        current_position[E_AXIS]+=retract_length_swap/volumetric_multiplier[active_extruder];
+      } else {
+        current_position[E_AXIS]+=retract_length/volumetric_multiplier[active_extruder];
+      }
+      plan_set_e_position(current_position[E_AXIS]);
+      float oldFeedrate = feedrate;
+      feedrate=retract_feedrate*60;
+      retracted[active_extruder]=true;
+      prepare_move();
+      current_position[Z_AXIS]-=retract_zlift;
+#ifdef DELTA
+      calculate_delta(current_position); // change cartesian kinematic to  delta kinematic;
+      plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
+#else
+      plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+      prepare_move();
+      feedrate = oldFeedrate;
+    } else if(!retracting && retracted[active_extruder]) {
+      destination[X_AXIS]=current_position[X_AXIS];
+      destination[Y_AXIS]=current_position[Y_AXIS];
+      destination[Z_AXIS]=current_position[Z_AXIS];
+      destination[E_AXIS]=current_position[E_AXIS];
+      current_position[Z_AXIS]+=retract_zlift;
+#ifdef DELTA
+      calculate_delta(current_position); // change cartesian kinematic  to  delta kinematic;
+      plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
+#else
+      plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+      //prepare_move();
+      if (swapretract) {
+        current_position[E_AXIS]-=(retract_length_swap+retract_recover_length_swap)/volumetric_multiplier[active_extruder]; 
+      } else {
+        current_position[E_AXIS]-=(retract_length+retract_recover_length)/volumetric_multiplier[active_extruder]; 
+      }
+      plan_set_e_position(current_position[E_AXIS]);
+      float oldFeedrate = feedrate;
+      feedrate=retract_recover_feedrate*60;
+      retracted[active_extruder]=false;
+      prepare_move();
+      feedrate = oldFeedrate;
+    }
+  }
+#endif
+++++++
+#if defined (upstream)
+//FWRETRACT
+#endif
+++++++
+#if defined (upstream) && defined (Z_PROBE_SLED)
+//
+#endif
+++++++
+
+
+**--**-**--merge: MarlinSerial.cpp
+
+#if defined (upstream) && ((F_CPU == 16000000UL && SERIAL_PORT == 0 && )(defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )!defined (AT90USB) )
+// hard-coded exception for compatibility with the bootloader shipped
+#endif
+++++++
+#if defined (akadamson) && ((F_CPU == 16000000UL && SERIAL_PORT == 0 && )(defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H) && )MOTHERBOARD != 8 )
+// hardcoded exception for compatibility with the bootloader shipped
+#endif
+++++++
+#if defined (akadamson) && MOTHERBOARD != 8
+// !teensylu
+#endif
+++++++
+#if defined (upstream) && !defined (AT90USB)
+// this is so I can support Attiny series and any other chip without a UART
+#endif
+++++++
+#if defined (akadamson) && MOTHERBOARD != 8
+// this is so I can support Attiny series and any other chip without a uart
+#endif
+++++++
+#if defined (upstream)
+// !AT90USB
+#endif
+++++++
+#if defined (akadamson)
+//teensylu
+#endif
+++++++
+#if defined (upstream)
+// For AT90USB targets use the UART for BT interfacing
+#endif
+++++++
+#if defined (upstream) && (defined(AT90USB) && defined (BTENABLED))
+HardwareSerial bt;
+#endif
+++++++
+
+
+**--**-**--merge: motion_control.cpp
+
+#if defined (upstream)
+//20141002:full circle for G03 did not work, e.g. G03 X80 Y80 I20 J0 F2000 is giving an Angle of zero so head is not moving
+#endif
+++++++
+
+
+**--**-**--merge: planner.cpp
+
+
+
+**--**-**--merge: qr_solve.cpp
+
+
+
+**--**-**--merge: Sd2Card.cpp
+
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+uint8_t retryCnt = 3;
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+
+    uint16_t calcCrc = CRC_CCITT(dst, count);
+    uint16_t recvCrc = spiRec() << 8;
+    recvCrc |= spiRec();
+    if (calcCrc != recvCrc)
+    {
+        error(SD_CARD_ERROR_CRC);
+        goto fail;
+    }
+  
+
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (SD_CHECK_AND_RETRY) )
+static const uint16_t crctab[] PROGMEM = {
+  0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
+  0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
+  0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+  0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE,
+  0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485,
+  0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+  0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4,
+  0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC,
+  0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+  0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B,
+  0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12,
+  0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+  0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41,
+  0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49,
+  0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+  0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78,
+  0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F,
+  0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+  0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E,
+  0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256,
+  0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+  0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405,
+  0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C,
+  0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+  0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB,
+  0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3,
+  0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+  0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92,
+  0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9,
+  0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+  0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
+  0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+};
+#endif
+++++++
+
+
+**--**-**--merge: SdBaseFile.cpp
+
+
+
+**--**-**--merge: SdFatUtil.cpp
+
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+char top;
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+extern int  __bss_end;
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+return __brkval ? &top - __brkval : &top - &__bss_end;
+#endif
+++++++
+#if defined (akadamson) && defined (SDSUPPORT)
+extern int* __brkval;
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+/** Amount of free RAM
+ * \return The number of free bytes.
+ */
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && defined (__arm__) )
+extern "C" char* sbrk(int incr);
+#endif
+++++++
+#if defined (upstream) && (defined (SDSUPPORT) && !defined (__arm__) )
+// __arm__
+#endif
+++++++
+#if defined (upstream) && defined (SDSUPPORT)
+// __arm
+#endif
+++++++
+
+
+**--**-**--merge: SdFile.cpp
+
+
+
+**--**-**--merge: SdVolume.cpp
+
+
+
+**--**-**--merge: Servo.cpp
+
+
+
+**--**-**--merge: stepper.cpp
+
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "X");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "X");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Y");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Y");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Z");
+#endif
+++++++
+#if defined (upstream)
+LCD_MESSAGEPGM(MSG_ENDSTOPS_HIT "Z");
+#endif
+++++++
+#if defined (upstream) && (defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && defined(SDSUPPORT))
+if (abort_on_endstop_hit)
+   {
+     card.sdprinting = false;
+     card.closefile();
+     quickStop();
+     setTargetHotend0(0);
+     setTargetHotend1(0);
+     setTargetHotend2(0);
+   }
+#endif
+++++++
+#if defined (upstream) && (defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && defined(SDSUPPORT))
+if (abort_on_endstop_hit)
+   {
+     card.sdprinting = false;
+     card.closefile();
+     quickStop();
+     setTargetHotend0(0);
+     setTargetHotend1(0);
+     setTargetHotend2(0);
+   }
+#endif
+++++++
+#if defined (upstream)
+MYSERIAL.print(MSG_STEPPER_TOO_HIGH);
+#endif
+++++++
+#if defined (akadamson)
+MYSERIAL.print(MSG_STEPPER_TO_HIGH);
+#endif
+++++++
+#if defined (upstream)
+// make a note of the number of step loops required at nominal speed
+#endif
+++++++
+#if defined (upstream)
+#include "cardreader.h"
+#endif
+++++++
+#if defined (upstream)
+static unsigned short step_loops_nominal;
+#endif
+++++++
+#if defined (upstream) && defined (ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+bool abort_on_endstop_hit = false;
+#endif
+++++++
+#if defined (upstream) && defined (MOTOR_CURRENT_PWM_XY_PIN)
+int motor_current_setting[3] = DEFAULT_PWM_MOTOR_CURRENT;
+#endif
+++++++
+#if defined (upstream)
+volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1};
+#endif
+++++++
+#if defined (akadamson)
+volatile char count_direction[NUM_AXIS] = { 1, 1, 1, 1};
+#endif
+++++++
+#if defined (akadamson) && defined (ADVANCE)
+unsigned char old_OCR0A;
+#endif
+++++++
+#if defined (akadamson)
+// ADVANCE
+#endif
+++++++
+
+
+**--**-**--merge: temperature.cpp
+
+
+
+**--**-**--merge: ultralcd.cpp
+
+#if defined (upstream) && defined (ULTRA_LCD)
+lcd_implementation_init();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//beep();
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
+SET_INPUT(BTN_EN1);
+#endif
+++++++
+#if defined (akadamson) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+buttons_init();
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
+SET_INPUT(BTN_EN2);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+byte Degree[8] =
+  {
+    B01100,
+    B10010,
+    B10010,
+    B01100,
+    B00000,
+    B00000,
+    B00000,
+    B00000
+  };
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
+WRITE(BTN_EN1,HIGH);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+byte Thermometer[8] =
+  {
+    B00100,
+    B01010,
+    B01010,
+    B01010,
+    B01010,
+    B10001,
+    B10001,
+    B01110
+  };
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
+WRITE(BTN_EN2,HIGH);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+byte uplevel[8]={
+    B00100,
+    B01110,
+    B11111,
+    B00100,
+    B11100,
+    B00000,
+    B00000,
+    B00000
+  };
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && BTN_ENC > 0 )
+SET_INPUT(BTN_ENC);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//thanks joris
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && BTN_ENC > 0 )
+WRITE(BTN_ENC,HIGH);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+byte refresh[8]={
+    B00000,
+    B00110,
+    B11001,
+    B11000,
+    B00011,
+    B10011,
+    B01100,
+    B00000,
+  };
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
+pinMode(SHIFT_CLK,OUTPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//thanks joris
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
+pinMode(SHIFT_LD,OUTPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+byte folder [8]={
+    B00000,
+    B11100,
+    B11111,
+    B10001,
+    B10001,
+    B11111,
+    B00000,
+    B00000
+  };
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
+pinMode(SHIFT_OUT,INPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//thanks joris
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
+WRITE(SHIFT_OUT,HIGH);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.begin(LCD_WIDTH, LCD_HEIGHT);
+#endif
+++++++
+#if defined (upstream) && (defined (NEWPANEL) && defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) )
+WRITE(SHIFT_LD,HIGH);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.createChar(1,Degree);
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (NEWPANEL) )
+// Not NEWPANEL
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.createChar(2,Thermometer);
+#endif
+++++++
+#if defined (upstream) && (defined (SR_LCD_2W_NL) && defined (ULTRA_LCD) && !defined (NEWPANEL) )
+// Non latching 2 wire shift register
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.createChar(3,uplevel);
+#endif
+++++++
+#if defined (upstream) && (defined (SR_LCD_2W_NL) && defined (ULTRA_LCD) && !defined (NEWPANEL) )
+pinMode (SR_DATA_PIN, OUTPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.createChar(4,refresh);
+#endif
+++++++
+#if defined (upstream) && (defined (SR_LCD_2W_NL) && defined (ULTRA_LCD) && !defined (NEWPANEL) )
+pinMode (SR_CLK_PIN, OUTPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+lcd.createChar(5,folder);
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined(SHIFT_CLK) && !defined (NEWPANEL) )
+pinMode(SHIFT_CLK,OUTPUT);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+LCD_MESSAGEPGM(WELCOME_MSG);
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined(SHIFT_CLK) && !defined (NEWPANEL) )
+pinMode(SHIFT_LD,OUTPUT);
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (NEWPANEL) && !defined(SHIFT_CLK) && defined (ULTIPANEL) )
+#error ULTIPANEL requires an encoder
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (NEWPANEL) )
+// SR_LCD_2W_NL
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//!NEWPANEL
+#endif
+++++++
+#if defined (upstream) && ((defined (SDSUPPORT) && defined(SDCARDDETECT) && (SDCARDDETECT > 0) && )defined (ULTRA_LCD) )
+pinMode(SDCARDDETECT,INPUT);
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//(SDCARDDETECT > 0)
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (LCD_HAS_SLOW_BUTTONS) )
+slow_buttons = 0;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+lcd_buttons_update();
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+encoderDiff = 0;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+return itostr3((int)x);
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//sprintf(conv,"%5.1f",x);
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+long xx = x * 1000;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+long xx=x*100;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+if (xx >= 0)
+		conv[0] = (xx / 1000) % 10 + '0';
+	else
+		conv[0] = '-';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[0]=(xx>=0)?'+':'-';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[1] = '.';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[1]=(xx/100)%10+'0';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[2] = (xx / 100) % 10 + '0';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[2]='.';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[5] = 0;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[6]=0;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+if (xx >= 100)
+  {
+    conv[0]=(xx/100)%10+'0';
+    conv[1]=(xx/10)%10+'0';
+    conv[2]=(xx)%10+'0';
+    conv[3]=0;
+  }
+  else if (xx >= 10)
+  {
+    conv[0]=(xx/10)%10+'0';
+    conv[1]=(xx)%10+'0';
+    conv[2]=0;
+  }
+  else
+  {
+    conv[0]=(xx)%10+'0';
+    conv[1]=0;
+  }
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[0]=(xx/100)%10+'0';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[0] = xx >= 1000 ? (xx / 1000) % 10 + '0' : ' ';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[0]=(xx/1000)%10+'0';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[1] = xx >= 100 ? (xx / 100) % 10 + '0' : ' ';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[1]=(xx/100)%10+'0';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[2] = xx >= 10 ? (xx / 10) % 10 + '0' : ' ';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[2]=(xx/10)%10+'0';
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+conv[3] = xx % 10 + '0';
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+conv[3]=(xx)%10+'0';
+#endif
+++++++
+#if defined (akadamson)
+#include "language.h"
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+#include "cardreader.h"
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+#include "stepper.h"
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+int8_t encoderDiff;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/* encoderDiff is updated from interrupt context and added to encoderPosition every LCD update */
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//=============================imported variables============================
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/* Configuration settings */
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (akadamson) && (defined (ULTRA_LCD) && defined (SDSUPPORT) )
+#include "cardreader.h"
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (FILAMENT_LCD_DISPLAY) )
+unsigned long message_millis = 0;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static float manual_feedrate[] = MANUAL_FEEDRATE;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//=============================private  variables============================
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// ULTIPANEL
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/* !Configuration settings */
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+static char messagetext[LCD_WIDTH]="";
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//Function pointer to menu functions.
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//return for string conversion routines
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+typedef void (*menuFunc_t)();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+static char conv[8];
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+uint8_t lcd_status_message_level;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+LCD_CLASS lcd(LCD_PINS_RS, LCD_PINS_ENABLE, LCD_PINS_D4, LCD_PINS_D5,LCD_PINS_D6,LCD_PINS_D7);
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+char lcd_status_message[LCD_WIDTH+1] = WELCOME_MSG;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//RS,Enable,D4,D5,D6,D7
+#endif
+++++++
+#if defined (upstream) && (defined (DOGLCD) && defined (ULTRA_LCD) )
+#include "dogm_lcd_implementation.h"
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+static unsigned long previous_millis_lcd=0;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (DOGLCD) )
+#include "ultralcd_implementation_hitachi_HD44780.h"
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//static long previous_millis_buttons=0;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/** forward declarations **/
+#endif
+++++++
+#if defined (akadamson) && (defined (NEWPANEL) && defined (ULTRA_LCD) )
+static unsigned long blocking=0;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void copy_and_scalePID_i();
+#endif
+++++++
+#if defined (akadamson) && (defined (ULTRA_LCD) && !defined (NEWPANEL) )
+static unsigned long blocking[8]={0,0,0,0,0,0,0,0};
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void copy_and_scalePID_d();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+static MainMenu menu;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/* Different menus */
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcdProgMemprint(const char *str)
+{
+  char ch=pgm_read_byte(str);
+  while(ch)
+  {
+    lcd.print(ch);
+    ch=pgm_read_byte(++str);
+  }
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcdProgMemprint(const char *str)
+{
+  char ch=pgm_read_byte(str);
+  while(ch)
+  {
+    lcd.print(ch);
+    ch=pgm_read_byte(++str);
+  }
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+static void lcd_status_screen();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+#define LCD_PRINT_PGM(x) lcdProgMemprint(PSTR(x))
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+extern bool powersupply;
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_main_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//=============================functions         ============================
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_tune_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//===========================================================================
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_prepare_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+int intround(const float &x){return int(0.5+x);}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+int intround(const float &x){return int(0.5+x);}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_move_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_status(const char* message)
+{
+  strncpy(messagetext,message,LCD_WIDTH);
+  messagetext[strlen(message)]=0;
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_status(const char* message)
+{
+  strncpy(messagetext,message,LCD_WIDTH);
+  messagetext[strlen(message)]=0;
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_control_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_statuspgm(const char* message)
+{
+  char ch=pgm_read_byte(message);
+  char *target=messagetext;
+  uint8_t cnt=0;
+  while(ch &&cnt<LCD_WIDTH)
+  {
+    *target=ch;
+    target++;
+    cnt++;
+    ch=pgm_read_byte(++message);
+  }
+  *target=0;
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_statuspgm(const char* message)
+{
+  char ch=pgm_read_byte(message);
+  char *target=messagetext;
+  uint8_t cnt=0;
+  while(ch &&cnt<LCD_WIDTH)
+  {
+    *target=ch;
+    target++;
+    cnt++;
+    ch=pgm_read_byte(++message);
+  }
+  *target=0;
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_control_temperature_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_alertstatuspgm(const char* message)
+{
+  lcd_statuspgm(message); 
+  menu.showStatus(); 
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_alertstatuspgm(const char* message)
+{
+  lcd_statuspgm(message); 
+  menu.showStatus(); 
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_control_temperature_preheat_pla_settings_menu();
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+FORCE_INLINE void clear()
+{
+  lcd.clear();
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+FORCE_INLINE void clear()
+{
+  lcd.clear();
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_control_temperature_preheat_abs_settings_menu();
+#endif
+++++++
+#if defined (upstream) && (defined (DOGLCD) && defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_set_contrast();
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_control_retract_menu();
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (DELTA_CALIBRATION_MENU) && defined (ULTIPANEL) )
+static void lcd_delta_calibrate_menu();
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+// DELTA_CALIBRATION_MENU
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined(LCD_I2C_VIKI) && !defined (ENCODER_STEPS_PER_MENU_ITEM) && defined (ULTIPANEL) )
+#define ENCODER_STEPS_PER_MENU_ITEM 5
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined(LCD_I2C_VIKI) && !defined (ENCODER_PULSES_PER_STEP) && defined (ULTIPANEL) )
+#define ENCODER_PULSES_PER_STEP 1
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (ENCODER_STEPS_PER_MENU_ITEM) && defined(LCD_I2C_VIKI) && defined (ULTIPANEL) )
+#define ENCODER_STEPS_PER_MENU_ITEM 2
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined(LCD_I2C_VIKI) && !defined (ENCODER_PULSES_PER_STEP) && defined (ULTIPANEL) )
+#define ENCODER_PULSES_PER_STEP 1
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+/* Helper macros for menus */
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && !defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) )
+volatile uint8_t buttons;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) )
+volatile uint8_t buttons_reprapworld_keypad;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) && defined (LCD_HAS_SLOW_BUTTONS) )
+volatile uint8_t slow_buttons;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+uint8_t currentMenuViewOffset;
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && (SDCARDDETECT > 0) && defined (ULTIPANEL) )
+bool lcd_oldcardstatus;
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//ULTIPANEL
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_return_to_status() { lcd_goto_menu(lcd_status_screen, 0, false); }
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (SDSUPPORT) && defined (ULTIPANEL) )
+static void lcd_autostart_sd()
+{
+    card.lastnr=0;
+    card.setroot();
+    card.checkautostart(true);
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+void lcd_set_home_offsets()
+{
+    for(int8_t i=0; i < NUM_AXIS; i++) {
+      if (i != E_AXIS) {
+        add_homing[i] -= current_position[i];
+        current_position[i] = 0.0;
+      }
+    }
+    plan_set_position(0.0, 0.0, 0.0, current_position[E_AXIS]);
+
+    // Audio feedback
+    enquecommand_P(PSTR("M300 S659 P200"));
+    enquecommand_P(PSTR("M300 S698 P200"));
+    lcd_return_to_status();
+}
+#endif
+++++++
+#if defined (upstream) && (defined (BABYSTEPPING) && defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void _lcd_babystep(int axis, const char *msg) {
+    if (encoderPosition != 0) {
+      babystepsTodo[axis] += (int)encoderPosition;
+      encoderPosition = 0;
+      lcdDrawUpdate = 1;
+    }
+    if (lcdDrawUpdate) lcd_implementation_drawedit(msg, "");
+    if (LCD_CLICKED) lcd_goto_menu(lcd_tune_menu);
+  }
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//BABYSTEPPING
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && TEMP_SENSOR_1 != 0 && defined (ULTIPANEL) )
+//2nd extruder preheat
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//2nd extruder preheat
+#endif
+++++++
+#if defined (upstream) && (TEMP_SENSOR_2 != 0 && defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//3 extruder preheat
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//3 extruder preheat
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && (TEMP_SENSOR_1 != 0 || TEMP_SENSOR_2 != 0 && )defined (ULTIPANEL) )
+//more than one extruder present
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//more than one extruder present
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (DELTA_CALIBRATION_MENU) && defined (ULTIPANEL) )
+static void lcd_delta_calibrate_menu()
+{
+    START_MENU();
+    MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
+    MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
+    MENU_ITEM(gcode, MSG_DELTA_CALIBRATE_X, PSTR("G0 F8000 X-77.94 Y-45 Z0"));
+    MENU_ITEM(gcode, MSG_DELTA_CALIBRATE_Y, PSTR("G0 F8000 X77.94 Y-45 Z0"));
+    MENU_ITEM(gcode, MSG_DELTA_CALIBRATE_Z, PSTR("G0 F8000 X0 Y90 Z0"));
+    MENU_ITEM(gcode, MSG_DELTA_CALIBRATE_CENTER, PSTR("G0 F8000 X0 Y0 Z0"));
+    END_MENU();
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+// DELTA_CALIBRATION_MENU
+#endif
+++++++
+#if defined (upstream) && (defined (DOGLCD) && defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_set_contrast()
+{
+    if (encoderPosition != 0)
+    {
+        lcd_contrast -= encoderPosition;
+        if (lcd_contrast < 0) lcd_contrast = 0;
+        else if (lcd_contrast > 63) lcd_contrast = 63;
+        encoderPosition = 0;
+        lcdDrawUpdate = 1;
+        u8g.setContrast(lcd_contrast);
+    }
+    if (lcdDrawUpdate)
+    {
+        lcd_implementation_drawedit(PSTR(MSG_CONTRAST), itostr2(lcd_contrast));
+    }
+    if (LCD_CLICKED) lcd_goto_menu(lcd_control_menu);
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) && defined (FWRETRACT) )
+static void lcd_control_retract_menu()
+{
+    START_MENU();
+    MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
+    MENU_ITEM_EDIT(bool, MSG_AUTORETRACT, &autoretract_enabled);
+    MENU_ITEM_EDIT(float52, MSG_CONTROL_RETRACT, &retract_length, 0, 100);
+	#if EXTRUDERS > 1
+      MENU_ITEM_EDIT(float52, MSG_CONTROL_RETRACT_SWAP, &retract_length_swap, 0, 100);
+    #endif
+    MENU_ITEM_EDIT(float3, MSG_CONTROL_RETRACTF, &retract_feedrate, 1, 999);
+    MENU_ITEM_EDIT(float52, MSG_CONTROL_RETRACT_ZLIFT, &retract_zlift, 0, 999);
+    MENU_ITEM_EDIT(float52, MSG_CONTROL_RETRACT_RECOVER, &retract_recover_length, 0, 100);
+	#if EXTRUDERS > 1
+      MENU_ITEM_EDIT(float52, MSG_CONTROL_RETRACT_RECOVER_SWAP, &retract_recover_length_swap, 0, 100);
+    #endif
+    MENU_ITEM_EDIT(float3, MSG_CONTROL_RETRACT_RECOVERF, &retract_recover_feedrate, 1, 999);
+    END_MENU();
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+//FWRETRACT
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && SDCARDDETECT == -1 && defined (ULTIPANEL) )
+static void lcd_sd_refresh()
+{
+    card.initsd();
+    currentMenuViewOffset = 0;
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+static void lcd_sd_updir()
+{
+    card.updir();
+    currentMenuViewOffset = 0;
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (REPRAPWORLD_KEYPAD) && defined (ULTIPANEL) )
+static void reprapworld_keypad_move_z_up() {
+    encoderPosition = 1;
+    move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
+		lcd_move_z();
+  }
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+/** End of menus **/
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//ULTIPANEL
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_update()
+{
+    static unsigned long timeoutToStatus = 0;
+
+    #ifdef LCD_HAS_SLOW_BUTTONS
+    slow_buttons = lcd_implementation_read_slow_buttons(); // buttons which take too long to read in interrupt context
+    #endif
+
+    lcd_buttons_update();
+
+    #if (SDCARDDETECT > 0)
+    if((IS_SD_INSERTED != lcd_oldcardstatus && lcd_detected()))
+    {
+        lcdDrawUpdate = 2;
+        lcd_oldcardstatus = IS_SD_INSERTED;
+        lcd_implementation_init( // to maybe revive the LCD if static electricity killed it.
+          #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
+            currentMenu == lcd_status_screen
+          #endif
+        );
+
+        if(lcd_oldcardstatus)
+        {
+            card.initsd();
+            LCD_MESSAGEPGM(MSG_SD_INSERTED);
+        }
+        else
+        {
+            card.release();
+            LCD_MESSAGEPGM(MSG_SD_REMOVED);
+        }
+    }
+    #endif//CARDINSERTED
+
+    if (lcd_next_update_millis < millis())
+    {
+#ifdef ULTIPANEL
+		#ifdef REPRAPWORLD_KEYPAD
+        	if (REPRAPWORLD_KEYPAD_MOVE_Z_UP) {
+        		reprapworld_keypad_move_z_up();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_Z_DOWN) {
+        		reprapworld_keypad_move_z_down();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_X_LEFT) {
+        		reprapworld_keypad_move_x_left();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_X_RIGHT) {
+        		reprapworld_keypad_move_x_right();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_Y_DOWN) {
+        		reprapworld_keypad_move_y_down();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_Y_UP) {
+        		reprapworld_keypad_move_y_up();
+        	}
+        	if (REPRAPWORLD_KEYPAD_MOVE_HOME) {
+        		reprapworld_keypad_move_home();
+        	}
+		#endif
+        if (abs(encoderDiff) >= ENCODER_PULSES_PER_STEP)
+        {
+            lcdDrawUpdate = 1;
+            encoderPosition += encoderDiff / ENCODER_PULSES_PER_STEP;
+            encoderDiff = 0;
+            timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
+        }
+        if (LCD_CLICKED)
+            timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
+#endif//ULTIPANEL
+
+#ifdef DOGLCD        // Changes due to different driver architecture of the DOGM display
+        blink++;     // Variable for fan animation and alive dot
+        u8g.firstPage();
+        do
+        {
+            u8g.setFont(u8g_font_6x10_marlin);
+            u8g.setPrintPos(125,0);
+            if (blink % 2) u8g.setColorIndex(1); else u8g.setColorIndex(0); // Set color for the alive dot
+            u8g.drawPixel(127,63); // draw alive dot
+            u8g.setColorIndex(1); // black on white
+            (*currentMenu)();
+            if (!lcdDrawUpdate)  break; // Terminate display update, when nothing new to draw. This must be done before the last dogm.next()
+        } while( u8g.nextPage() );
+#else
+        (*currentMenu)();
+#endif
+
+#ifdef LCD_HAS_STATUS_INDICATORS
+        lcd_implementation_update_indicators();
+#endif
+
+#ifdef ULTIPANEL
+        if(timeoutToStatus < millis() && currentMenu != lcd_status_screen)
+        {
+            lcd_return_to_status();
+            lcdDrawUpdate = 2;
+        }
+#endif//ULTIPANEL
+        if (lcdDrawUpdate == 2) lcd_implementation_clear();
+        if (lcdDrawUpdate) lcdDrawUpdate--;
+        lcd_next_update_millis = millis() + LCD_UPDATE_INTERVAL;
+    }
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void beep()
+{
+  //return;
+  #ifdef ULTIPANEL
+	#if (BEEPER > -1)
+	{
+		pinMode(BEEPER,OUTPUT);
+		for(int8_t i=0;i<20;i++){
+		WRITE(BEEPER,HIGH);
+		delay(5);
+		WRITE(BEEPER,LOW);
+		delay(5);
+		}
+	}
+        #endif
+  #endif
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_ignore_click(bool b)
+{
+    ignore_click = b;
+    wait_for_unclick = false;
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void beepshort()
+{
+  //return;
+  #ifdef ULTIPANEL
+	#if (BEEPER > -1)
+	{
+		pinMode(BEEPER,OUTPUT);
+		for(int8_t i=0;i<10;i++){
+		WRITE(BEEPER,HIGH);
+		delay(3);
+		WRITE(BEEPER,LOW);
+		delay(3);
+		}
+	}
+        #endif
+  #endif  
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_finishstatus() {
+  int len = strlen(lcd_status_message);
+  if (len > 0) {
+    while (len < LCD_WIDTH) {
+      lcd_status_message[len++] = ' ';
+    }
+  }
+  lcd_status_message[LCD_WIDTH] = '\0';
+  #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
+    #if PROGRESS_MSG_EXPIRE > 0
+      messageTick =
+    #endif
+    progressBarTick = millis();
+  #endif
+  lcdDrawUpdate = 2;
+
+  #ifdef FILAMENT_LCD_DISPLAY
+    message_millis = millis();  //get status message to show up for a while
+  #endif
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void lcd_status()
+{
+  #ifdef ULTIPANEL
+    static uint8_t oldbuttons=0;
+    //static long previous_millis_buttons=0;
+    //static long previous_lcdinit=0;
+  //  buttons_check(); // Done in temperature interrupt
+    //previous_millis_buttons=millis();
+    unsigned long ms=millis();
+    for(int8_t i=0; i<8; i++) {
+      #ifndef NEWPANEL
+      if((blocking[i]>ms))
+        buttons &= ~(1<<i);
+      #else
+      if((blocking>ms))
+        buttons &= ~(1<<i);        
+      #endif
+    }
+    if((buttons==oldbuttons) &&  ((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
+      return;
+    oldbuttons=buttons;
+  #else
+  
+    if(((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
+      return;
+  #endif
+    
+  previous_millis_lcd=millis();
+  menu.update();
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_setstatus(const char* message)
+{
+    if (lcd_status_message_level > 0)
+        return;
+    strncpy(lcd_status_message, message, LCD_WIDTH);
+    lcd_finishstatus();
+}
+#endif
+++++++
+#if defined (akadamson) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+void buttons_init()
+{
+  #ifdef NEWPANEL
+    pinMode(BTN_EN1,INPUT);
+    pinMode(BTN_EN2,INPUT); 
+    pinMode(BTN_ENC,INPUT); 
+    pinMode(SDCARDDETECT,INPUT);
+    WRITE(BTN_EN1,HIGH);
+    WRITE(BTN_EN2,HIGH);
+    WRITE(BTN_ENC,HIGH);
+    #if (SDCARDDETECT > -1)
+    {
+      WRITE(SDCARDDETECT,HIGH);
+    }
+    #endif
+  #else
+    pinMode(SHIFT_CLK,OUTPUT);
+    pinMode(SHIFT_LD,OUTPUT);
+    pinMode(SHIFT_EN,OUTPUT);
+    pinMode(SHIFT_OUT,INPUT);
+    WRITE(SHIFT_OUT,HIGH);
+    WRITE(SHIFT_LD,HIGH); 
+    WRITE(SHIFT_EN,LOW); 
+  #endif
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_setstatuspgm(const char* message)
+{
+    if (lcd_status_message_level > 0)
+        return;
+    strncpy_P(lcd_status_message, message, LCD_WIDTH);
+    lcd_finishstatus();
+}
+#endif
+++++++
+#if defined (akadamson) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+void buttons_check()
+{
+  
+  #ifdef NEWPANEL
+    uint8_t newbutton=0;
+    if(READ(BTN_EN1)==0)  newbutton|=EN_A;
+    if(READ(BTN_EN2)==0)  newbutton|=EN_B;
+    if((blocking<millis()) &&(READ(BTN_ENC)==0))
+      newbutton|=EN_C;
+    buttons=newbutton;
+  #else   //read it from the shift register
+    uint8_t newbutton=0;
+    WRITE(SHIFT_LD,LOW);
+    WRITE(SHIFT_LD,HIGH);
+    unsigned char tmp_buttons=0;
+    for(int8_t i=0;i<8;i++)
+    { 
+      newbutton = newbutton>>1;
+      if(READ(SHIFT_OUT))
+        newbutton|=(1<<7);
+      WRITE(SHIFT_CLK,HIGH);
+      WRITE(SHIFT_CLK,LOW);
+    }
+    buttons=~newbutton; //invert it, because a pressed switch produces a logical 0
+  #endif
+  
+  //manage encoder rotation
+  char enc=0;
+  if(buttons&EN_A)
+    enc|=(1<<0);
+  if(buttons&EN_B)
+    enc|=(1<<1);
+  if(enc!=lastenc)
+	{
+    switch(enc)
+    {
+    case encrot0:
+      if(lastenc==encrot3)
+        encoderpos++;
+      else if(lastenc==encrot1)
+        encoderpos--;
+      break;
+    case encrot1:
+      if(lastenc==encrot0)
+        encoderpos++;
+      else if(lastenc==encrot2)
+        encoderpos--;
+      break;
+    case encrot2:
+      if(lastenc==encrot1)
+        encoderpos++;
+      else if(lastenc==encrot3)
+        encoderpos--;
+      break;
+    case encrot3:
+      if(lastenc==encrot2)
+        encoderpos++;
+      else if(lastenc==encrot0)
+        encoderpos--;
+      break;
+    default:
+      ;
+    }
+  }
+  lastenc=enc;
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_setalertstatuspgm(const char* message)
+{
+    lcd_setstatuspgm(message);
+    lcd_status_message_level = 1;
+#ifdef ULTIPANEL
+    lcd_return_to_status();
+#endif//ULTIPANEL
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+MainMenu::MainMenu()
+{
+  status=Main_Status;
+  displayStartingRow=0;
+  activeline=0;
+  force_lcd_update=true;
+  linechanging=false;
+  tune=false;
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+void lcd_reset_alert_level()
+{
+    lcd_status_message_level = 0;
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void MainMenu::showStatus()
+{ 
+#if LCD_HEIGHT==4
+  static int olddegHotEnd0=-1;
+  static int oldtargetHotEnd0=-1;
+  //force_lcd_update=true;
+  if(force_lcd_update)  //initial display of content
+  {
+    encoderpos=feedmultiply;
+    clear();
+    lcd.setCursor(0,0);LCD_PRINT_PGM("\002000/000\001 ");
+    #if defined BED_USES_THERMISTOR || defined BED_USES_AD595 
+      lcd.setCursor(10,0);LCD_PRINT_PGM("B000/000\001 ");
+    #elif EXTRUDERS > 1
+      lcd.setCursor(10,0);LCD_PRINT_PGM("\002000/000\001 ");
+    #endif
+  }
+    
+  int tHotEnd0=intround(degHotend0());
+  if((tHotEnd0!=olddegHotEnd0)||force_lcd_update)
+  {
+    lcd.setCursor(1,0);
+    lcd.print(ftostr3(tHotEnd0));
+    olddegHotEnd0=tHotEnd0;
+  }
+  int ttHotEnd0=intround(degTargetHotend0());
+  if((ttHotEnd0!=oldtargetHotEnd0)||force_lcd_update)
+  {
+    lcd.setCursor(5,0);
+    lcd.print(ftostr3(ttHotEnd0));
+    oldtargetHotEnd0=ttHotEnd0;
+  }
+  #if defined BED_USES_THERMISTOR || defined BED_USES_AD595 
+    static int oldtBed=-1;
+    static int oldtargetBed=-1; 
+    int tBed=intround(degBed());
+    if((tBed!=oldtBed)||force_lcd_update)
+    {
+      lcd.setCursor(11,0);
+      lcd.print(ftostr3(tBed));
+      oldtBed=tBed;
+    }
+    int targetBed=intround(degTargetBed());
+    if((targetBed!=oldtargetBed)||force_lcd_update)
+    {
+      lcd.setCursor(15,0);
+      lcd.print(ftostr3(targetBed));
+      oldtargetBed=targetBed;
+    }
+  #elif EXTRUDERS > 1
+    static int olddegHotEnd1=-1;
+    static int oldtargetHotEnd1=-1;
+    int tHotEnd1=intround(degHotend1());
+    if((tHotEnd1!=olddegHotEnd1)||force_lcd_update)
+    {
+      lcd.setCursor(11,0);
+      lcd.print(ftostr3(tHotEnd1));
+      olddegHotEnd1=tHotEnd1;
+    }
+    int ttHotEnd1=intround(degTargetHotend1());
+    if((ttHotEnd1!=oldtargetHotEnd1)||force_lcd_update)
+    {
+      lcd.setCursor(15,0);
+      lcd.print(ftostr3(ttHotEnd1));
+      oldtargetHotEnd1=ttHotEnd1;
+    }
+  #endif
+  //starttime=2;
+  static uint16_t oldtime=0;
+  if(starttime!=0)
+  {
+    lcd.setCursor(0,1);
+    uint16_t time=millis()/60000-starttime/60000;
+    
+    if(starttime!=oldtime)
+    {
+      lcd.print(itostr2(time/60));LCD_PRINT_PGM("h ");lcd.print(itostr2(time%60));LCD_PRINT_PGM("m");
+      oldtime=time;
+    }
+  }
+  static int oldzpos=0;
+  int currentz=current_position[2]*100;
+  if((currentz!=oldzpos)||force_lcd_update)
+  {
+    lcd.setCursor(10,1);
+    LCD_PRINT_PGM("Z:");lcd.print(ftostr52(current_position[2]));
+    oldzpos=currentz;
+  }
+  
+  static int oldfeedmultiply=0;
+  int curfeedmultiply=feedmultiply;
+  
+  if(feedmultiplychanged == true) {
+    feedmultiplychanged = false;
+    encoderpos = curfeedmultiply;
+  }
+  
+  if(encoderpos!=curfeedmultiply||force_lcd_update)
+  {
+   curfeedmultiply=encoderpos;
+   if(curfeedmultiply<10)
+     curfeedmultiply=10;
+   if(curfeedmultiply>999)
+     curfeedmultiply=999;
+   feedmultiply=curfeedmultiply;
+   encoderpos=curfeedmultiply;
+  }
+  
+  if((curfeedmultiply!=oldfeedmultiply)||force_lcd_update)
+  {
+   oldfeedmultiply=curfeedmultiply;
+   lcd.setCursor(0,2);
+   lcd.print(itostr3(curfeedmultiply));LCD_PRINT_PGM("% ");
+  }
+  
+  if(messagetext[0]!='\0')
+  {
+    lcd.setCursor(0,LCD_HEIGHT-1);
+    lcd.print(messagetext);
+    uint8_t n=strlen(messagetext);
+    for(int8_t i=0;i<LCD_WIDTH-n;i++)
+      lcd.print(" ");
+    messagetext[0]='\0';
+  }
+#ifdef SDSUPPORT
+  static uint8_t oldpercent=101;
+  uint8_t percent=card.percentDone();
+  if(oldpercent!=percent ||force_lcd_update)
+  {
+     lcd.setCursor(10,2);
+    lcd.print(itostr3((int)percent));
+    LCD_PRINT_PGM("%SD");
+  }
+#endif
+#else //smaller LCDS----------------------------------
+  static int olddegHotEnd0=-1;
+  static int oldtargetHotEnd0=-1;
+  if(force_lcd_update)  //initial display of content
+  {
+    encoderpos=feedmultiply;
+    lcd.setCursor(0,0);LCD_PRINT_PGM("\002---/---\001 ");
+  }
+    
+  int tHotEnd0=intround(degHotend0());
+  int ttHotEnd0=intround(degTargetHotend0());
+
+
+  if((abs(tHotEnd0-olddegHotEnd0)>1)||force_lcd_update)
+  {
+    lcd.setCursor(1,0);
+    lcd.print(ftostr3(tHotEnd0));
+    olddegHotEnd0=tHotEnd0;
+  }
+  if((ttHotEnd0!=oldtargetHotEnd0)||force_lcd_update)
+  {
+    lcd.setCursor(5,0);
+    lcd.print(ftostr3(ttHotEnd0));
+    oldtargetHotEnd0=ttHotEnd0;
+  }
+
+  if(messagetext[0]!='\0')
+  {
+    lcd.setCursor(0,LCD_HEIGHT-1);
+    lcd.print(messagetext);
+    uint8_t n=strlen(messagetext);
+    for(int8_t i=0;i<LCD_WIDTH-n;i++)
+      lcd.print(" ");
+    messagetext[0]='\0';
+  }
+
+#endif
+  force_lcd_update=false;
+}
+#endif
+++++++
+#if defined (upstream) && (defined (DOGLCD) && defined (ULTRA_LCD) )
+void lcd_setcontrast(uint8_t value)
+{
+    lcd_contrast = value & 63;
+    u8g.setContrast(lcd_contrast);
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+enum {ItemP_exit, ItemP_autostart,ItemP_disstep,ItemP_home, ItemP_origin, ItemP_preheat_pla, ItemP_preheat_abs, ItemP_cooldown,/*ItemP_extrude,*/ItemP_move};
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+/* Warning: This function is called from interrupt context */
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//any action must not contain a ',' character anywhere, or this breaks:
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+void lcd_buttons_update()
+{
+#ifdef NEWPANEL
+    uint8_t newbutton=0;
+    if(READ(BTN_EN1)==0)  newbutton|=EN_A;
+    if(READ(BTN_EN2)==0)  newbutton|=EN_B;
+  #if BTN_ENC > 0
+    if((blocking_enc<millis()) && (READ(BTN_ENC)==0))
+        newbutton |= EN_C;
+  #endif
+    buttons = newbutton;
+    #ifdef LCD_HAS_SLOW_BUTTONS
+    buttons |= slow_buttons;
+    #endif
+    #ifdef REPRAPWORLD_KEYPAD
+      // for the reprapworld_keypad
+      uint8_t newbutton_reprapworld_keypad=0;
+      WRITE(SHIFT_LD,LOW);
+      WRITE(SHIFT_LD,HIGH);
+      for(int8_t i=0;i<8;i++) {
+          newbutton_reprapworld_keypad = newbutton_reprapworld_keypad>>1;
+          if(READ(SHIFT_OUT))
+              newbutton_reprapworld_keypad|=(1<<7);
+          WRITE(SHIFT_CLK,HIGH);
+          WRITE(SHIFT_CLK,LOW);
+      }
+      buttons_reprapworld_keypad=~newbutton_reprapworld_keypad; //invert it, because a pressed switch produces a logical 0
+	#endif
+#else   //read it from the shift register
+    uint8_t newbutton=0;
+    WRITE(SHIFT_LD,LOW);
+    WRITE(SHIFT_LD,HIGH);
+    unsigned char tmp_buttons=0;
+    for(int8_t i=0;i<8;i++)
+    {
+        newbutton = newbutton>>1;
+        if(READ(SHIFT_OUT))
+            newbutton|=(1<<7);
+        WRITE(SHIFT_CLK,HIGH);
+        WRITE(SHIFT_CLK,LOW);
+    }
+    buttons=~newbutton; //invert it, because a pressed switch produces a logical 0
+#endif//!NEWPANEL
+
+    //manage encoder rotation
+    uint8_t enc=0;
+    if (buttons & EN_A) enc |= B01;
+    if (buttons & EN_B) enc |= B10;
+    if(enc != lastEncoderBits)
+    {
+        switch(enc)
+        {
+        case encrot0:
+            if(lastEncoderBits==encrot3)
+                encoderDiff++;
+            else if(lastEncoderBits==encrot1)
+                encoderDiff--;
+            break;
+        case encrot1:
+            if(lastEncoderBits==encrot0)
+                encoderDiff++;
+            else if(lastEncoderBits==encrot2)
+                encoderDiff--;
+            break;
+        case encrot2:
+            if(lastEncoderBits==encrot1)
+                encoderDiff++;
+            else if(lastEncoderBits==encrot3)
+                encoderDiff--;
+            break;
+        case encrot3:
+            if(lastEncoderBits==encrot2)
+                encoderDiff++;
+            else if(lastEncoderBits==encrot0)
+                encoderDiff--;
+            break;
+        }
+    }
+    lastEncoderBits = enc;
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+#define MENUITEM(repaint_action, click_action) \
+  {\
+    if(force_lcd_update)  { lcd.setCursor(0,line);  repaint_action; } \
+    if((activeline==line) && CLICKED) {click_action} \
+  }
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+bool lcd_detected(void)
+{
+#if (defined(LCD_I2C_TYPE_MCP23017) || defined(LCD_I2C_TYPE_MCP23008)) && defined(DETECT_DEVICE)
+  return lcd.LcdDetected() == 1;
+#else
+  return true;
+#endif
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void MainMenu::showPrepare()
+{
+#ifdef ULTIPANEL
+ uint8_t line=0;
+ clearIfNecessary();
+ for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
+ {
+   //Serial.println((int)(line-lineoffset));
+  switch(i)
+  {
+    case ItemP_exit:
+      MENUITEM(  LCD_PRINT_PGM(MSG_MAIN)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
+      break;
+    case ItemP_autostart:
+      MENUITEM(  LCD_PRINT_PGM(MSG_AUTOSTART)  ,  BLOCK;
+#ifdef SDSUPPORT
+          card.lastnr=0;card.setroot();card.checkautostart(true);
+#endif
+          beepshort(); ) ;
+      break;
+    case ItemP_disstep:
+      MENUITEM(  LCD_PRINT_PGM(MSG_DISABLE_STEPPERS)  ,  BLOCK;enquecommand("M84");beepshort(); ) ;
+      break;
+    case ItemP_home:
+      MENUITEM(  LCD_PRINT_PGM(MSG_AUTO_HOME)  ,  BLOCK;enquecommand("G28");beepshort(); ) ;
+      break;
+    case ItemP_origin:
+      MENUITEM(  LCD_PRINT_PGM(MSG_SET_ORIGIN)  ,  BLOCK;enquecommand("G92 X0 Y0 Z0");beepshort(); ) ;
+      break;
+    case ItemP_preheat_pla:
+		MENUITEM(  LCD_PRINT_PGM(MSG_PREHEAT_PLA)  ,  BLOCK;setTargetHotend0(plaPreheatHotendTemp);setTargetBed(plaPreheatHPBTemp);
+      #if FAN_PIN > -1
+		FanSpeed = plaPreheatFanSpeed;
+        analogWrite(FAN_PIN,  FanSpeed);
+      #endif
+      beepshort(); );
+      break;
+    case ItemP_preheat_abs:
+      MENUITEM(  LCD_PRINT_PGM(MSG_PREHEAT_ABS)  ,  BLOCK;setTargetHotend0(absPreheatHotendTemp);setTargetBed(absPreheatHPBTemp); 
+      #if FAN_PIN > -1
+	  	FanSpeed = absPreheatFanSpeed;
+        analogWrite(FAN_PIN,  FanSpeed);
+      #endif
+      beepshort(); );
+      break;
+    case ItemP_cooldown:
+      MENUITEM(  LCD_PRINT_PGM(MSG_COOLDOWN)  ,  BLOCK;setTargetHotend0(0);setTargetHotend1(0);setTargetHotend2(0);setTargetBed(0);beepshort(); ) ;
+      break;
+//    case ItemP_extrude:
+  //    MENUITEM(  LCD_PRINT_PGM(" Extrude")  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F700 E50");beepshort(); ) ;
+    //  break;
+    case ItemP_move:
+      MENUITEM(  LCD_PRINT_PGM(MSG_MOVE_AXIS) , BLOCK;status=Sub_PrepareMove;beepshort(); );
+      break;
+        default:   
+      break;
+  }
+  line++;
+ }
+ updateActiveLines(ItemP_move,encoderpos);
+#endif
+}
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+void lcd_buzz(long duration, uint16_t freq)
+{
+#ifdef LCD_USE_I2C_BUZZER
+  lcd.buzz(duration,freq);
+#endif
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+enum {
+  ItemAM_exit,
+  ItemAM_X, ItemAM_Y, ItemAM_Z, ItemAM_E, ItemAM_ERetract
+};
+#endif
+++++++
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+bool lcd_clicked()
+{
+  return LCD_CLICKED;
+}
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void MainMenu::showAxisMove()
+{
+   uint8_t line=0;
+   int oldencoderpos=0;
+   clearIfNecessary();
+   for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
+   {
+     switch(i)
+      {
+          case ItemAM_exit:
+          MENUITEM(  LCD_PRINT_PGM(MSG_PREPARE_ALT)  ,  BLOCK;status=Main_Prepare;beepshort(); ) ;
+          break;
+          case ItemAM_X:
+          {
+	 	  //oldencoderpos=0;
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);LCD_PRINT_PGM(" X:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[X_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                  if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F700 X0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F700 X-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[X_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_Y:
+            {
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);LCD_PRINT_PGM(" Y:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Y_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                  if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F700 Y0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F700 Y-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Y_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_Z:
+          {
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);LCD_PRINT_PGM(" Z:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Z_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                   if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F70 Z0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F70 Z-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Z_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_E:
+          // ErikDB: TODO: this length should be changed for volumetric.
+          MENUITEM(  LCD_PRINT_PGM(MSG_EXTRUDE)  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F70 E1");beepshort(); ) ;
+          break;
+          case ItemAM_ERetract:
+              // ErikDB: TODO: this length should be changed for volumetric.
+              MENUITEM(  LCD_PRINT_PGM(MSG_RETRACT)  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F700 E-1");beepshort(); ) ;
+              break;
+          default:
+          break;
+      }
+      line++;
+   }
+   updateActiveLines(ItemAM_ERetract,encoderpos);
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//ULTIPANEL
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+enum {ItemT_exit,ItemT_speed,ItemT_flow,ItemT_nozzle,
+#if (HEATER_BED_PIN > -1)
+ItemT_bed,
+#endif
+ItemT_fan};
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/********************************/
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+void MainMenu::showTune()
+{ 
+  uint8_t line=0;
+  clearIfNecessary();
+ for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
+ {
+   //Serial.println((int)(line-lineoffset));
+  switch(i)
+  {
+  case ItemT_exit:
+      MENUITEM(  LCD_PRINT_PGM(MSG_MAIN)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
+      break;
+  case ItemT_speed:
+    {
+      if(force_lcd_update)
+      {
+        lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_SPEED);
+        lcd.setCursor(13,line);lcd.print(ftostr3(feedmultiply));
+      }
+      
+      if((activeline!=line) )
+        break;
+      
+      if(CLICKED) //AnalogWrite(FAN_PIN,  fanpwm);
+      {
+        linechanging=!linechanging;
+        if(linechanging)
+        {
+            encoderpos=feedmultiply;
+        }
+        else
+        {
+          encoderpos=activeline*lcdslow;
+          beepshort();
+        }
+        BLOCK;
+      }
+      if(linechanging)
+      {
+        if(encoderpos<1) encoderpos=1;
+        if(encoderpos>400) encoderpos=400;
+        feedmultiply = encoderpos;
+        feedmultiplychanged=true;
+        lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+      }
+      
+    }break;
+    case ItemT_nozzle:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_NOZZLE);
+          lcd.setCursor(13,line);lcd.print(ftostr3(intround(degTargetHotend0())));
+        } 
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=intround(degTargetHotend0());
+          }
+          else
+          {
+            setTargetHotend0(encoderpos);
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>260) encoderpos=260;
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+      }break;
+      #if (HEATER_BED_PIN > -1)
+      case ItemT_bed:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_BED);
+          lcd.setCursor(13,line);lcd.print(ftostr3(intround(degTargetBed())));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=intround(degTargetBed());
+          }
+          else
+          {
+            setTargetBed(encoderpos);
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>260) encoderpos=260;
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+      }break;
+      #endif
+
+      
+      case ItemT_fan:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_FAN_SPEED);
+          lcd.setCursor(13,line);lcd.print(ftostr3(FanSpeed));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED) //nalogWrite(FAN_PIN,  fanpwm);
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=FanSpeed;
+          }
+          else
+          {
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>255) encoderpos=255;
+          FanSpeed=encoderpos;
+            analogWrite(FAN_PIN,  FanSpeed);
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+        
+      }break;
+      case ItemT_flow://axis_steps_per_unit[i] = code_value();
+         {
+      if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_FLOW);
+          lcd.setCursor(13,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=(long)(axis_steps_per_unit[E_AXIS]*100.0);
+          }
+          else
+          {
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[E_AXIS]);
+            position[E_AXIS]=lround(position[E_AXIS]*factor);
+            //current_position[E_AXIS]*=factor;
+            axis_steps_per_unit[E_AXIS]= encoderpos/100.0;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
+        }
+        if(linechanging)
+        {
+          if(encoderpos<5) encoderpos=5;
+          if(encoderpos>999999) encoderpos=999999;
+          lcd.setCursor(13,line);lcd.print(ftostr52(encoderpos/100.0));
+        }
+        
+      }break; 
+    default:   
+      break;
+  }
+  line++;
+ }
+ updateActiveLines(ItemT_fan,encoderpos);
+}
+#endif
+#if defined (akadamson) && defined (ULTRA_LCD)
+void MainMenu::showTune()
+{ 
+  uint8_t line=0;
+  clearIfNecessary();
+ for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
+ {
+   //Serial.println((int)(line-lineoffset));
+  switch(i)
+  {
+  case ItemT_exit:
+      MENUITEM(  LCD_PRINT_PGM(MSG_MAIN)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
+      break;
+  case ItemT_speed:
+    {
+      if(force_lcd_update)
+      {
+        lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_SPEED);
+        lcd.setCursor(13,line);lcd.print(ftostr3(feedmultiply));
+      }
+      
+      if((activeline!=line) )
+        break;
+      
+      if(CLICKED) //AnalogWrite(FAN_PIN,  fanpwm);
+      {
+        linechanging=!linechanging;
+        if(linechanging)
+        {
+            encoderpos=feedmultiply;
+        }
+        else
+        {
+          encoderpos=activeline*lcdslow;
+          beepshort();
+        }
+        BLOCK;
+      }
+      if(linechanging)
+      {
+        if(encoderpos<1) encoderpos=1;
+        if(encoderpos>400) encoderpos=400;
+        feedmultiply = encoderpos;
+        feedmultiplychanged=true;
+        lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+      }
+      
+    }break;
+    case ItemT_nozzle:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_NOZZLE);
+          lcd.setCursor(13,line);lcd.print(ftostr3(intround(degTargetHotend0())));
+        } 
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=intround(degTargetHotend0());
+          }
+          else
+          {
+            setTargetHotend0(encoderpos);
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>260) encoderpos=260;
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+      }break;
+      #if (HEATER_BED_PIN > -1)
+      case ItemT_bed:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_BED);
+          lcd.setCursor(13,line);lcd.print(ftostr3(intround(degTargetBed())));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=intround(degTargetBed());
+          }
+          else
+          {
+            setTargetBed(encoderpos);
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>260) encoderpos=260;
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+      }break;
+      #endif
+
+      
+      case ItemT_fan:
+      {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_FAN_SPEED);
+          lcd.setCursor(13,line);lcd.print(ftostr3(FanSpeed));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED) //nalogWrite(FAN_PIN,  fanpwm);
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=FanSpeed;
+          }
+          else
+          {
+            encoderpos=activeline*lcdslow;
+            beepshort();
+          }
+          BLOCK;
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>255) encoderpos=255;
+          FanSpeed=encoderpos;
+            analogWrite(FAN_PIN,  FanSpeed);
+          lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
+        }
+        
+      }break;
+      case ItemT_flow://axis_steps_per_unit[i] = code_value();
+         {
+      if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);LCD_PRINT_PGM(MSG_FLOW);
+          lcd.setCursor(13,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=(long)(axis_steps_per_unit[E_AXIS]*100.0);
+          }
+          else
+          {
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[E_AXIS]);
+            position[E_AXIS]=lround(position[E_AXIS]*factor);
+            //current_position[E_AXIS]*=factor;
+            axis_steps_per_unit[E_AXIS]= encoderpos/100.0;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
+        }
+        if(linechanging)
+        {
+          if(encoderpos<5) encoderpos=5;
+          if(encoderpos>999999) encoderpos=999999;
+          lcd.setCursor(13,line);lcd.print(ftostr52(encoderpos/100.0));
+        }
+        
+      }break; 
+    default:   
+      break;
+  }
+  line++;
+ }
+ updateActiveLines(ItemT_fan,encoderpos);
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/** Float conversion utilities **/
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+/*does not work
+#define MENUCHANGEITEM(repaint_action,  enter_action, accept_action,  change_action) \
+   {\
+     if(force_lcd_update)  { lcd.setCursor(0,line);  repaint_action; } \
+     if(activeline==line)  \
+     { \
+       if(CLICKED) \
+       { \
+         linechanging=!linechanging; \
+         if(linechanging)  {enter_action;} \
+         else {accept_action;} \
+       }  \
+       else \
+       if(linechanging) {change_action};}\
+   }
+*/
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+/********************************/
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+enum {
+  ItemCT_exit,ItemCT_nozzle0,
+#ifdef AUTOTEMP
+  ItemCT_autotempactive,
+  ItemCT_autotempmin,ItemCT_autotempmax,ItemCT_autotempfact,
+#endif
+#if EXTRUDERS > 1
+  ItemCT_nozzle1,
+#endif
+#if EXTRUDERS > 2
+  ItemCT_nozzle2,
+#endif
+#if defined BED_USES_THERMISTOR || defined BED_USES_AD595
+ItemCT_bed,
+#endif  
+  ItemCT_fan,
+  ItemCT_PID_P,ItemCT_PID_I,ItemCT_PID_D,ItemCT_PID_C,
+  ItemCT_PLA_PreHeat_Setting, 
+  ItemCT_ABS_PreHeat_Setting,
+};
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+char conv[8];
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert float to string with 123.4 format, dropping sign
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//  convert float to string with +123.4 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert float to string with 123.4 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+//Float to string with 1.23 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert int to rj string with 123 or -12 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert int to rj string with 1234 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert float to rj string with 12345 format
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//  convert float to string with +1234.5 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+char *ftostr5(const float &x) {
+  long xx = abs(x);
+  conv[0] = xx >= 10000 ? (xx / 10000) % 10 + '0' : ' ';
+  conv[1] = xx >= 1000 ? (xx / 1000) % 10 + '0' : ' ';
+  conv[2] = xx >= 100 ? (xx / 100) % 10 + '0' : ' ';
+  conv[3] = xx >= 10 ? (xx / 10) % 10 + '0' : ' ';
+  conv[4] = xx % 10 + '0';
+  conv[5] = 0;
+  return conv;
+}
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Convert float to string with +123.45 format
+#endif
+++++++
+#if defined (akadamson) && defined (ULTRA_LCD)
+//  convert float to string with +123.45 format
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+// Callback for after editing PID i value
+#endif
+++++++
+
+
+**--**-**--merge: vector_3.cpp
+
+
+
+**--**-**--merge: watchdog.cpp
+
+#if defined (upstream) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) )
+LCD_ALERTMESSAGEPGM("ERR:Please Reset");
+#endif
+++++++
+#if defined (akadamson) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) )
+LCD_MESSAGEPGM("ERR:Please Reset");
+#endif
+++++++
+#if defined (upstream) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) )
+lcd_update();
+#endif
+++++++
+#if defined (akadamson) && (defined (USE_WATCHDOG) && defined (WATCHDOG_RESET_MANUAL) )
+LCD_STATUS;
+#endif
+++++++

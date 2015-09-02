@@ -58,6 +58,23 @@ public class TestInitial {
         return result;
     }
 
+    public void writeTofile(String content, String filepath) {
+
+        try {
+            File file = new File(filepath);
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * run main()
      *
@@ -134,7 +151,6 @@ public class TestInitial {
 
             if (f.exists()) {
                 inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
-//                inputFilePaths.add(fork + "/Marlin/Marlin/");
                 outputPath += "_" + fork;
             } else {
                 System.out.println(filePath + " not exist!");
@@ -391,7 +407,7 @@ public class TestInitial {
      * clean temp file ".xml" and compiled folders
      */
     public void clearTmpFile() {
-        Path directory = Paths.get("testcpp/");
+        Path directory = Paths.get("testcpp/mergedResult/");
         try {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
@@ -401,6 +417,17 @@ public class TestInitial {
                     }
                     return FileVisitResult.CONTINUE;
                 }
+
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if (dir.getFileName().toString().startsWith("19")) {
+                        Files.delete(dir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+
             });
         } catch (IOException e) {
             e.printStackTrace();

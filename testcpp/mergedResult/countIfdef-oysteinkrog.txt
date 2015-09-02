@@ -1,0 +1,256 @@
+!!!fork: oysteinkrog
+
+**--**-**--merge: BlinkM.cpp
+
+
+
+**--**-**--merge: cardreader.cpp
+
+
+
+**--**-**--merge: ConfigurationStore.cpp
+
+
+
+**--**-**--merge: digipot_mcp4451.cpp
+
+
+
+**--**-**--merge: LiquidCrystalRus.cpp
+
+
+
+**--**-**--merge: Marlin_main.cpp
+
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+(float x, float y, float z_before)
+#endif
+++++++
+#if defined (oysteinkrog) && defined (ENABLE_AUTO_BED_LEVELING)
+(float x, float y, float z_before, int retract_probe, int verboseness)
+#endif
+++++++
+#if defined (upstream) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) )
+retract_z_probe();
+#endif
+++++++
+#if defined (oysteinkrog) && (!defined (Z_PROBE_SLED) && defined (ENABLE_AUTO_BED_LEVELING) )
+if (retract_probe)
+  retract_z_probe();
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+SERIAL_PROTOCOLPGM(MSG_BED);
+#endif
+++++++
+#if defined (oysteinkrog) && defined (ENABLE_AUTO_BED_LEVELING)
+if ( verboseness > 2 ) {
+  SERIAL_PROTOCOLPGM(MSG_BED);
+  SERIAL_PROTOCOLPGM(" x: ");
+  SERIAL_PROTOCOL(x);
+  SERIAL_PROTOCOLPGM(" y: ");
+  SERIAL_PROTOCOL(y);
+  SERIAL_PROTOCOLPGM(" z: ");
+  SERIAL_PROTOCOL(measured_z);
+  SERIAL_PROTOCOLPGM("\n");
+  }
+#endif
+++++++
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+SERIAL_PROTOCOLPGM(" x: ");
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+current_position[Z_AXIS]-=retract_zlift;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+calculate_delta(current_position);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+// change cartesian kinematic to  delta kinematic;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && (!defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+prepare_move();
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+calculate_delta(current_position);
+#endif
+++++++
+#if defined (upstream) && (!defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+prepare_move();
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+current_position[Z_AXIS]+=retract_zlift;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+calculate_delta(current_position);
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+// change cartesian kinematic  to  delta kinematic;
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && (!defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+//prepare_move();
+#endif
+++++++
+#if defined (upstream) && (defined (DELTA) && defined (FWRETRACT) )
+calculate_delta(current_position);
+#endif
+++++++
+#if defined (upstream) && (!defined (DELTA) && defined (FWRETRACT) )
+plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+#endif
+++++++
+#if defined (upstream) && defined (FWRETRACT)
+//prepare_move();
+#endif
+++++++
+#if defined (upstream)
+#define VERSION_STRING  "1.0.2"
+#endif
+++++++
+#if defined (oysteinkrog)
+#define VERSION_STRING  "1.0.0"
+#endif
+++++++
+#if defined (upstream) && (defined (DUAL_X_CARRIAGE) && (EXTRUDERS == 1 || defined(COREXY) \
+      || !defined(X2_ENABLE_PIN) || !defined(X2_STEP_PIN) || !defined(X2_DIR_PIN) \
+      || !defined(X2_HOME_POS) || !defined(X2_MIN_POS) || !defined(X2_MAX_POS) \
+      || !defined(X_MAX_PIN) || X_MAX_PIN < 0 &) || defined (oysteinkrog) && (defined (DUAL_X_CARRIAGE) && (EXTRUDERS == 1 || defined(COREXY) \
+      || !defined(X2_ENABLE_PIN) || !defined(X2_STEP_PIN) || !defined(X2_DIR_PIN) \
+      || !defined(X2_HOME_POS) || !defined(X2_MIN_POS) || !defined(X2_MAX_POS) \
+      || !defined(X_MAX_PIN) || X_MAX_PIN < 0 &)
+#error "Missing or invalid definitions for DUAL_X_CARRIAGE mode."
+#endif
+++++++
+
+
+**--**-**--merge: MarlinSerial.cpp
+
+
+
+**--**-**--merge: motion_control.cpp
+
+
+
+**--**-**--merge: planner.cpp
+
+
+
+**--**-**--merge: qr_solve.cpp
+
+
+
+**--**-**--merge: Sd2Card.cpp
+
+
+
+**--**-**--merge: SdBaseFile.cpp
+
+
+
+**--**-**--merge: SdFatUtil.cpp
+
+
+
+**--**-**--merge: SdFile.cpp
+
+
+
+**--**-**--merge: SdVolume.cpp
+
+
+
+**--**-**--merge: Servo.cpp
+
+
+
+**--**-**--merge: stepper.cpp
+
+
+
+**--**-**--merge: temperature.cpp
+
+
+
+**--**-**--merge: ultralcd.cpp
+
+#if defined (upstream) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
+#endif
+++++++
+#if defined (oysteinkrog) && (defined (ULTRA_LCD) && defined (ULTIPANEL) )
+MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28 X Y"));
+#endif
+++++++
+#if defined (upstream) && defined (ULTRA_LCD)
+static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool feedback=true) {
+  if (currentMenu != menu) {
+    currentMenu = menu;
+    encoderPosition = encoder;
+    if (feedback) lcd_quick_feedback();
+
+    // For LCD_PROGRESS_BAR re-initialize the custom characters
+    #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT)
+      lcd_set_custom_characters(menu == lcd_status_screen);
+    #endif
+  }
+#endif
+++++++
+#if defined (oysteinkrog) && defined (ULTRA_LCD)
+static void lcd_goto_menu(menuFunc_t menu, const uint32_t encoder=0, const bool feedback=true) {
+  if (currentMenu != menu) {
+    currentMenu = menu;
+    encoderPosition = encoder;
+    if (feedback) lcd_quick_feedback();
+
+    // For LCD_PROGRESS_BAR re-initialize the custom characters
+    #if defined(LCD_PROGRESS_BAR) && defined(SDSUPPORT) && !defined(DOGLCD)
+      lcd_set_custom_characters(menu == lcd_status_screen);
+    #endif
+  }
+#endif
+++++++
+
+
+**--**-**--merge: vector_3.cpp
+
+#if defined (upstream) && defined (ENABLE_AUTO_BED_LEVELING)
+SERIAL_PROTOCOL(matrix[count]);
+#endif
+++++++
+#if defined (oysteinkrog) && defined (ENABLE_AUTO_BED_LEVELING)
+SERIAL_PROTOCOL_F(matrix[count],6);
+#endif
+++++++
+
+
+**--**-**--merge: watchdog.cpp
+
