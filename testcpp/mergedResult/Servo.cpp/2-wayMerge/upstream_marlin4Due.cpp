@@ -474,23 +474,22 @@ static boolean isTimerActive
     return false;
 }
 /****************** end of static functions ******************************/
-#endif
+Servo::Servo
+() {
+    if
+    ( ServoCount < MAX_SERVOS) {
+        this->servoIndex = ServoCount++;
+// assign a servo index to this instance
 #if defined (upstream) && defined (NUM_SERVOS)
-Servo::Servo() {
-    if( ServoCount < MAX_SERVOS) {
-        this->servoIndex = ServoCount++;                    // assign a servo index to this instance
-        servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values  - 12 Aug 2009
-    } else
-        this->servoIndex = INVALID_SERVO ;  // too many servos
-}
+        servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);
 #endif
 #if defined (marlin4Due) && defined (NUM_SERVOS)
-Servo::Servo() {
-    if (ServoCount < MAX_SERVOS) {
-        this->servoIndex = ServoCount++;                    // assign a servo index to this instance
-        servo_info[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values  - 12 Aug 2009
+        servo_info[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);
+#endif
+// store default values  - 12 Aug 2009
     } else
-        this->servoIndex = INVALID_SERVO;  // too many servos
+        this->servoIndex = INVALID_SERVO ;
+// too many servos
 }
 #endif
 #if defined (upstream) && defined (NUM_SERVOS)

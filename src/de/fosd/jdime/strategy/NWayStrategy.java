@@ -39,6 +39,7 @@ import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
+<<<<<<< origin/develop
 
 import de.fosd.jdime.matcher.Matching;
 <<<<<<< origin/develop
@@ -48,6 +49,11 @@ import de.fosd.jdime.stats.Stats;
 import de.fosd.jdime.util.PrintFunction;
 >>>>>>> HEAD~51
 import nu.xom.Document;
+=======
+import de.fosd.jdime.stats.MergeTripleStats;
+import de.fosd.jdime.stats.Stats;
+import de.fosd.jdime.util.IOFunctionSet;
+>>>>>>> HEAD~50
 
 
 /**
@@ -58,7 +64,8 @@ import nu.xom.Document;
 public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
     private static final Logger LOG = Logger.getLogger(NWayStrategy.class.getCanonicalName());
-    PrintFunction printFunction = new PrintFunction();
+    IOFunctionSet ioFunctionSet = new IOFunctionSet();
+
     /**
      * The source <code>FileArtifacts</code> are extracted from the
      * <code>MergeOperation</code>, parsed by the <code>JastAddJ</code> parser
@@ -109,23 +116,15 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         Iterator it = variants.keySet().iterator();
 		targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
         while (it.hasNext()) {
-
-
             merged = targetNode;
-
 			next = new CppNodeArtifact(variants.get((Revision) it.next()));
 
             try {
                 mergeContext = context;
                 mergeContext.resetStreams();
-
                 long cmdStart = System.currentTimeMillis();
-
 				targetNode = CppNodeArtifact.createProgram(merged);
-
-
                 targetNode.setRevision(merged.getRevision(), true);
-
                 targetNode.renumberTree();
 
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -134,7 +133,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
 
 				MergeScenario<CppNodeArtifact> astScenario = new MergeScenario<>(MergeType.TWOWAY, merged, merged.createEmptyArtifact(), next);
-
 				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(astScenario, targetNode,
                         merged.getRevision().getName(), next.getRevision().getName());
 
@@ -147,7 +145,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 HashSet<String> revSet = new HashSet<>();
                 targetNode.getRevisions(revSet);
                 targetNode.fixRevision(revSet);
-
 
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.finest("Structured merge finished.");
@@ -168,25 +165,85 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     }
                 }
 
+//                String prettyPrint = targetNode.prettyPrint();
+//                prettyPrint = presicePrettyprint(prettyPrint);
+//                try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
+//                    String line;
+//                    while ((line = buf.readLine()) != null) {
+//                        context.appendLine(line);
+//                    }
+//                }
+//
+//                long runtime = System.currentTimeMillis() - cmdStart;
+//
+//                if (LOG.isLoggable(Level.FINE)) {
+//                    FileWriter file = new FileWriter(merged + ".dot");
+//                    file.write(new CPPNodeStrategy().dumpTree(targetNode, true));
+//                    file.close();
+//                }
+//
+//                LOG.fine(() -> String.format("Structured merge time was %s ms.", runtime));
+//
+//                if (context.hasErrors()) {
+//                    System.err.println(context.getStdErr());
+//                }
+//
+//                // write output
+//                if (!context.isPretend() && target != null) {
+//                    assert (target.exists());
+//                    target.write(context.getStdIn());
+//                }
+//                try {
+//                    Process process = new ProcessBuilder("astyle/bin/astyle",
+//                            "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+            } catch (Throwable t) {
+                LOG.severe("Exception while merging:");
+                for (Revision rev : variants.keySet()) {
+                    LOG.severe(String.format("%s: %s", rev, variants.get(rev).getPath()));
+                }
+                LOG.severe(t.toString());
+
+                if (!context.isKeepGoing()) {
+                    throw new Error(t);
+                } else {
+                    if (context.hasStats()) {
+                        MergeTripleStats scenarioStats = new MergeTripleStats(scenario, t.toString());
+                        context.getStats().addScenarioStats(scenarioStats);
+                    }
+                }
+            }
+        }
+
+
                 String prettyPrint = targetNode.prettyPrint();
                 prettyPrint = presicePrettyprint(prettyPrint);
-                try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
 
+        //------------------
+        String testPath ="testcpp/mergedResult/countIfdef.txt";
+        try {
+            String ifdefBlocks = ioFunctionSet.readResult(testPath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //------------------
+
+
+        try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
                     String line;
                     while ((line = buf.readLine()) != null) {
                         context.appendLine(line);
                     }
+        } catch (IOException e) {
+            e.printStackTrace();
                 }
 
-                long runtime = System.currentTimeMillis() - cmdStart;
-
-                if (LOG.isLoggable(Level.FINE)) {
-                    FileWriter file = new FileWriter(merged + ".dot");
-					file.write(new CPPNodeStrategy().dumpTree(targetNode, true));
-                    file.close();
-                }
-
-                LOG.fine(() -> String.format("Structured merge time was %s ms.", runtime));
 
                 if (context.hasErrors()) {
                     System.err.println(context.getStdErr());
@@ -195,7 +252,11 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 // write output
                 if (!context.isPretend() && target != null) {
                     assert (target.exists());
+            try {
                     target.write(context.getStdIn());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
                 }
                 try {
                     Process process = new ProcessBuilder("astyle/bin/astyle",
@@ -204,24 +265,65 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     e.printStackTrace();
                 }
 
+<<<<<<< origin/develop
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
                 context.addCrash(scenario, t);
 
                 for (Revision rev : variants.keySet()) {
                     LOG.severe(String.format("%s: %s", rev, variants.get(rev).getPath()));
-                }
-                LOG.severe(t.toString());
+=======
 
+>>>>>>> HEAD~50
+                }
+
+<<<<<<< origin/develop
                 if (!context.isKeepGoing()) {
                     throw new Error(t);
+=======
+    //-------------------
+    public HashSet<String> forkNameSet = new HashSet<>();
+
+    public void inputFileInit() {
+//        String path = "testcpp/originMarlin/";
+//        File dir = new File(path);
+//        String[] names = dir.list();
+//        for (String name : names) {
+//            if (new File(path + name).isDirectory()) {
+//                if (!name.equals("upstream")) {
+//                    forkNameSet.add(name);
+//                }
+//            }
+//
+//        }
+
+        forkNameSet.add("yuroller");
+//        forkNameSet.add("marlin4Due");
+        forkNameSet.add("upstream");
+    }
+
+    public void analysisIfdefBlock(String content) {
+        String[] ifdefBlocks = content.split("\\+\\+\\+\\+\\+\\+");
+        for (String block : ifdefBlocks) {
+            for (String fork : forkNameSet) {
+                if (block.contains("defined " + fork + ")")) {
+
+>>>>>>> HEAD~50
                 }
             }
         }
     }
 
 
+    //-------------------
+
     public String presicePrettyprint(String res) {
+
+        //-----------------------
+        String testPath = "testcpp/mergedResult/countIfdef.txt";
+        inputFileInit();
+        //-----------------------
+
        while(res.contains("#endif+-+-+-")){
            res = res.replace("#endif+-+-+-","#endif");
 
@@ -248,31 +350,34 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     newResult +="#endif\n";
 
                         //-------------------
-                        String countIfdef = "#endif\n++++++\n";
-                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                       ioFunctionSet.printEndif(testPath);
                         //-------------------
 
                 }
             }
             conditionStack.push(tmp[0]);
-//                newResult += tmp[0] + "\n";
-//                for (int i = 1; i < tmp.length - 1; i++) {
-//                    newResult += tmp[i] + "\n";
-//                }
-                newResult +=printFunction.printNodeWithoutHeadandEnd(e,0);
+                newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
 
                 //-------------------
-                    if (!(tmp[0].contains("defined (A)") && tmp[0].contains("defined (B)"))) {
-                        String countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
-                        printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                int i = 0;
+                for (String fork : forkNameSet) {
+                    if (tmp[0].contains("defined (" + fork + ")")) {
+                        i++;
                     }
-                //-------------------
             }
+
+                if (i < forkNameSet.size()) {
+                    String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
+                    ioFunctionSet.writeTofile(countIfdef, testPath);
             }
         //-------------------
-        String countIfdef = "#endif\n++++++\n";
-        printFunction.writeTofile(countIfdef, "countIfdef.txt");
-        //-------------------
+
+
+            }
+        }
+        //-----------------------
+       ioFunctionSet.printEndif(testPath);
+//-----------------------
         return newResult+"#endif\n";
     }
 

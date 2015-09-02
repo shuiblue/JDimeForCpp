@@ -1612,6 +1612,47 @@ float unscalePID_d(float d) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if defined (quikshot)
 /*
@@ -2868,6 +2909,8 @@ float unscalePID_d(float d) {
 }
 
 #endif //PIDTEMP
+
+
 
 
 

@@ -6,27 +6,19 @@
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Marlin.h"</cpp:file></cpp:include>
 <cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>BLINKM</name></cpp:ifdef>
 
-<cpp:if>#<cpp:directive>if</cpp:directive> <expr>(<name>ARDUINO</name> &gt;= 100)</expr></cpp:if>
-  <cpp:include># <cpp:directive>include</cpp:directive> <cpp:file>"Arduino.h"</cpp:file></cpp:include>
-<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
-  <cpp:include># <cpp:directive>include</cpp:directive> <cpp:file>"WProgram.h"</cpp:file></cpp:include>
-<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"BlinkM.h"</cpp:file></cpp:include>
 
 <function><type><name>void</name></type> <name>SendColors</name><parameter_list>(<param><decl><type><name>byte</name></type> <name>red</name></decl></param>, <param><decl><type><name>byte</name></type> <name>grn</name></decl></param>, <param><decl><type><name>byte</name></type> <name>blu</name></decl></param>)</parameter_list>
 <block>{
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>begin</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt> 
+  
   <expr_stmt><expr><call><name><name>Wire</name>.<name>beginTransmission</name></name><argument_list>(<argument><expr>0x09</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr>'o'</expr></argument>)</argument_list></call></expr>;</expr_stmt>                    <comment type="line">//to disable ongoing script, only needs to be used once</comment>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr>'n'</expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>red</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>grn</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>write</name></name><argument_list>(<argument><expr><name>blu</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
-  <expr_stmt><expr><call><name><name>Wire</name>.<name>endTransmission</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+ 
 }</block></function>
 
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//BLINKM</comment>
+
+
 
 
 

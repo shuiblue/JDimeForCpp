@@ -34,7 +34,12 @@ void SendColors
 //to disable ongoing script, only needs to be used once
     Wire.write('n');
     Wire.write(red);
+#if defined (upstream) && defined (BLINKM)
     Wire.write(grn);
+#endif
+#if defined (marlin4Due) && defined (BLINKM)
+// Wire.write(grn);
+#endif
     Wire.write(blu);
     Wire.endTransmission();
 }

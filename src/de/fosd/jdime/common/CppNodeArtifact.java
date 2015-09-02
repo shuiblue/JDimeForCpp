@@ -14,10 +14,14 @@ import de.fosd.jdime.strategy.CPPNodeStrategy;
 import de.fosd.jdime.strategy.MergeStrategy;
 import de.fosd.jdime.util.Entity;
 <<<<<<< origin/develop
+<<<<<<< origin/develop
 import de.fosd.jdime.util.IOFunctionSet;
 =======
 import de.fosd.jdime.util.PrintFunction;
 >>>>>>> HEAD~51
+=======
+import de.fosd.jdime.util.IOFunctionSet;
+>>>>>>> HEAD~50
 
 
 /**
@@ -25,10 +29,14 @@ import de.fosd.jdime.util.PrintFunction;
  */
 public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 <<<<<<< origin/develop
+<<<<<<< origin/develop
     IOFunctionSet ioFunctionSet = new IOFunctionSet();
 =======
     PrintFunction printFunction = new PrintFunction();
 >>>>>>> HEAD~51
+=======
+    IOFunctionSet ioFunctionSet = new IOFunctionSet();
+>>>>>>> HEAD~50
     private Node astnode = null;
     private Document xmlDoc = null;
     Stack<String> conditionStack = new Stack<>();
@@ -36,6 +44,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     String xmlns = "http://www.sdml.info/srcML/src";
 
 
+<<<<<<< origin/develop
+=======
+
+
+>>>>>>> HEAD~50
     /**
      * Constructor class call c++ parser and create the AST, using this instance
      * as the root node.
@@ -43,6 +56,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @param artifact fileArtifact that can build CppNodeArtifact
      */
     public CppNodeArtifact(final FileArtifact artifact) {
+
+
         if (artifact.isEmpty()) {
             astnode = null;
             return;
@@ -955,7 +970,30 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return res;
     }
 
-    String countIfdef = "";
+    //-------------------
+    public HashSet<String> forkNameSet = new HashSet<>();
+    public void inputFileInit() {
+//        String path = "testcpp/originMarlin/";
+//        File dir = new File(path);
+//        String[] names = dir.list();
+//        for (String name : names) {
+//            if (new File(path + name).isDirectory()) {
+//                if (!name.equals("upstream")) {
+//                    forkNameSet.add(name);
+//                }
+//            }
+//
+//        }
+
+        forkNameSet.add("yuroller");
+//        forkNameSet.add("marlin4Due");
+        forkNameSet.add("upstream");
+    }
+
+
+
+
+    //-------------------
 
     /**
 <<<<<<< origin/develop
@@ -969,6 +1007,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @return presiced result
      */
     public String presicePrettyprint(String res, String blockCondition) {
+    //-----------------------
+        String testPath = "testcpp/mergedResult/countIfdef.txt";
+        inputFileInit();
+    //-----------------------
+
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
@@ -980,23 +1023,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
                     if (lastCon.equals(tmp[0])) {
-//                        String x = "";
-//                        for (int i = 1; i < tmp.length - 1; i++) {
-//                            x += tmp[i] + "\n";
-//                        }
-//                        newResult += x;
-                        newResult += printFunction.printNodeWithoutHeadandEnd(e, 1);
+                        newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 1);
                         continue;
                     } else {
                         conditionStack.pop();
                         if (tmp[0].equals(blockCondition.replace("\n", ""))) {
                             newResult += "#endif\n";
 //-----------------------
-                            countIfdef = "#endif\n++++++\n";
-                            printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                            ioFunctionSet.printEndif(testPath);
 //-----------------------
-
-
                             if (tmp.length > 3) {
                                 for (int i = 1; i < tmp.length - 1; i++) {
                                     newResult += tmp[i] + "\n";
@@ -1007,22 +1042,41 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             continue;
                         } else {
                             newResult += "#endif\n";
-                            //-------------------
-                            countIfdef = "#endif\n++++++\n";
-                            printFunction.writeTofile(countIfdef, "countIfdef.txt");
-                            //-------------------
+  //-----------------------
+                           ioFunctionSet. printEndif(testPath);
+//-----------------------
 
                             if (!tmp[0].startsWith("#if defined")) {
                                 newResult += e;
                             } else {
-                                newResult += printFunction.printNodeWithoutHeadandEnd(e, 0);
+                                newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
                                 conditionStack.push(tmp[0]);
 
-                                //-------------------
-                                countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
-                                printFunction.writeTofile(countIfdef, "countIfdef.txt");
-                                //-------------------
+//                                //-------------------
+//                                String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
+//                                ioFunctionSet.writeTofile(countIfdef,testPath);
+//                                //-------------------
 
+
+                                //-------------------
+                                int i = 0;
+                                int a = 0;
+                                for(String s: forkNameSet){
+                                    if(blockCondition.contains("defined ("+s+")")){
+                                        i++;
+                                    }
+                                    if(e.contains("defined ("+s+")")){
+                                        a++;
+                                    }
+                                }
+
+
+
+                                if (i==forkNameSet.size()&&a<forkNameSet.size()&& e.split("#if").length==2) {
+                                    String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
+                                    ioFunctionSet.writeTofile(countIfdef, testPath);
+                                }
+                                //-------------------
 
                             }
                         }
@@ -1031,17 +1085,30 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     if (tmp[0].startsWith("#if defined")) {
                         if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
                             conditionStack.push(tmp[0]);
-                            newResult += printFunction.printNodeWithoutHeadandEnd(e, 0);
+                            newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
 
                             //-------------------
-                            if (blockCondition.contains("defined (A)") && blockCondition.contains("defined (B)") && e.split("#if").length < 3) {
-                                countIfdef = printFunction.printNodeWithoutHeadandEnd(e, 0);
-                                printFunction.writeTofile(countIfdef, "countIfdef.txt");
+                            int i = 0;
+                            int a = 0;
+                            for(String s: forkNameSet){
+                                if(blockCondition.contains("defined ("+s+")")){
+                                    i++;
+                                }
+                                if(e.contains("defined ("+s+")")){
+                                    a++;
+                                }
+                            }
+
+
+
+                            if (i==forkNameSet.size()&&a<forkNameSet.size()&& e.split("#if").length==2) {
+                                String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
+                                ioFunctionSet.writeTofile(countIfdef, testPath);
                             }
                             //-------------------
 
                         } else {
-                            newResult += printFunction.printNodeWithoutHeadandEnd(e, 1);
+                            newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 1);
                         }
                     } else {
                         newResult += e;
@@ -1055,12 +1122,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (conditionStack.size() > 0) {
             conditionStack.pop();
             newResult += "#endif\n";
+        }
 
 //-----------------------
-            countIfdef = "#endif\n++++++\n";
-            printFunction.writeTofile(countIfdef, "countIfdef.txt");
+        ioFunctionSet.printEndif(testPath);
 //-----------------------
-        }
+
         return newResult;
     }
 
@@ -1089,6 +1156,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     /**
      * this function add the prefix of element to the print result.
 <<<<<<< origin/develop
+<<<<<<< origin/develop
      *
      * @param cppNoArt
      * @return
@@ -1098,6 +1166,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
 
 =======
+=======
+     *
+>>>>>>> HEAD~50
      * @param nodeLocalName element's name
      * @param cppNoArt
      * @return
@@ -1282,6 +1353,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         return blockString;
     }
+<<<<<<< origin/develop
 
 <<<<<<< origin/develop
     public String printRightParenthesis(CppNodeArtifact c, String res) {
@@ -1295,6 +1367,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 =======
 //                        String child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
 
+=======
+                        } else {
+                            blockString += c.prettyPrint();
+                        }
+                    } else {
+                        blockString += c.prettyPrint();
+                    }
+                    if (c.children != null && c.children.size() > 0) {
+>>>>>>> HEAD~50
                         String child_localName;
                         if (((Element) c.astnode).getChildElements().size() > 0) {
                             child_localName = ((Element) c.astnode).getChildElements().get(0).getLocalName();
@@ -1532,8 +1613,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return s;
     }
 
+<<<<<<< origin/develop
 =======
 >>>>>>> HEAD~51
+=======
+>>>>>>> HEAD~50
     /**
      * This function print the match node
      *

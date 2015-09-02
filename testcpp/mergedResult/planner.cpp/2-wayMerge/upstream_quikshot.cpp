@@ -980,6 +980,47 @@ void reset_acceleration_rates() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if defined (quikshot)
 /*
@@ -1884,6 +1925,8 @@ void reset_acceleration_rates() {
         axis_steps_per_sqr_second[i] = max_acceleration_units_per_sq_second[i] * axis_steps_per_unit[i];
     }
 }
+
+
 
 
 
