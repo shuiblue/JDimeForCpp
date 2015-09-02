@@ -1287,20 +1287,22 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             //str is the Revision of each variants
             String str = c.variants.keySet().toArray()[i].toString();
-            String condition = printCondition(c.variants.get(str).getRevision());
 
             if (c.variants.get(str).hasMatches()) {
                 s += printMatchCondition(c.variants.get(str));
             } else {
+//
                 s += "#if defined (" + str + ")";
+                String condition = printCondition(c.variants.get(str).getRevision());
                 if (condition.length() > 0) {
                     s += " && " + condition;
                 }
             }
             s += "\n" + c.variants.get(str);
+
+            //get parents' revision
             s += printCondition(c.getRevision());
             s += "\n#endif\n";
-
             if (var_size > 1) {
                 s += "+-+-+-\n";
             }
