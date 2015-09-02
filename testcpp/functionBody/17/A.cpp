@@ -9,3 +9,6 @@ protected:
 	int s = 1;
 
 }
+
+
+

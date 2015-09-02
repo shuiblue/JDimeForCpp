@@ -8,3 +8,6 @@ protected:
 	int s = 0;
 
 }
+
+
+
