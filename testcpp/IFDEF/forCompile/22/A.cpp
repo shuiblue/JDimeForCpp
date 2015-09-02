@@ -2,3 +2,4 @@
 #if defined(X)
 void a();
 #endif
+

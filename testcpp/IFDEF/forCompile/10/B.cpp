@@ -4,3 +4,4 @@ void a();
 #ifdef Y
 void b();
 #endif
+
