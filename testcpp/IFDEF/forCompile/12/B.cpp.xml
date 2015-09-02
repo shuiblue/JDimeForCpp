@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" language="C++" filename="testcpp/IFDEF/forCompile/12/B.cpp"><function_decl><type><name>void</name></type> <name>b</name><parameter_list>()</parameter_list>;</function_decl>
+
+</unit>

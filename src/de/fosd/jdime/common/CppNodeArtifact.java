@@ -412,7 +412,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public CppNodeArtifact addChild(CppNodeArtifact child) throws IOException {
         child.setParent(this);
         if (checkIfEndifMatched(child.astnode)) {
-                String localName = ((Element) child.astnode).getLocalName();
+            String localName = ((Element) child.astnode).getLocalName();
             if (!entity.getTerminal().contains(localName)) {
                 child.initializeChildren();
 
@@ -800,7 +800,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
-        if (this.children != null && this.children.size() > 0) {
+        if(this.isChoice()){
+            res += printChoice(this);
+
+        }else if (this.children != null) {
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
@@ -832,18 +835,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         res += printMatchNode(child);
                         res += "+-+-+-\n";
                     }
-                } else {
-                    res += printChoice(this);
-                    continue;
                 }
             }
-        }
-//        else if (this.isChoice()) {
-//            res += printChoice(this);
-//        } else if (this.matches != null) {
-//            res += printMatchNode(this);
-//        }
-        else {
+        } else {
             res += printSingleNode(this);
         }
         res += "+-+-+-\n";
