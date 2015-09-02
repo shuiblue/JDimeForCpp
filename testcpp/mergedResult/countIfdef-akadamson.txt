@@ -10,10 +10,14 @@
 logging = false;
 #endif
 ++++++
+
 #if defined (upstream) && defined (SDSUPPORT)
 workDirDepth = 0;
+file_subcall_ctr=0;
+memset(workDirParents, 0, sizeof(workDirParents));
 #endif
 ++++++
+
 #if defined (upstream) && defined (SDSUPPORT)
 //the SD start is delayed, because otherwise the serial cannot answer fast enough to make contact with the host software.
 #endif
