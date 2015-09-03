@@ -276,7 +276,7 @@ public class TestInitial {
      * @param testNum
      * @return
      */
-    public boolean checkProprocessResult(HashSet<String> config, String merged, String origin, String path, String testNum) {
+    public boolean checkPreprocessResult(HashSet<String> config, String merged, String origin, String path, String testNum) {
         String filePath = path + testNum;
 
         String r1 = compileCpp(config, merged, filePath);
@@ -374,8 +374,8 @@ public class TestInitial {
                 feature.addAll(c);
                 feature.add(file);
                 System.out.println("## running config " + feature.toString());
-                System.out.println(checkProprocessResult((HashSet<String>) feature, output, file, path, testNum));
-                result = result && checkProprocessResult((HashSet<String>) feature, output, file, path, testNum);
+                System.out.println(checkPreprocessResult((HashSet<String>) feature, output, file, path, testNum));
+                result = result && checkPreprocessResult((HashSet<String>) feature, output, file, path, testNum);
                 feature = new HashSet<>();
             }
         }
