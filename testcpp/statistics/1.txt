@@ -1,0 +1,75 @@
+#if defined (A) && defined (X)
+int y=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B) && defined (Y)
+int V=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A) && defined (X)
+c++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B)
+b++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A)
+a++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A) && defined (X)
+int y=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B) && defined (Y)
+int V=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A) && defined (X)
+c++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B)
+b++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A)
+a++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A) && defined (X)
+int y=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B) && defined (Y)
+int V=0;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A) && defined (X)
+c++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (B)
+b++;
+#endif
++-+-+-
++++++++++++++++++++++++
+#if defined (A)
+a++;
+#endif
++-+-+-
++++++++++++++++++++++++

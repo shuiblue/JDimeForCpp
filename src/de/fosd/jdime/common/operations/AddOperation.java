@@ -25,12 +25,22 @@ package de.fosd.jdime.common.operations;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+<<<<<<< origin/develop
 import de.fosd.jdime.common.Artifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.stats.ElementStatistics;
 import de.fosd.jdime.stats.MergeScenarioStatistics;
 import de.fosd.jdime.stats.Statistics;
+=======
+import de.fosd.jdime.common.*;
+import de.fosd.jdime.stats.ASTStats;
+import de.fosd.jdime.stats.Stats;
+import de.fosd.jdime.stats.StatsElement;
+import de.fosd.jdime.util.Entity;
+import de.fosd.jdime.util.IOFunctionSet;
+import nu.xom.Element;
+>>>>>>> HEAD~38
 
 /**
  * The operation adds <code>Artifact</code>s.
@@ -97,6 +107,16 @@ System.out.println(target.dumpTree());
     public void apply(MergeContext context) throws IOException {
         assert (artifact != null);
         assert (artifact.exists()) : "Artifact does not exist: " + artifact;
+
+//------------------FOR STATISTICS
+		if(!artifact.hasMatches()||artifact.hasChildren()) {
+			String path = "testcpp/statistics/1.txt";
+			String breakLine= "+++++++++++++++++++++++\n";
+			IOFunctionSet io = new IOFunctionSet();
+			io.writeTofile(artifact.prettyPrint(), path);
+			io.writeTofile(breakLine,path);
+		}
+//------------------FOR STATISTICS
 
         LOG.fine(() -> "Applying: " + this);
 

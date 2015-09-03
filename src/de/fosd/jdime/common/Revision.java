@@ -96,8 +96,6 @@ public class Revision {
                 for (String s : iter.next().split("\\|\\|")) {
                     result |= artifact != null && artifact.hasMatching(new Revision(s.replace(" ","")));
                 }
-
-//                result |= artifact != null && artifact.hasMatching(new Revision(iter.next()));
             }
         }
 

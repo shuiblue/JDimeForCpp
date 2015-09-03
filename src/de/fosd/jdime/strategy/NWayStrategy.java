@@ -114,10 +114,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         }
 
         Iterator it = variants.keySet().iterator();
-		targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
+        targetNode = new CppNodeArtifact(variants.get(it.next()));
         while (it.hasNext()) {
             merged = targetNode;
-			next = new CppNodeArtifact(variants.get((Revision) it.next()));
+            next = new CppNodeArtifact(variants.get(it.next()));
 
             try {
                 mergeContext = context;
@@ -164,42 +164,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.print(targetNode.prettyPrint());
                     }
                 }
-
-//                String prettyPrint = targetNode.prettyPrint();
-//                prettyPrint = presicePrettyprint(prettyPrint);
-//                try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
-//                    String line;
-//                    while ((line = buf.readLine()) != null) {
-//                        context.appendLine(line);
-//                    }
-//                }
-//
-//                long runtime = System.currentTimeMillis() - cmdStart;
-//
-//                if (LOG.isLoggable(Level.FINE)) {
-//                    FileWriter file = new FileWriter(merged + ".dot");
-//                    file.write(new CPPNodeStrategy().dumpTree(targetNode, true));
-//                    file.close();
-//                }
-//
-//                LOG.fine(() -> String.format("Structured merge time was %s ms.", runtime));
-//
-//                if (context.hasErrors()) {
-//                    System.err.println(context.getStdErr());
-//                }
-//
-//                // write output
-//                if (!context.isPretend() && target != null) {
-//                    assert (target.exists());
-//                    target.write(context.getStdIn());
-//                }
-//                try {
-//                    Process process = new ProcessBuilder("astyle/bin/astyle",
-//                            "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
                 for (Revision rev : variants.keySet()) {
@@ -218,23 +182,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
             }
         }
 
-
                 String prettyPrint = targetNode.prettyPrint();
-                prettyPrint = presicePrettyprint(prettyPrint);
-
-        //------------------
-        String testPath ="testcpp/mergedResult/countIfdef.txt";
-        try {
-            String ifdefBlocks = ioFunctionSet.readResult(testPath);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
-        //------------------
-
-
+        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
                     String line;
                     while ((line = buf.readLine()) != null) {
@@ -243,7 +194,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         } catch (IOException e) {
             e.printStackTrace();
                 }
-
 
                 if (context.hasErrors()) {
                     System.err.println(context.getStdErr());
@@ -259,11 +209,12 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
             }
                 }
                 try {
-                    Process process = new ProcessBuilder("astyle/bin/astyle",
+            new ProcessBuilder("astyle/bin/astyle",
                             "--style=google","--indent-preproc-block","-xe",context.getOutputFile().getPath()).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+<<<<<<< origin/develop
 
 <<<<<<< origin/develop
             } catch (Throwable t) {
@@ -379,6 +330,8 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
        ioFunctionSet.printEndif(testPath);
 //-----------------------
         return newResult+"#endif\n";
+=======
+>>>>>>> HEAD~38
     }
 
     @Override

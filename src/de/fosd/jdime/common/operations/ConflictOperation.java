@@ -27,12 +27,11 @@ import java.util.logging.Logger;
 
 import de.fosd.jdime.common.Artifact;
 import de.fosd.jdime.common.MergeContext;
+import de.fosd.jdime.util.IOFunctionSet;
 
 /**
+ * @param <T> type of artifact
  * @author Olaf Lessenich
- *
- * @param <T>
- *            type of artifact
  */
 public class ConflictOperation<T extends Artifact<T>> extends Operation<T> {
 
@@ -78,6 +77,22 @@ public class ConflictOperation<T extends Artifact<T>> extends Operation<T> {
             InterruptedException {
 
         LOG.fine(() -> "Applying: " + this);
+
+
+//------------------FOR STATISTICS
+        String path = "testcpp/statistics/1.txt";
+        String breakLine= "+++++++++++++++++++++++\n";
+        IOFunctionSet ioFunctionSet = new IOFunctionSet();
+        IOFunctionSet io = new IOFunctionSet();
+        io.writeTofile(left.prettyPrint(), path);
+//        io.writeTofile(ioFunctionSet.presicePrettyprint(left.prettyPrint()), path);
+        io.writeTofile(breakLine,path);
+        io.writeTofile(right.prettyPrint(), path);
+//        io.writeTofile(ioFunctionSet.presicePrettyprint(right.prettyPrint()), path);
+        io.writeTofile(breakLine,path);
+
+//------------------FOR STATISTICS
+
 
         if (target != null) {
             assert (target.exists());

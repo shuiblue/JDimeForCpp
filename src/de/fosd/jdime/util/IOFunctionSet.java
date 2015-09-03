@@ -1,6 +1,7 @@
 package de.fosd.jdime.util;
 
 import java.io.*;
+import java.util.Stack;
 
 /**
  * Created by shuruiz on 8/31/15.
@@ -41,46 +42,112 @@ public class IOFunctionSet {
         }
     }
 
-
-
     /**
-     * this function read the content of the file from filePath, and ready for comparing
+     * This function presice the pretty print result of a block when:
+     * 1)neighbor lines have the same condition
+     * 2) the element has the same condition with the block
      *
-     * @param filePath file path
-     * @return content of the file
-     * @throws IOException e
+     * @param res            origin pretty print result
+     * @param blockCondition condition of the block
+     * @return presiced result
      */
-    public String readResult(String filePath) throws IOException {
-        BufferedReader result_br = new BufferedReader(new FileReader(filePath));
-        String result = "";
-        try {
-            StringBuilder sb = new StringBuilder();
-            String line = result_br.readLine();
+    public String precisePrettyprint(String res, String blockCondition) {
 
-            while (line != null) {
-                if (!line.isEmpty()) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
+        String newResult = "";
+        Stack<String> conditionStack = new Stack<>();
+        String[] elements = res.split("\\+-\\+-\\+-\n");
+        for (int j = 0; j < elements.length; j++) {
+            String e = elements[j];
+
+            if (e.length() > 0 && !e.equals("\n")) {
+                String[] tmp = e.split("\n");
+                if (conditionStack.size() > 0) {
+                    String lastCon = conditionStack.lastElement();
+                    if (lastCon.equals(tmp[0])) {
+                        newResult += printNodeWithoutHeadandEnd(e, 1);
+                        continue;
+                    } else {
+                        conditionStack.pop();
+                        if (tmp[0].equals(blockCondition.replace("\n", ""))) {
+                            newResult += "#endif\n";
+                            if (tmp.length > 3) {
+                                for (int i = 1; i < tmp.length - 1; i++) {
+                                    newResult += tmp[i] + "\n";
+                                }
+                            } else {
+                                newResult += tmp[1] + "\n";
+                            }
+                            continue;
+                        } else {
+                            newResult += "#endif\n";
+
+                            if (!tmp[0].startsWith("#if defined")) {
+                                newResult += e;
+                            } else {
+                                newResult += printNodeWithoutHeadandEnd(e, 0);
+                                conditionStack.push(tmp[0]);
+                            }
+                        }
+                    }
+                } else {
+                    if (tmp[0].startsWith("#if defined")) {
+                        if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
+                            conditionStack.push(tmp[0]);
+                            newResult += printNodeWithoutHeadandEnd(e, 0);
+                        } else {
+                            newResult += printNodeWithoutHeadandEnd(e, 1);
+                        }
+                    } else {
+                        newResult += e;
+                        if (!e.endsWith("\n")) {
+                            newResult += "\n";
+                        }
+                    }
                 }
-                line = result_br.readLine();
             }
-            result = sb.toString();
-        } finally {
-            result_br.close();
         }
-        return result;
-    }
-    public void printEndif(String testPath){
-        String tmpString = null;
-        try {
-            tmpString = readResult(testPath);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if (conditionStack.size() > 0) {
+            conditionStack.pop();
+            newResult += "#endif\n";
         }
-        if(!tmpString.endsWith("+\n")&&!tmpString.replace("\n","").endsWith("cpp")) {
-            String countIfdef = "#endif\n++++++\n";
-           writeTofile(countIfdef, testPath);
-        }
+
+        return newResult;
     }
 
+
+    public String presicePrettyprint(String res) {
+
+
+        while (res.contains("#endif+-+-+-")) {
+            res = res.replace("#endif+-+-+-", "#endif");
+
+        }
+        String newResult = "";
+        Stack<String> conditionStack = new Stack<>();
+        String[] elements = res.split("\\+-\\+-\\+-\n");
+        String s = "";
+        for (String e : elements) {
+            if (e.length() > 0) {
+                String[] tmp = e.split("\n");
+                if (conditionStack.size() > 0) {
+                    String lastCon = conditionStack.lastElement();
+                    if (lastCon.equals(tmp[0])) {
+                        String x = "";
+                        for (int i = 1; i < tmp.length - 1; i++) {
+                            x += tmp[i] + "\n";
+                        }
+                        newResult += x;
+                        continue;
+                    } else {
+                        conditionStack.pop();
+                        conditionStack.push(tmp[0]);
+                        newResult += "#endif\n";
+                    }
+                }
+                conditionStack.push(tmp[0]);
+                newResult += printNodeWithoutHeadandEnd(e, 0);
+            }
+        }
+        return newResult + "#endif\n";
+    }
 }
