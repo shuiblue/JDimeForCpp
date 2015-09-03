@@ -813,7 +813,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         // choice node
         if (this.isChoice()) {
             res += printChoice(this);
-        } else if (this.children != null) {     // matched node
+//        } else if (this.children != null) {     // matched node
+        } else if (this.hasMatches()) {     // matched node
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
@@ -1016,12 +1017,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     /**
      * this function add the prefix of element to the print result.
      *
-     * @param nodeLocalName element's name
      * @param cppNoArt
      * @return
      */
-    public String addElementPrefix(String nodeLocalName, CppNodeArtifact cppNoArt) {
+    public String addElementPrefix(CppNodeArtifact cppNoArt) {
         String res = "";
+        String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
+
         if (nodeLocalName.equals("function")) {
             String returnType = (((Element) cppNoArt.astnode).getChildElements("type", xmlns)).get(0).getValue();
             String funcName = (((Element) cppNoArt.astnode).getChildElements("name", xmlns)).get(0).getValue();
@@ -1065,32 +1067,17 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String res = "";
         String blockCondition = printMatchCondition(cppNoArt);
         String nodeLocalName = ((Element) cppNoArt.astnode).getLocalName();
-        res += addElementPrefix(nodeLocalName, cppNoArt);
+        res += addElementPrefix(cppNoArt);
 
         Iterator<CppNodeArtifact> it = cppNoArt.getChildren().iterator();
         while (it.hasNext()) {
             CppNodeArtifact c = it.next();
             String c_localName = ((Element) c.astnode).getLocalName();
-            String c_value = c.astnode.getValue();
             res += "+-+-+-\n";
+
             // print the node before block (e.g. condition..)
-            if (!nodeLocalName.equals("for")) {
-                if (entity.getTerminal().contains(c_localName)) {
-                    if (c.hasMatches()) {
-                        //handle do while loop specifically
-                        if (c_localName.equals("condition") && nodeLocalName.equals("do")) {
-                            res += "while " + c_value + ";";
-                        } else {
-                            res += printMatchSingleNode(c);
-                        }
-                    } else {
-                        res += precisePrettyprint(printChoice(c), blockCondition) + "\n";
-                    }
-                }
-                if (c_localName.equals("expr") && nodeLocalName.equals("case")) {
-                    res += ":";
-                }
-            }
+            res+=printBlockRelatedEntity(c,nodeLocalName,blockCondition);
+
             // start to handle <block/> tag node
             String blockString = "";
             if (entity.getBlockEntity().contains(c_localName)) {
@@ -1102,14 +1089,39 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 blockString += printRightParenthesis(c, res);
 
                 blockString += "+-+-+-\n";
-                   } else if (entity.getNonTerminal().contains(c_localName)) {
-                blockString=printNonTerminalNode(c);
+            } else if (entity.getNonTerminal().contains(c_localName)) {
+                blockString = printNonTerminalNode(c);
             }
             res += precisePrettyprint(blockString, blockCondition);
 
         }
         res = "+-+-+-\n" + blockCondition + precisePrettyprint(res, blockCondition) + "#endif\n";
         res += "+-+-+-\n";
+        return res;
+    }
+
+    public String printBlockRelatedEntity(CppNodeArtifact c, String parentLocalName, String blockCondition) {
+        String c_localName = ((Element) c.astnode).getLocalName();
+        String c_value = c.astnode.getValue();
+        String res = "";
+
+        if (!parentLocalName.equals("for")) {
+            if (entity.getTerminal().contains(c_localName)) {
+                if (c.hasMatches()) {
+                    //handle do while loop specifically
+                    if (c_localName.equals("condition") && parentLocalName.equals("do")) {
+                        res += "while " + c_value + ";";
+                    } else {
+                        res += printMatchSingleNode(c);
+                    }
+                } else {
+                    res += precisePrettyprint(printChoice(c), blockCondition) + "\n";
+                }
+            }
+            if (c_localName.equals("expr") && parentLocalName.equals("case")) {
+                res += ":";
+            }
+        }
         return res;
     }
 
@@ -1181,31 +1193,20 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
             blockString += printChoice(c) + "\n";
         } else if (c.hasMatches()) { // c has matched with other node
-            if (c.children != null) {
-                Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
-                while (it4Block.hasNext()) {
-                    blockString += "+-+-+-\n";
-                    CppNodeArtifact c_block = it4Block.next();
-                    String c_block_localName = ((Element) c_block.astnode).getLocalName();
-                    if (entity.getClassBody().contains(c_block_localName)) {
-                        String s = c_block.prettyPrint();
-                        blockString += s;
-
-                    } else if (entity.getNonTerminal().contains(c_block_localName)) {
-                        String block = printNonTerminalNode(c_block);
-                        blockString += block;
-
-                    } else if (c_block.hasMatches()) {
-                        blockString += printMatchCondition(c_block) + c_block.astnode.getValue() + "\n#endif\n";
-                    } else {
-                        String choice = printChoice(c_block);
-                        blockString += choice;
-                    }
+            Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
+            while (it4Block.hasNext()) {
+                blockString += "+-+-+-\n";
+                CppNodeArtifact c_block = it4Block.next();
+                String c_block_localName = ((Element) c_block.astnode).getLocalName();
+                if (entity.getClassBody().contains(c_block_localName)) {
+                    blockString += c_block.prettyPrint();
+                } else if (c_block.hasMatches()) {
+                    blockString += printBlock(c_block);
+                } else {
+                    blockString += printChoice(c_block);
                 }
             }
         }
-
-
         return blockString;
     }
 
