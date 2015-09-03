@@ -102,10 +102,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         }
 
         Iterator it = variants.keySet().iterator();
-        targetNode = new CppNodeArtifact(variants.get((Revision) it.next()));
+        targetNode = new CppNodeArtifact(variants.get(it.next()));
         while (it.hasNext()) {
             merged = targetNode;
-            next = new CppNodeArtifact(variants.get((Revision) it.next()));
+            next = new CppNodeArtifact(variants.get(it.next()));
 
             try {
                 mergeContext = context;
@@ -152,42 +152,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.print(targetNode.prettyPrint());
                     }
                 }
-
-//                String prettyPrint = targetNode.prettyPrint();
-//                prettyPrint = presicePrettyprint(prettyPrint);
-//                try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
-//                    String line;
-//                    while ((line = buf.readLine()) != null) {
-//                        context.appendLine(line);
-//                    }
-//                }
-//
-//                long runtime = System.currentTimeMillis() - cmdStart;
-//
-//                if (LOG.isLoggable(Level.FINE)) {
-//                    FileWriter file = new FileWriter(merged + ".dot");
-//                    file.write(new CPPNodeStrategy().dumpTree(targetNode, true));
-//                    file.close();
-//                }
-//
-//                LOG.fine(() -> String.format("Structured merge time was %s ms.", runtime));
-//
-//                if (context.hasErrors()) {
-//                    System.err.println(context.getStdErr());
-//                }
-//
-//                // write output
-//                if (!context.isPretend() && target != null) {
-//                    assert (target.exists());
-//                    target.write(context.getStdIn());
-//                }
-//                try {
-//                    Process process = new ProcessBuilder("astyle/bin/astyle",
-//                            "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
                 for (Revision rev : variants.keySet()) {
@@ -206,23 +170,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
             }
         }
 
-
         String prettyPrint = targetNode.prettyPrint();
-        prettyPrint = presicePrettyprint(prettyPrint);
-
-        //------------------
-        String testPath ="testcpp/mergedResult/countIfdef.txt";
-        try {
-            String ifdefBlocks = ioFunctionSet.readResult(testPath);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
-        //------------------
-
-
+        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
             String line;
             while ((line = buf.readLine()) != null) {
@@ -231,7 +182,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         if (context.hasErrors()) {
             System.err.println(context.getStdErr());
@@ -247,112 +197,11 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
             }
         }
         try {
-            Process process = new ProcessBuilder("astyle/bin/astyle",
+            new ProcessBuilder("astyle/bin/astyle",
                     "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-    }
-
-    //-------------------
-    public HashSet<String> forkNameSet = new HashSet<>();
-
-    public void inputFileInit() {
-//        String path = "testcpp/originMarlin/";
-//        File dir = new File(path);
-//        String[] names = dir.list();
-//        for (String name : names) {
-//            if (new File(path + name).isDirectory()) {
-//                if (!name.equals("upstream")) {
-//                    forkNameSet.add(name);
-//                }
-//            }
-//
-//        }
-
-        forkNameSet.add("yuroller");
-//        forkNameSet.add("marlin4Due");
-        forkNameSet.add("upstream");
-    }
-
-    public void analysisIfdefBlock(String content) {
-        String[] ifdefBlocks = content.split("\\+\\+\\+\\+\\+\\+");
-        for (String block : ifdefBlocks) {
-            for (String fork : forkNameSet) {
-                if (block.contains("defined " + fork + ")")) {
-
-                }
-            }
-        }
-    }
-
-
-    //-------------------
-
-    public String presicePrettyprint(String res) {
-
-        //-----------------------
-        String testPath = "testcpp/mergedResult/countIfdef.txt";
-        inputFileInit();
-        //-----------------------
-
-        while (res.contains("#endif+-+-+-")) {
-            res = res.replace("#endif+-+-+-", "#endif");
-
-        }
-        String newResult = "";
-        Stack<String> conditionStack = new Stack<>();
-        String[] elements = res.split("\\+-\\+-\\+-\n");
-        String s = "";
-        for (String e : elements) {
-            if (e.length() > 0) {
-                String[] tmp = e.split("\n");
-                if (conditionStack.size() > 0) {
-                    String lastCon = conditionStack.lastElement();
-                    if (lastCon.equals(tmp[0])) {
-                        String x = "";
-                        for (int i = 1; i < tmp.length - 1; i++) {
-                            x += tmp[i] + "\n";
-                        }
-                        newResult += x;
-                        continue;
-                    } else {
-                        conditionStack.pop();
-                        conditionStack.push(tmp[0]);
-                        newResult += "#endif\n";
-
-                        //-------------------
-                       ioFunctionSet.printEndif(testPath);
-                        //-------------------
-
-                    }
-                }
-                conditionStack.push(tmp[0]);
-                newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-
-                //-------------------
-                int i = 0;
-                for (String fork : forkNameSet) {
-                    if (tmp[0].contains("defined (" + fork + ")")) {
-                        i++;
-                    }
-                }
-
-                if (i < forkNameSet.size()) {
-                    String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-                    ioFunctionSet.writeTofile(countIfdef, testPath);
-                }
-                //-------------------
-
-
-            }
-        }
-        //-----------------------
-       ioFunctionSet.printEndif(testPath);
-//-----------------------
-        return newResult + "#endif\n";
     }
 
     @Override

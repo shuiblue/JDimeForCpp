@@ -615,11 +615,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (astnode_Class.contains("Element")) {
             if (localEqual) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
-
-//                    if ((this.children == null&& other.children == null)||(this.children.size()>0&&other.children.size()==0 )||(this.children.size()==0&&other.children.size()>0 )){
                     if (this.children == null && other.children == null) {
                         return match;
-//                        return false;
                     }
                     return true;
                 } else if (ast_localName.equals("function")
@@ -810,15 +807,13 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     @Override
     public String prettyPrint() {
         String res = "";
-        // choice node
         if (this.isChoice()) {
             res += printChoice(this);
-//        } else if (this.children != null) {     // matched node
-        } else if (this.hasMatches()) {     // matched node
+        } else if (this.children != null) {     // matched node
             Iterator<CppNodeArtifact> it = getChildren().iterator();
             while (it.hasNext()) {
                 CppNodeArtifact child = it.next();
-
+                String c_localName = ((Element) child.astnode).getLocalName();
                 //print 'protected' and 'public' before there children
                 if (this.astnode.getClass().getName().contains("Element")) {
                     String localName = ((Element) this.astnode).getLocalName();
@@ -828,8 +823,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 }
                 if (child.variants != null) {
                     res += child.prettyPrint();
-                } else {
-                    res += printMatch(child);
+                } else if (child.hasMatches()) {
+                    if(entity.getNonTerminal().contains(c_localName)){
+                        res+=printBlock(child);
+                    }else{
+                        res += printMatchSingleNode(child);
+                        res += "+-+-+-\n";
+                    }
+                } else {    //single node
+                    res += printSingleNode(this);
                 }
             }
         } else {    //single node
@@ -837,162 +839,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         res += "+-+-+-\n";
         return res;
-    }
-
-    //-------------------
-    public HashSet<String> forkNameSet = new HashSet<>();
-
-    public void inputFileInit() {
-//        String path = "testcpp/originMarlin/";
-//        File dir = new File(path);
-//        String[] names = dir.list();
-//        for (String name : names) {
-//            if (new File(path + name).isDirectory()) {
-//                if (!name.equals("upstream")) {
-//                    forkNameSet.add(name);
-//                }
-//            }
-//
-//        }
-
-        forkNameSet.add("yuroller");
-//        forkNameSet.add("marlin4Due");
-        forkNameSet.add("upstream");
-    }
-
-
-    //-------------------
-
-    /**
-     * This function presice the pretty print result of a block when:
-     * 1)neighbor lines have the same condition
-     * 2) the element has the same condition with the block
-     *
-     * @param res            origin pretty print result
-     * @param blockCondition condition of the block
-     * @return presiced result
-     */
-    public String precisePrettyprint(String res, String blockCondition) {
-        //-----------------------
-        String testPath = "testcpp/mergedResult/countIfdef.txt";
-        inputFileInit();
-        //-----------------------
-
-        String newResult = "";
-        Stack<String> conditionStack = new Stack<>();
-        String[] elements = res.split("\\+-\\+-\\+-\n");
-        for (int j = 0; j < elements.length; j++) {
-            String e = elements[j];
-
-            if (e.length() > 0 && !e.equals("\n")) {
-                String[] tmp = e.split("\n");
-                if (conditionStack.size() > 0) {
-                    String lastCon = conditionStack.lastElement();
-                    if (lastCon.equals(tmp[0])) {
-                        newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 1);
-                        continue;
-                    } else {
-                        conditionStack.pop();
-                        if (tmp[0].equals(blockCondition.replace("\n", ""))) {
-                            newResult += "#endif\n";
-//-----------------------
-                            ioFunctionSet.printEndif(testPath);
-//-----------------------
-                            if (tmp.length > 3) {
-                                for (int i = 1; i < tmp.length - 1; i++) {
-                                    newResult += tmp[i] + "\n";
-                                }
-                            } else {
-                                newResult += tmp[1] + "\n";
-                            }
-                            continue;
-                        } else {
-                            newResult += "#endif\n";
-                            //-----------------------
-                            ioFunctionSet.printEndif(testPath);
-//-----------------------
-
-                            if (!tmp[0].startsWith("#if defined")) {
-                                newResult += e;
-                            } else {
-                                newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-                                conditionStack.push(tmp[0]);
-
-//                                //-------------------
-//                                String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-//                                ioFunctionSet.writeTofile(countIfdef,testPath);
-//                                //-------------------
-
-
-                                //-------------------
-                                int i = 0;
-                                int a = 0;
-                                for (String s : forkNameSet) {
-                                    if (blockCondition.contains("defined (" + s + ")")) {
-                                        i++;
-                                    }
-                                    if (e.contains("defined (" + s + ")")) {
-                                        a++;
-                                    }
-                                }
-
-
-                                if (i == forkNameSet.size() && a < forkNameSet.size() && e.split("#if").length == 2) {
-                                    String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-                                    ioFunctionSet.writeTofile(countIfdef, testPath);
-                                }
-                                //-------------------
-
-                            }
-                        }
-                    }
-                } else {
-                    if (tmp[0].startsWith("#if defined")) {
-                        if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
-                            conditionStack.push(tmp[0]);
-                            newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-
-                            //-------------------
-                            int i = 0;
-                            int a = 0;
-                            for (String s : forkNameSet) {
-                                if (blockCondition.contains("defined (" + s + ")")) {
-                                    i++;
-                                }
-                                if (e.contains("defined (" + s + ")")) {
-                                    a++;
-                                }
-                            }
-
-
-                            if (i == forkNameSet.size() && a < forkNameSet.size() && e.split("#if").length == 2) {
-                                String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-                                ioFunctionSet.writeTofile(countIfdef, testPath);
-                            }
-                            //-------------------
-
-                        } else {
-                            newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 1);
-                        }
-                    } else {
-                        newResult += e;
-                        if (!e.endsWith("\n")) {
-                            newResult += "\n";
-                        }
-                    }
-                }
-            }
-        }
-        if (conditionStack.size() > 0) {
-            conditionStack.pop();
-            newResult += "#endif\n";
-        }
-
-        //-----------------------
-        ioFunctionSet.printEndif(testPath);
-//-----------------------
-
-        return newResult;
     }
 
 
@@ -1010,6 +856,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += printBlock(c);
         } else if (c.isChoice()) {
             res += printChoice(c);
+        } else {
+            res += c.prettyPrint();
         }
         return res;
     }
@@ -1076,7 +924,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             res += "+-+-+-\n";
 
             // print the node before block (e.g. condition..)
-            res+=printBlockRelatedEntity(c,nodeLocalName,blockCondition);
+            res += printBlockRelatedEntity(c, nodeLocalName, blockCondition);
 
             // start to handle <block/> tag node
             String blockString = "";
@@ -1092,10 +940,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             } else if (entity.getNonTerminal().contains(c_localName)) {
                 blockString = printNonTerminalNode(c);
             }
-            res += precisePrettyprint(blockString, blockCondition);
+            res += ioFunctionSet.precisePrettyprint(blockString, blockCondition);
 
         }
-        res = "+-+-+-\n" + blockCondition + precisePrettyprint(res, blockCondition) + "#endif\n";
+        res = "+-+-+-\n" + blockCondition + ioFunctionSet.precisePrettyprint(res, blockCondition) + "#endif\n";
         res += "+-+-+-\n";
         return res;
     }
@@ -1114,8 +962,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     } else {
                         res += printMatchSingleNode(c);
                     }
-                } else {
-                    res += precisePrettyprint(printChoice(c), blockCondition) + "\n";
+                } else if(c.isChoice()){
+                    res += ioFunctionSet.precisePrettyprint(printChoice(c), blockCondition) + "\n";
+                }else{
+                    res+=c.prettyPrint();
                 }
             }
             if (c_localName.equals("expr") && parentLocalName.equals("case")) {
@@ -1302,23 +1152,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return s;
     }
 
-
-    public String printMatch(CppNodeArtifact c) {
-        String res = "";
-        String c_localName = ((Element) c.astnode).getLocalName();
-        if (entity.getNonTerminal().contains(c_localName)) {
-            if (c.children == null) {
-                res += res += "+-+-+-\n" + c.prettyPrint();
-            } else {
-                res += printBlock(c);
-            }
-        } else {
-            res += printMatchSingleNode(c);
-            res += "+-+-+-\n";
-        }
-        return res;
-    }
-
     /**
      * This function print the match node
      *
@@ -1391,7 +1224,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     public static void sleep() {
         try {
-            Thread.sleep(200);                 //1000 milliseconds is one second.
+            Thread.sleep(300);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

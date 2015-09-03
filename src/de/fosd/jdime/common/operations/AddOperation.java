@@ -25,14 +25,13 @@ package de.fosd.jdime.common.operations;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import de.fosd.jdime.common.ASTNodeArtifact;
-import de.fosd.jdime.common.Artifact;
-import de.fosd.jdime.common.FileArtifact;
-import de.fosd.jdime.common.LangElem;
-import de.fosd.jdime.common.MergeContext;
+import de.fosd.jdime.common.*;
 import de.fosd.jdime.stats.ASTStats;
 import de.fosd.jdime.stats.Stats;
 import de.fosd.jdime.stats.StatsElement;
+import de.fosd.jdime.util.Entity;
+import de.fosd.jdime.util.IOFunctionSet;
+import nu.xom.Element;
 
 /**
  * The operation adds <code>Artifact</code>s.
@@ -83,6 +82,16 @@ if (condition != null) {
 	public final void apply(final MergeContext context) throws IOException {
 		assert (artifact != null);
 		assert (artifact.exists()) : "Artifact does not exist: " + artifact;
+
+//------------------FOR STATISTICS
+		if(!artifact.hasMatches()||artifact.hasChildren()) {
+			String path = "testcpp/statistics/1.txt";
+			String breakLine= "+++++++++++++++++++++++\n";
+			IOFunctionSet io = new IOFunctionSet();
+			io.writeTofile(artifact.prettyPrint(), path);
+			io.writeTofile(breakLine,path);
+		}
+//------------------FOR STATISTICS
 
 		LOG.fine(() -> "Applying: " + this);
 

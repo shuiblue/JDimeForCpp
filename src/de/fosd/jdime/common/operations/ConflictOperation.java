@@ -27,107 +27,122 @@ import java.util.logging.Logger;
 
 import de.fosd.jdime.common.Artifact;
 import de.fosd.jdime.common.MergeContext;
+import de.fosd.jdime.util.IOFunctionSet;
 
 /**
+ * @param <T> type of artifact
  * @author Olaf Lessenich
- *
- * @param <T>
- *            type of artifact
  */
 public class ConflictOperation<T extends Artifact<T>> extends Operation<T> {
 
-	private static final Logger LOG = Logger.getLogger(ConflictOperation.class.getCanonicalName());
-	
-	private T type;
-	private T left;
-	private T right;
+    private static final Logger LOG = Logger.getLogger(ConflictOperation.class.getCanonicalName());
 
-	/**
-	 * Output Artifact.
-	 */
-	private T target;
+    private T type;
+    private T left;
+    private T right;
 
-	private String leftCondition;
-	private String rightCondition;
+    /**
+     * Output Artifact.
+     */
+    private T target;
 
-	/**
-	 * Class constructor.
-	 *
-	 * @param left left alternatives
-	 * @param right right alternatives
-	 * @param target target node
-	 */
-	public ConflictOperation(final T left, final T right, final T target, final String leftCondition,
-							 final String rightCondition) {
-		super();
-		this.left = left;
-		this.right = right;
-		this.target = target;
+    private String leftCondition;
+    private String rightCondition;
 
-		if (leftCondition != null) {
-			this.leftCondition = leftCondition;
-		}
+    /**
+     * Class constructor.
+     *
+     * @param left   left alternatives
+     * @param right  right alternatives
+     * @param target target node
+     */
+    public ConflictOperation(final T left, final T right, final T target, final String leftCondition,
+                             final String rightCondition) {
+        super();
+        this.left = left;
+        this.right = right;
+        this.target = target;
 
-		if (rightCondition != null) {
-			this.rightCondition = rightCondition;
-		}
-	}
+        if (leftCondition != null) {
+            this.leftCondition = leftCondition;
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.fosd.jdime.common.operations.Operation#apply(de.fosd.jdime.common.
-	 * MergeContext)
-	 */
-	@Override
-	public final void apply(final MergeContext context) throws IOException,
-			InterruptedException {
+        if (rightCondition != null) {
+            this.rightCondition = rightCondition;
+        }
+    }
 
-		LOG.fine(() -> "Applying: " + this);
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * de.fosd.jdime.common.operations.Operation#apply(de.fosd.jdime.common.
+     * MergeContext)
+     */
+    @Override
+    public final void apply(final MergeContext context) throws IOException,
+            InterruptedException {
 
-		if (target != null) {
-			assert (target.exists());
+        LOG.fine(() -> "Applying: " + this);
 
-			if (context.isConditionalMerge(left) && leftCondition != null && rightCondition != null) {
-				LOG.fine("Create choice node");
-				T choice;
-				if (left.isChoice()) {
-					choice = left;
-				} else {
-					choice = target.createChoiceDummy(leftCondition, left);
-				}
 
-				assert (choice.isChoice());
-				choice.addVariant(rightCondition, right);
-				target.addChild(choice);
-			} else {
-				LOG.fine("Create conflict node");
-				T conflict = target.createConflictArtifact(left, right);
-				assert (conflict.isConflict());
-				target.addChild(conflict);
-			}
-		}
-	}
+//------------------FOR STATISTICS
+        String path = "testcpp/statistics/1.txt";
+        String breakLine= "+++++++++++++++++++++++\n";
+        IOFunctionSet ioFunctionSet = new IOFunctionSet();
+        IOFunctionSet io = new IOFunctionSet();
+        io.writeTofile(left.prettyPrint(), path);
+//        io.writeTofile(ioFunctionSet.presicePrettyprint(left.prettyPrint()), path);
+        io.writeTofile(breakLine,path);
+        io.writeTofile(right.prettyPrint(), path);
+//        io.writeTofile(ioFunctionSet.presicePrettyprint(right.prettyPrint()), path);
+        io.writeTofile(breakLine,path);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fosd.jdime.common.operations.Operation#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "CONFLICT";
-	}
+//------------------FOR STATISTICS
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fosd.jdime.common.operations.Operation#toString()
-	 */
-	@Override
-	public final String toString() {
-		return getId() + ": " + getName() + " {" + left + "} <~~> {" + right
-				+ "}";
-	}
+
+        if (target != null) {
+            assert (target.exists());
+
+            if (context.isConditionalMerge(left) && leftCondition != null && rightCondition != null) {
+                LOG.fine("Create choice node");
+                T choice;
+                if (left.isChoice()) {
+                    choice = left;
+                } else {
+                    choice = target.createChoiceDummy(leftCondition, left);
+                }
+
+                assert (choice.isChoice());
+                choice.addVariant(rightCondition, right);
+                target.addChild(choice);
+            } else {
+                LOG.fine("Create conflict node");
+                T conflict = target.createConflictArtifact(left, right);
+                assert (conflict.isConflict());
+                target.addChild(conflict);
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see de.fosd.jdime.common.operations.Operation#getName()
+     */
+    @Override
+    public final String getName() {
+        return "CONFLICT";
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see de.fosd.jdime.common.operations.Operation#toString()
+     */
+    @Override
+    public final String toString() {
+        return getId() + ": " + getName() + " {" + left + "} <~~> {" + right
+                + "}";
+    }
 }
