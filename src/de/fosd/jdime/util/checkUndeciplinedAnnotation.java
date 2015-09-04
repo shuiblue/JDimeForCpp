@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by shuruiz on 8/9/15.
  */
-public class checkUndeciplinedAnnotation {
+public class CheckUndeciplinedAnnotation {
 
         public static void main (String[]args)throws IOException {
 

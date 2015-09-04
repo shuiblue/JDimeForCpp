@@ -1,75 +1,61 @@
-#if defined (A) && defined (X)
-int y=0;
+-----------choice node----------
+#if defined (A) && (defined (X) && defined (Y) )
+a++;
 #endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (B) && defined (Y)
-int V=0;
+--------additional ifdef------
+-----parent:defined(A)&&defined(X)
+------child:defined(A)&&(defined(X)&&defined(Y))
+
+-----------choice node----------
+#if defined (B) && (defined (X) && defined (Z) )
+b++;
 #endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A) && defined (X)
+--------additional ifdef------
+-----parent:defined(B)&&defined(X)
+------child:defined(B)&&(defined(X)&&defined(Z))
+
+-----------choice node----------
+#if defined (A) && (defined (X) && defined (Y) )
 c++;
 #endif
+--------additional ifdef------
+-----parent:defined(A)&&defined(X)
+------child:defined(A)&&(defined(X)&&defined(Y))
+
+-----------choice node----------
+#if defined (A) && (defined (X) && defined (Y) )
+a++;
+#endif
+--------additional ifdef------
+-----parent:defined(A)&&defined(X)
+------child:defined(A)&&(defined(X)&&defined(Y))
+
+-----------choice node----------
+#if defined (B) && (defined (X) && defined (Z) )
+b++;
+#endif
+--------additional ifdef------
+-----parent:defined(B)&&defined(X)
+------child:defined(B)&&(defined(X)&&defined(Z))
+
+#if defined (A) && (defined (X) && defined (Y) )
+a++;
+#endif
 +-+-+-
-+++++++++++++++++++++++
-#if defined (B)
+#if defined (B) && (defined (X) && defined (Z) )
 b++;
 #endif
 +-+-+-
 +++++++++++++++++++++++
-#if defined (A)
-a++;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A) && defined (X)
-int y=0;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (B) && defined (Y)
-int V=0;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A) && defined (X)
+-----------choice node----------
+#if defined (A) && (defined (X) && defined (Y) )
 c++;
 #endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (B)
-b++;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A)
-a++;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A) && defined (X)
-int y=0;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (B) && defined (Y)
-int V=0;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A) && defined (X)
+--------additional ifdef------
+-----parent:defined(A)&&defined(X)
+------child:defined(A)&&(defined(X)&&defined(Y))
+
+#if defined (A) && (defined (X) && defined (Y) )
 c++;
 #endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (B)
-b++;
-#endif
-+-+-+-
-+++++++++++++++++++++++
-#if defined (A)
-a++;
-#endif
-+-+-+-
 +++++++++++++++++++++++
