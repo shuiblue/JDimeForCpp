@@ -806,40 +806,43 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     @Override
     public String prettyPrint() {
-        String res = "";
-        if (this.isChoice()) {
-            res += printChoice(this);
-        } else if (this.children != null) {     // matched node
-            Iterator<CppNodeArtifact> it = getChildren().iterator();
-            while (it.hasNext()) {
-                CppNodeArtifact child = it.next();
-                String c_localName = ((Element) child.astnode).getLocalName();
-                //print 'protected' and 'public' before there children
-                if (this.astnode.getClass().getName().contains("Element")) {
-                    String localName = ((Element) this.astnode).getLocalName();
-                    if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
-                        res += localName + ":\n+-+-+-\n";
-                    }
-                }
-                if (child.variants != null) {
-                    res += child.prettyPrint();
-                } else if (child.hasMatches()) {
-                    if (entity.getNonTerminal().contains(c_localName)) {
-                        res += printBlock(child);
-                    } else {
-                        res += printMatchSingleNode(child);
-                        res += "+-+-+-\n";
-                    }
-                } else {    //single node
-                    res += printSingleNode(this);
-                }
-            }
-        } else {    //single node
-            res += printSingleNode(this);
-        }
-        res += "+-+-+-\n";
-        return res;
+        return "";
     }
+//    public String prettyPrint() {
+//        String res = "";
+//        if (this.isChoice()) {
+//            res += printChoice(this);
+//        } else if (this.children != null) {     // matched node
+//            Iterator<CppNodeArtifact> it = getChildren().iterator();
+//            while (it.hasNext()) {
+//                CppNodeArtifact child = it.next();
+//                String c_localName = ((Element) child.astnode).getLocalName();
+//                //print 'protected' and 'public' before there children
+//                if (this.astnode.getClass().getName().contains("Element")) {
+//                    String localName = ((Element) this.astnode).getLocalName();
+//                    if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
+//                        res += localName + ":\n+-+-+-\n";
+//                    }
+//                }
+//                if (child.variants != null) {
+//                    res += child.prettyPrint();
+//                } else if (child.hasMatches()) {
+//                    if (entity.getNonTerminal().contains(c_localName)) {
+//                        res += printBlock(child);
+//                    } else {
+//                        res += printMatchSingleNode(child);
+//                        res += "+-+-+-\n";
+//                    }
+//                } else {    //single node
+//                    res += printSingleNode(this);
+//                }
+//            }
+//        } else {    //single node
+//            res += printSingleNode(this);
+//        }
+//        res += "+-+-+-\n";
+//        return res;
+//    }
 
 
     /**
@@ -1124,6 +1127,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @return
      */
     public String printChoice(CppNodeArtifact c) {
+
         String s = "";
         int var_size = c.variants.size();
         for (int i = 0; i < var_size; i++) {
@@ -1144,10 +1148,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             CppNodeArtifact parent = c.getParent();
             String path = "testcpp/statistics/1.txt";
             String parentRev;
-System.out.print("!!!!!!");
             ioFunctionSet.writeTofile("-----------choice node----------\n", path);
             ioFunctionSet.writeTofile(nodeString, path);
-
 
             if (parent.hasMatches()) {
                 parentRev = c.printMatchCondition(parent);
@@ -1159,19 +1161,21 @@ System.out.print("!!!!!!");
                     if (!rootRev.equals(childRev)) {
                         if (childRev.replace(rev, "").contains("defined")) {
 
-                            ioFunctionSet.writeTofile("--------additional ifdef------\n", path);
-                            ioFunctionSet.writeTofile("-----parent:"+ rootRev+"\n", path);
-                            ioFunctionSet.writeTofile("------child:" + childRev+"\n\n", path);
+                            ioFunctionSet.writeTofile("--------additional ifdef------\n\n", path);
+                            ioFunctionSet.writeTofile("-----parent:" + rootRev + "\n\n", path);
+                            ioFunctionSet.writeTofile("------child:" + childRev + "\n\n", path);
 
                         }
                     }
                 }
             }
             //------------
+
             if (var_size > 1) {
                 nodeString += "+-+-+-\n";
             }
             s += nodeString;
+
         }
         return s;
     }
