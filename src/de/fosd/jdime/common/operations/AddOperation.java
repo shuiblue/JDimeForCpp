@@ -84,13 +84,13 @@ if (condition != null) {
 		assert (artifact.exists()) : "Artifact does not exist: " + artifact;
 
 //------------------FOR STATISTICS
-		if(!artifact.hasMatches()||artifact.hasChildren()) {
-			String path = "testcpp/statistics/1.txt";
-			String breakLine= "+++++++++++++++++++++++\n";
-			IOFunctionSet io = new IOFunctionSet();
-			io.writeTofile(artifact.prettyPrint(), path);
-			io.writeTofile(breakLine,path);
-		}
+//		if(!artifact.hasMatches()||artifact.hasChildren()) {
+//			String path = "testcpp/statistics/1.txt";
+//			String breakLine= "+++++++++++++++++++++++\n";
+//			IOFunctionSet io = new IOFunctionSet();
+//			io.writeTofile(artifact.prettyPrint(), path);
+//			io.writeTofile(breakLine,path);
+//		}
 //------------------FOR STATISTICS
 
 		LOG.fine(() -> "Applying: " + this);

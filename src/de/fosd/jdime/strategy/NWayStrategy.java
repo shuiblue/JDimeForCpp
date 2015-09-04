@@ -43,6 +43,7 @@ import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.stats.MergeTripleStats;
 import de.fosd.jdime.stats.Stats;
 import de.fosd.jdime.util.IOFunctionSet;
+import de.fosd.jdime.util.Statistics;
 
 /**
  * Performs a structured merge on <code>FileArtifacts</code>.
@@ -142,15 +143,15 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.println(targetNode.dumpTree());
                     }
 
-                    LOG.finest("Pretty-printing merged:");
-                    System.out.println(merged.prettyPrint());
-                    LOG.finest("Pretty-printing next:");
-                    System.out.println(next.prettyPrint());
+//                    LOG.finest("Pretty-printing merged:");
+//                    System.out.println(merged.prettyPrint());
+//                    LOG.finest("Pretty-printing next:");
+//                    System.out.println(next.prettyPrint());
 
-                    if (!context.isDiffOnly()) {
-                        LOG.finest("Pretty-printing target:");
-                        System.out.print(targetNode.prettyPrint());
-                    }
+//                    if (!context.isDiffOnly()) {
+//                        LOG.finest("Pretty-printing target:");
+//                        System.out.print(targetNode.prettyPrint());
+//                    }
                 }
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
@@ -169,11 +170,14 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
+        //------------
+        Statistics statistics = new Statistics();
+        statistics.findUniqueBlock(targetNode);
+        //-----------
+        String prettyPrint = "";
+//        String prettyPrint = targetNode.prettyPrint();
 
-        String prettyPrint = targetNode.prettyPrint();
-
-
-        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
+//        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
             String line;
             while ((line = buf.readLine()) != null) {
@@ -203,6 +207,11 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
             e.printStackTrace();
         }
     }
+
+
+
+
+
 
     @Override
     public final String toString() {

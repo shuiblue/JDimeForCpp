@@ -824,9 +824,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (child.variants != null) {
                     res += child.prettyPrint();
                 } else if (child.hasMatches()) {
-                    if(entity.getNonTerminal().contains(c_localName)){
-                        res+=printBlock(child);
-                    }else{
+                    if (entity.getNonTerminal().contains(c_localName)) {
+                        res += printBlock(child);
+                    } else {
                         res += printMatchSingleNode(child);
                         res += "+-+-+-\n";
                     }
@@ -962,10 +962,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     } else {
                         res += printMatchSingleNode(c);
                     }
-                } else if(c.isChoice()){
+                } else if (c.isChoice()) {
                     res += ioFunctionSet.precisePrettyprint(printChoice(c), blockCondition) + "\n";
-                }else{
-                    res+=c.prettyPrint();
+                } else {
+                    res += c.prettyPrint();
                 }
             }
             if (c_localName.equals("expr") && parentLocalName.equals("case")) {
@@ -1127,27 +1127,51 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         String s = "";
         int var_size = c.variants.size();
         for (int i = 0; i < var_size; i++) {
-
+            String nodeString = "";
             //str is the Revision of each variants
             String str = c.variants.keySet().toArray()[i].toString();
+            String cRev = printRevAndCondition(c, str);
+            nodeString += cRev;
 
-            if (c.variants.get(str).hasMatches()) {
-                s += printMatchCondition(c.variants.get(str));
-            } else {
-                s += "#if defined (" + str + ")";
-                String condition = printCondition(c.variants.get(str).getRevision());
-                if (condition.length() > 0) {
-                    s += " && " + condition;
-                }
-            }
-            s += "\n" + c.variants.get(str);
+
+            nodeString += "\n" + c.variants.get(str);
 
             //get parents' revision
-            s += printCondition(c.getRevision());
-            s += "\n#endif\n";
-            if (var_size > 1) {
-                s += "+-+-+-\n";
+//            s += printCondition(c.getRevision());
+            nodeString += "\n#endif\n";
+
+            //------------
+            CppNodeArtifact parent = c.getParent();
+            String path = "testcpp/statistics/1.txt";
+            String parentRev;
+System.out.print("!!!!!!");
+            ioFunctionSet.writeTofile("-----------choice node----------\n", path);
+            ioFunctionSet.writeTofile(nodeString, path);
+
+
+            if (parent.hasMatches()) {
+                parentRev = c.printMatchCondition(parent);
+                String[] parentRevisionSet = parentRev.split("\\|\\|");
+                String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
+                String childRev = clearBlank(cRev.replace("#if ", ""));
+                String rev = rootRev.split("&&")[0].replace("\n", "");
+                if (childRev.contains(rev)) {
+                    if (!rootRev.equals(childRev)) {
+                        if (childRev.replace(rev, "").contains("defined")) {
+
+                            ioFunctionSet.writeTofile("--------additional ifdef------\n", path);
+                            ioFunctionSet.writeTofile("-----parent:"+ rootRev+"\n", path);
+                            ioFunctionSet.writeTofile("------child:" + childRev+"\n\n", path);
+
+                        }
+                    }
+                }
             }
+            //------------
+            if (var_size > 1) {
+                nodeString += "+-+-+-\n";
+            }
+            s += nodeString;
         }
         return s;
     }
@@ -1163,6 +1187,21 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         res += c.toString() + "\n";
         res += "#endif\n";
         return res;
+    }
+
+
+    public String printRevAndCondition(CppNodeArtifact c, String str) {
+        String s = "";
+        if (c.variants.get(str).hasMatches()) {
+            s += printMatchCondition(c.variants.get(str));
+        } else {
+            s += "#if defined (" + str + ")";
+            String condition = printCondition(c.variants.get(str).getRevision());
+            if (condition.length() > 0) {
+                s += " && " + condition;
+            }
+        }
+        return s;
     }
 
     /**

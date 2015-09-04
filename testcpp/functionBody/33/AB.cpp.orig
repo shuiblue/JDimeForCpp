@@ -1,21 +1,15 @@
-#if defined (A) || defined (B)
+#if defined (A) && defined (X) || defined (B) && defined (X)
 void a
 ()
 {
-#if defined (A) && defined (X)
-int y=0;
+#if defined (A) && (defined (X) && defined (Y) )
+a++;
 #endif
-#if defined (B) && defined (Y)
-int V=0;
-#endif
-#if defined (A) && defined (X)
-c++;
-#endif
-#if defined (B)
+#if defined (B) && (defined (X) && defined (Z) )
 b++;
 #endif
-#if defined (A)
-a++;
+#if defined (A) && (defined (X) && defined (Y) )
+c++;
 #endif
 }
 #endif
