@@ -3,7 +3,9 @@
 a++;
 #endif
 --------additional ifdef------
+
 -----parent:defined(A)&&defined(X)
+
 ------child:defined(A)&&(defined(X)&&defined(Y))
 
 -----------choice node----------
@@ -11,51 +13,28 @@ a++;
 b++;
 #endif
 --------additional ifdef------
+
 -----parent:defined(B)&&defined(X)
+
 ------child:defined(B)&&(defined(X)&&defined(Z))
 
------------choice node----------
-#if defined (A) && (defined (X) && defined (Y) )
-c++;
-#endif
---------additional ifdef------
------parent:defined(A)&&defined(X)
-------child:defined(A)&&(defined(X)&&defined(Y))
 
------------choice node----------
-#if defined (A) && (defined (X) && defined (Y) )
-a++;
-#endif
---------additional ifdef------
------parent:defined(A)&&defined(X)
-------child:defined(A)&&(defined(X)&&defined(Y))
-
------------choice node----------
-#if defined (B) && (defined (X) && defined (Z) )
-b++;
-#endif
---------additional ifdef------
------parent:defined(B)&&defined(X)
-------child:defined(B)&&(defined(X)&&defined(Z))
-
-#if defined (A) && (defined (X) && defined (Y) )
-a++;
-#endif
-+-+-+-
-#if defined (B) && (defined (X) && defined (Z) )
-b++;
-#endif
-+-+-+-
 +++++++++++++++++++++++
 -----------choice node----------
 #if defined (A) && (defined (X) && defined (Y) )
 c++;
 #endif
 --------additional ifdef------
+
 -----parent:defined(A)&&defined(X)
+
 ------child:defined(A)&&(defined(X)&&defined(Y))
 
-#if defined (A) && (defined (X) && defined (Y) )
-c++;
+
++++++++++++++++++++++++
+-----------choice node----------
+#if defined (A) && defined (X)
+z++;
 #endif
+
 +++++++++++++++++++++++
