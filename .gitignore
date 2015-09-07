@@ -22,3 +22,4 @@ workbench.xmi
 *.txt
 /testcpp/mergedResult/
 *.cpp\n
+testcpp/functionBody/**/compile/
