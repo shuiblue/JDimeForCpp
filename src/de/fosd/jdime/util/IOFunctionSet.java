@@ -143,9 +143,6 @@ public class IOFunctionSet {
                         conditionStack.push(tmp[0]);
                         newResult += "#endif\n";
 
-                        //-----------
-                        newResult += "+-+-+-\n";
-                        //-----------
 
 
                     }
@@ -156,19 +153,13 @@ public class IOFunctionSet {
             }else {
                   if(conditionStack.size()>0) {
                       conditionStack.pop();
-//                      newResult += "#endif\n";
-                      //-----------
-                      newResult += "+-+-+-\n";
-                      //-----------
+                      newResult += "#endif\n";
 
                   }
                  newResult+=e;
               }
             }
         }
-        //----------
-        return newResult ;
-        //-----------
-//        return newResult + "#endif\n";
+        return newResult + "#endif\n";
     }
 }

@@ -185,14 +185,8 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
-        //------------
-        Statistics statistics = new Statistics();
-        statistics.findUniqueBlock(targetNode);
-        //-----------
-        String prettyPrint = "";
-//        String prettyPrint = targetNode.prettyPrint();
-
-//        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
+        String prettyPrint = targetNode.prettyPrint();
+        prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
                     String line;
                     while ((line = buf.readLine()) != null) {
