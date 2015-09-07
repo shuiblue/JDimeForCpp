@@ -17,3 +17,7 @@ gradle.properties
 *.swp
 /lib/glpk-4.55/
 workbench.xmi
+*.new
+*.txt
+/testcpp/mergedResult/
+*.cpp\n

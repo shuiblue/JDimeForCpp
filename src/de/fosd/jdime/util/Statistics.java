@@ -1,6 +1,7 @@
 package de.fosd.jdime.util;
 
 import de.fosd.jdime.common.CppNodeArtifact;
+import test.TestInitial;
 
 import java.util.Iterator;
 
@@ -24,5 +25,8 @@ public class Statistics {
             root.printChoice(root);
         }
     }
+
+
+
 
 }

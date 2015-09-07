@@ -125,9 +125,9 @@ public class IOFunctionSet {
         String newResult = "";
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
-        String s = "";
         for (String e : elements) {
-            if (e.length() > 0) {
+            if (e.length() > 0 ){
+              if(e.startsWith("#if")){
                 String[] tmp = e.split("\n");
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
@@ -142,12 +142,33 @@ public class IOFunctionSet {
                         conditionStack.pop();
                         conditionStack.push(tmp[0]);
                         newResult += "#endif\n";
+
+                        //-----------
+                        newResult += "+-+-+-\n";
+                        //-----------
+
+
                     }
                 }
+
                 conditionStack.push(tmp[0]);
                 newResult += printNodeWithoutHeadandEnd(e, 0);
+            }else {
+                  if(conditionStack.size()>0) {
+                      conditionStack.pop();
+//                      newResult += "#endif\n";
+                      //-----------
+                      newResult += "+-+-+-\n";
+                      //-----------
+
+                  }
+                 newResult+=e;
+              }
             }
         }
-        return newResult + "#endif\n";
+        //----------
+        return newResult ;
+        //-----------
+//        return newResult + "#endif\n";
     }
 }
