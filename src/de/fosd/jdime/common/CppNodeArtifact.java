@@ -1145,29 +1145,55 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             nodeString += "\n#endif\n";
 
             //------------
-            CppNodeArtifact parent = c.getParent();
-            String path = "testcpp/statistics/1.txt";
-            String parentRev;
-            ioFunctionSet.writeTofile("-----------choice node----------\n", path);
-            ioFunctionSet.writeTofile(nodeString, path);
 
+                CppNodeArtifact parent = c.getParent();
             if (parent.hasMatches()) {
-                parentRev = c.printMatchCondition(parent);
-                String[] parentRevisionSet = parentRev.split("\\|\\|");
-                String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
-                String childRev = clearBlank(cRev.replace("#if ", ""));
-                String rev = rootRev.split("&&")[0].replace("\n", "");
-                if (childRev.contains(rev)) {
-                    if (!rootRev.equals(childRev)) {
-                        if (childRev.replace(rev, "").contains("defined")) {
+                String parentRev = c.printMatchCondition(parent);
+                String[] forks = parentRev.replace("#if ", "").split("\\|\\|");
+                String fileName = "";
+                for (String f : forks) {
+                    f = f.replace("defined", "").replace(" ", "");
+                    fileName += f.substring(f.indexOf("(") + 1, f.indexOf(")")) + "_";
+                }
+                String path = "testcpp/statistics/" + fileName + ".txt";
+                ioFunctionSet.writeTofile("+-+-+-\n", path);
+                ioFunctionSet.writeTofile(nodeString, path);
 
-                            ioFunctionSet.writeTofile("--------additional ifdef------\n\n", path);
-                            ioFunctionSet.writeTofile("-----parent:" + rootRev + "\n\n", path);
-                            ioFunctionSet.writeTofile("------child:" + childRev + "\n\n", path);
+                if (parent.hasMatches()) {
 
+                    String[] parentRevisionSet = parentRev.split("\\|\\|");
+                    String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
+                    String childRev = clearBlank(cRev.replace("#if ", ""));
+                    String rev = rootRev.split("&&")[0].replace("\n", "");
+                    if (childRev.contains(rev)) {
+                        if (!rootRev.equals(childRev)) {
+                            if (childRev.replace(rev, "").contains("defined")) {
+                                String fake_chileRev =childRev.replace(rev,"");
+
+                                String[] rootConditons= rootRev.replace(rev,"").split("&&");
+                                for(String con: rootConditons)
+                                {
+                                    if(con.length()>0){
+                                        fake_chileRev=fake_chileRev.replace(con,"");
+                                    }
+                                }
+
+                                if(fake_chileRev.contains("defined")) {
+                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                    ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
+                                ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
+                                ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
+                                    ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
+                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                }
+                            }
                         }
                     }
                 }
+
+
+
+
             }
             //------------
 

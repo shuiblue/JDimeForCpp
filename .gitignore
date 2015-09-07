@@ -18,3 +18,7 @@ gradle.properties
 /lib/glpk-4.55/
 JDime.properties
 workbench.xmi
+*.new
+*.txt
+/testcpp/mergedResult/
+*.cpp\n
