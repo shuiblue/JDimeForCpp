@@ -806,43 +806,40 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     @Override
     public String prettyPrint() {
-        return "";
+        String res = "";
+        if (this.isChoice()) {
+            res += printChoice(this);
+        } else if (this.children != null) {     // matched node
+            Iterator<CppNodeArtifact> it = getChildren().iterator();
+            while (it.hasNext()) {
+                CppNodeArtifact child = it.next();
+                String c_localName = ((Element) child.astnode).getLocalName();
+                //print 'protected' and 'public' before there children
+                if (this.astnode.getClass().getName().contains("Element")) {
+                    String localName = ((Element) this.astnode).getLocalName();
+                    if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
+                        res += localName + ":\n+-+-+-\n";
+                    }
+                }
+                if (child.variants != null) {
+                    res += child.prettyPrint();
+                } else if (child.hasMatches()) {
+                    if (entity.getNonTerminal().contains(c_localName)) {
+                        res += printBlock(child);
+                    } else {
+                        res += printMatchSingleNode(child);
+                        res += "+-+-+-\n";
+                    }
+                } else {    //single node
+                    res += printSingleNode(this);
+                }
+            }
+        } else {    //single node
+            res += printSingleNode(this);
+        }
+        res += "+-+-+-\n";
+        return res;
     }
-//    public String prettyPrint() {
-//        String res = "";
-//        if (this.isChoice()) {
-//            res += printChoice(this);
-//        } else if (this.children != null) {     // matched node
-//            Iterator<CppNodeArtifact> it = getChildren().iterator();
-//            while (it.hasNext()) {
-//                CppNodeArtifact child = it.next();
-//                String c_localName = ((Element) child.astnode).getLocalName();
-//                //print 'protected' and 'public' before there children
-//                if (this.astnode.getClass().getName().contains("Element")) {
-//                    String localName = ((Element) this.astnode).getLocalName();
-//                    if ((localName.equals("public") || localName.equals("protected")) && !res.contains("protected") && !res.contains("public")) {
-//                        res += localName + ":\n+-+-+-\n";
-//                    }
-//                }
-//                if (child.variants != null) {
-//                    res += child.prettyPrint();
-//                } else if (child.hasMatches()) {
-//                    if (entity.getNonTerminal().contains(c_localName)) {
-//                        res += printBlock(child);
-//                    } else {
-//                        res += printMatchSingleNode(child);
-//                        res += "+-+-+-\n";
-//                    }
-//                } else {    //single node
-//                    res += printSingleNode(this);
-//                }
-//            }
-//        } else {    //single node
-//            res += printSingleNode(this);
-//        }
-//        res += "+-+-+-\n";
-//        return res;
-//    }
 
 
     /**
@@ -1139,63 +1136,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
 
             nodeString += "\n" + c.variants.get(str);
-
-            //get parents' revision
-//            s += printCondition(c.getRevision());
             nodeString += "\n#endif\n";
-
-            //------------
-
-                CppNodeArtifact parent = c.getParent();
-            if (parent.hasMatches()) {
-                String parentRev = c.printMatchCondition(parent);
-                String[] forks = parentRev.replace("#if ", "").split("\\|\\|");
-                String fileName = "";
-                for (String f : forks) {
-                    f = f.replace("defined", "").replace(" ", "");
-                    fileName += f.substring(f.indexOf("(") + 1, f.indexOf(")")) + "_";
-                }
-                String path = "testcpp/statistics/" + fileName + ".txt";
-                ioFunctionSet.writeTofile("+-+-+-\n", path);
-                ioFunctionSet.writeTofile(nodeString, path);
-
-                if (parent.hasMatches()) {
-
-                    String[] parentRevisionSet = parentRev.split("\\|\\|");
-                    String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
-                    String childRev = clearBlank(cRev.replace("#if ", ""));
-                    String rev = rootRev.split("&&")[0].replace("\n", "");
-                    if (childRev.contains(rev)) {
-                        if (!rootRev.equals(childRev)) {
-                            if (childRev.replace(rev, "").contains("defined")) {
-                                String fake_chileRev =childRev.replace(rev,"");
-
-                                String[] rootConditons= rootRev.replace(rev,"").split("&&");
-                                for(String con: rootConditons)
-                                {
-                                    if(con.length()>0){
-                                        fake_chileRev=fake_chileRev.replace(con,"");
-                                    }
-                                }
-
-                                if(fake_chileRev.contains("defined")) {
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                    ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
-                                ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
-                                ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
-                                    ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-
-
-            }
-            //------------
 
             if (var_size > 1) {
                 nodeString += "+-+-+-\n";
