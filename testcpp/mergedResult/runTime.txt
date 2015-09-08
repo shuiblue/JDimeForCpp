@@ -3582,3 +3582,7 @@
 1262
 2 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'marlin4Due' 
 1241
+3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
+87238
+3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
+86459
