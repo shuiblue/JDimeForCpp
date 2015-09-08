@@ -106,6 +106,80 @@ public class TestInitial {
         }
     }
 
+    public String checkMergeRepo(String path, Set<String> combination, String mergedFile){
+        ArrayList<String> inputFilePaths = new ArrayList<>();
+        String result = "";
+        int n = combination.size() + 1;
+        String outputPath = "testcpp/mergedRepo/" + n + "-wayMerge/upstream";
+        for (String fork : combination) {
+            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
+            File f = new File(filePath);
+
+            if (f.exists()) {
+                inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
+                outputPath += "_" + fork;
+            } else {
+                System.out.println(filePath + " not exist!");
+
+                outputPath += "_no_" + fork;
+            }
+        }
+        outputPath+="/"+mergedFile;
+        if (inputFilePaths.size() > 0) {
+            String commandLine = "-mode,nway,-output," + outputPath + ","
+                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
+//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
+            String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
+            for (int i = 0; i < inputFilePaths.size(); i++) {
+                commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + inputFilePaths.get(i).split("\\+")[1];
+                title += inputFilePaths.get(i).split("/")[0] + "' ";
+                if (i < inputFilePaths.size() - 1) {
+                    commandLine += ",";
+                    title += " , ";
+                }
+            }
+            String[] arg = commandLine.split(",");
+
+            try {
+                long start = System.currentTimeMillis();
+                Main.main(arg);
+                long end = System.currentTimeMillis();
+
+                long runTime = end - start;
+
+                File file = new File("testcpp/mergedResult/runTime.txt");
+
+                // if file doesnt exists, then create it
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(title + "\n");
+                bw.write(String.valueOf(runTime) + "\n");
+                bw.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return  result;
+    }
+
+
     /**
      * check merged file is equal to expect result
      *
