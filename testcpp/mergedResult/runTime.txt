@@ -3697,9 +3697,14 @@
 12063
 3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
 92214
+<<<<<<< origin/develop
 =======
 3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
 87238
 3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
 86459
 >>>>>>> HEAD~27
+=======
+3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
+90741
+>>>>>>> HEAD~26
