@@ -77,20 +77,6 @@ public class ConflictOperation<T extends Artifact<T>> extends Operation<T> {
             InterruptedException {
 
         LOG.fine(() -> "Applying: " + this);
-
-
-//------------------FOR STATISTICS
-//        String path = "testcpp/statistics/1.txt";
-//        String breakLine= "+++++++++++++++++++++++\n";
-//        IOFunctionSet ioFunctionSet = new IOFunctionSet();
-//        IOFunctionSet io = new IOFunctionSet();
-//        io.writeTofile(left.prettyPrint(), path);
-//        io.writeTofile(breakLine,path);
-//        io.writeTofile(right.prettyPrint(), path);
-//        io.writeTofile(breakLine,path);
-//------------------FOR STATISTICS
-
-
         if (target != null) {
             assert (target.exists());
 

@@ -37,28 +37,13 @@ import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
+import de.fosd.jdime.common.NotYetImplementedException;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
-<<<<<<< origin/develop
-
-import de.fosd.jdime.matcher.Matching;
-<<<<<<< origin/develop
-=======
-import de.fosd.jdime.stats.MergeTripleStats;
-import de.fosd.jdime.stats.Stats;
-import de.fosd.jdime.util.PrintFunction;
->>>>>>> HEAD~51
-import nu.xom.Document;
-=======
 import de.fosd.jdime.stats.MergeTripleStats;
 import de.fosd.jdime.stats.Stats;
 import de.fosd.jdime.util.IOFunctionSet;
-<<<<<<< origin/develop
->>>>>>> HEAD~50
-
-=======
 import de.fosd.jdime.util.Statistics;
->>>>>>> HEAD~37
 
 /**
  * Performs a structured merge on <code>FileArtifacts</code>.
@@ -85,7 +70,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
      * @param context
      */
     @Override
-    public final void merge(MergeOperation<FileArtifact> operation, MergeContext context) throws IOException {
+    public final void merge(MergeOperation<FileArtifact> operation, MergeContext context) {
 
         assert (operation != null);
         assert (context != null);
@@ -102,12 +87,12 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         if (!context.isDiffOnly() && target != null) {
             assert (!target.exists() || target.isEmpty()) : "Would be overwritten: " + target;
         }
-        
-        /* ASTNodeArtifacts are created from the input files.
+
+		/* ASTNodeArtifacts are created from the input files.
          * Then, a ASTNodeStrategy can be applied.
-         * The result is pretty printed and can be written into the output file.
-         */
-		CppNodeArtifact merged, next, targetNode;
+		 * The result is pretty printed and can be written into the output file.
+		 */
+        CppNodeArtifact merged, next, targetNode;
         MergeContext mergeContext;
 
         if (LOG.isLoggable(Level.FINE)) {
@@ -127,7 +112,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 mergeContext = context;
                 mergeContext.resetStreams();
                 long cmdStart = System.currentTimeMillis();
-				targetNode = CppNodeArtifact.createProgram(merged);
+                targetNode = CppNodeArtifact.createProgram(merged);
                 targetNode.setRevision(merged.getRevision(), true);
                 targetNode.renumberTree();
 
@@ -136,8 +121,8 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                     System.out.println(targetNode.dumpTree());
                 }
 
-				MergeScenario<CppNodeArtifact> astScenario = new MergeScenario<>(MergeType.TWOWAY, merged, merged.createEmptyArtifact(), next);
-				MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(astScenario, targetNode,
+                MergeScenario<CppNodeArtifact> astScenario = new MergeScenario<>(MergeType.TWOWAY, merged, merged.createEmptyArtifact(), next);
+                MergeOperation<CppNodeArtifact> astMergeOp = new MergeOperation<>(astScenario, targetNode,
                         merged.getRevision().getName(), next.getRevision().getName());
 
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -158,15 +143,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.println(targetNode.dumpTree());
                     }
 
-//                    LOG.finest("Pretty-printing merged:");
-//                    System.out.println(merged.prettyPrint());
-//                    LOG.finest("Pretty-printing next:");
-//                    System.out.println(next.prettyPrint());
-
-//                    if (!context.isDiffOnly()) {
-//                        LOG.finest("Pretty-printing target:");
-//                        System.out.print(targetNode.prettyPrint());
-//                    }
                 }
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");
@@ -188,72 +164,35 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         String prettyPrint = targetNode.prettyPrint();
         prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
-                    String line;
-                    while ((line = buf.readLine()) != null) {
-                        context.appendLine(line);
-                    }
+            String line;
+            while ((line = buf.readLine()) != null) {
+                context.appendLine(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-                }
+        }
 
-                if (context.hasErrors()) {
-                    System.err.println(context.getStdErr());
-                }
+        if (context.hasErrors()) {
+            System.err.println(context.getStdErr());
+        }
 
-                // write output
-                if (!context.isPretend() && target != null) {
-                    assert (target.exists());
+        // write output
+        if (!context.isPretend() && target != null) {
+            assert (target.exists());
             try {
-                    target.write(context.getStdIn());
+                target.write(context.getStdIn());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-                }
-                try {
+        }
+        try {
             new ProcessBuilder("astyle/bin/astyle",
-                            "--style=google","--indent-preproc-block","-xe",context.getOutputFile().getPath()).start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-<<<<<<< origin/develop
+                    "--style=google", "--indent-preproc-block", "-xe", context.getOutputFile().getPath()).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-<<<<<<< origin/develop
-            } catch (Throwable t) {
-                LOG.severe("Exception while merging:");
-                context.addCrash(scenario, t);
-
-                for (Revision rev : variants.keySet()) {
-                    LOG.severe(String.format("%s: %s", rev, variants.get(rev).getPath()));
-=======
-
->>>>>>> HEAD~50
-                }
-
-<<<<<<< origin/develop
-<<<<<<< origin/develop
-                if (!context.isKeepGoing()) {
-                    throw new Error(t);
-=======
-    //-------------------
-    public HashSet<String> forkNameSet = new HashSet<>();
-
-    public void inputFileInit() {
-//        String path = "testcpp/originMarlin/";
-//        File dir = new File(path);
-//        String[] names = dir.list();
-//        for (String name : names) {
-//            if (new File(path + name).isDirectory()) {
-//                if (!name.equals("upstream")) {
-//                    forkNameSet.add(name);
-//                }
-//            }
-//
-//        }
-
-        forkNameSet.add("yuroller");
-//        forkNameSet.add("marlin4Due");
-        forkNameSet.add("upstream");
-=======
 
 
 
@@ -262,93 +201,17 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
     @Override
     public final String toString() {
         return "nway";
->>>>>>> HEAD~37
-    }
-
-    public void analysisIfdefBlock(String content) {
-        String[] ifdefBlocks = content.split("\\+\\+\\+\\+\\+\\+");
-        for (String block : ifdefBlocks) {
-            for (String fork : forkNameSet) {
-                if (block.contains("defined " + fork + ")")) {
-
->>>>>>> HEAD~50
-                }
-            }
-        }
-    }
-
-
-    //-------------------
-
-    public String presicePrettyprint(String res) {
-
-        //-----------------------
-        String testPath = "testcpp/mergedResult/countIfdef.txt";
-        inputFileInit();
-        //-----------------------
-
-       while(res.contains("#endif+-+-+-")){
-           res = res.replace("#endif+-+-+-","#endif");
-
-       }
-        String newResult = "";
-        Stack<String> conditionStack = new Stack<>();
-        String[] elements = res.split("\\+-\\+-\\+-\n");
-        String s = "";
-        for (String e : elements) {
-            if (e.length() > 0) {
-            String[] tmp = e.split("\n");
-            if (conditionStack.size() > 0) {
-                String lastCon = conditionStack.lastElement();
-                if (lastCon.equals(tmp[0])) {
-                    String x = "";
-                    for (int i = 1; i < tmp.length - 1; i++) {
-                        x += tmp[i]+"\n";
-                    }
-                    newResult += x;
-                    continue;
-                } else {
-                    conditionStack.pop();
-                    conditionStack.push(tmp[0]);
-                    newResult +="#endif\n";
-
-                        //-------------------
-                       ioFunctionSet.printEndif(testPath);
-                        //-------------------
-
-                }
-            }
-            conditionStack.push(tmp[0]);
-                newResult += ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-
-                //-------------------
-                int i = 0;
-                for (String fork : forkNameSet) {
-                    if (tmp[0].contains("defined (" + fork + ")")) {
-                        i++;
-                    }
-            }
-
-                if (i < forkNameSet.size()) {
-                    String countIfdef = ioFunctionSet.printNodeWithoutHeadandEnd(e, 0);
-                    ioFunctionSet.writeTofile(countIfdef, testPath);
-            }
-        //-------------------
-
-
-            }
-        }
-        //-----------------------
-       ioFunctionSet.printEndif(testPath);
-//-----------------------
-        return newResult+"#endif\n";
-=======
->>>>>>> HEAD~38
     }
 
     @Override
-    public final String toString() {
-        return "nway";
+    public final Stats createStats() {
+        return new Stats(new String[]{"directories", "files", "lines", "nodes"});
+    }
+
+    @Override
+    public final String getStatsKey(FileArtifact artifact) {
+        // FIXME: remove me when implementation is complete!
+        throw new NotYetImplementedException("StructuredStrategy: Implement me!");
     }
 
     @Override

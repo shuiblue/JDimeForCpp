@@ -50,28 +50,6 @@ public class mergeMarlin {
     }
 
 
-<<<<<<< origin/develop
-=======
-        mergedFiles.add("cardReader.cpp");
-//        File upstream = new File(main_repo);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".cpp");
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            mergedFiles.add(f.getName());
-//        }
-
-//        forkName.add("yuroller");
-        forkName.add("marlin4Due");
-
-        return forkName;
-    }
-
->>>>>>> HEAD~35
     public void afterTest() {
         testInitial.clearTmpFile();
     }
@@ -81,97 +59,15 @@ public class mergeMarlin {
     public void NWayMerge_Rev() {
 
         HashSet<String> forkNames = inputFileInit();
-<<<<<<< origin/develop
-=======
-//        HashSet<String> forkNames = inputFileInit_1();
-        String filePath;
-//        for (String fileToBeMerged : mergedFiles) {
->>>>>>> HEAD~35
 
 //        for (String fileToBeMerged : mergedFiles) {
 //            for (int i = 2; i <= 20; i++) {
         Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 2);
-
-
         for (Set<String> combination : combinationFiles) {
-<<<<<<< origin/develop
             for (String fileToBeMerged : mergedFiles) {
                 testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged);
             }
         }
-=======
-
-
-            //-----------
-            String forkName = "";
-            for (String com : combination) {
-                forkName += com;
-            }
-            filePath = "testcpp/statistics/" + "upstream_" + forkName + "_" + ".txt";
-            sleep();
-            //-----------
-
-            for (String fileToBeMerged : mergedFiles) {
-
-                //-----------
-                testInitial.writeTofile("!#############!##############!" + fileToBeMerged + "\n", filePath);
-                testInitial.writeTofile("+-+-+-\n", filePath);
-                //-----------
-
-                testInitial.checkMerge_wrapper4Marlin(path, combination, fileToBeMerged);
-            }
-
-//            }
-
-
-            //-----------
-            IOFunctionSet ioFunctionSet = new IOFunctionSet();
-            String mergedBlock = "";
-            try {
-                mergedBlock = ioFunctionSet.presicePrettyprint(testInitial.readResult(filePath));
-                ioFunctionSet.writeTofile(mergedBlock, filePath + ".new");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            int upstream = 0;
-            int upstreamNewLine = 0;
-            int fork = 0;
-            int forkNewLine = 0;
-            int ifdef = 0;
-            String[] files = mergedBlock.split("!#############!##############!");
-            for (String file : files) {
-                String[] blocks = file.split("\\+-\\+-\\+-\n");
-                for (String b : blocks) {
-                    if (b.contains("#if defined (upstream)")) {
-                        upstream++;
-                        upstreamNewLine += b.split("\n").length;
-
-                    }
-                    if (b.contains("#if defined (" + forkName + ")")) {
-                        fork++;
-                        forkNewLine += b.split("\n").length;
-                    }
-                    if (b.contains("additional ifdef")) {
-                        ifdef++;
-                    }
-                }
-            }
-
-            String statisticsPath = "testcpp/statistics/result.txt";
-            ioFunctionSet.writeTofile("\n+++++++++\nCompare upstream with " + forkName + ":\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstream unique: " + upstream + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("LOC upstream unique: " + upstreamNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("fork unique: " + fork + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("LOC fork unique: " + forkNewLine + "\n", statisticsPath);
-
-            ioFunctionSet.writeTofile("introduced ifdef: " + ifdef + "\n", statisticsPath);
-            //-----------
-
-
-        }
-
->>>>>>> HEAD~35
     }
 
     @Test
