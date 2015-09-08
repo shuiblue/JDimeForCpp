@@ -855,7 +855,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public String printNonTerminalNode(CppNodeArtifact c) {
         String res = "";
-        if (c.hasMatches()) {
+        if (c.children!=null&&c.hasMatches()) {
             res += printBlock(c);
         } else if (c.isChoice()) {
             res += printChoice(c);
@@ -1053,10 +1053,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 String c_block_localName = ((Element) c_block.astnode).getLocalName();
                 if (entity.getClassBody().contains(c_block_localName)) {
                     blockString += c_block.prettyPrint();
-                } else if (c_block.hasMatches()) {
+                } else if (c_block.children!=null&&c_block.hasMatches()) {
                     blockString += printBlock(c_block);
-                } else {
+                } else if(c_block.isChoice()){
                     blockString += printChoice(c_block);
+                }else{
+                    blockString+=c_block.printSingleNode(c_block);
                 }
             }
         }
