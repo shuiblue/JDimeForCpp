@@ -51,21 +51,21 @@ public class mergeMarlin {
 
     public HashSet<String> inputFileInit_1() {
 
-        mergedFiles.add("cardReader.cpp");
-//        File upstream = new File(main_repo);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".cpp");
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            mergedFiles.add(f.getName());
-//        }
+//        mergedFiles.add("cardReader.cpp");
+        File upstream = new File(main_repo);
+        File[] matches = upstream.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".cpp");
+//                return name.endsWith(".h") || name.endsWith(".cpp");
+            }
+        });
 
-//        forkName.add("yuroller");
-        forkName.add("marlin4Due");
+        for (File f : matches) {
+            mergedFiles.add(f.getName());
+        }
+
+        forkName.add("upstreamAlromh87");
+        forkName.add("alromh87");
 
         return forkName;
     }
@@ -85,14 +85,14 @@ public class mergeMarlin {
     @Test
     public void NWayMerge_Rev() {
 
-        HashSet<String> forkNames = inputFileInit();
-//        HashSet<String> forkNames = inputFileInit_1();
+//        HashSet<String> forkNames = inputFileInit();
+        HashSet<String> forkNames = inputFileInit_1();
         String filePath;
 //        for (String fileToBeMerged : mergedFiles) {
 
 //            for (int i = 2; i <= 20; i++) {
         sleep();
-        Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 2);
+        Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 3);
 
 
         for (Set<String> combination : combinationFiles) {
