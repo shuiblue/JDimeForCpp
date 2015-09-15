@@ -3698,3 +3698,89 @@
 92214
 3 way merge: pins.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
 90741
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'upstreamAlromh87'  , alromh87' 
+8571
+3 way merge: planner.cpp file. 'upstream' repo merge with fork 'drsdre'  , upstreamDrsdre' 
+3230
+3 way merge: planner.h file. 'upstream' repo merge with fork 'drsdre'  , upstreamDrsdre' 
+2194
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'drsdre'  , upstreamDrsdre' 
+22436
+3 way merge: planner.cpp file. 'upstream' repo merge with fork 'drsdre'  , upstreamDrsdre' 
+3181
+3 way merge: planner.cpp file. 'upstream' repo merge with fork 'drsdre'  , upstreamDrsdre' 
+3635
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2328
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2973
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'alromh87' 
+3329
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1895
+3 way merge: LiquidCrystalRus.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1871
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'alromh87' 
+29419
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2023
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1936
+3 way merge: planner.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1872
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2964
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2551
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'alromh87' 
+4455
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1872
+3 way merge: SdFile.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1902
+3 way merge: SdVolume.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2156
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2186
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'alromh87' 
+4195
+3 way merge: temperature.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1874
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'alromh87' 
+5247
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1910
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1858
+3 way merge: BlinkM.h file. 'upstream' repo merge with fork 'alromh87' 
+2159
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'alromh87' 
+2019
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'alromh87' 
+9426
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'alromh87' 
+3681
+3 way merge: ConfigurationStore.h file. 'upstream' repo merge with fork 'alromh87' 
+1864
+3 way merge: dogm_font_data_marlin.h file. 'upstream' repo merge with fork 'alromh87' 
+2075
+3 way merge: dogm_lcd_implementation.h file. 'upstream' repo merge with fork 'alromh87' 
+2697
+3 way merge: DOGMbitmaps.h file. 'upstream' repo merge with fork 'alromh87' 
+1960
+3 way merge: BlinkM.h file. 'upstream' repo merge with fork 'alromh87' 
+3131
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'alromh87' 
+2511
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'alromh87' 
+23200
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'alromh87' 
+6717
+3 way merge: ConfigurationStore.h file. 'upstream' repo merge with fork 'alromh87' 
+1910
+3 way merge: dogm_font_data_marlin.h file. 'upstream' repo merge with fork 'alromh87' 
+2182
+3 way merge: dogm_lcd_implementation.h file. 'upstream' repo merge with fork 'alromh87' 
+4872
+3 way merge: DOGMbitmaps.h file. 'upstream' repo merge with fork 'alromh87' 
+2201

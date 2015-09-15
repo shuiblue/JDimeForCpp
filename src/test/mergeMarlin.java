@@ -61,6 +61,7 @@ public class mergeMarlin {
         });
 
         for (File f : matches) {
+
             mergedFiles.add(f.getName());
         }
 

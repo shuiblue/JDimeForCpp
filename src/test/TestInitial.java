@@ -144,12 +144,10 @@ public class TestInitial {
     }
 
 
-    public String checkMergeRepo(String path, Set<String> combination, String mergedFile){
+    public String checkMergeRepo(String path, String fork, String mergedFile){
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
-        int n = combination.size() + 1;
-        String outputPath = "testcpp/mergedRepo/" + n + "-wayMerge/upstream";
-        for (String fork : combination) {
+        String outputPath = "testcpp/mergedRepo/3-wayMerge/upstream";
             String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
             File f = new File(filePath);
 
@@ -161,20 +159,34 @@ public class TestInitial {
 
                 outputPath += "_no_" + fork;
             }
+
+
+        String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
+
+        File f1 = new File(upstreamOldPath+mergedFile);
+
+        if (f1.exists()) {
+            outputPath += "_" + fork;
+        } else {
+            System.out.println(filePath + " not exist!");
+
+            outputPath += "_no_" + fork;
         }
+
         outputPath+="/"+mergedFile;
+
         if (inputFilePaths.size() > 0) {
             String commandLine = "-mode,nway,-output," + outputPath + ","
                     + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
-//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
-            String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
+            String title =3+ " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
             for (int i = 0; i < inputFilePaths.size(); i++) {
-                commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + inputFilePaths.get(i).split("\\+")[1];
+               String forkName =inputFilePaths.get(i).split("\\+")[1];
+                commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + forkName;
                 title += inputFilePaths.get(i).split("/")[0] + "' ";
-                if (i < inputFilePaths.size() - 1) {
-                    commandLine += ",";
-                    title += " , ";
-                }
+                commandLine += ",";
+                commandLine +=upstreamOldPath+mergedFile+"+"+fork+"Upstream";
+
+
             }
             String[] arg = commandLine.split(",");
 
