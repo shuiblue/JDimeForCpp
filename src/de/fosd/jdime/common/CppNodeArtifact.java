@@ -100,9 +100,29 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @param ifdefMatch if the node is un-deciplined annotation,which means ifdedMatch = false,
      *                   then do not initialize it child
      */
-    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch) {
+//    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch) {
+//        this.astnode = astnode;
+//        this.setRevision(revision);
+//        if (astnode.getClass().getName().contains("Element")) {
+//            String localName = ((Element) astnode).getLocalName();
+//
+//            if (ifdefMatch) {
+//                if (!entity.getTerminal().contains(localName)) {
+//                    this.initializeChildren(revision);
+//                }
+//            }
+//        }
+//        renumberTree();
+//    }
+    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch,Stack<String> parentConditionStack) {
         this.astnode = astnode;
         this.setRevision(revision);
+
+
+        if(parentConditionStack.size()>0){
+            conditionStack.addAll(parentConditionStack);
+        }
+
         if (astnode.getClass().getName().contains("Element")) {
             String localName = ((Element) astnode).getLocalName();
 
@@ -228,10 +248,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         }
                         if (!entity.getHeadEntity().contains(localName)) {
                             Revision revision = new Revision(getRevision().getName());
+
                             if (conditionStack != null && conditionStack.size() > 0) {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
@@ -313,7 +334,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
 
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+//                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
@@ -1164,32 +1186,33 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 if (parent.hasMatches()) {
 
                     String[] parentRevisionSet = parentRev.split("\\|\\|");
-                    String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
-                    String childRev = clearBlank(cRev.replace("#if ", ""));
-                    String rev = rootRev.split("&&")[0].replace("\n", "");
-                    if (childRev.contains(rev)) {
-                        if (!rootRev.equals(childRev)) {
-                            if (childRev.replace(rev, "").contains("defined")) {
-                                String fake_chileRev =childRev.replace(rev,"");
+//                    if(parentRevisionSet[i].length()>0) {
+                        String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
+                        String childRev = clearBlank(cRev.replace("#if ", ""));
+                        String rev = rootRev.split("&&")[0].replace("\n", "");
+                        if (childRev.contains(rev)) {
+                            if (!rootRev.equals(childRev)) {
+                                if (childRev.replace(rev, "").contains("defined")) {
+                                    String fake_chileRev = childRev.replace(rev, "");
 
-                                String[] rootConditons= rootRev.replace(rev,"").split("&&");
-                                for(String con: rootConditons)
-                                {
-                                    if(con.length()>0){
-                                        fake_chileRev=fake_chileRev.replace(con,"");
+                                    String[] rootConditons = rootRev.replace(rev, "").split("&&");
+                                    for (String con : rootConditons) {
+                                        if (con.length() > 0) {
+                                            fake_chileRev = fake_chileRev.replace(con, "");
+                                        }
+                                    }
+
+                                    if (fake_chileRev.contains("defined")) {
+                                        ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                        ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
+                                        ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
+                                        ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
+                                        ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
+                                        ioFunctionSet.writeTofile("+-+-+-\n", path);
                                     }
                                 }
-
-                                if(fake_chileRev.contains("defined")) {
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                    ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
-                                ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
-                                ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
-                                    ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                }
                             }
-                        }
+//                        }
                     }
                 }
 

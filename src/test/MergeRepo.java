@@ -1,12 +1,16 @@
 package test;
+
 import de.fosd.jdime.util.IOFunctionSet;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 /**
  * Created by shuruiz on 9/8/15.
  */
@@ -19,57 +23,62 @@ public class MergeRepo {
     HashSet<String> forkName = new HashSet<>();
     List<String> mergedFiles = new ArrayList<>();
 
-    public HashSet<String> inputFileInit_1() {
-
-        mergedFiles.add("pins.h");
-//        mergedFiles.add("Configuration.h");
+    public HashSet<String> inputFileInit() {
 //        File upstream = new File(main_repo);
 //        File[] matches = upstream.listFiles(new FilenameFilter() {
 //            public boolean accept(File dir, String name) {
-//                return name.endsWith(".h");
+//                return name.endsWith(".cpp");
 ////                return name.endsWith(".h") || name.endsWith(".cpp");
 //            }
 //        });
 //
 //        for (File f : matches) {
-//            if(!f.getName().equals("fastio.h")||f.getName().equals("language.h")) {
+//            if (!f.getName().equals("fastio.h") || !f.getName().contains("language")) {
 //                mergedFiles.add(f.getName());
 //            }
+//
 //        }
-        forkName.add("upstreamAlromh87");
-        forkName.add("alromh87");
+//        File dir = new File(path);
+//        String[] names = dir.list();
+//        for (String name : names) {
+//            if (new File(path + name).isDirectory()) {
+//                if (!name.equals("upstream")) {
+//                    forkName.add(name);
+//                }
+//            }
+//
+//        }
+        mergedFiles.add("ultralcd.cpp");
+//        forkName.add("alromh87");
+//        forkName.add("johnnyr");
+//        forkName.add("mattsch");
+//        forkName.add("quikshot");
+//        forkName.add("DinoMesina");
+        forkName.add("wgm4321");
+
         return forkName;
     }
 
+
     @Test
     public void NWayMerge_Rev() {
-        String filePath;
-//        HashSet<String> forkNames = inputFileInit();
-        HashSet<String> forkNames = inputFileInit_1();
-//        for (String fileToBeMerged : mergedFiles) {
-//            for (int i = 2; i <= 20; i++) {
 
-        Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 3);
-        for (Set<String> combination : combinationFiles) {
-
+        HashSet<String> forkNames = inputFileInit();
+        for (String fork : forkNames) {
 
             //-----------
-            String forkName = "";
-            for (String com : combination) {
-                forkName += com+"_";
-            }
-            filePath = "testcpp/statistics/" + "upstream_" + forkName  + ".txt";
-
+            String filePath = "testcpp/statistics/" + "upstream_" + fork + "_" + fork + "Upstream_.txt";
             //-----------
-
 
 
             for (String fileToBeMerged : mergedFiles) {
+                System.out.println(fileToBeMerged + "~\n");
                 //-----------
                 testInitial.writeTofile("!#############!##############!" + fileToBeMerged + "\n", filePath);
                 testInitial.writeTofile("+-+-+-\n", filePath);
                 //-----------
-                testInitial.checkMergeRepo(path, combination, fileToBeMerged);
+                testInitial.checkMergeRepo(path, fork, fileToBeMerged);
+
             }
 
 //            }
@@ -85,24 +94,60 @@ public class MergeRepo {
                 e.printStackTrace();
             }
 
-            int upstream = 0;
+            int upstreamNew = 0;
             int upstreamNewLine = 0;
-            int fork = 0;
+            int upstreamOld = 0;
+            int upstreamOldLine = 0;
+            int forkUnique = 0;
             int forkNewLine = 0;
+            int new_fork = 0;
+            int new_fork_Line = 0;
+            int old_fork = 0;
+            int old_fork_Line = 0;
+            int allUpstream = 0;
+            int allUpstream_Line = 0;
+
+
             int ifdef = 0;
+
+            ArrayList<String> combination = new ArrayList<>();
+
+            combination.add("upstream");
+            combination.add(fork);
+            combination.add(fork + "Upstream");
+
+
             String[] files = mergedBlock.split("!#############!##############!");
             for (String file : files) {
                 String[] blocks = file.split("\\+-\\+-\\+-\n");
                 for (String b : blocks) {
-                    if (b.contains("#if defined (upstream)")) {
-                        upstream++;
+                    if (b.contains(combination.get(0)) && !b.contains(combination.get(1)) && !b.contains(combination.get(2))) {
+                        upstreamNew++;
                         upstreamNewLine += b.split("\n").length;
-
                     }
-                    if (b.contains("#if defined (" + forkName + ")")) {
-                        fork++;
+                    if (b.contains(combination.get(1)) && !b.contains(combination.get(0)) && !b.contains(combination.get(2))) {
+                        forkUnique++;
                         forkNewLine += b.split("\n").length;
                     }
+
+                    if (b.contains(combination.get(2)) && !b.contains(combination.get(0)) && !b.contains(combination.get(1))) {
+                        upstreamOld++;
+                        upstreamOldLine += b.split("\n").length;
+                    }
+
+                    if (b.contains(combination.get(0)) && b.contains(combination.get(1)) && !b.contains(combination.get(2))) {
+                        new_fork++;
+                        new_fork_Line += b.split("\n").length;
+                    }
+                    if (b.contains(combination.get(0)) && b.contains(combination.get(2)) && !b.contains(combination.get(1))) {
+                        allUpstream++;
+                        allUpstream_Line += b.split("\n").length;
+                    }
+                    if (b.contains(combination.get(1)) && b.contains(combination.get(2)) && !b.contains(combination.get(0))) {
+                        old_fork++;
+                        old_fork_Line += b.split("\n").length;
+                    }
+
                     if (b.contains("additional ifdef")) {
                         ifdef++;
                     }
@@ -110,11 +155,13 @@ public class MergeRepo {
             }
 
             String statisticsPath = "testcpp/statistics/result.txt";
-            ioFunctionSet.writeTofile("\n+++++++++\nCompare upstream with " + forkName + ":\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstream unique: " + upstream + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("LOC upstream unique: " + upstreamNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("fork unique: " + fork + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("LOC fork unique: " + forkNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("\n+++++++++\nCompare 2 version of upstream(upstream_NEW/upstream_OLD) with " + forkName + ":\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstream_NEW unique: " + upstreamNew + "/LOC:" + upstreamNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("fork unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstream_OLD unique: " + upstreamOld + "/LOC:" + upstreamOldLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstreamNew_fork unique: " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstreamOLD_fork unique: " + old_fork + "/LOC:" + old_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstream_All unique: " + allUpstream + "/LOC:" + allUpstream_Line + "\n", statisticsPath);
 
             ioFunctionSet.writeTofile("introduced ifdef: " + ifdef + "\n", statisticsPath);
             //-----------
