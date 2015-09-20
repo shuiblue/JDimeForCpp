@@ -28,11 +28,12 @@ public class MergeRepo {
             }
         });
 
-        for (File f : matches) {
-            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
-                mergedFiles.add(f.getName());
-            }
-        }
+//        for (File f : matches) {
+//            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
+//                mergedFiles.add(f.getName());
+//            }
+//
+//        }
         File dir = new File(path);
         String[] names = dir.list();
         for (String name : names) {
@@ -42,8 +43,10 @@ public class MergeRepo {
                 }
             }
 
+        }
 
-        forkName.add("alromh87");
+
+        forkName.add("drsdre");
         return forkName;
     }
 
