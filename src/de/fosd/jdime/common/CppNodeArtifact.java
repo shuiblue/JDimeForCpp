@@ -99,6 +99,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      *                             then do not initialize it child
      * @param parentConditionStack this stack stores the node's parent's condition, in order to know whether this node has been wrapped by new ifdef
      */
+<<<<<<< origin/develop
 
     public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch, Stack<String> parentConditionStack) {
         this.astnode = astnode;
@@ -106,6 +107,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (parentConditionStack.size() > 0) {
             conditionStack.addAll(parentConditionStack);
         }
+=======
+    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch,Stack<String> parentConditionStack) {
+        this.astnode = astnode;
+        this.setRevision(revision);
+
+        if(parentConditionStack.size()>0){
+                 conditionStack.addAll(parentConditionStack);
+                    }
+
+>>>>>>> HEAD~21
         if (astnode.getClass().getName().contains("Element")) {
             String localName = ((Element) astnode).getLocalName();
 
@@ -236,7 +247,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (conditionStack != null && conditionStack.size() > 0) {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
+<<<<<<< origin/develop
 
+=======
+>>>>>>> HEAD~21
                             CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched, conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
