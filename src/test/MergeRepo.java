@@ -23,43 +23,40 @@ public class MergeRepo {
         File upstream = new File(main_repo);
         File[] matches = upstream.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".h");
+                return name.endsWith(".cpp");
 //                return name.endsWith(".h") || name.endsWith(".cpp");
             }
         });
 
         for (File f : matches) {
-            if(!f.getName().equals("fastio.h")||f.getName().equals("language.h")) {
+            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
                 mergedFiles.add(f.getName());
             }
-
         }
-//        File dir = new File(path);
-//        String[] names = dir.list();
-//        for (String name : names) {
-//            if (new File(path + name).isDirectory()) {
-//                if (!name.equals("upstream")) {
-//                    forkName.add(name);
-//                }
-//            }
-//
-//        }
+        File dir = new File(path);
+        String[] names = dir.list();
+        for (String name : names) {
+            if (new File(path + name).isDirectory()) {
+                if (!name.equals("upstream")) {
+                    forkName.add(name);
+                }
+            }
+
 
         forkName.add("alromh87");
         return forkName;
     }
 
 
-
     @Test
     public void NWayMerge_Rev() {
         HashSet<String> forkNames = inputFileInit();
-       for(String fork: forkNames){
+        for (String fork : forkNames) {
 
-           for (String fileToBeMerged : mergedFiles) {
-               testInitial.checkMergeRepo(path, fork, fileToBeMerged);
-           }
-       }
+            for (String fileToBeMerged : mergedFiles) {
+                testInitial.checkMergeRepo(path, fork, fileToBeMerged);
+            }
+        }
 
 //         Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 3);
 //        for (Set<String> combination : combinationFiles) {

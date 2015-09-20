@@ -100,9 +100,14 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @param ifdefMatch if the node is un-deciplined annotation,which means ifdedMatch = false,
      *                   then do not initialize it child
      */
-    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch) {
+    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch,Stack<String> parentConditionStack) {
         this.astnode = astnode;
         this.setRevision(revision);
+
+        if(parentConditionStack.size()>0){
+                 conditionStack.addAll(parentConditionStack);
+                    }
+
         if (astnode.getClass().getName().contains("Element")) {
             String localName = ((Element) astnode).getLocalName();
 
@@ -231,7 +236,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (conditionStack != null && conditionStack.size() > 0) {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
@@ -313,7 +318,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
 
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
