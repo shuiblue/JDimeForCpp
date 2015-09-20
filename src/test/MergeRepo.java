@@ -48,13 +48,13 @@ public class MergeRepo {
 //            }
 //
 //        }
-        mergedFiles.add("ultralcd.cpp");
+        mergedFiles.add("cardreader.cpp");
 //        forkName.add("alromh87");
 //        forkName.add("johnnyr");
 //        forkName.add("mattsch");
 //        forkName.add("quikshot");
 //        forkName.add("DinoMesina");
-        forkName.add("wgm4321");
+        forkName.add("drsdre");
 
         return forkName;
     }
