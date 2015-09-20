@@ -1,6 +1,7 @@
 package test;
 
 import de.fosd.jdime.Main;
+import de.fosd.jdime.util.IOFunctionSet;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 
@@ -110,30 +111,45 @@ public class TestInitial {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
         String outputPath = "testcpp/mergedRepo/3-wayMerge/upstream";
+
             String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
             File f = new File(filePath);
+
+        String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
+        File f1 = new File(upstreamOldPath+mergedFile);
 
             if (f.exists()) {
                 inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
                 outputPath += "_" + fork;
-            } else {
-                System.out.println(filePath + " not exist!");
 
-                outputPath += "_no_" + fork;
+            if (f1.exists()) {
+                outputPath += "_oldUpstream";;
+            } else {
+                System.out.println(upstreamOldPath + " not exist!");
+                outputPath += "_no_oldUpstream";
             }
 
-
-        String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
-
-        File f1 = new File(upstreamOldPath+mergedFile);
-
-        if (f1.exists()) {
-            outputPath += "_" + fork;
         } else {
             System.out.println(filePath + " not exist!");
-
             outputPath += "_no_" + fork;
+            if (f1.exists()) {
+                outputPath += "_oldUpstream";
+
+            } else {
+                System.out.println(upstreamOldPath + " not exist!");
+                outputPath += "_no_oldUpstream";
+
+                try {
+                    String statisticsPath = "testcpp/statistics/result.txt";
+                    String upstreamNEW = readResult("testcpp/originMarlin/upstream/Marlin/Marlin/"+mergedFile);
+                    IOFunctionSet ioFunctionSet = new IOFunctionSet();
+                    ioFunctionSet.writeTofile("upstream(NEW) UNIQUE FILE : " + mergedFile + " ,LOC: " + upstreamNEW.split("\n").length+1+ "\n", statisticsPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
         }
+            }
+        }
+
 
         outputPath+="/"+mergedFile;
 
