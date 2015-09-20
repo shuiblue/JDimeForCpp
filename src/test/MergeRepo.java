@@ -24,20 +24,24 @@ public class MergeRepo {
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-//        File upstream = new File(main_repo);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".cpp");
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            if (!f.getName().equals("fastio.h") || !f.getName().contains("language")) {
-//                mergedFiles.add(f.getName());
-//            }
-//
-//        }
+        File upstream = new File(main_repo);
+        File[] matches = upstream.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".cpp");
+//                return name.endsWith(".h") || name.endsWith(".cpp");
+            }
+        });
+
+        for (File f : matches) {
+            if (!f.getName().contains("planner")
+                    && !f.getName().contains("temperature")
+                    && !f.getName().contains("LiquidCrystalRus")
+                    && !f.getName().contains("SdFile")
+                    &&!f.getName().contains("SdVolume")) {
+                mergedFiles.add(f.getName());
+            }
+
+        }
 //        File dir = new File(path);
 //        String[] names = dir.list();
 //        for (String name : names) {
@@ -48,13 +52,13 @@ public class MergeRepo {
 //            }
 //
 //        }
-        mergedFiles.add("cardreader.cpp");
-//        forkName.add("alromh87");
-//        forkName.add("johnnyr");
-//        forkName.add("mattsch");
-//        forkName.add("quikshot");
-//        forkName.add("DinoMesina");
+        forkName.add("alromh87");
+        forkName.add("johnnyr");
+        forkName.add("mattsch");
+        forkName.add("quikshot");
+        forkName.add("DinoMesina");
         forkName.add("drsdre");
+        forkName.add("wgm4321");
 
         return forkName;
     }
@@ -155,13 +159,13 @@ public class MergeRepo {
             }
 
             String statisticsPath = "testcpp/statistics/result.txt";
-            ioFunctionSet.writeTofile("\n+++++++++\nCompare 2 version of upstream(upstream_NEW/upstream_OLD) with " + forkName + ":\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstream_NEW unique: " + upstreamNew + "/LOC:" + upstreamNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("fork unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstream_OLD unique: " + upstreamOld + "/LOC:" + upstreamOldLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstreamNew_fork unique: " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstreamOLD_fork unique: " + old_fork + "/LOC:" + old_fork_Line + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("upstream_All unique: " + allUpstream + "/LOC:" + allUpstream_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("\n+++++++++\nCompare 2 version of upstream(upstream_NEW/upstream_OLD) with " + fork + ":\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstream_NEW) Unique: " + upstreamNew + "/LOC:" + upstreamNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("("+fork+") Unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstream_OLD)Unique: " + upstreamOld + "/LOC:" + upstreamOldLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstreamNew) ^ ("+fork+"): " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstreamOLD) ^ ("+fork+"): " + old_fork + "/LOC:" + old_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("upstream(NEW) ^ (OLD): " + allUpstream + "/LOC:" + allUpstream_Line + "\n", statisticsPath);
 
             ioFunctionSet.writeTofile("introduced ifdef: " + ifdef + "\n", statisticsPath);
             //-----------
