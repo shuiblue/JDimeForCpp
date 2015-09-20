@@ -620,7 +620,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (astnode_Class.contains("Element")) {
             if (localEqual) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
-                    if (this.children == null && other.children == null) {
+                    if ((this.children == null && other.children == null)
+                            ||(this.children == null&&other.children!=null)
+                            ||(this.children != null&&other.children==null)) {
+//                    if (this.children == null && other.children == null) {
                         return match;
                     }
                     return true;
