@@ -107,6 +107,7 @@ public class TestInitial {
         }
     }
 
+<<<<<<< origin/develop
     public String checkMergeRepo(String path, String fork, String mergedFile){
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
@@ -188,6 +189,26 @@ public class TestInitial {
                 bw.close();
 
 
+=======
+   public void mergePullRQ(String path, ArrayList<String> inputFilePaths,String fork,String fileToBeMerged){
+       String outputPath = path+fork+"/MocPullRQ/Marlin/Marlin/";
+
+
+       String suffix = ".cpp";
+       String commandLine = "-mode,nway,-output," + outputPath + fileToBeMerged + ",";
+       char cond = 'A';
+       for (int i = 0; i < inputFilePaths.size(); i++) {
+
+           commandLine += inputFilePaths.get(i)  + "+" + String.valueOf(cond);
+           if (i < inputFilePaths.size() - 1) {
+               commandLine += ",";
+           }
+           cond++;
+       }
+       String[] arg = commandLine.split(",");
+       try {
+           Main.main(arg);
+>>>>>>> HEAD~16
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -197,6 +218,7 @@ public class TestInitial {
             }
 
 
+<<<<<<< origin/develop
 
             try {
                 result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
@@ -208,6 +230,12 @@ public class TestInitial {
     }
 
 
+=======
+    }
+
+
+
+>>>>>>> HEAD~16
     /**
      * check merged file is equal to expect result
      *
