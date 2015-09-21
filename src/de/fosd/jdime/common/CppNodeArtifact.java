@@ -1051,21 +1051,26 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
             blockString += printChoice(c) + "\n";
         } else if (c.hasMatches()) { // c has matched with other node
-            Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
-            while (it4Block.hasNext()) {
-                blockString += "+-+-+-\n";
-                CppNodeArtifact c_block = it4Block.next();
-                String c_block_localName = ((Element) c_block.astnode).getLocalName();
-                if (entity.getClassBody().contains(c_block_localName)) {
-                    blockString += c_block.prettyPrint();
-                } else if (c_block.children!=null&&c_block.hasMatches()) {
+
+            if(c.getChildren()!=null) {
+                Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
+                while (it4Block.hasNext()) {
+                    blockString += "+-+-+-\n";
+                    CppNodeArtifact c_block = it4Block.next();
+                    String c_block_localName = ((Element) c_block.astnode).getLocalName();
+                    if (entity.getClassBody().contains(c_block_localName)) {
+                        blockString += c_block.prettyPrint();
+                    } else if (c_block.children != null && c_block.hasMatches()) {
 //                } else if (c_block.hasMatches()) {
-                    blockString += printBlock(c_block);
-                } else if(c_block.isChoice()){
-                    blockString += printChoice(c_block);
-                }else{
-                    blockString+=c_block.printSingleNode(c_block);
+                        blockString += printBlock(c_block);
+                    } else if (c_block.isChoice()) {
+                        blockString += printChoice(c_block);
+                    } else {
+                        blockString += c_block.printSingleNode(c_block);
+                    }
                 }
+            }else{
+                blockString+=c.prettyPrint();
             }
         }
         return blockString;
