@@ -18,20 +18,20 @@ public class testMergePullReq {
     List<String> mergedFiles = new ArrayList<>();
 
     public void mergePR(String forkName) {
-        File upstream = new File(path+forkName+upstreamBeforeMerge);
-        File[] matches = upstream.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".h") || name.endsWith(".cpp");
-            }
-        });
+//        File upstream = new File(path+forkName+upstreamBeforeMerge);
+//        File[] matches = upstream.listFiles(new FilenameFilter() {
+//            public boolean accept(File dir, String name) {
+//                return name.endsWith(".h") || name.endsWith(".cpp");
+//            }
+//        });
+//
+//        for (File f : matches) {
+//            if(!f.getName().equals("fastio.h")||f.getName().contains("language")||f.getName().contains("pins")) {
+//                mergedFiles.add(f.getName());
+//            }
+//        }
 
-        for (File f : matches) {
-            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
-                mergedFiles.add(f.getName());
-            }
-        }
-
-
+        mergedFiles.add("pins.h");
 
 
         for (String fileToBeMerged : mergedFiles) {
@@ -47,7 +47,7 @@ public class testMergePullReq {
 
     @Test
     public void mocPullReq_10() {
-        mergePR("wgm4321");
+        mergePR("DinoMesina");
 
     }
 

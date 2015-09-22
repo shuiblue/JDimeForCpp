@@ -909,6 +909,11 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (nodeLocalName.equals("extern")) {
             String ast_name = cppNoArt.astnode.getChild(0).getValue();
             res += ast_name;
+        } else if (nodeLocalName.equals("macro")){
+            Element child =((Element) cppNoArt.astnode).getChildElements().get(0);
+            if(child.getLocalName().equals("name")){
+                res+=child.getChild(0).getValue();
+            }
         }
         return res;
     }
