@@ -114,12 +114,12 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 //        }
 //        renumberTree();
 //    }
-    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch,Stack<String> parentConditionStack) {
+    public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch, Stack<String> parentConditionStack) {
         this.astnode = astnode;
         this.setRevision(revision);
 
 
-        if(parentConditionStack.size()>0){
+        if (parentConditionStack.size() > 0) {
             conditionStack.addAll(parentConditionStack);
         }
 
@@ -252,7 +252,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             if (conditionStack != null && conditionStack.size() > 0) {
                                 revision.conditions.addAll(conditionStack.stream().collect(Collectors.toList()));
                             }
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched, conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
@@ -335,7 +335,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                             }
 
 //                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched);
-                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched,conditionStack);
+                            CppNodeArtifact child = new CppNodeArtifact(node, revision, ifdef_endif_Matched, conditionStack);
                             child.setParent(this);
                             child.setRevision(new Revision(getRevision().getName()));
                             if (conditionStack != null && conditionStack.size() > 0) {
@@ -638,9 +638,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             if (localEqual) {
                 if (entity.getMatchedEntity().contains(ast_localName)) {
 //                    if (this.children == null && other.children == null) {
-                        if ((this.children == null && other.children == null)
-                                ||(this.children == null&&other.children!=null)
-                                ||(this.children != null&&other.children==null)) {
+                    if ((this.children == null && other.children == null)
+                            || (this.children == null && other.children != null)
+                            || (this.children != null && other.children == null)) {
                         return match;
                     }
                     return true;
@@ -880,7 +880,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      */
     public String printNonTerminalNode(CppNodeArtifact c) {
         String res = "";
-        if (c.children!=null&&c.hasMatches()) {
+        if (c.children != null && c.hasMatches()) {
             res += printBlock(c);
         } else if (c.isChoice()) {
             res += printChoice(c);
@@ -928,9 +928,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } else if (nodeLocalName.equals("extern")) {
             String ast_name = cppNoArt.astnode.getChild(0).getValue();
             res += ast_name;
+        } else if (nodeLocalName.equals("macro")) {
+            Element child = ((Element) cppNoArt.astnode).getChildElements().get(0);
+            if (child.getLocalName().equals("name")) {
+                res += child.getChild(0).getValue();
+            }
         }
-        return res;
-    }
+
+
+    return res;
+}
 
 
     /**
@@ -1071,20 +1078,25 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         if (c.isChoice()) {  // if c is a Choice Node, then the block will include 'else'
             blockString += printChoice(c) + "\n";
         } else if (c.hasMatches()) { // c has matched with other node
-            Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
-            while (it4Block.hasNext()) {
-                blockString += "+-+-+-\n";
-                CppNodeArtifact c_block = it4Block.next();
-                String c_block_localName = ((Element) c_block.astnode).getLocalName();
-                if (entity.getClassBody().contains(c_block_localName)) {
-                    blockString += c_block.prettyPrint();
-                } else if (c_block.children!=null&&c_block.hasMatches()) {
-                    blockString += printBlock(c_block);
-                } else if(c_block.isChoice()){
-                    blockString += printChoice(c_block);
-                }else{
-                    blockString+=c_block.printSingleNode(c_block);
+
+            if (c.getChildren() != null) {
+                Iterator<CppNodeArtifact> it4Block = c.getChildren().iterator();
+                while (it4Block.hasNext()) {
+                    blockString += "+-+-+-\n";
+                    CppNodeArtifact c_block = it4Block.next();
+                    String c_block_localName = ((Element) c_block.astnode).getLocalName();
+                    if (entity.getClassBody().contains(c_block_localName)) {
+                        blockString += c_block.prettyPrint();
+                    } else if (c_block.children != null && c_block.hasMatches()) {
+                        blockString += printBlock(c_block);
+                    } else if (c_block.isChoice()) {
+                        blockString += printChoice(c_block);
+                    } else {
+                        blockString += c_block.printSingleNode(c_block);
+                    }
                 }
+            } else {
+                blockString += c.prettyPrint();
             }
         }
         return blockString;
@@ -1173,7 +1185,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             //------------
 
-                CppNodeArtifact parent = c.getParent();
+            CppNodeArtifact parent = c.getParent();
             if (parent.hasMatches()) {
                 String parentRev = c.printMatchCondition(parent);
                 String[] forks = parentRev.replace("#if ", "").split("\\|\\|");
@@ -1190,36 +1202,34 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     String[] parentRevisionSet = parentRev.split("\\|\\|");
 //                    if(parentRevisionSet[i].length()>0) {
-                        String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
-                        String childRev = clearBlank(cRev.replace("#if ", ""));
-                        String rev = rootRev.split("&&")[0].replace("\n", "");
-                        if (childRev.contains(rev)) {
-                            if (!rootRev.equals(childRev)) {
-                                if (childRev.replace(rev, "").contains("defined")) {
-                                    String fake_chileRev = childRev.replace(rev, "");
+                    String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
+                    String childRev = clearBlank(cRev.replace("#if ", ""));
+                    String rev = rootRev.split("&&")[0].replace("\n", "");
+                    if (childRev.contains(rev)) {
+                        if (!rootRev.equals(childRev)) {
+                            if (childRev.replace(rev, "").contains("defined")) {
+                                String fake_chileRev = childRev.replace(rev, "");
 
-                                    String[] rootConditons = rootRev.replace(rev, "").split("&&");
-                                    for (String con : rootConditons) {
-                                        if (con.length() > 0) {
-                                            fake_chileRev = fake_chileRev.replace(con, "");
-                                        }
-                                    }
-
-                                    if (fake_chileRev.contains("defined")) {
-                                        ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                        ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
-                                        ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
-                                        ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
-                                        ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
-                                        ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                String[] rootConditons = rootRev.replace(rev, "").split("&&");
+                                for (String con : rootConditons) {
+                                    if (con.length() > 0) {
+                                        fake_chileRev = fake_chileRev.replace(con, "");
                                     }
                                 }
+
+                                if (fake_chileRev.contains("defined")) {
+                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                    ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
+                                    ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
+                                    ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
+                                    ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
+                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
+                                }
                             }
+                        }
 //                        }
                     }
                 }
-
-
 
 
             }

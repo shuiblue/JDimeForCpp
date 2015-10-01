@@ -62,6 +62,8 @@ public class Entity {
         terminal.add("error");
         terminal.add("include");
         terminal.add("member_list");
+        terminal.add("argument_list");
+        terminal.add("empty_stmt");
 
 /* head entity of
  function : (return type+function name)
