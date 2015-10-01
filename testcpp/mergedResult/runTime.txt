@@ -3784,3 +3784,23 @@
 4872
 3 way merge: DOGMbitmaps.h file. 'upstream' repo merge with fork 'alromh87' 
 2201
+3 way merge: pins.h file. 'upstream' repo merge with fork 'drsdre' 
+44871
+3 way merge: pins.h file. 'upstream' repo merge with fork 'mattsch' 
+140035
+3 way merge: pins.h file. 'upstream' repo merge with fork 'quikshot' 
+113250
+3 way merge: pins.h file. 'upstream' repo merge with fork 'alromh87' 
+98371
+3 way merge: pins.h file. 'upstream' repo merge with fork 'drsdre' 
+44829
+3 way merge: pins.h file. 'upstream' repo merge with fork 'DinoMesina' 
+201151
+3 way merge: pins.h file. 'upstream' repo merge with fork 'johnnyr' 
+58132
+3 way merge: pins.h file. 'upstream' repo merge with fork 'yuroller' 
+98201
+3 way merge: pins.h file. 'upstream' repo merge with fork 'wgm4321' 
+86995
+3 way merge: language.h file. 'upstream' repo merge with fork 'mattsch' 
+6113

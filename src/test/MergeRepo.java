@@ -20,13 +20,13 @@ public class MergeRepo {
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-        File upstream = new File(main_repo);
-        File[] matches = upstream.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".cpp");
-//                return name.endsWith(".h") || name.endsWith(".cpp");
-            }
-        });
+//        File upstream = new File(main_repo);
+//        File[] matches = upstream.listFiles(new FilenameFilter() {
+//            public boolean accept(File dir, String name) {
+//                return name.endsWith(".cpp");
+////                return name.endsWith(".h") || name.endsWith(".cpp");
+//            }
+//        });
 
 //        for (File f : matches) {
 //            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
@@ -44,7 +44,7 @@ public class MergeRepo {
             }
 
         }
-
+mergedFiles.add("language.h");
 
         forkName.add("drsdre");
         return forkName;
