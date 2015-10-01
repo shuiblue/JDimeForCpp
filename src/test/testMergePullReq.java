@@ -47,7 +47,7 @@ public class testMergePullReq {
 
     @Test
     public void mocPullReq_10() {
-        mergePR("DinoMesina");
+        mergePR("wgm4321");
 
     }
 
