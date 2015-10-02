@@ -5284,3 +5284,5 @@
 1895
 3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'wgm4321' 
 1851
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+19489

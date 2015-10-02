@@ -117,8 +117,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public CppNodeArtifact(final Node astnode, Revision revision, boolean ifdefMatch, Stack<String> parentConditionStack) {
         this.astnode = astnode;
         this.setRevision(revision);
-
-
         if (parentConditionStack.size() > 0) {
             conditionStack.addAll(parentConditionStack);
         }

@@ -52,12 +52,12 @@ public class MergeRepo {
 //            }
 //
 //        }
-        forkName.add("alromh87");
-        forkName.add("johnnyr");
-        forkName.add("mattsch");
-        forkName.add("quikshot");
-        forkName.add("DinoMesina");
-        forkName.add("drsdre");
+//        forkName.add("alromh87");
+//        forkName.add("johnnyr");
+//        forkName.add("mattsch");
+//        forkName.add("quikshot");
+//        forkName.add("DinoMesina");
+//        forkName.add("drsdre");
         forkName.add("wgm4321");
 
         return forkName;
