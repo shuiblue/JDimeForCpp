@@ -106,6 +106,34 @@ public class TestInitial {
             e.printStackTrace();
         }
     }
+    public void mergePullRQ(String path, ArrayList<String> inputFilePaths,String fork,String fileToBeMerged){
+        String outputPath = path+fork+"/MocPullRQ/Marlin/Marlin/";
+
+
+        String suffix = ".cpp";
+        String commandLine = "-mode,nway,-output," + outputPath + fileToBeMerged + ",";
+        char cond = 'A';
+        for (int i = 0; i < inputFilePaths.size(); i++) {
+
+            commandLine += inputFilePaths.get(i)  + "+" + String.valueOf(cond);
+            if (i < inputFilePaths.size() - 1) {
+                commandLine += ",";
+            }
+            cond++;
+        }
+        String[] arg = commandLine.split(",");
+        try {
+            Main.main(arg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     public String checkMergeRepo(String path, String fork, String mergedFile){
         ArrayList<String> inputFilePaths = new ArrayList<>();

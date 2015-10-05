@@ -934,8 +934,8 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
 
 
-    return res;
-}
+        return res;
+    }
 
 
     /**
@@ -1164,7 +1164,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
      * @return
      */
     public String printChoice(CppNodeArtifact c) {
-
+        String path="";
         String s = "";
         int var_size = c.variants.size();
         for (int i = 0; i < var_size; i++) {
@@ -1172,6 +1172,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             //str is the Revision of each variants
             String str = c.variants.keySet().toArray()[i].toString();
             String cRev = printRevAndCondition(c, str);
+            CppNodeArtifact choiceNode = c.variants.get(str);
+
+
             nodeString += cRev;
 
 
@@ -1179,62 +1182,64 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
             //get parents' revision
 //            s += printCondition(c.getRevision());
-            nodeString += "\n#endif\n";
+            nodeString += "\n#endif";
 
             //------------
 
             CppNodeArtifact parent = c.getParent();
             if (parent.hasMatches()) {
                 String parentRev = c.printMatchCondition(parent);
-                String[] forks = parentRev.replace("#if ", "").split("\\|\\|");
+                String[] forks = clearBlank(parentRev.replace("#if ", "")).split("\\|\\|");
+                String rootRev = clearBlank(parentRev.replace("#if ", ""));
+                String childRev = clearBlank(cRev.replace("#if ", ""));
+
                 String fileName = "";
+                String forkName = "";
                 for (String f : forks) {
+                    if (!f.contains("pstream")) {
+                        forkName = f.replace("defined(", "").replace(")", "");
+                    }
                     f = f.replace("defined", "").replace(" ", "");
-                    fileName += f.substring(f.indexOf("(") + 1, f.indexOf(")")) + "_";
+                    f = f.substring(f.indexOf("(") + 1, f.indexOf(")"));
+
+                    fileName += f + "_";
                 }
-                String path = "testcpp/statistics/" + fileName + ".txt";
-                ioFunctionSet.writeTofile("+-+-+-\n", path);
+                 path = "testcpp/statistics/" + fileName + ".txt";
+                ioFunctionSet.writeTofile("\n+-+-+-\n", path);
                 ioFunctionSet.writeTofile(nodeString, path);
 
-                if (parent.hasMatches()) {
 
-                    String[] parentRevisionSet = parentRev.split("\\|\\|");
-//                    if(parentRevisionSet[i].length()>0) {
-                    String rootRev = clearBlank(parentRevisionSet[i].replace("#if ", ""));
-                    String childRev = clearBlank(cRev.replace("#if ", ""));
-                    String rev = rootRev.split("&&")[0].replace("\n", "");
-                    if (childRev.contains(rev)) {
-                        if (!rootRev.equals(childRev)) {
-                            if (childRev.replace(rev, "").contains("defined")) {
-                                String fake_chileRev = childRev.replace(rev, "");
+                if (str.contains(forkName)&&!str.contains("Upstream")) {
+                    String forIfdefPath = "testcpp/statistics/" + fileName + "Ifdef.txt";
 
-                                String[] rootConditons = rootRev.replace(rev, "").split("&&");
-                                for (String con : rootConditons) {
-                                    if (con.length() > 0) {
-                                        fake_chileRev = fake_chileRev.replace(con, "");
-                                    }
-                                }
+                    HashSet<String> choiceNodeConditions = choiceNode.getRevision().conditions;
+                    String parentConditions = parent.printMatchCondition(parent);
 
-                                if (fake_chileRev.contains("defined")) {
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                    ioFunctionSet.writeTofile("++++additional ifdef+++\n\n", path);
-                                    ioFunctionSet.writeTofile("+++parent:" + rootRev + "\n\n", path);
-                                    ioFunctionSet.writeTofile("+++child:" + childRev + "\n\n", path);
-                                    ioFunctionSet.writeTofile("[" + fake_chileRev + "]\n\n", path);
-                                    ioFunctionSet.writeTofile("+-+-+-\n", path);
-                                }
+                    if (choiceNodeConditions.size() > 0) {
+                        for (String choiceCon : choiceNodeConditions) {
+                            if (parentConditions.contains(choiceCon)) {
+                                parentConditions = parentConditions.replace(choiceCon, "");
+                            } else {
+                                ioFunctionSet.writeTofile("(IFDEF)", path);
+                                ioFunctionSet.writeTofile("\n+-+-+-\n", forIfdefPath);
+                                ioFunctionSet.writeTofile(nodeString, forIfdefPath);
+
+                                ioFunctionSet.writeTofile("\n+-+-+-\n", forIfdefPath);
+                                ioFunctionSet.writeTofile("++++additional ifdef+++\n", forIfdefPath);
+                                ioFunctionSet.writeTofile("+++parent:" + parent.printMatchCondition(parent) + "\n", forIfdefPath);
+                                ioFunctionSet.writeTofile("+++child:" + childRev + "\n", forIfdefPath);
+                                ioFunctionSet.writeTofile("+-+-+-\n", forIfdefPath);
                             }
                         }
-//                        }
                     }
                 }
-
 
             }
             //------------
 
             if (var_size > 1) {
-                nodeString += "+-+-+-\n";
+                nodeString += "\n+-+-+-\n";
+                ioFunctionSet.writeTofile("\n+-+-+-\n", path);
             }
             s += nodeString;
 
