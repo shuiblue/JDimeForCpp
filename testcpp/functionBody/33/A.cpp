@@ -74,9 +74,13 @@ void CardReader::initsd()
 
 <<<<<<< origin/develop
 }
+<<<<<<< origin/develop
 =======
 
 
 
 
 >>>>>>> HEAD~9
+=======
+
+>>>>>>> HEAD~8
