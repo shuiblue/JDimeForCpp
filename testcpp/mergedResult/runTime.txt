@@ -5531,4 +5531,563 @@
 =======
 3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
 19489
+<<<<<<< origin/develop
 >>>>>>> HEAD~11
+=======
+3 way merge: temperature.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+22237
+3 way merge: temperature.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+164453
+3 way merge: temperature.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3935
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3271
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3340
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3124
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3620
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3526
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3325
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3517
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3642
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2261
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3578
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2481
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2993
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2203
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3042
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3082
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3068
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3232
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2151
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2838
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2529
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1863
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+24854
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2171
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2079
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3022
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2514
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4551
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1871
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2167
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3052
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'mattsch' 
+5283
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1905
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1891
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1858
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2239
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2158
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1856
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'quikshot' 
+16769
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2018
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1925
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2865
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2637
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'quikshot' 
+4540
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1861
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'quikshot' 
+2085
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'quikshot' 
+3372
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'quikshot' 
+5452
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1907
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'quikshot' 
+1898
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1853
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2237
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2147
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1858
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'alromh87' 
+15872
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1998
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1966
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'alromh87' 
+3051
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2714
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'alromh87' 
+4441
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1875
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'alromh87' 
+2246
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'alromh87' 
+3156
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'alromh87' 
+5523
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1947
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'alromh87' 
+1871
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'drsdre' 
+2410
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'drsdre' 
+2119
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'drsdre' 
+11867
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1999
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1937
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'drsdre' 
+2417
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'drsdre' 
+4348
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1862
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'drsdre' 
+3227
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'drsdre' 
+4339
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'drsdre' 
+1861
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1840
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2241
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2198
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1860
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+17891
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2000
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1952
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2930
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2511
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+4350
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1858
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2106
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+2991
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+6619
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1916
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'DinoMesina' 
+1868
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1850
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2219
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1988
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1851
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+9681
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2004
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1933
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2342
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2462
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+4354
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1870
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1978
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+2927
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+3890
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1873
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'johnnyr' 
+1858
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1850
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2224
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2183
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1850
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'yuroller' 
+14967
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1981
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1938
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2463
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'yuroller' 
+2626
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'yuroller' 
+4485
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1862
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1967
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'yuroller' 
+3090
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'yuroller' 
+4866
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1873
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'yuroller' 
+1862
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1851
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2296
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2142
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1854
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+19873
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1985
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1925
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3000
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2598
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+5035
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1869
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2068
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3305
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+7301
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1901
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1847
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2231
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2950
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2755
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1860
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+17387
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2027
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1924
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2814
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2582
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4472
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1873
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2091
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3098
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'mattsch' 
+5509
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1896
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1858
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1853
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2366
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2130
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1857
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+19093
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2020
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1914
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2925
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2566
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+4671
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1851
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2057
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3541
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+5537
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1894
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1844
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2472
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4003
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2714
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3294
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2675
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1882
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+23260
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2035
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1957
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3339
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2800
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+5162
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1884
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2284
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3536
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'mattsch' 
+6110
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1910
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1856
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4013
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2144
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2960
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2692
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1854
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+19688
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2055
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1926
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3072
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2578
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4833
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1863
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2104
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3002
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'mattsch' 
+5412
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1915
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1858
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3217
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3703
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3926
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3934
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3778
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3511
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3358
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3629
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3572
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3557
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4421
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3477
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3217
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3484
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+169318
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3835
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3732
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3388
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3365
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3621
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3181
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2158
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3156
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2831
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1893
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+18202
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2031
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1934
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3090
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2571
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+4708
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1871
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2104
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3162
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+5731
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1909
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1857
+3 way merge: BlinkM.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2162
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3179
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2505
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1866
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+17833
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2061
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1934
+3 way merge: qr_solve.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2989
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2563
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+4588
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1863
+3 way merge: Servo.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2103
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+3733
+3 way merge: ultralcd.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+5608
+3 way merge: vector_3.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1927
+3 way merge: watchdog.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+1850
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+19858
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+22130
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+787703
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+22711
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+27968
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+26076
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+22986
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2693
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2233
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+20510
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2711
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2390
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+2265
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+74147
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'wgm4321' 
+288427
+>>>>>>> HEAD~10

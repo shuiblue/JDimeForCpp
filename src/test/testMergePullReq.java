@@ -31,7 +31,11 @@ public class testMergePullReq {
 //            }
 //        }
 
+<<<<<<< origin/develop
         mergedFiles.add("pins.h");
+=======
+        mergedFiles.add("ConfigurationStore.cpp");
+>>>>>>> HEAD~10
 
 
         for (String fileToBeMerged : mergedFiles) {
