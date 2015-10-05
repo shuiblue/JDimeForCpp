@@ -176,12 +176,18 @@ boolean uniqueIFDEF=false;
                   if(e.contains("###")){
                       newResult += "+-+-+-\n";
                   }
+
               }
             }
         }
         //----------
-//        return newResult ;
+        newResult += "#endif";
+        if(uniqueIFDEF==true){
+            newResult+="(IFDEF)";
+        }
+
+        return newResult ;
         //-----------
-        return newResult + "#endif\n";
+//        return newResult + "#endif\n";
     }
 }

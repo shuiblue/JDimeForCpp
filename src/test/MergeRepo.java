@@ -24,42 +24,42 @@ public class MergeRepo {
     List<String> mergedFiles = new ArrayList<>();
 
     public HashSet<String> inputFileInit() {
-//        File upstream = new File(main_repo);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".cpp");
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            if (!f.getName().contains("planner")
-//                    && !f.getName().contains("temperature")
-//                    && !f.getName().contains("LiquidCrystalRus")
-//                    && !f.getName().contains("SdFile")
-//                    &&!f.getName().contains("SdVolume")) {
-//                mergedFiles.add(f.getName());
-//            }
-//
-//        }
-//        File dir = new File(path);
-//        String[] names = dir.list();
-//        for (String name : names) {
-//            if (new File(path + name).isDirectory()) {
-//                if (!name.equals("upstream")) {
-//                    forkName.add(name);
-//                }
-//            }
-//
-//        }
+        File upstream = new File(main_repo);
+        File[] matches = upstream.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".cpp");
+//                return name.endsWith(".h") || name.endsWith(".cpp");
+            }
+        });
+
+        for (File f : matches) {
+            if (!f.getName().contains("planner")
+                    && !f.getName().contains("temperature")
+                    && !f.getName().contains("LiquidCrystalRus")
+                    && !f.getName().contains("SdFile")
+                    &&!f.getName().contains("SdVolume")) {
+                mergedFiles.add(f.getName());
+            }
+
+        }
+        File dir = new File(path);
+        String[] names = dir.list();
+        for (String name : names) {
+            if (new File(path + name).isDirectory()) {
+                if (!name.equals("upstream")) {
+                    forkName.add(name);
+                }
+            }
+
+        }
 //        forkName.add("alromh87");
 //        forkName.add("johnnyr");
 //        forkName.add("mattsch");
 //        forkName.add("quikshot");
 //        forkName.add("DinoMesina");
 //        forkName.add("drsdre");
-        forkName.add("wgm4321");
-        mergedFiles.add("Marlin_main.cpp");
+//        forkName.add("wgm4321");
+//        mergedFiles.add("Marlin_main.cpp");
         return forkName;
     }
 

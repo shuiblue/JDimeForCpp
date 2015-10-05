@@ -1209,7 +1209,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 ioFunctionSet.writeTofile(nodeString, path);
 
 
-                if (str.contains(forkName)&&!str.contains("Upstream")) {
+                if (cRev.contains(forkName)&&!cRev.contains("Upstream")) {
                     String forIfdefPath = "testcpp/statistics/" + fileName + "Ifdef.txt";
 
                     HashSet<String> choiceNodeConditions = choiceNode.getRevision().conditions;
