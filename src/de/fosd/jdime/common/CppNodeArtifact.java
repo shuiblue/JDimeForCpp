@@ -1189,7 +1189,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             CppNodeArtifact parent = c.getParent();
             if (parent.hasMatches()) {
                 String parentRev = c.printMatchCondition(parent);
-                String[] forks = clearBlank(parentRev.replace("#if ", "")).split("\\|\\|");
+//                String[] forks = clearBlank(parentRev.replace("#if ", "")).split("\\|\\|");
+
+                List<String> forks =c.printMatchConditionList(parent);
                 String rootRev = clearBlank(parentRev.replace("#if ", ""));
                 String childRev = clearBlank(cRev.replace("#if ", ""));
 
@@ -1200,6 +1202,9 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                         forkName = f.replace("defined(", "").replace(")", "");
                     }
                     f = f.replace("defined", "").replace(" ", "");
+                    if(f.indexOf("(")<0||f.indexOf(")")<0){
+                       System.out.print("aa");
+                    }
                     f = f.substring(f.indexOf("(") + 1, f.indexOf(")"));
 
                     fileName += f + "_";
@@ -1309,6 +1314,39 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         }
         s += "#if " + condition + "\n";
         return s;
+    }
+
+    public List<String> printMatchConditionList(CppNodeArtifact c) {
+
+        List<String> conditionList = new ArrayList<>();
+        String s = "";
+        String condition = "";
+        Collection<Matching<CppNodeArtifact>> matcher = c.matches.values();
+        ArrayList<String> var = new ArrayList<>();
+        for (Matching<CppNodeArtifact> m : matcher) {
+            Revision revision_1 = m.getMatchedArtifacts().getX().getRevision();
+            String r1 = "defined (" + revision_1.toString() + ")";
+            if (revision_1.conditions.size() > 0) {
+                r1 += " && " + printCondition(revision_1);
+            }
+            if (!var.contains(r1)) var.add(r1);
+
+            Revision revision_2 = m.getMatchedArtifacts().getY().getRevision();
+            String r2 = "defined (" + revision_2.toString() + ")";
+            if (revision_2.conditions.size() > 0) {
+                r2 += " && " + printCondition(revision_2);
+            }
+            if (!var.contains(r2)) var.add(r2);
+        }
+        for (int i = 0; i < var.size(); i++) {
+            condition += var.get(i);
+            conditionList.add(var.get(i));
+            if (i < var.size() - 1) {
+                condition += " || ";
+            }
+        }
+        s += "#if " + condition + "\n";
+        return conditionList;
     }
 
     /**

@@ -28,7 +28,7 @@ public class MergeRepo {
         File[] matches = upstream.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.endsWith(".cpp");
-//                return name.endsWith(".h") || name.endsWith(".cpp");
+//               return name.endsWith(".h") || name.endsWith(".cpp");
             }
         });
 
@@ -37,7 +37,13 @@ public class MergeRepo {
                     && !f.getName().contains("temperature")
                     && !f.getName().contains("LiquidCrystalRus")
                     && !f.getName().contains("SdFile")
-                    &&!f.getName().contains("SdVolume")) {
+                    &&!f.getName().contains("SdVolume")
+                    &&!f.getName().contains("fastio")
+                    &&!f.getName().contains("anguage")
+                    &&!f.getName().contains("stepper.h")
+                    &&!f.getName().contains("pins.h")
+                    &&!f.getName().contains("thermistortables.h")
+                    ) {
                 mergedFiles.add(f.getName());
             }
 
@@ -52,14 +58,15 @@ public class MergeRepo {
             }
 
         }
-//        forkName.add("alromh87");
+//        forkName.add("quickshot");
+//        forkName.add("marlin4Due");
 //        forkName.add("johnnyr");
-//        forkName.add("mattsch");
-//        forkName.add("quikshot");
+//        forkName.add("yuroller");
+//        forkName.add("oysteinkrog");
 //        forkName.add("DinoMesina");
-//        forkName.add("drsdre");
 //        forkName.add("wgm4321");
-//        mergedFiles.add("Marlin_main.cpp");
+//        forkName.add("mattsch");
+//        mergedFiles.add("ultralcd.cpp");
         return forkName;
     }
 
@@ -142,8 +149,14 @@ public class MergeRepo {
                             upstreamNew++;
                             upstreamNewLine += blockLength;
                         } else if (b.contains(combination.get(1)) && !b.contains(combination.get(0)) && !b.contains(combination.get(2))) {//fork
+
+                            ioFunctionSet.writeTofile( fork + " Unique:\n "+ b+"\n", "testcpp/statistics/result_mattsch_unique.txt");
+
+
+
                             forkUnique++;
                             forkNewLine += blockLength;
+
                             if (b.contains("(IFDEF)")) {
                                 forkUniqueIfdef++;
                                 forkUniqueIfdef_LOC+=blockLength;
@@ -183,15 +196,18 @@ public class MergeRepo {
 
             String statisticsPath = "testcpp/statistics/result.txt";
             ioFunctionSet.writeTofile("\n+++++++++\nCompare 2 version of upstream(upstream_NEW/upstream_OLD) with " + fork + ":\n", statisticsPath);
-            ioFunctionSet.writeTofile("(upstream_NEW) Unique: " + upstreamNew + "/LOC:" + upstreamNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("(" + fork + ") Unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
+
             ioFunctionSet.writeTofile("(upstream_OLD)Unique: " + upstreamOld + "/LOC:" + upstreamOldLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("(upstreamNew) ^ (" + fork + "): " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstream_NEW) Unique: " + upstreamNew + "/LOC:" + upstreamNewLine + "\n", statisticsPath);
             ioFunctionSet.writeTofile("(upstreamOLD) ^ (" + fork + "): " + old_fork + "/LOC:" + old_fork_Line + "\n", statisticsPath);
             ioFunctionSet.writeTofile("upstream(NEW) ^ (OLD): " + allUpstream + "/LOC:" + allUpstream_Line + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("fork introduced ifdef: " + ifdef +  "/LOC:" + ifdefFork_LOC+"\n", statisticsPath);
-            ioFunctionSet.writeTofile("introduced ifdef - merged to upstream: " + fork_upstreamNew_Ifdef +  "/LOC:" + fork_upstreamNew_Ifdef_LOC+"\n", statisticsPath);
-            ioFunctionSet.writeTofile("introduced ifdef - NOT merged : " + forkUniqueIfdef +  "/LOC:" + forkUniqueIfdef_LOC+"\n", statisticsPath);
+            ioFunctionSet.writeTofile("~~~~~~~~~\n", statisticsPath);
+
+            ioFunctionSet.writeTofile("(" + fork + ") Unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("#ifdef - (" + fork + ") Unique:  " + forkUniqueIfdef +  "/LOC:" + forkUniqueIfdef_LOC+"\n", statisticsPath);
+            ioFunctionSet.writeTofile("(upstreamNew) ^ (" + fork + "): " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("#ifdef - (upstreamNew) ^ (" + fork + "): " + fork_upstreamNew_Ifdef +  "/LOC:" + fork_upstreamNew_Ifdef_LOC+"\n", statisticsPath);
+            ioFunctionSet.writeTofile("all #ifdef: " + ifdef +  "/LOC:" + ifdefFork_LOC+"\n", statisticsPath);
 
             //-----------
 
