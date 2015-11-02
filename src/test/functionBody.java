@@ -488,6 +488,7 @@ test12
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 
+
     @Test
     public void test31() {
         inputFileInit(2);
