@@ -487,6 +487,7 @@ test12
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+
     @Test
     public void test31() {
         inputFileInit(2);
