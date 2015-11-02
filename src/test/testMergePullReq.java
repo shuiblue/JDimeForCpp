@@ -18,6 +18,7 @@ public class testMergePullReq {
     List<String> mergedFiles = new ArrayList<>();
 
     public void mergePR(String forkName) {
+<<<<<<< origin/develop
 //        File upstream = new File(path+forkName+upstreamBeforeMerge);
 //        File[] matches = upstream.listFiles(new FilenameFilter() {
 //            public boolean accept(File dir, String name) {
@@ -38,6 +39,9 @@ public class testMergePullReq {
 >>>>>>> HEAD~10
 
 
+=======
+        mergedFiles.add("ConfigurationStore.cpp");
+>>>>>>> HEAD~4
         for (String fileToBeMerged : mergedFiles) {
             ArrayList<String> inputFilePaths = new ArrayList<>();
             inputFilePaths.add(path+forkName+upstreamBeforeMerge+fileToBeMerged+"+upstreamBeforeMerge");
@@ -45,8 +49,11 @@ public class testMergePullReq {
             System.out.println("NOW: "+fileToBeMerged);
                 testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
             }
+<<<<<<< origin/develop
 
 
+=======
+>>>>>>> HEAD~4
     }
 
     @Test
@@ -54,5 +61,8 @@ public class testMergePullReq {
         mergePR("wgm4321");
 
     }
+<<<<<<< origin/develop
 
+=======
+>>>>>>> HEAD~4
 }

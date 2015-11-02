@@ -257,6 +257,7 @@ public class TestInitial {
         return  result;
     }
 
+<<<<<<< origin/develop
 
 =======
     }
@@ -264,6 +265,8 @@ public class TestInitial {
 
 
 >>>>>>> HEAD~16
+=======
+>>>>>>> HEAD~4
     /**
      * check merged file is equal to expect result
      *
@@ -306,6 +309,7 @@ public class TestInitial {
         return checkMerge(inputFilePaths, outputPath, expectResultPath);
     }
 
+<<<<<<< origin/develop
 <<<<<<< origin/develop
     /**
 <<<<<<< origin/develop
@@ -422,6 +426,8 @@ public class TestInitial {
 
 
 
+=======
+>>>>>>> HEAD~4
     public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
@@ -447,7 +453,6 @@ public class TestInitial {
         }
 
         if (inputFilePaths.size() > 0) {
-//            runMain4Marlin(inputFilePaths, outputPath, mergedFile);
             runMain4Marlin_withRevision(inputFilePaths, outputPath, mergedFile);
         try {
             result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
@@ -461,7 +466,6 @@ public class TestInitial {
     public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile){
         String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
-//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
         int n = inputFilePaths.size() + 1;
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
         for (int i = 0; i < inputFilePaths.size(); i++) {
