@@ -1,0 +1,26 @@
+#if defined (A) || defined (B) || defined (C)
+void setup
+()
+{
+setup_killpin();
+#if defined (B)
+// STRING_VERSION_CONFIG_H
+#endif
+#if defined (A) && defined (STAT_LED_RED) || defined (B) && defined (STAT_LED_RED)
+
+pinMode(STAT_LED_RED, OUTPUT);
+
+digitalWrite(STAT_LED_RED, LOW);
+
+// turn it off
+#endif
+#if defined (A) && defined (STAT_LED_BLUE) || defined (B) && defined (STAT_LED_BLUE)
+
+pinMode(STAT_LED_BLUE, OUTPUT);
+
+digitalWrite(STAT_LED_BLUE, LOW);
+
+// turn it off
+#endif
+}
+#endif

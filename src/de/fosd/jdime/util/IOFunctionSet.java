@@ -116,7 +116,7 @@ public class IOFunctionSet {
 
 
     public String presicePrettyprint(String res) {
-
+boolean uniqueIFDEF=false;
 
         while (res.contains("#endif+-+-+-")) {
             res = res.replace("#endif+-+-+-", "#endif");
@@ -141,15 +141,31 @@ public class IOFunctionSet {
                     } else {
                         conditionStack.pop();
                         conditionStack.push(tmp[0]);
-                        newResult += "#endif\n";
+                        newResult += "#endif";
+                        if(uniqueIFDEF==true){
+                            newResult+="(IFDEF)";
+                            uniqueIFDEF=false;
+                        }
 
+<<<<<<< HEAD
+=======
+                        //-----------
+                        newResult += "\n+-+-+-\n";
+                        //-----------
+>>>>>>> countIfdef
 
 
                     }
                 }
 
                 conditionStack.push(tmp[0]);
+
                 newResult += printNodeWithoutHeadandEnd(e, 0);
+           if(e.contains("IFDEF")){
+               uniqueIFDEF=true;
+           }
+
+
             }else {
                   if(conditionStack.size()>0) {
                       conditionStack.pop();
@@ -157,9 +173,25 @@ public class IOFunctionSet {
 
                   }
                  newResult+=e;
+                  if(e.contains("###")){
+                      newResult += "+-+-+-\n";
+                  }
+
               }
             }
         }
+<<<<<<< HEAD
         return newResult + "#endif\n";
+=======
+        //----------
+        newResult += "#endif";
+        if(uniqueIFDEF==true){
+            newResult+="(IFDEF)";
+        }
+
+        return newResult ;
+        //-----------
+//        return newResult + "#endif\n";
+>>>>>>> countIfdef
     }
 }

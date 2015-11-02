@@ -31,7 +31,11 @@ public class testMergePullReq {
 //            }
 //        }
 
-        mergedFiles.add("pins.h");
+//<<<<<<< HEAD
+//        mergedFiles.add("pins.h");
+//=======
+        mergedFiles.add("ConfigurationStore.cpp");
+//>>>>>>> countIfdef
 
 
         for (String fileToBeMerged : mergedFiles) {
@@ -39,8 +43,13 @@ public class testMergePullReq {
             inputFilePaths.add(path+forkName+upstreamBeforeMerge+fileToBeMerged+"+upstreamBeforeMerge");
             inputFilePaths.add(path+forkName+forkBeforeMerge+fileToBeMerged+"+forkBeforeMerge");
             System.out.println("NOW: "+fileToBeMerged);
-                testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
-            }
+//<<<<<<< HEAD
+//                testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
+//            }
+//=======
+            testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
+        }
+//>>>>>>> countIfdef
 
 
     }
@@ -51,4 +60,8 @@ public class testMergePullReq {
 
     }
 
+//<<<<<<< HEAD
+//}
+//=======
 }
+//>>>>>>> countIfdef
