@@ -22,3 +22,6 @@ workbench.xmi
 /testcpp/mergedResult/
 *.cpp\n
 testcpp/functionBody/**/compile/
+.git
+testcpp/originMarlin/
+
