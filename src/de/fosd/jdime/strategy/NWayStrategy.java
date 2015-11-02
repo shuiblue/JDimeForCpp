@@ -143,15 +143,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                         System.out.println(targetNode.dumpTree());
                     }
 
-//                    LOG.finest("Pretty-printing merged:");
-//                    System.out.println(merged.prettyPrint());
-//                    LOG.finest("Pretty-printing next:");
-//                    System.out.println(next.prettyPrint());
-
-//                    if (!context.isDiffOnly()) {
-//                        LOG.finest("Pretty-printing target:");
-//                        System.out.print(targetNode.prettyPrint());
-//                    }
                 }
             } catch (Throwable t) {
                 LOG.severe("Exception while merging:");

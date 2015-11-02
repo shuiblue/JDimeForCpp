@@ -116,7 +116,7 @@ public class IOFunctionSet {
 
 
     public String presicePrettyprint(String res) {
-boolean uniqueIFDEF=false;
+        boolean uniqueIFDEF = false;
 
         while (res.contains("#endif+-+-+-")) {
             res = res.replace("#endif+-+-+-", "#endif");
@@ -126,72 +126,70 @@ boolean uniqueIFDEF=false;
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
         for (String e : elements) {
-            if (e.length() > 0 ){
-              if(e.startsWith("#if")){
-                String[] tmp = e.split("\n");
-                if (conditionStack.size() > 0) {
-                    String lastCon = conditionStack.lastElement();
-                    if (lastCon.equals(tmp[0])) {
-                        String x = "";
-                        for (int i = 1; i < tmp.length - 1; i++) {
-                            x += tmp[i] + "\n";
+            if (e.length() > 0) {
+                if (e.startsWith("#if")) {
+                    String[] tmp = e.split("\n");
+                    if (conditionStack.size() > 0) {
+                        String lastCon = conditionStack.lastElement();
+                        if (lastCon.equals(tmp[0])) {
+                            String x = "";
+                            for (int i = 1; i < tmp.length - 1; i++) {
+                                x += tmp[i] + "\n";
+                            }
+                            newResult += x;
+                            continue;
+                        } else {
+                            conditionStack.pop();
+                            conditionStack.push(tmp[0]);
+                            newResult += "#endif";
+                            if (uniqueIFDEF == true) {
+                                newResult += "(IFDEF)";
+                                uniqueIFDEF = false;
+                            }
+
+                            //-----------
+//                        newResult += "\n+-+-+-\n";
+                            newResult += "\n";
+                            //-----------
+
+
                         }
-                        newResult += x;
-                        continue;
-                    } else {
+                    }
+
+                    conditionStack.push(tmp[0]);
+
+                    newResult += printNodeWithoutHeadandEnd(e, 0);
+                    if (e.contains("IFDEF")) {
+                        uniqueIFDEF = true;
+                    }
+
+
+                } else {
+                    if (conditionStack.size() > 0) {
                         conditionStack.pop();
-                        conditionStack.push(tmp[0]);
-                        newResult += "#endif";
-                        if(uniqueIFDEF==true){
-                            newResult+="(IFDEF)";
-                            uniqueIFDEF=false;
-                        }
-
-<<<<<<< HEAD
-=======
-                        //-----------
-                        newResult += "\n+-+-+-\n";
-                        //-----------
->>>>>>> countIfdef
-
+                        newResult += "#endif\n";
 
                     }
+                    newResult += e;
+                    if (e.contains("###")) {
+                        newResult += "+-+-+-\n";
+                    }
+
                 }
-
-                conditionStack.push(tmp[0]);
-
-                newResult += printNodeWithoutHeadandEnd(e, 0);
-           if(e.contains("IFDEF")){
-               uniqueIFDEF=true;
-           }
-
-
-            }else {
-                  if(conditionStack.size()>0) {
-                      conditionStack.pop();
-                      newResult += "#endif\n";
-
-                  }
-                 newResult+=e;
-                  if(e.contains("###")){
-                      newResult += "+-+-+-\n";
-                  }
-
-              }
             }
         }
-<<<<<<< HEAD
-        return newResult + "#endif\n";
-=======
+//<<<<<<< HEAD
+//        return newResult + "#endif\n";
+//=======
         //----------
         newResult += "#endif";
-        if(uniqueIFDEF==true){
-            newResult+="(IFDEF)";
+        if (uniqueIFDEF == true) {
+            newResult += "(IFDEF)";
         }
 
-        return newResult ;
+        return newResult;
         //-----------
 //        return newResult + "#endif\n";
->>>>>>> countIfdef
+//>>>>>>> countIfdef
     }
 }

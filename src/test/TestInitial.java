@@ -235,38 +235,6 @@ public class TestInitial {
         return  result;
     }
 
-
-//   public void mergePullRQ(String path, ArrayList<String> inputFilePaths,String fork,String fileToBeMerged){
-//       String outputPath = path+fork+"/MocPullRQ/Marlin/Marlin/";
-//
-//
-//       String suffix = ".cpp";
-//       String commandLine = "-mode,nway,-output," + outputPath + fileToBeMerged + ",";
-//       char cond = 'A';
-//       for (int i = 0; i < inputFilePaths.size(); i++) {
-//
-//           commandLine += inputFilePaths.get(i)  + "+" + String.valueOf(cond);
-//           if (i < inputFilePaths.size() - 1) {
-//               commandLine += ",";
-//           }
-//           cond++;
-//       }
-//       String[] arg = commandLine.split(",");
-//       try {
-//           Main.main(arg);
-//       } catch (IOException e) {
-//           e.printStackTrace();
-//       } catch (ParseException e) {
-//           e.printStackTrace();
-//       } catch (InterruptedException e) {
-//           e.printStackTrace();
-//       }
-//
-//
-//    }
-
-
-
     /**
      * check merged file is equal to expect result
      *
@@ -304,95 +272,6 @@ public class TestInitial {
         return checkMerge(inputFilePaths, outputPath, expectResultPath);
     }
 
-
-//    public String checkMergeRepo(String path, String fork, String mergedFile){
-//        ArrayList<String> inputFilePaths = new ArrayList<>();
-//        String result = "";
-//        String outputPath = "testcpp/mergedRepo/3-wayMerge/upstream";
-//            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
-//            File f = new File(filePath);
-//
-//            if (f.exists()) {
-//                inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
-//                outputPath += "_" + fork;
-//            } else {
-//                System.out.println(filePath + " not exist!");
-//
-//                outputPath += "_no_" + fork;
-//            }
-//
-//
-//        String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
-//
-//        File f1 = new File(upstreamOldPath+mergedFile);
-//
-//        if (f1.exists()) {
-//            outputPath += "_" + fork;
-//        } else {
-//            System.out.println(filePath + " not exist!");
-//
-//            outputPath += "_no_" + fork;
-//        }
-//
-//        outputPath+="/"+mergedFile;
-//
-//        if (inputFilePaths.size() > 0) {
-//            String commandLine = "-mode,nway,-output," + outputPath + ","
-//                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
-//            String title =3+ " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
-//            for (int i = 0; i < inputFilePaths.size(); i++) {
-//               String forkName =inputFilePaths.get(i).split("\\+")[1];
-//                commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + forkName;
-//                title += inputFilePaths.get(i).split("/")[0] + "' ";
-//                commandLine += ",";
-//                commandLine +=upstreamOldPath+mergedFile+"+"+fork+"Upstream";
-//
-//
-//            }
-//            String[] arg = commandLine.split(",");
-//
-//            try {
-//                long start = System.currentTimeMillis();
-//                Main.main(arg);
-//                long end = System.currentTimeMillis();
-//
-//                long runTime = end - start;
-//
-//                File file = new File("testcpp/mergedResult/runTime.txt");
-//
-//                // if file doesnt exists, then create it
-//                if (!file.exists()) {
-//                    file.createNewFile();
-//                }
-//                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-//                BufferedWriter bw = new BufferedWriter(fw);
-//                bw.write(title + "\n");
-//                bw.write(String.valueOf(runTime) + "\n");
-//                bw.close();
-//
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//
-//
-//            try {
-//                result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return  result;
-//    }
-//
-
-
-
     public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
@@ -418,7 +297,6 @@ public class TestInitial {
         }
 
         if (inputFilePaths.size() > 0) {
-//            runMain4Marlin(inputFilePaths, outputPath, mergedFile);
             runMain4Marlin_withRevision(inputFilePaths, outputPath, mergedFile);
             try {
                 result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
@@ -432,7 +310,6 @@ public class TestInitial {
     public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
         String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
-//                + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
         int n = inputFilePaths.size() + 1;
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
         for (int i = 0; i < inputFilePaths.size(); i++) {
