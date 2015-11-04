@@ -1,34 +1,16 @@
 package test;
 
-//<<<<<<< HEAD
-//=======
 import de.fosd.jdime.util.IOFunctionSet;
-//>>>>>>> countIfdef
 import org.junit.Test;
-
 import java.io.File;
 import java.io.FilenameFilter;
-//<<<<<<< HEAD
-//=======
 import java.io.IOException;
-//>>>>>>> countIfdef
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-///**
-//<<<<<<< HEAD
-// * Created by shuruiz on 9/7/15.
-// */
-//public class MergeRepo {
-//=======
-// * Created by shuruiz on 9/8/15.
-// */
 public class MergeRepo {
 
-
-//>>>>>>> countIfdef
     String path = "testcpp/originMarlin/";
     String main_repo = "testcpp/originMarlin/upstream/Marlin/Marlin/";
     TestInitial testInitial = new TestInitial(path);
@@ -40,30 +22,23 @@ public class MergeRepo {
         File[] matches = upstream.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.endsWith(".cpp");
-//<<<<<<< HEAD
-////                return name.endsWith(".h") || name.endsWith(".cpp");
-//=======
-////               return name.endsWith(".h") || name.endsWith(".cpp");
-//>>>>>>> countIfdef
+//               return name.endsWith(".h") || name.endsWith(".cpp");
             }
         });
 
         for (File f : matches) {
-//<<<<<<< HEAD
-//            if(!f.getName().equals("fastio.h")||f.getName().contains("language")) {
-//=======
+
             if (!f.getName().contains("planner")
                     && !f.getName().contains("temperature")
                     && !f.getName().contains("LiquidCrystalRus")
                     && !f.getName().contains("SdFile")
-                    &&!f.getName().contains("SdVolume")
-                    &&!f.getName().contains("fastio")
-                    &&!f.getName().contains("anguage")
-                    &&!f.getName().contains("stepper.h")
-                    &&!f.getName().contains("pins.h")
-                    &&!f.getName().contains("thermistortables.h")
+                    && !f.getName().contains("SdVolume")
+                    && !f.getName().contains("fastio")
+                    && !f.getName().contains("anguage")
+                    && !f.getName().contains("stepper.h")
+                    && !f.getName().contains("pins.h")
+                    && !f.getName().contains("thermistortables.h")
                     ) {
-//>>>>>>> countIfdef
                 mergedFiles.add(f.getName());
             }
 
@@ -78,11 +53,7 @@ public class MergeRepo {
             }
 
         }
-//<<<<<<< HEAD
-//mergedFiles.add("language.h");
 
-//        forkName.add("drsdre");
-//=======
 //        forkName.add("quickshot");
 //        forkName.add("marlin4Due");
 //        forkName.add("johnnyr");
@@ -92,32 +63,12 @@ public class MergeRepo {
 //        forkName.add("wgm4321");
 //        forkName.add("mattsch");
 //        mergedFiles.add("ultralcd.cpp");
-//>>>>>>> countIfdef
         return forkName;
     }
 
 
     @Test
     public void NWayMerge_Rev() {
-//<<<<<<< HEAD
-//        HashSet<String> forkNames = inputFileInit();
-//        for (String fork : forkNames) {
-//
-//            for (String fileToBeMerged : mergedFiles) {
-//                testInitial.checkMergeRepo(path, fork, fileToBeMerged);
-//            }
-//        }
-//
-////         Set<Set<String>> combinationFiles = testInitial.getAllConfigurations(forkNames, 3);
-////        for (Set<String> combination : combinationFiles) {
-////            for (String fileToBeMerged : mergedFiles) {
-////                testInitial.checkMergeRepo(path, combination, fileToBeMerged);
-////
-////            }
-////        }
-//    }
-//}
-//=======
 
         HashSet<String> forkNames = inputFileInit();
         for (String fork : forkNames) {
@@ -134,7 +85,7 @@ public class MergeRepo {
                 testInitial.writeTofile("!#############!##############!" + fileToBeMerged + "\n", filePath);
                 testInitial.writeTofile("+-+-+-\n", filePath);
 
-                 testInitial.writeTofile("!#############!##############!" + fileToBeMerged + "\n", forIfdefPath);
+                testInitial.writeTofile("!#############!##############!" + fileToBeMerged + "\n", forIfdefPath);
                 testInitial.writeTofile("+-+-+-\n", forIfdefPath);
                 //-----------
                 testInitial.checkMergeRepo(path, fork, fileToBeMerged);
@@ -166,11 +117,11 @@ public class MergeRepo {
             int old_fork_Line = 0;
             int allUpstream = 0;
             int allUpstream_Line = 0;
-            int ifdefFork_LOC=0;
-            int forkUniqueIfdef=0;
-            int forkUniqueIfdef_LOC=0;
-            int fork_upstreamNew_Ifdef=0;
-            int fork_upstreamNew_Ifdef_LOC=0;
+            int ifdefFork_LOC = 0;
+            int forkUniqueIfdef = 0;
+            int forkUniqueIfdef_LOC = 0;
+            int fork_upstreamNew_Ifdef = 0;
+            int fork_upstreamNew_Ifdef_LOC = 0;
 
 
             int ifdef = 0;
@@ -187,26 +138,23 @@ public class MergeRepo {
                 String[] blocks = file.split("\\+-\\+-\\+-\n");
 
                 for (String b : blocks) {
-                    if(b.length()>0&&b.startsWith("#if")) {
-                        int blockLength=b.split("\n").length-2;
+                    if (b.length() > 0 && b.startsWith("#if")) {
+                        int blockLength = b.split("\n").length - 2;
 
                         if (b.contains(combination.get(0)) && !b.contains(combination.get(1)) && !b.contains(combination.get(2))) { //upstream_New
                             upstreamNew++;
                             upstreamNewLine += blockLength;
                         } else if (b.contains(combination.get(1)) && !b.contains(combination.get(0)) && !b.contains(combination.get(2))) {//fork
 
-                            ioFunctionSet.writeTofile( fork + " Unique:\n "+ b+"\n", "testcpp/statistics/result_mattsch_unique.txt");
-
-
-
+                            ioFunctionSet.writeTofile(fork + " Unique:\n " + b + "\n", "testcpp/statistics/result_mattsch_unique.txt");
                             forkUnique++;
                             forkNewLine += blockLength;
 
                             if (b.contains("(IFDEF)")) {
                                 forkUniqueIfdef++;
-                                forkUniqueIfdef_LOC+=blockLength;
+                                forkUniqueIfdef_LOC += blockLength;
                                 ifdef++;
-                                ifdefFork_LOC+=blockLength;
+                                ifdefFork_LOC += blockLength;
                             }
 
                         } else if (b.contains(combination.get(2)) && !b.contains(combination.get(0)) && !b.contains(combination.get(1))) {//upstream_OLD
@@ -219,10 +167,10 @@ public class MergeRepo {
 
                             if (b.contains("(IFDEF)")) {
                                 fork_upstreamNew_Ifdef++;
-                                fork_upstreamNew_Ifdef_LOC+=blockLength;
+                                fork_upstreamNew_Ifdef_LOC += blockLength;
 
                                 ifdef++;
-                                ifdefFork_LOC+=blockLength;
+                                ifdefFork_LOC += blockLength;
                             }
                         } else if (b.contains(combination.get(0)) && b.contains(combination.get(2)) && !b.contains(combination.get(1))) {//NEW^OLD
                             allUpstream++;
@@ -231,8 +179,6 @@ public class MergeRepo {
                             old_fork++;
                             old_fork_Line += blockLength;
                         }
-
-
 
 
                     }
@@ -249,10 +195,10 @@ public class MergeRepo {
             ioFunctionSet.writeTofile("~~~~~~~~~\n", statisticsPath);
 
             ioFunctionSet.writeTofile("(" + fork + ") Unique: " + forkUnique + "/LOC:" + forkNewLine + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("#ifdef - (" + fork + ") Unique:  " + forkUniqueIfdef +  "/LOC:" + forkUniqueIfdef_LOC+"\n", statisticsPath);
+            ioFunctionSet.writeTofile("#ifdef - (" + fork + ") Unique:  " + forkUniqueIfdef + "/LOC:" + forkUniqueIfdef_LOC + "\n", statisticsPath);
             ioFunctionSet.writeTofile("(upstreamNew) ^ (" + fork + "): " + new_fork + "/LOC:" + new_fork_Line + "\n", statisticsPath);
-            ioFunctionSet.writeTofile("#ifdef - (upstreamNew) ^ (" + fork + "): " + fork_upstreamNew_Ifdef +  "/LOC:" + fork_upstreamNew_Ifdef_LOC+"\n", statisticsPath);
-            ioFunctionSet.writeTofile("all #ifdef: " + ifdef +  "/LOC:" + ifdefFork_LOC+"\n", statisticsPath);
+            ioFunctionSet.writeTofile("#ifdef - (upstreamNew) ^ (" + fork + "): " + fork_upstreamNew_Ifdef + "/LOC:" + fork_upstreamNew_Ifdef_LOC + "\n", statisticsPath);
+            ioFunctionSet.writeTofile("all #ifdef: " + ifdef + "/LOC:" + ifdefFork_LOC + "\n", statisticsPath);
 
             //-----------
 
@@ -260,4 +206,3 @@ public class MergeRepo {
     }
 
 }
-//>>>>>>> countIfdef

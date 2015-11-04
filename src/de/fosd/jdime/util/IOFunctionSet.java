@@ -178,9 +178,7 @@ public class IOFunctionSet {
                 }
             }
         }
-//<<<<<<< HEAD
-//        return newResult + "#endif\n";
-//=======
+
         //----------
         newResult += "#endif";
         if (uniqueIFDEF == true) {
@@ -190,6 +188,11 @@ public class IOFunctionSet {
         return newResult;
         //-----------
 //        return newResult + "#endif\n";
-//>>>>>>> countIfdef
+    }
+
+
+
+    public String clearBlank(String s) {
+        return s.replace("\n", "").replace(" ", "").replace("\t", "");
     }
 }

@@ -631,32 +631,32 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                     return true;
                 } else if (ast_localName.equals("function")
                         || ast_localName.equals("constructor")) {
-                    String astnode_type = clearBlank(astnode.getChild(0).getValue());
-                    String astnode_func_name = clearBlank((astnode).getChild(2).getValue());
+                    String astnode_type = ioFunctionSet.clearBlank(astnode.getChild(0).getValue());
+                    String astnode_func_name = ioFunctionSet.clearBlank((astnode).getChild(2).getValue());
 
-                    String other_type = clearBlank((other.getCppNode()).getChild(0).getValue());
-                    String other_func_name = clearBlank((other.getCppNode()).getChild(2).getValue());
+                    String other_type = ioFunctionSet.clearBlank((other.getCppNode()).getChild(0).getValue());
+                    String other_func_name = ioFunctionSet.clearBlank((other.getCppNode()).getChild(2).getValue());
 
                     return (astnode_type + astnode_func_name).equals(other_type + other_func_name);
                 } else if (ast_localName.equals("switch") || ast_localName.equals("case")) {
-                    String ast_condition = clearBlank((astnode).getChild(1).getValue());
-                    String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_condition = ioFunctionSet.clearBlank((astnode).getChild(1).getValue());
+                    String other_condition = ioFunctionSet.clearBlank((other.getCppNode()).getChild(1).getValue());
 
                     return ast_condition.equals(other_condition);
                 } else if (ast_localName.equals("if")) {
 
-                    String ast_condition = clearBlank((astnode).getChild(1).getValue());
-                    String other_condition = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_condition = ioFunctionSet.clearBlank((astnode).getChild(1).getValue());
+                    String other_condition = ioFunctionSet.clearBlank((other.getCppNode()).getChild(1).getValue());
 
-                    String ast_then = clearBlank((astnode).getChild(2).getValue());
-                    String other_then = clearBlank((other.getCppNode()).getChild(2).getValue());
+                    String ast_then = ioFunctionSet.clearBlank((astnode).getChild(2).getValue());
+                    String other_then = ioFunctionSet.clearBlank((other.getCppNode()).getChild(2).getValue());
 
 
                     return ast_condition.equals(other_condition) || ast_then.equals(other_then);
 
                 } else if (ast_localName.equals("while") || ast_localName.equals("do")) {
-                    String ast_condition = clearBlank((((Element) astnode).getChildElements("condition", xmlns)).get(0).getValue());
-                    String other_condition = clearBlank((((Element) other.getCppNode()).getChildElements("condition", xmlns)).get(0).getValue());
+                    String ast_condition = ioFunctionSet.clearBlank((((Element) astnode).getChildElements("condition", xmlns)).get(0).getValue());
+                    String other_condition = ioFunctionSet.clearBlank((((Element) other.getCppNode()).getChildElements("condition", xmlns)).get(0).getValue());
                     Boolean conditionMatch = ast_condition.equals(other_condition);
 
                     String ast_block;
@@ -666,40 +666,40 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
                     Boolean blockMatch;
                     if (ast_block_elements.size() > 0 && other_block_elements.size() > 0) {
-                        ast_block = clearBlank(ast_block_elements.get(0).getValue());
-                        other_block = clearBlank(other_block_elements.get(0).getValue());
+                        ast_block = ioFunctionSet.clearBlank(ast_block_elements.get(0).getValue());
+                        other_block = ioFunctionSet.clearBlank(other_block_elements.get(0).getValue());
                         blockMatch = ast_block.equals(other_block);
                     } else {
                         blockMatch = false;
                     }
                     return blockMatch || conditionMatch;
                 } else if (ast_localName.equals("for")) {
-                    String ast_init = clearBlank((astnode).getChild(1).getValue());
-                    String other_init = clearBlank((other.getCppNode()).getChild(1).getValue());
-                    String ast_condition = clearBlank((astnode).getChild(3).getValue());
-                    String other_condition = clearBlank((other.getCppNode()).getChild(3).getValue());
+                    String ast_init = ioFunctionSet.clearBlank((astnode).getChild(1).getValue());
+                    String other_init = ioFunctionSet.clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_condition = ioFunctionSet.clearBlank((astnode).getChild(3).getValue());
+                    String other_condition = ioFunctionSet.clearBlank((other.getCppNode()).getChild(3).getValue());
 
-                    String ast_incr = clearBlank((astnode).getChild(5).getValue());
-                    String other_incr = clearBlank((other.getCppNode()).getChild(5).getValue());
+                    String ast_incr = ioFunctionSet.clearBlank((astnode).getChild(5).getValue());
+                    String other_incr = ioFunctionSet.clearBlank((other.getCppNode()).getChild(5).getValue());
 
                     return (ast_init + ast_condition + ast_incr).equals(other_init + other_condition + other_incr);
 
                 } else if (ast_localName.equals("class")) {
-                    String ast_className = clearBlank((astnode).getChild(1).getValue());
-                    String other_className = clearBlank((other.getCppNode()).getChild(1).getValue());
+                    String ast_className = ioFunctionSet.clearBlank((astnode).getChild(1).getValue());
+                    String other_className = ioFunctionSet.clearBlank((other.getCppNode()).getChild(1).getValue());
                     String ast_suffix = "";
                     String other_suffix = "";
 
                     if (astnode.getChild(3).getClass().getName().equals("super") ||
                             other.getCppNode().getChild(3).getClass().getName().equals("super")) {
-                        ast_suffix = clearBlank((astnode).getChild(3).getValue());
-                        other_suffix = clearBlank((other.getCppNode()).getChild(3).getValue());
+                        ast_suffix = ioFunctionSet.clearBlank((astnode).getChild(3).getValue());
+                        other_suffix = ioFunctionSet.clearBlank((other.getCppNode()).getChild(3).getValue());
 
                     }
                     return (ast_className + ast_suffix).equals(other_className + other_suffix);
                 } else if (ast_localName.equals("extern")) {
-                    String ast_externName = clearBlank((astnode).getChild(0).getValue());
-                    String other_externName = clearBlank((other.getCppNode()).getChild(0).getValue());
+                    String ast_externName = ioFunctionSet.clearBlank((astnode).getChild(0).getValue());
+                    String other_externName = ioFunctionSet.clearBlank((other.getCppNode()).getChild(0).getValue());
                     return ast_externName.equals(other_externName);
                 } else {
                     return match;
@@ -711,9 +711,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return false;
     }
 
-    public String clearBlank(String s) {
-        return s.replace("\n", "").replace(" ", "").replace("\t", "");
-    }
 
     @Override
     public void merge(MergeOperation<CppNodeArtifact> operation,
@@ -1167,7 +1164,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
                 String parentRev = c.printMatchCondition(parent);
 
                 List<String> forks = c.printMatchConditionList(parent);
-                String childRev = clearBlank(cRev.replace("#if ", ""));
+                String childRev = ioFunctionSet.clearBlank(cRev.replace("#if ", ""));
 
                 String fileName = "";
                 String forkName = "";
