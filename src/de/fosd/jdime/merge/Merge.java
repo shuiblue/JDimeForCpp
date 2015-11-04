@@ -156,15 +156,8 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
 
 				if ((leftChildren==null || rightChildren==null)||( leftChildren.isEmpty() || rightChildren.isEmpty())) {
                 LOG.finest(() -> String.format("%s and [%s] have no children", prefix(left), right.getId()));
-
-
-
-                AddOperation<T> addOp = new AddOperation<>(
-                        left,  target, null);
+                AddOperation<T> addOp = new AddOperation<>(left,  target,null, null);
                 addOp.apply(context);
-
-
-
                 return;
             } else if (leftChildren.isEmpty()) {
                 LOG.finest(() -> String.format("%s has no children", prefix(left)));

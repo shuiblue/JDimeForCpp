@@ -18,42 +18,14 @@ public class testMergePullReq {
     List<String> mergedFiles = new ArrayList<>();
 
     public void mergePR(String forkName) {
-<<<<<<< origin/develop
-//        File upstream = new File(path+forkName+upstreamBeforeMerge);
-//        File[] matches = upstream.listFiles(new FilenameFilter() {
-//            public boolean accept(File dir, String name) {
-//                return name.endsWith(".h") || name.endsWith(".cpp");
-//            }
-//        });
-//
-//        for (File f : matches) {
-//            if(!f.getName().equals("fastio.h")||f.getName().contains("language")||f.getName().contains("pins")) {
-//                mergedFiles.add(f.getName());
-//            }
-//        }
-
-<<<<<<< origin/develop
-        mergedFiles.add("pins.h");
-=======
         mergedFiles.add("ConfigurationStore.cpp");
->>>>>>> HEAD~10
-
-
-=======
-        mergedFiles.add("ConfigurationStore.cpp");
->>>>>>> HEAD~4
         for (String fileToBeMerged : mergedFiles) {
             ArrayList<String> inputFilePaths = new ArrayList<>();
             inputFilePaths.add(path+forkName+upstreamBeforeMerge+fileToBeMerged+"+upstreamBeforeMerge");
             inputFilePaths.add(path+forkName+forkBeforeMerge+fileToBeMerged+"+forkBeforeMerge");
             System.out.println("NOW: "+fileToBeMerged);
-                testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
-            }
-<<<<<<< origin/develop
-
-
-=======
->>>>>>> HEAD~4
+            testInitial.mergePullRQ(path, inputFilePaths,forkName,fileToBeMerged);
+        }
     }
 
     @Test
@@ -61,8 +33,4 @@ public class testMergePullReq {
         mergePR("wgm4321");
 
     }
-<<<<<<< origin/develop
-
-=======
->>>>>>> HEAD~4
 }

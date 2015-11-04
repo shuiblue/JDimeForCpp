@@ -37,13 +37,9 @@ import de.fosd.jdime.common.FileArtifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
-import de.fosd.jdime.common.NotYetImplementedException;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
-import de.fosd.jdime.stats.MergeTripleStats;
-import de.fosd.jdime.stats.Stats;
 import de.fosd.jdime.util.IOFunctionSet;
-import de.fosd.jdime.util.Statistics;
 
 /**
  * Performs a structured merge on <code>FileArtifacts</code>.
@@ -153,11 +149,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
                 if (!context.isKeepGoing()) {
                     throw new Error(t);
-                } else {
-                    if (context.hasStats()) {
-                        MergeTripleStats scenarioStats = new MergeTripleStats(scenario, t.toString());
-                        context.getStats().addScenarioStats(scenarioStats);
-                    }
                 }
             }
         }
@@ -203,16 +194,6 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
         return "nway";
     }
 
-    @Override
-    public final Stats createStats() {
-        return new Stats(new String[]{"directories", "files", "lines", "nodes"});
-    }
-
-    @Override
-    public final String getStatsKey(FileArtifact artifact) {
-        // FIXME: remove me when implementation is complete!
-        throw new NotYetImplementedException("StructuredStrategy: Implement me!");
-    }
 
     @Override
     public final String dumpTree(FileArtifact artifact, boolean graphical) throws IOException {

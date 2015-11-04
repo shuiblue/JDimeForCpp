@@ -171,14 +171,9 @@ public class OrderedMerge<T extends Artifact<T>> implements MergeInterface<T> {
                                     leftdone = true;
                                 }
                             } else {
-<<<<<<< origin/develop
                                 // add the left change
                                 AddOperation<T> addOp = new AddOperation<>(leftChild, target, triple, l.getName());
-=======
-								//
-								// the left change
-								AddOperation<T> addOp = new AddOperation<>(leftChild, target, l.getName());
->>>>>>> HEAD~39
+
                                 leftChild.setMerged();
                                 addOp.apply(context);
                             }

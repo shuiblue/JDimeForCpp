@@ -23,12 +23,7 @@
 package de.fosd.jdime.common;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -448,12 +443,8 @@ public abstract class Artifact<T extends Artifact<T>> implements Comparable<T>, 
     /**
      * Returns the maximum depth of any node in the tree.
      *
-<<<<<<< origin/develop
      * @return the maximum depth
-=======
-     * @param context merge context
-     * @return key of statistical element
->>>>>>> HEAD~134
+
      */
     public int getMaxDepth() {
         return 1 + children.parallelStream().map(Artifact::getMaxDepth).max(Integer::compare).orElse(0);

@@ -19,20 +19,20 @@ import java.util.List;
  */
 public class CheckUndeciplinedAnnotation {
 
-        public static void main (String[]args)throws IOException {
+    public static void main (String[]args)throws IOException {
 
-            File dir = new File("/Users/shuruiz/Work/originMarlin");
-            String[] extensions = new String[]{"cpp"};
+        File dir = new File("/Users/shuruiz/Work/originMarlin");
+        String[] extensions = new String[]{"cpp"};
 //            String[] extensions = new String[]{"cpp", "h"};
-            System.out.println("Getting all .cpp files in " + dir.getCanonicalPath()
-                    + " including those in subdirectories");
-            List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
-            for (File file : files) {
-                System.out.println("file: " + file.getCanonicalPath());
-                Document doc = getXmlDom(getXmlFile(file.getPath()));
-                CppNodeArtifact cppNodeArtifact = new CppNodeArtifact(doc,new Revision("a"));
-            }
+        System.out.println("Getting all .cpp files in " + dir.getCanonicalPath()
+                + " including those in subdirectories");
+        List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
+        for (File file : files) {
+            System.out.println("file: " + file.getCanonicalPath());
+            Document doc = getXmlDom(getXmlFile(file.getPath()));
+            CppNodeArtifact cppNodeArtifact = new CppNodeArtifact(doc,new Revision("a"));
         }
+    }
 
 
 

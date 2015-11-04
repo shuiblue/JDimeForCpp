@@ -89,7 +89,7 @@ public class TestInitial {
         char cond = 'A';
         for (int i = 0; i < inputFilePaths.size(); i++) {
 
-            commandLine += prefix + inputFilePaths.get(i) +suffix+"+"+String.valueOf(cond);
+            commandLine += prefix + inputFilePaths.get(i) + suffix + "+" + String.valueOf(cond);
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
             }
@@ -135,21 +135,20 @@ public class TestInitial {
 
     }
 
-<<<<<<< origin/develop
     public String checkMergeRepo(String path, String fork, String mergedFile){
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
         String outputPath = "testcpp/mergedRepo/3-wayMerge/upstream";
 
-            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
-            File f = new File(filePath);
+        String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
+        File f = new File(filePath);
 
         String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
         File f1 = new File(upstreamOldPath+mergedFile);
 
-            if (f.exists()) {
-                inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
-                outputPath += "_" + fork;
+        if (f.exists()) {
+            inputFilePaths.add(fork + "/Marlin/Marlin/+" + fork);
+            outputPath += "_" + fork;
 
             if (f1.exists()) {
                 outputPath += "_oldUpstream";;
@@ -175,7 +174,7 @@ public class TestInitial {
                     ioFunctionSet.writeTofile("upstream(NEW) UNIQUE FILE : " + mergedFile + " ,LOC: " + upstreamNEW.split("\n").length+1+ "\n", statisticsPath);
                 } catch (IOException e) {
                     e.printStackTrace();
-        }
+                }
             }
         }
 
@@ -190,7 +189,7 @@ public class TestInitial {
                 String forkName =inputFilePaths.get(i).split("\\+")[1];
                 commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + forkName;
                 title += inputFilePaths.get(i).split("/")[0] + "' ";
-                    commandLine += ",";
+                commandLine += ",";
                 commandLine +=upstreamOldPath+mergedFile+"+"+fork+"Upstream";
 
 
@@ -217,26 +216,6 @@ public class TestInitial {
                 bw.close();
 
 
-=======
-   public void mergePullRQ(String path, ArrayList<String> inputFilePaths,String fork,String fileToBeMerged){
-       String outputPath = path+fork+"/MocPullRQ/Marlin/Marlin/";
-
-
-       String suffix = ".cpp";
-       String commandLine = "-mode,nway,-output," + outputPath + fileToBeMerged + ",";
-       char cond = 'A';
-       for (int i = 0; i < inputFilePaths.size(); i++) {
-
-           commandLine += inputFilePaths.get(i)  + "+" + String.valueOf(cond);
-           if (i < inputFilePaths.size() - 1) {
-               commandLine += ",";
-           }
-           cond++;
-       }
-       String[] arg = commandLine.split(",");
-       try {
-           Main.main(arg);
->>>>>>> HEAD~16
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -246,7 +225,6 @@ public class TestInitial {
             }
 
 
-<<<<<<< origin/develop
 
             try {
                 result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
@@ -257,16 +235,6 @@ public class TestInitial {
         return  result;
     }
 
-<<<<<<< origin/develop
-
-=======
-    }
-
-
-
->>>>>>> HEAD~16
-=======
->>>>>>> HEAD~4
     /**
      * check merged file is equal to expect result
      *
@@ -281,8 +249,8 @@ public class TestInitial {
         String result = "";
         String expect_result = "";
         try {
-            result = readResult(prefix + outputPath + suffix).replace("\n","").replace(" ","").replace("\t","");
-            expect_result = readResult(prefix + expectResultPath + suffix).replace("\n","").replace(" ","").replace("\t","");
+            result = readResult(prefix + outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
+            expect_result = readResult(prefix + expectResultPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -295,11 +263,6 @@ public class TestInitial {
      * @return
      */
     public boolean checkMerge_wrapper(HashSet<String> fileName, String testNum, String output) {
-//        try {
-//            Thread.sleep(100);                 //1000 milliseconds is one second.
-//        } catch (InterruptedException ex) {
-//            Thread.currentThread().interrupt();
-//        }
         ArrayList<String> inputFilePaths = new ArrayList<>();
         for (String s : fileName) {
             inputFilePaths.add(testNum + s);
@@ -309,39 +272,13 @@ public class TestInitial {
         return checkMerge(inputFilePaths, outputPath, expectResultPath);
     }
 
-<<<<<<< origin/develop
-<<<<<<< origin/develop
-    /**
-<<<<<<< origin/develop
-=======
-     * wrapper for check Merge-- for new real Marlin REPO
-     *
-     * @return
-     */
-    public String checkMerge_wrapper4Marlin(String path, String fork, String mergedFile) {
+    public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
-        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/";
-
-        inputFilePaths.add(fork + "/Marlin/Marlin/");
-        String outputPath = outputPath_pre + "upstream_" + fork;
-        runMain4Marlin(inputFilePaths, outputPath, mergedFile);
-        try {
-                result = readResult( outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
-        return result;
-    }
-=======
->>>>>>> HEAD~55
-
-    public String checkMergeRepo(String path, String fork, String mergedFile){
-        ArrayList<String> inputFilePaths = new ArrayList<>();
-        String result = "";
-        String outputPath = "testcpp/mergedRepo/3-wayMerge/upstream";
+        int n = combination.size() + 1;
+        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/" + n + "-wayMerge/";
+        String outputPath = outputPath_pre + "upstream";
+        for (String fork : combination) {
             String filePath = path + fork + "/Marlin/Marlin/" + mergedFile;
             File f = new File(filePath);
 
@@ -350,126 +287,33 @@ public class TestInitial {
                 outputPath += "_" + fork;
             } else {
                 System.out.println(filePath + " not exist!");
-
                 outputPath += "_no_" + fork;
             }
-
-
-        String upstreamOldPath = "testcpp/upstreamVar/" + fork+"Upstream/Marlin/Marlin/";
-
-        File f1 = new File(upstreamOldPath+mergedFile);
-
-        if (f1.exists()) {
-            outputPath += "_" + fork;
-        } else {
-            System.out.println(filePath + " not exist!");
-
-            outputPath += "_no_" + fork;
+            if (mergedFile.endsWith("cpp")) {
+                suffix = ".cpp";
+            } else {
+                suffix = ".h";
+            }
         }
 
-        outputPath+="/"+mergedFile;
-
         if (inputFilePaths.size() > 0) {
-            String commandLine = "-mode,nway,-output," + outputPath + ","
-                    + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
-            String title =3+ " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
-            for (int i = 0; i < inputFilePaths.size(); i++) {
-               String forkName =inputFilePaths.get(i).split("\\+")[1];
-                commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + forkName;
-                title += inputFilePaths.get(i).split("/")[0] + "' ";
-                    commandLine += ",";
-                commandLine +=upstreamOldPath+mergedFile+"+"+fork+"Upstream";
-
-
-            }
-            String[] arg = commandLine.split(",");
-
-            try {
-                long start = System.currentTimeMillis();
-                Main.main(arg);
-                long end = System.currentTimeMillis();
-
-                long runTime = end - start;
-
-                File file = new File("testcpp/mergedResult/runTime.txt");
-
-                // if file doesnt exists, then create it
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(title + "\n");
-                bw.write(String.valueOf(runTime) + "\n");
-                bw.close();
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
-
+            runMain4Marlin_withRevision(inputFilePaths, outputPath, mergedFile);
             try {
                 result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return  result;
-    }
-
-
-
-
-=======
->>>>>>> HEAD~4
-    public String checkMerge_wrapper4Marlin(String path, Set<String> combination, String mergedFile) {
-        ArrayList<String> inputFilePaths = new ArrayList<>();
-        String result = "";
-        int n = combination.size()+1;
-        String outputPath_pre = "testcpp/mergedResult/" + mergedFile + "/"+n+"-wayMerge/";
-        String outputPath = outputPath_pre + "upstream" ;
-        for (String fork : combination) {
-            String filePath = path + fork + "/Marlin/Marlin/" + mergedFile ;
-            File f = new File(filePath);
-
-            if (f.exists()) {
-                inputFilePaths.add(fork + "/Marlin/Marlin/+"+fork);
-            outputPath +="_"+fork;
-            } else {
-                System.out.println(filePath + " not exist!");
-                outputPath += "_no_" + fork;
-        }
-        if (mergedFile.endsWith("cpp")) {
-            suffix = ".cpp";
-        } else {
-            suffix=".h";
-        }
-        }
-
-        if (inputFilePaths.size() > 0) {
-            runMain4Marlin_withRevision(inputFilePaths, outputPath, mergedFile);
-        try {
-            result = readResult(outputPath + suffix).replace("\n", "").replace(" ", "").replace("\t", "");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        }
         return result;
     }
 
-    public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile){
+    public void runMain4Marlin_withRevision(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
         String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + "+upstream,";
         int n = inputFilePaths.size() + 1;
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
         for (int i = 0; i < inputFilePaths.size(); i++) {
-            commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile+"+"+inputFilePaths.get(i).split("\\+")[1];
+            commandLine += prefix + inputFilePaths.get(i).split("\\+")[0] + mergedFile + "+" + inputFilePaths.get(i).split("\\+")[1];
             title += inputFilePaths.get(i).split("/")[0] + "' ";
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
@@ -509,25 +353,25 @@ public class TestInitial {
 
 
     public void runMain4Marlin(ArrayList<String> inputFilePaths, String outputPath, String mergedFile) {
-            String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
+        String commandLine = "-mode,nway,-output," + outputPath + suffix + ","
                 + prefix + "upstream/Marlin/Marlin/" + mergedFile + ",";
-        int n = inputFilePaths.size()+1;
+        int n = inputFilePaths.size() + 1;
         String title = n + " way merge: " + mergedFile + " file. 'upstream' repo merge with fork '";
         for (int i = 0; i < inputFilePaths.size(); i++) {
-            commandLine += prefix + inputFilePaths.get(i) + mergedFile ;
-            title+=inputFilePaths.get(i).split("/")[0] + "' ";
+            commandLine += prefix + inputFilePaths.get(i) + mergedFile;
+            title += inputFilePaths.get(i).split("/")[0] + "' ";
             if (i < inputFilePaths.size() - 1) {
                 commandLine += ",";
-                title+=" , ";
+                title += " , ";
             }
-            }
-            String[] arg = commandLine.split(",");
-            try {
+        }
+        String[] arg = commandLine.split(",");
+        try {
             long start = System.currentTimeMillis();
-                Main.main(arg);
+            Main.main(arg);
             long end = System.currentTimeMillis();
 
-            long runTime = end-start;
+            long runTime = end - start;
 
             File file = new File("testcpp/mergedResult/runTime.txt");
 
@@ -535,22 +379,21 @@ public class TestInitial {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile(),true);
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(title+"\n");
-            bw.write(String.valueOf(runTime)+"\n");
+            bw.write(title + "\n");
+            bw.write(String.valueOf(runTime) + "\n");
             bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
 
     /**
->>>>>>> HEAD~64
      * check if merged files after preprocessed under certain configuration is equal to preprocessed origin input file under same config
      *
      * @param config
@@ -566,7 +409,7 @@ public class TestInitial {
         String r1 = compileCpp(config, merged, filePath);
         String r2 = compileCpp(config, origin, filePath);
         try {
-            return readResult(r1).replace("\n", "").replace(" ","").replace("\t", "").equals(readResult(r2).replace("\n","").replace(" ","").replace("\t", ""));
+            return readResult(r1).replace("\n", "").replace(" ", "").replace("\t", "").equals(readResult(r2).replace("\n", "").replace(" ", "").replace("\t", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -597,15 +440,15 @@ public class TestInitial {
 
         if (config != null) {
             for (String s : config) {
-            if (s.contains(">")||s.contains("<")||s.contains("=")) {
-                   s= s.replace('<','l');
-                   s= s.replace('>','b');
-                   s= s.replace('=','e');
+                if (s.contains(">") || s.contains("<") || s.contains("=")) {
+                    s = s.replace('<', 'l');
+                    s = s.replace('>', 'b');
+                    s = s.replace('=', 'e');
                 }
                 if (s.startsWith("!")) {
                     compiledPath += "not" + s.substring(1);
                     cmd_compiling += ",-U" + s.substring(1);
-                } else{
+                } else {
                     compiledPath += s;
                     cmd_compiling += ",-D" + s;
                 }
@@ -689,14 +532,14 @@ public class TestInitial {
     }
 
     public Set<Set<String>> getAllConfigurations(HashSet<String> features, int combineNum) {
-        Set<Set<String>> combinations = new HashSet<Set<String>>() ;
+        Set<Set<String>> combinations = new HashSet<Set<String>>();
         Set<Set<String>> configurations = getAllConfigurations(features);
-        for(Set<String> s :configurations){
-            if(s.size()==combineNum-1){
+        for (Set<String> s : configurations) {
+            if (s.size() == combineNum - 1) {
                 combinations.add(s);
             }
         }
-        return  combinations;
+        return combinations;
     }
 
 

@@ -25,22 +25,12 @@ package de.fosd.jdime.common.operations;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-<<<<<<< origin/develop
 import de.fosd.jdime.common.Artifact;
 import de.fosd.jdime.common.MergeContext;
 import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.stats.ElementStatistics;
 import de.fosd.jdime.stats.MergeScenarioStatistics;
 import de.fosd.jdime.stats.Statistics;
-=======
-import de.fosd.jdime.common.*;
-import de.fosd.jdime.stats.ASTStats;
-import de.fosd.jdime.stats.Stats;
-import de.fosd.jdime.stats.StatsElement;
-import de.fosd.jdime.util.Entity;
-import de.fosd.jdime.util.IOFunctionSet;
-import nu.xom.Element;
->>>>>>> HEAD~38
 
 /**
  * The operation adds <code>Artifact</code>s.
@@ -83,21 +73,8 @@ public class AddOperation<T extends Artifact<T>> extends Operation<T> {
     public AddOperation(T artifact, T target, MergeScenario<T> mergeScenario, String condition) {
         this.artifact = artifact;
         this.target = target;
-<<<<<<< origin/develop
-<<<<<<< origin/develop
-<<<<<<< origin/develop
         this.mergeScenario = mergeScenario;
 
-=======
-System.out.println("-----------------addOper----target----Dumptree---------------------");
-System.out.println(target.dumpTree());		
->>>>>>> HEAD~154
-=======
-//System.out.println("-----------------addOper----target----Dumptree---------------------");
-//System.out.println(target.dumpTree());		
->>>>>>> HEAD~153
-=======
->>>>>>> HEAD~152
         if (condition != null) {
             this.condition = condition;
         }
@@ -107,16 +84,6 @@ System.out.println(target.dumpTree());
     public void apply(MergeContext context) throws IOException {
         assert (artifact != null);
         assert (artifact.exists()) : "Artifact does not exist: " + artifact;
-
-//------------------FOR STATISTICS
-//		if(!artifact.hasMatches()||artifact.hasChildren()) {
-//			String path = "testcpp/statistics/1.txt";
-//			String breakLine= "+++++++++++++++++++++++\n";
-//			IOFunctionSet io = new IOFunctionSet();
-//			io.writeTofile(artifact.prettyPrint(), path);
-//			io.writeTofile(breakLine,path);
-//		}
-//------------------FOR STATISTICS
 
         LOG.fine(() -> "Applying: " + this);
 

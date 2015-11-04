@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import de.fosd.jdime.stats.KeyEnums;
 import nu.xom.*;
 import de.fosd.jdime.common.operations.ConflictOperation;
 import de.fosd.jdime.common.operations.MergeOperation;
@@ -458,15 +459,10 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     }
 
     @Override
-    public CppNodeArtifact createChoiceDummy(String condition,
-                                             CppNodeArtifact artifact) throws IOException {
-        CppNodeArtifact choice;
-        choice = new CppNodeArtifact(artifact.astnode.copy(), getRevision());
-        choice.setRevision(new Revision("choice"));
-        choice.setNumber(virtualcount++);
-        choice.setChoice(condition, artifact);
-        return choice;
+    public CppNodeArtifact createChoiceArtifact(String condition, CppNodeArtifact artifact) throws IOException {
+        return null;
     }
+
 
     @Override
     public CppNodeArtifact createEmptyArtifact() throws IOException {
@@ -580,10 +576,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         return getRevision() + "-" + getNumber();
     }
 
-    @Override
-    public String getStatsKey(MergeContext context) {
-        return "nodes";
-    }
+
 
     @Override
     public boolean hasUniqueLabels() {
@@ -1347,5 +1340,15 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Override
+    public KeyEnums.Type getType() {
+        return null;
+    }
+
+    @Override
+    public KeyEnums.Level getLevel() {
+        return null;
     }
 }
