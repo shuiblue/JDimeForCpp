@@ -34,10 +34,11 @@ IOFunctionSet ioFunctionSet = new IOFunctionSet();
      * @param cRev c's Revision
      *
      */
-    public void coundIfdefs(CppNodeArtifact c,CppNodeArtifact choiceNode, String cRev, String nodeString) {
+    public String coundIfdefs(CppNodeArtifact c,CppNodeArtifact choiceNode, String cRev, String nodeString) {
 
 
         CppNodeArtifact parent = c.getParent();
+        String   path="";
         if (parent.hasMatches()) {
             String parentRev = c.printMatchCondition(parent);
 
@@ -58,7 +59,7 @@ IOFunctionSet ioFunctionSet = new IOFunctionSet();
 
                 fileName += f + "_";
             }
-         String   path = "testcpp/statistics/" + fileName + ".txt";
+        path = "testcpp/statistics/" + fileName + ".txt";
             ioFunctionSet.writeTofile("\n+-+-+-\n", path);
             ioFunctionSet.writeTofile(nodeString, path);
 
@@ -89,6 +90,7 @@ IOFunctionSet ioFunctionSet = new IOFunctionSet();
             }
 
         }
+        return  path;
     }
 
 

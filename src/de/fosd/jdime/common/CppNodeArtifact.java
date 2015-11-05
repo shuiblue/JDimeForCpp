@@ -461,7 +461,16 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
 
     @Override
     public CppNodeArtifact createChoiceArtifact(String condition, CppNodeArtifact artifact) throws IOException {
-        return null;
+//        return null;
+
+        CppNodeArtifact choice;
+
+        choice = new CppNodeArtifact(artifact.astnode, artifact.getRevision());
+        choice.setRevision(new Revision("choice"));
+        choice.setNumber(virtualcount++);
+        choice.setChoice(condition, artifact);
+        return choice;
+
     }
 
 
@@ -576,7 +585,6 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
     public String getId() {
         return getRevision() + "-" + getNumber();
     }
-
 
 
     @Override
@@ -1155,7 +1163,7 @@ public class CppNodeArtifact extends Artifact<CppNodeArtifact> {
             nodeString += "\n#endif";
 
             //------------ count Ifdefs--------
-                statistics.coundIfdefs(c, choiceNode,  cRev,  nodeString);
+            path = statistics.coundIfdefs(c, choiceNode, cRev, nodeString);
             //------------ count Ifdefs--------
 
             if (var_size > 1) {

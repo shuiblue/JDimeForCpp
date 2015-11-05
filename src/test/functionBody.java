@@ -1,5 +1,6 @@
 package test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -299,6 +300,7 @@ test12
         // ----------------check preprocessed Merged result equal to origin
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
+
     @Test
     public void test15() {
         inputFileInit(2);
@@ -501,4 +503,3 @@ test12
         assertTrue(testInitial.testEveryConfig(config, fileName, output_2way, path, testNum));
     }
 }
-
