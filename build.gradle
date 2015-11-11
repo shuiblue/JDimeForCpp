@@ -57,7 +57,7 @@ dependencies {
     compile 'com.thoughtworks.xstream:xstream:1.4.8'
     compile 'de.uni-passau.fim.seibt:kvconfig:1.0'
     compile files('lib/JJ7.jar')
-    compile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
     compile('com.io7m.xom:xom:1.2.10') {
         transitive = false     }
 }
