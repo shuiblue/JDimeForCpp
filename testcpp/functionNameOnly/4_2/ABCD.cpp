@@ -1,12 +1,13 @@
-#ifdef A || B || C || D
-void x();
+#if defined (A) || defined (B) || defined (C) || defined (D)
+    void x();
 #endif
-#ifdef B
-void b();
+#if defined (B)
+    void b();
 #endif
-#ifdef A || C
-void ac();
+#if defined (A) || defined (C)
+
+    void ac();
 #endif
-#ifdef D
-void d();
+#if defined (D)
+    void d();
 #endif

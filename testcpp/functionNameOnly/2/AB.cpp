@@ -1,9 +1,9 @@
-#ifdef A || B
-void c();
+#if defined (A) || defined (B)
+    void c();
 #endif
-#ifdef A
-void a();
+#if defined (A)
+    void a();
 #endif
-#ifdef B
-void b();
+#if defined (B)
+    void b();
 #endif

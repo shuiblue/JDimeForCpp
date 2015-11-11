@@ -1,7 +1,7 @@
 package de.fosd.jdime.util;
 
 import de.fosd.jdime.common.CppNodeArtifact;
-import test.TestInitial;
+//import testJDimeCpp.TestInitial;
 
 import java.util.HashSet;
 import java.util.Iterator;

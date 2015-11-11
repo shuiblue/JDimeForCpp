@@ -1,3 +1,3 @@
-#ifdef A || B
-void a();
+#if defined (A) || defined (B)
+    void a();
 #endif

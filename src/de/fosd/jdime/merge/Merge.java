@@ -114,10 +114,10 @@ public class Merge<T extends Artifact<T>> implements MergeInterface<T> {
             if (m.getScore() == 0) {
                 LOG.fine(() -> String.format("%s and %s have no matches.", left.getId(), right.getId()));
 
-                    ConflictOperation<T> conflictOp = new ConflictOperation<>(
-                            left, right, target, l.getName(), r.getName());
-                    conflictOp.apply(context);
-
+//                    ConflictOperation<T> conflictOp = new ConflictOperation<>(
+//                            left, right, target, l.getName(), r.getName());
+//                    conflictOp.apply(context);
+//
 
 
                 return;

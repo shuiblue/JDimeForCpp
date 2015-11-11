@@ -322,7 +322,7 @@ public final class Main {
 						
                         context.setBugfixing();
                         break;
-                    case "test":
+                    case "de/fosd/jdime/test":
                         InternalTests.run();
                         return false;
                     case "testenvironment":
