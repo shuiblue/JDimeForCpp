@@ -6,18 +6,18 @@ import java.util.HashSet;
  * Created by shuruiz on 11/5/15.
  */
 public class DeclarationNode {
-
+    String fileName;
     int lineNumber;
     String type;
     String name;
-    String localName;
+    String decl_tag;
     HashSet<DependenceNode> dependencies;
 
-    DeclarationNode(String name, String type,String localName,int lineNumber) {
+    DeclarationNode(String name, String type, int lineNumber, String decl_tag) {
         this.name = name;
         this.type = type;
-        this.localName=localName;
-        this.lineNumber=lineNumber;
+        this.lineNumber = lineNumber;
+        this.decl_tag = decl_tag;
         dependencies = new HashSet<>();
     }
 
@@ -33,8 +33,8 @@ public class DeclarationNode {
         return name;
     }
 
-    public String getLocalName() {
-        return localName;
+    public String getDecl_tag() {
+        return decl_tag;
     }
 
     public HashSet<DependenceNode> getDependencies() {

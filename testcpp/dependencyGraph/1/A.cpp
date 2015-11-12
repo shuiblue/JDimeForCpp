@@ -7,4 +7,5 @@ void CardReader()
    filesize = 0;
    print(write(filesize));
    write();
+   write(a,b);
 }
