@@ -11,6 +11,8 @@ public class DependenceNode {
 
     String name;
     String tag;
+
+
     DeclarationNode declaration;
 
     DependenceNode(String name,  String tag,int lineNumber ) {
@@ -34,6 +36,9 @@ public class DependenceNode {
 
     public DeclarationNode getDeclaration() {
         return declaration;
+    }
+    public void setDeclaration(DeclarationNode declaration) {
+        this.declaration = declaration;
     }
 
     public int getLineNumber() {

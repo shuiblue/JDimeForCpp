@@ -2,7 +2,11 @@ package de.fosd.jdime.util;
 
 import nu.xom.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.validation.SchemaFactory;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Stack;
 
 /**
@@ -193,9 +197,36 @@ public class IOFunctionSet {
     }
 
 
-
     public String clearBlank(String s) {
         return s.replace("\n", "").replace(" ", "").replace("\t", "");
+    }
+
+    /**
+     * this function read the content of the file from filePath, and ready for comparing
+     *
+     * @param filePath file path
+     * @return content of the file
+     * @throws IOException e
+     */
+    public static String readResult(String filePath) throws IOException {
+        BufferedReader result_br = new BufferedReader(new FileReader(filePath));
+        String result = "";
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = result_br.readLine();
+
+            while (line != null) {
+                if (!line.isEmpty()) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                }
+                line = result_br.readLine();
+            }
+            result = sb.toString();
+        } finally {
+            result_br.close();
+        }
+        return result;
     }
 
 
@@ -221,7 +252,7 @@ public class IOFunctionSet {
             try {
 //                new ProcessBuilder("/usr/local/bin/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
 //                        inputFile, "-o", outXmlFile).start();
-                new ProcessBuilder("srcML/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",inputFile, "-o", outXmlFile).start();
+                new ProcessBuilder("srcML/src2srcml", "--xmlns:PREFIX=http://www.sdml.info/srcML/position", inputFile, "-o", outXmlFile).start();
                 sleep();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -242,8 +273,12 @@ public class IOFunctionSet {
         try {
             Builder builder = new Builder();
             File file = new File(xmlFilePath);
+
             sleep();
-            doc = builder.build(file);
+            String xml =  readResult(xmlFilePath);
+            if(xml.length()>0) {
+                doc = builder.build(file);
+            }
         } catch (ParsingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -253,10 +288,9 @@ public class IOFunctionSet {
     }
 
 
-
     public static void sleep() {
         try {
-            Thread.sleep(300);                 //1000 milliseconds is one second.
+            Thread.sleep(500);                 //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

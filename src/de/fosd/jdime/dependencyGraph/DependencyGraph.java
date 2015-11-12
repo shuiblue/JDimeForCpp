@@ -1,5 +1,6 @@
 package de.fosd.jdime.dependencyGraph;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +13,13 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.Node;
+import org.apache.commons.collections15.Transformer;
+import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.renderers.Renderer;
+
+import javax.swing.*;
 
 
 /**
@@ -23,58 +31,96 @@ public class DependencyGraph {
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
     static String xmlFilePath = "";
 
-    DirectedSparseGraph<Integer, Edge> createDependencyGraph(List<DeclarationNode> declarations, List<DependencyGraph> dependencies) {
+    public static DirectedSparseGraph<Integer, Edge> createDependencyGraph(List<DeclarationNode> declarations, List<DependenceNode> dependencies) {
         DirectedSparseGraph<Integer, Edge> g = new DirectedSparseGraph<>();
-//        for (DeclarationNode decl : declarations) {
-//            g.addVertex(decl.getLineNumber());
-//        }
 
-
-        for (int i = 0; i < declarationNodes.size(); i++) {
-            for(int j=0;j<dependenceNodes.size();j++){
-                dependenceNodes.get(i);
-            }
+        //add vertex
+        for (DeclarationNode decl : declarations) {
+            g.addVertex(decl.getLineNumber());
+        }
+        for (DependenceNode depen : dependenceNodes) {
+            g.addVertex(depen.getLineNumber());
         }
 
-//            String name_1 = candidates.get(i).getName();
-//            String type_1 = candidates.get(i).getType();
-//            String local_1 = candidates.get(i).getLocalName();
-//            int line_1 = candidates.get(i).getLineNumber();
-//
-//            for (int t = 0; t < candidates.size(); t++) {
-//                if (i != t) {
-//                    String name_2 = candidates.get(t).getName();
-//                    String type_2 = candidates.get(t).getType();
-//                    String local_2 = candidates.get(t).getLocalName();
-//                    int line_2 = candidates.get(t).getLineNumber();
-//                    if (name_1.equals(name_2)) {
-//                        if (local_1.contains("decl")) {
-//                            candidates.get(t).getDependencies().add(candidates.get(i));
-//                            g.addEdge(new Edge(type_2 + " " + name_2), line_2, line_1);
-//
-//                        } else if (local_2.contains("decl")) {
-//                            candidates.get(i).getDependencies().add(candidates.get(t));
-//                            g.addEdge(new Edge(type_1 + "  " + name_1), line_1, line_2);
-//                        } else {
-//                            candidates.get(i).sameNameList.add(candidates.get(t));
-//                            candidates.get(t).sameNameList.add(candidates.get(i));
-//
-//                        }
-//
-//                    }
-//                }
-//            }
-//
-//        }
+        for (int i = 0; i < declarationNodes.size(); i++) {
+            for (int j = 0; j < dependenceNodes.size(); j++) {
+                DeclarationNode decl = declarationNodes.get(i);
+                DependenceNode depen = dependenceNodes.get(j);
+                if (isRelated(decl, depen)) {
+
+                    decl.getDependencies().add(depen);
+                    depen.setDeclaration(decl);
+
+                    //create edge
+                    String type, name;
+                    if (decl.getDecl_tag().equals("decl_stmt")) {
+                        type = decl.getType();
+                    } else {
+                        type = depen.getTag();
+
+                    }
+                    name = depen.getName();
+                    g.addEdge(new Edge(type + " " + name), depen.getLineNumber(), decl.getLineNumber());
+                }
+            }
+        }
         return g;
     }
 
-    public static void parseMergedXML(String xmlPath, String xpathQuery, String output) {
+    /**
+     * check whether two nodes has dependency relation
+     *
+     * @param decl  declaration node
+     * @param depen dependency node
+     * @return true, if is related.
+     */
+    public static boolean isRelated(DeclarationNode decl, DependenceNode depen) {
+
+        if (decl.getName().equals(depen.getName())) {
+            if (decl.getDecl_tag().equals("decl_stmt") && depen.getTag().contains("expr")) {
+                return true;
+            } else if (depen.getTag().equals("call")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static void findAllNodes() {
+        Entity entity = new Entity();
+        for (String tag : entity.getOneLayerEntity()) {
+            String query = "src:" + tag;
+            System.out.println(tag+"\n");
+            if (entity.getDeclarationEntity().contains(tag)) {
+                findDeclarationNode(query, tag);
+            } else if (entity.getDependencyEntity().contains(tag)) {
+                findDependencyNode(query, tag);
+            }
+        }
+
+        for (String tag : entity.getStmtEntity()) {
+            String stmtTag = tag + "_stmt";
+
+            System.out.println(stmtTag+"\n");
+
+            String query = "src:" + stmtTag + "/src:" + tag;
+            if (entity.getDeclarationEntity().contains(tag)) {
+                findDeclarationNode(query, stmtTag);
+            } else if (entity.getDependencyEntity().contains(tag)) {
+                findDependencyNode(query, stmtTag);
+            }
+        }
+    }
+
+
+    public static void searchQuery(String xmlPath, String xpathQuery, String output) {
 
         //run srcML
         if (new File(xmlPath).isFile()) {
             try {
-                new ProcessBuilder("srcML/srcml2src", "--xpath", xpathQuery, xmlPath, "-o", output).start();
+                ProcessBuilder processBuilder = new ProcessBuilder("srcML/srcml2src", "--xpath", xpathQuery, xmlPath, "-o", output);
+                processBuilder.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,19 +130,18 @@ public class DependencyGraph {
     }
 
 
-
     public static void findDeclarationNode(String query, String decl_tag) {
         //get decl_stmt name list
-        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/name.xml";
+        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+decl_tag+"_name.xml";
         String declStmt_name_Query = "//" + query + "/src:name";
-        parseMergedXML(xmlFilePath, declStmt_name_Query, name_output);
+        searchQuery(xmlFilePath, declStmt_name_Query, name_output);
         Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
         Node nameList_root = declStmtNodeListTree.getChild(0);
 
         //get decl_stmt type list
-        String type_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/type.xml";
+        String type_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+decl_tag+"_type.xml";
         String declSdeclStmt_type_QuerytmtQuery = "//" + query + "/src:type/src:name";
-        parseMergedXML(xmlFilePath, declSdeclStmt_type_QuerytmtQuery, type_output);
+        searchQuery(xmlFilePath, declSdeclStmt_type_QuerytmtQuery, type_output);
         Document declStmtTypeNodeListTree = ioFunctionSet.getXmlDom(type_output);
         Node typeList_root = declStmtTypeNodeListTree.getChild(0);
 
@@ -114,68 +159,72 @@ public class DependencyGraph {
                 declarationNodes.add(new DeclarationNode(declStmt_name, type, lineNum, decl_tag));
             }
         }
-        System.out.print("");
     }
 
     public static void findDependencyNode(String query, String tag) {
         //get  name list
-        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/dep.xml";
+        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+tag+"_dep.xml";
         String name_Query = "//" + query + "/src:name";
-        parseMergedXML(xmlFilePath, name_Query, name_output);
+
+        searchQuery(xmlFilePath, name_Query, name_output);
+
 
         Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
-        Element nameList_root = (Element)declStmtNodeListTree.getChild(0);
-       Elements elements = nameList_root.getChildElements();
 
-            for(int i=0;i<elements.size();i++){
+        if(declStmtNodeListTree!=null) {
+            Element nameList_root = (Element) declStmtNodeListTree.getChild(0);
+            Elements elements = nameList_root.getChildElements();
+
+            for (int i = 0; i < elements.size(); i++) {
                 Element nameNode = elements.get(i);
                 String declStmt_name = nameNode.getValue();
-                int lineNum = Integer.parseInt(((Element)nameNode.getChild(0)).getAttribute(0).getValue());
+                int lineNum = Integer.parseInt(((Element) nameNode.getChild(0)).getAttribute(0).getValue());
                 dependenceNodes.add(new DependenceNode(declStmt_name, tag, lineNum));
                 System.out.print("");
+            }
         }
-
-
     }
 
 
+    public static void visualizeGraph(DirectedSparseGraph<Integer, Edge> g) {
+        VisualizationImageServer<Integer, Edge> vv =
+                new VisualizationImageServer<Integer, Edge>(new CircleLayout<Integer, Edge>(g), new Dimension(400, 400));
+// Setup up a new vertex to paint transformer...
+        Transformer<Integer, Paint> vertexPaint = new Transformer<Integer, Paint>() {
+            public Paint transform(Integer i) {
+                return Color.GREEN;
+            }
+        };
+// Set up a new stroke Transformer for the edges
+        float dash[] = {10.0f};
+        final Stroke edgeStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+        Transformer<Edge, Stroke> edgeStrokeTransformer =
+                new Transformer<Edge, Stroke>() {
+                    public Stroke transform(Edge s) {
+                        return edgeStroke;
+                    }
+                };
+        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+        vv.getRenderContext().setEdgeStrokeTransformer(edgeStrokeTransformer);
+        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+        vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
+        vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+
+        JFrame frame = new JFrame();
+        frame.getContentPane().add(vv);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
 
     public static void main(String[] args) {
-
-        String dirPath = "";
-
-        String filePath = "testcpp/dependencyGraph/1/A.cpp";
+        String filePath = args[0];
         xmlFilePath = ioFunctionSet.getXmlFile(filePath);
-
-        //decl_stmt
-        String decl_stmt_query = "src:decl_stmt/src:decl";
-        findDeclarationNode(decl_stmt_query, "decl_stmt");
-
-        //function_decl
-        String function_decl_query = "src:function_decl";
-        findDeclarationNode(function_decl_query, "function_decl");
-
-        //function
-        String function_query = "src:function";
-        findDeclarationNode(function_query, "function");
-
-        //expr_stmt
-        String expr_stmt_tag = "expr_stmt";
-        String expr_stmt_query = "src:" + expr_stmt_tag + "/src:expr";
-        findDependencyNode(expr_stmt_query, expr_stmt_tag);
-
-        //call
-        String func_call_tag = "call";
-        String func_call_query= "src:"+func_call_tag;
-        findDependencyNode(func_call_query, func_call_tag);
-
-        //expr
-        String expr_tag ="expr";
-        String expr_query="src:"+expr_tag;
-        findDependencyNode(expr_query,expr_tag);
-
+        findAllNodes();
+        DirectedSparseGraph<Integer, Edge> graph = createDependencyGraph(declarationNodes, dependenceNodes);
+        visualizeGraph(graph);
         System.out.print("");
-//        parseASTforDependencyGraph(astTree);
 
     }
 

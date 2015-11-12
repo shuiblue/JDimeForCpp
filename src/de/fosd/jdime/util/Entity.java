@@ -18,6 +18,16 @@ public class Entity {
 
     Set<String> classBody = null;
 
+
+
+    Set<String> oneLayerEntity = null;
+    Set<String> stmtEntity = null;
+
+    Set<String> declarationEntity = null;
+    Set<String> dependencyEntity = null;
+
+
+
     public Entity() {
         nonTerminal = new HashSet<>();
         nonTerminal.add("function");
@@ -102,6 +112,31 @@ public class Entity {
         classBody.add("public");
         classBody.add("protected");
 
+        oneLayerEntity = new HashSet<>();
+        oneLayerEntity.add("function");
+        oneLayerEntity.add("function_decl");
+        oneLayerEntity.add("class_decl");
+        oneLayerEntity.add("constructor_decl");
+        oneLayerEntity.add("destructor");
+
+        oneLayerEntity.add("call");
+        oneLayerEntity.add("expr");
+
+
+        stmtEntity = new HashSet<>();
+        stmtEntity.add("decl");
+
+        declarationEntity = new HashSet<>();
+        declarationEntity.add("function");
+        declarationEntity.add("function_decl");
+        declarationEntity.add("class_decl");
+        declarationEntity.add("constructor_decl");
+        declarationEntity.add("destructor");
+        declarationEntity.add("decl");
+
+        dependencyEntity = new HashSet<>();
+        dependencyEntity.add("call");
+        dependencyEntity.add("expr");
     }
 
     public Set<String> getNonTerminal() {
@@ -128,5 +163,21 @@ public class Entity {
 
     public Set<String> getClassBody() {
         return classBody;
+    }
+
+    public Set<String> getOneLayerEntity() {
+        return oneLayerEntity;
+    }
+
+    public Set<String> getStmtEntity() {
+        return stmtEntity;
+    }
+
+    public Set<String> getDeclarationEntity() {
+        return declarationEntity;
+    }
+
+    public Set<String> getDependencyEntity() {
+        return dependencyEntity;
     }
 }
