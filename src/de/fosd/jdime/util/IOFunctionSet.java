@@ -252,7 +252,12 @@ public class IOFunctionSet {
             try {
 //                new ProcessBuilder("/usr/local/bin/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
 //                        inputFile, "-o", outXmlFile).start();
-                new ProcessBuilder("srcML/src2srcml", "--xmlns:PREFIX=http://www.sdml.info/srcML/position", inputFile, "-o", outXmlFile).start();
+                String verbose="";
+                if(inputFile.contains("tar.gz")){
+                     verbose = "-v";
+                }
+
+                new ProcessBuilder("srcML/src2srcml",verbose,"--xmlns:PREFIX=http://www.sdml.info/srcML/position", inputFile, "-o", outXmlFile).start();
                 sleep();
             } catch (IOException e) {
                 e.printStackTrace();

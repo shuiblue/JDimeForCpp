@@ -31,11 +31,16 @@ public class DependencyGraph {
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
     static String xmlFilePath = "";
 
-    public static DirectedSparseGraph<Integer, Edge> createDependencyGraph(List<DeclarationNode> declarations, List<DependenceNode> dependencies) {
+    public static DirectedSparseGraph<Integer, Edge> createDependencyGraph(String xmlFilePath) {
+
+        xmlFilePath = ioFunctionSet.getXmlFile(xmlFilePath);
+        findAllNodes();
+
+
         DirectedSparseGraph<Integer, Edge> g = new DirectedSparseGraph<>();
 
         //add vertex
-        for (DeclarationNode decl : declarations) {
+        for (DeclarationNode decl : declarationNodes) {
             g.addVertex(decl.getLineNumber());
         }
         for (DependenceNode depen : dependenceNodes) {
@@ -220,12 +225,12 @@ public class DependencyGraph {
 
     public static void main(String[] args) {
         String filePath = args[0];
-        xmlFilePath = ioFunctionSet.getXmlFile(filePath);
-        findAllNodes();
-        DirectedSparseGraph<Integer, Edge> graph = createDependencyGraph(declarationNodes, dependenceNodes);
+        DirectedSparseGraph<Integer, Edge> graph = createDependencyGraph(filePath);
         visualizeGraph(graph);
-        System.out.print("");
 
     }
+
+
+
 
 }
