@@ -29,12 +29,13 @@ public class DependencyGraph {
     static List<DeclarationNode> declarationNodes = new ArrayList<>();
     static List<DependenceNode> dependenceNodes = new ArrayList<>();
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
-    static String xmlFilePath = "";
+//    static String xmlFilePath = "";
+    static String tarFileName = "test_2";
 
-    public static DirectedSparseGraph<Integer, Edge> createDependencyGraph(String xmlFilePath) {
+    public static DirectedSparseGraph<Integer, Edge> createDependencyGraph(String filePath) {
 
-        xmlFilePath = ioFunctionSet.getXmlFile(xmlFilePath);
-        findAllNodes();
+       String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
+        findAllNodes(xmlFilePath);
 
 
         DirectedSparseGraph<Integer, Edge> g = new DirectedSparseGraph<>();
@@ -92,28 +93,28 @@ public class DependencyGraph {
     }
 
 
-    public static void findAllNodes() {
+    public static void findAllNodes(String xmlFilePath) {
         Entity entity = new Entity();
         for (String tag : entity.getOneLayerEntity()) {
             String query = "src:" + tag;
-            System.out.println(tag+"\n");
+            System.out.println(tag + "\n");
             if (entity.getDeclarationEntity().contains(tag)) {
-                findDeclarationNode(query, tag);
+                findDeclarationNode(xmlFilePath,query, tag);
             } else if (entity.getDependencyEntity().contains(tag)) {
-                findDependencyNode(query, tag);
+                findDependencyNode(xmlFilePath,query, tag);
             }
         }
 
         for (String tag : entity.getStmtEntity()) {
             String stmtTag = tag + "_stmt";
 
-            System.out.println(stmtTag+"\n");
+            System.out.println(stmtTag + "\n");
 
             String query = "src:" + stmtTag + "/src:" + tag;
             if (entity.getDeclarationEntity().contains(tag)) {
-                findDeclarationNode(query, stmtTag);
+                findDeclarationNode(xmlFilePath,query, stmtTag);
             } else if (entity.getDependencyEntity().contains(tag)) {
-                findDependencyNode(query, stmtTag);
+                findDependencyNode(xmlFilePath,query, stmtTag);
             }
         }
     }
@@ -135,16 +136,16 @@ public class DependencyGraph {
     }
 
 
-    public static void findDeclarationNode(String query, String decl_tag) {
+    public static void findDeclarationNode(String xmlFilePath,String query, String decl_tag) {
         //get decl_stmt name list
-        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+decl_tag+"_name.xml";
+        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/" + tarFileName+"/" + tarFileName +"_"+ decl_tag + "_name.xml";
         String declStmt_name_Query = "//" + query + "/src:name";
         searchQuery(xmlFilePath, declStmt_name_Query, name_output);
         Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
         Node nameList_root = declStmtNodeListTree.getChild(0);
 
         //get decl_stmt type list
-        String type_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+decl_tag+"_type.xml";
+        String type_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/"+ tarFileName+"/"  + tarFileName+"_"+  decl_tag + "_type.xml";
         String declSdeclStmt_type_QuerytmtQuery = "//" + query + "/src:type/src:name";
         searchQuery(xmlFilePath, declSdeclStmt_type_QuerytmtQuery, type_output);
         Document declStmtTypeNodeListTree = ioFunctionSet.getXmlDom(type_output);
@@ -166,9 +167,9 @@ public class DependencyGraph {
         }
     }
 
-    public static void findDependencyNode(String query, String tag) {
+    public static void findDependencyNode(String xmlFilePath,String query, String tag) {
         //get  name list
-        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/1/"+tag+"_dep.xml";
+        String name_output = "/Users/shuruiz/Work/tmpXMLFile/dependencyGraph/"+ tarFileName+"/"  + tarFileName +"_"+ tag + "_dep.xml";
         String name_Query = "//" + query + "/src:name";
 
         searchQuery(xmlFilePath, name_Query, name_output);
@@ -176,7 +177,7 @@ public class DependencyGraph {
 
         Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
 
-        if(declStmtNodeListTree!=null) {
+        if (declStmtNodeListTree != null) {
             Element nameList_root = (Element) declStmtNodeListTree.getChild(0);
             Elements elements = nameList_root.getChildElements();
 
@@ -224,13 +225,26 @@ public class DependencyGraph {
     }
 
     public static void main(String[] args) {
-        String filePath = args[0];
+
+//        filePath = "testcpp/dependencyGraph/1/A.cpp";
+
+
+        String dir = "testcpp/dependencyGraph/";
+        String testDir = dir + tarFileName+"/";
+
+
+        String filePath = testDir + tarFileName + ".tar.gz";
+        try {
+            new ProcessBuilder("tar", "-cvzf", filePath, testDir).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         DirectedSparseGraph<Integer, Edge> graph = createDependencyGraph(filePath);
         visualizeGraph(graph);
 
     }
-
-
 
 
 }

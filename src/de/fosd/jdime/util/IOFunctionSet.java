@@ -257,7 +257,8 @@ public class IOFunctionSet {
                      verbose = "-v";
                 }
 
-                new ProcessBuilder("srcML/src2srcml",verbose,"--xmlns:PREFIX=http://www.sdml.info/srcML/position", inputFile, "-o", outXmlFile).start();
+                new ProcessBuilder("srcML/src2srcml",verbose,"--xmlns:PREFIX=http://www.sdml.info/srcML/position",
+                        inputFile, "-o", outXmlFile).start();
                 sleep();
             } catch (IOException e) {
                 e.printStackTrace();

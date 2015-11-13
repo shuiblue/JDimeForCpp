@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -19,24 +18,20 @@ public class testDependencyGraph {
 
     @Test
     public void test1() {
-//        String tarFileName = "test_1";
-//        String filePath = dir + tarFileName + ".tar.gz";
-//        try {
-//            new ProcessBuilder("tar", "-cvzf", filePath, "testcpp/dependencyGraph/1/*.cpp", "testcpp/dependencyGraph/1/*.h").start();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        String[] args = {filePath};
-//
-//        DependencyGraph.main(args);
-//
-//        try {
-//            assertNotNull(IOFunctionSet.readResult(filePath));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-assertNotNull(1);
-        System.out.println("a");
+        String tarFileName = "test_1/";
+        String filePath = dir + tarFileName + ".tar.gz";
+        try {
+            new ProcessBuilder("tar", "-cvzf", filePath, dir+tarFileName+"/*.cpp", dir+tarFileName+"/*.h").start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] args = {filePath};
+        DependencyGraph.main(args);
+        try {
+            assertNotNull(IOFunctionSet.readResult(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
