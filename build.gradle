@@ -62,6 +62,7 @@ dependencies {
     }
     compile 'net.sf.jung:jung-graph-impl:2.0.1'
     compile 'net.sf.jung:jung-visualization:2.0.1'
+    compile 'net.sf.jung:jung2:2.0.1'
 }
 
 def configFile = file('JDime.properties')
