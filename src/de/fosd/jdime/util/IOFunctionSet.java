@@ -280,6 +280,7 @@ public class IOFunctionSet {
             String xml =  readResult(xmlFilePath);
             if(xml.length()>0) {
                 doc = builder.build(file);
+
             }
         } catch (ParsingException e) {
             e.printStackTrace();

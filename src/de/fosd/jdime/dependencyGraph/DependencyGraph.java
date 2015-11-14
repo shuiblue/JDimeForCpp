@@ -1,13 +1,8 @@
 package de.fosd.jdime.dependencyGraph;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import de.fosd.jdime.util.Entity;
@@ -16,12 +11,13 @@ import edu.uci.ics.jung.graph.*;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import nu.xom.Node;
 import org.apache.commons.collections15.Transformer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
+import org.apache.commons.collections15.bag.SynchronizedBag;
+
 import javax.swing.*;
 
 
@@ -40,10 +36,10 @@ public class DependencyGraph {
 
         //add vertex
         for (DeclarationNode decl : declarationNodes) {
-            g.addVertex(decl.getLineNumber() + "--" + decl.getFileName());
+            g.addVertex(decl.getLineNumber() + "-" + decl.getFileName());
         }
         for (DependenceNode depen : dependenceNodes) {
-            g.addVertex(depen.getLineNumber() + "--" + depen.getFileName());
+            g.addVertex(depen.getLineNumber() + "-" + depen.getFileName());
         }
         //check .h define function and  .cpp define the body
         for (DeclarationNode d1 : declarationNodes) {
@@ -136,25 +132,27 @@ public class DependencyGraph {
     }
 
 
-    public static void separateFileNode(String xmlFilePath) {
-        Document doc = ioFunctionSet.getXmlDom(xmlFilePath);
-        Elements fileElementList = ((Element) doc.getChild(0)).getChildElements();
-        for (int i = 0; i < fileElementList.size(); i++) {
-            String[] filePath = fileElementList.get(i).getAttributeValue("filename").split("/");
-
-            String fileName = filePath[filePath.length - 1];
-            findAllNodes(xmlFilePath, fileName);
-        }
-    }
-
     public static void searchQuery(String xmlPath, String xpathQuery, String output) {
 
         //run srcML
         if (new File(xmlPath).isFile()) {
             try {
-                ProcessBuilder processBuilder = new ProcessBuilder("srcML/srcml2src", "--xpath", xpathQuery, xmlPath, "-o", output);
-                processBuilder.start();
+                String cmd = "srcML/srcml2src " + "--xpath " + xpathQuery + " " + xmlPath + " -o " + output;
+                String[] command = cmd.split(" ");
+                ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+                Process process = processBuilder.start();
+                process.waitFor();
+
+                //I don't have choice,,, when I use this loop, the wired bug is gone...
+                while (ioFunctionSet.clearBlank(ioFunctionSet.readResult(output)).length() == 0) {
+                    ProcessBuilder processBuilder1 = new ProcessBuilder(command);
+                    Process process1 = processBuilder.start();
+                    process1.waitFor();
+                }
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {
@@ -164,43 +162,47 @@ public class DependencyGraph {
 
 
     public static void findDeclarationNode(String xmlFilePath, String query, String decl_tag, String fileName) {
+
         //get decl_stmt name list
         String name_output = xmlFilePath + "_" + decl_tag + "_name.xml";
         String declStmt_name_Query = "//" + query + "/src:name";
         searchQuery(xmlFilePath, declStmt_name_Query, name_output);
         Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
+
+
         Element nameList_root = (Element) declStmtNodeListTree.getChild(0);
 
-        //get decl_stmt type list
-        String type_output = xmlFilePath + "_" + decl_tag + "_type.xml";
-        String declStmtQuery = "//" + query + "/src:type/src:name";
-        searchQuery(xmlFilePath, declStmtQuery, type_output);
-        Document declStmtTypeNodeListTree = ioFunctionSet.getXmlDom(type_output);
-        Element typeList_root = (Element) declStmtTypeNodeListTree.getChild(0);
+        if (nameList_root.getChildElements().size() > 0) {
+            //get decl_stmt type list
+            String type_output = xmlFilePath + "_" + decl_tag + "_type.xml";
+            String declStmtQuery = "//" + query + "/src:type/src:name";
+            searchQuery(xmlFilePath, declStmtQuery, type_output);
+            Document declStmtTypeNodeListTree = ioFunctionSet.getXmlDom(type_output);
+            Element typeList_root = (Element) declStmtTypeNodeListTree.getChild(0);
 
-        Elements elements = nameList_root.getChildElements();
-        for (int i = 0; i < elements.size(); i++) {
-            Element nameNode = (Element) elements.get(i).getChild(0);
-            if (nameNode.getAttributeCount() > 0) {
-                String declStmt_name = nameNode.getValue();
-                String lineNum = nameNode.getAttribute(0).getValue();
-                //get type
-                Element typeNode = (Element) typeList_root.getChildElements().get(i).getChild(0);
-                String type = typeNode.getValue();
-                declarationNodes.add(new DeclarationNode(declStmt_name, type, lineNum, decl_tag, fileName));
-            } else if ((nameNode.getChildElements().size() > 0)) {
-                if (decl_tag.contains("function")) {
-                    //get type
-                    Element typeNode = typeList_root.getChildElements().get(0);
-                    String type = typeNode.getValue();
-
+            Elements elements = nameList_root.getChildElements();
+            for (int i = 0; i < elements.size(); i++) {
+                Element nameNode = (Element) elements.get(i).getChild(0);
+                if (nameNode.getAttributeCount() > 0) {
                     String declStmt_name = nameNode.getValue();
-                    String lineNum = nameNode.getChildElements().get(0).getAttribute(0).getValue();
-
+                    String lineNum = nameNode.getAttribute(0).getValue();
+                    //get type
+                    Element typeNode = (Element) typeList_root.getChildElements().get(i).getChild(0);
+                    String type = typeNode.getValue();
                     declarationNodes.add(new DeclarationNode(declStmt_name, type, lineNum, decl_tag, fileName));
+                } else if ((nameNode.getChildElements().size() > 0)) {
+                    if (decl_tag.contains("function")) {
+                        //get type
+                        Element typeNode = typeList_root.getChildElements().get(0);
+                        String type = typeNode.getValue();
+
+                        String declStmt_name = nameNode.getValue();
+                        String lineNum = nameNode.getChildElements().get(0).getAttribute(0).getValue();
+
+                        declarationNodes.add(new DeclarationNode(declStmt_name, type, lineNum, decl_tag, fileName));
+                    }
                 }
             }
-//            }
         }
     }
 
@@ -214,10 +216,13 @@ public class DependencyGraph {
         searchQuery(xmlFilePath, name_Query, name_output);
 
 
-        Document declStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
+        Document depStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
 
-        if (declStmtNodeListTree != null) {
-            Element nameList_root = (Element) declStmtNodeListTree.getChild(0);
+
+        Element nameList_root = (Element) depStmtNodeListTree.getChild(0);
+
+        if (nameList_root.getChildElements().size() > 0) {
+
             Elements elements = nameList_root.getChildElements();
 
             for (int i = 0; i < elements.size(); i++) {
@@ -245,13 +250,13 @@ public class DependencyGraph {
 
     public static void visualizeGraph(DirectedSparseGraph<String, Edge> g) {
         VisualizationImageServer<String, Edge> vv =
-                new VisualizationImageServer<String, Edge>(new CircleLayout<String, Edge>(g), new Dimension(400, 400));
+                new VisualizationImageServer<String, Edge>(new CircleLayout<String, Edge>(g), new Dimension(600, 600));
 // Setup up a new vertex to paint transformer...
         Transformer<String, Paint> vertexPaint = new Transformer<String, Paint>() {
             public Paint transform(String str) {
-                if(str.contains(".h")) {
+                if (str.contains(".h")) {
                     return Color.GREEN;
-                }else{
+                } else {
                     return Color.PINK;
                 }
             }
@@ -302,6 +307,7 @@ public class DependencyGraph {
             }
         }
         DirectedSparseGraph<String, Edge> graph = createDependencyGraph();
+        System.out.print("the graph is : " + graph.toString());
         visualizeGraph(graph);
 
     }
