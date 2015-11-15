@@ -14,3 +14,11 @@ void CardReader()
    write();
    write(file,b);
 }
+void CardReader::ls() 
+{
+  lsAction=LS_SerialPrint;
+}
+static void lcd_sdcard_print_menu();
+void lcd_sdcard_print_menu(){
+	lcd_sdcard_menu();
+}

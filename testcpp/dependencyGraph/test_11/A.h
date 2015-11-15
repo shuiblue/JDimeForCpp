@@ -3,5 +3,4 @@ class CardReader
 {
 public:
   CardReader();
-    void ls();
 }

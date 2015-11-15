@@ -26,6 +26,8 @@ public class Entity {
     Set<String> declarationEntity = null;
     Set<String> dependencyEntity = null;
 
+    Set<String> funcionDeclarationEntity = null;
+
 
 
     public Entity() {
@@ -137,6 +139,15 @@ public class Entity {
         dependencyEntity = new HashSet<>();
         dependencyEntity.add("call");
         dependencyEntity.add("expr");
+
+        funcionDeclarationEntity = new HashSet<>();
+        funcionDeclarationEntity.add("function_decl");
+        funcionDeclarationEntity.add("function");
+        funcionDeclarationEntity.add("constructor");
+        funcionDeclarationEntity.add("constructor_decl");
+        funcionDeclarationEntity.add("destructor");
+        funcionDeclarationEntity.add("destructor_decl");
+
     }
 
     public Set<String> getNonTerminal() {
@@ -180,4 +191,8 @@ public class Entity {
     public Set<String> getDependencyEntity() {
         return dependencyEntity;
     }
+    public Set<String> getFuncionDeclarationEntity() {
+        return funcionDeclarationEntity;
+    }
+
 }

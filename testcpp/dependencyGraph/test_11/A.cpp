@@ -14,7 +14,3 @@ void CardReader()
    write();
    write(file,b);
 }
-void CardReader::ls() 
-{
-  lsAction=LS_SerialPrint;
-}
