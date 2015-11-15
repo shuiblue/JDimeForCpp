@@ -48,6 +48,9 @@ public class IOFunctionSet {
         }
     }
 
+
+
+
     /**
      * This function presice the pretty print result of a block when:
      * 1)neighbor lines have the same condition
@@ -197,7 +200,7 @@ public class IOFunctionSet {
     }
 
 
-    public String clearBlank(String s) {
+    public static  String clearBlank(String s) {
         return s.replace("\n", "").replace(" ", "").replace("\t", "");
     }
 

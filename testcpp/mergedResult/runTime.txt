@@ -8,3 +8,9 @@
 2317
 3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
 3094
+3 way merge: blinkm.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3512
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4675
+3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
+3132

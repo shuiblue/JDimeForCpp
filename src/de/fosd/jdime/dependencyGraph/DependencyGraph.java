@@ -3,6 +3,8 @@ package de.fosd.jdime.dependencyGraph;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import de.fosd.jdime.util.Entity;
@@ -29,17 +31,43 @@ public class DependencyGraph {
     static List<DependenceNode> dependenceNodes = new ArrayList<>();
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
 
-    public static DirectedSparseGraph<String, Edge> createDependencyGraph() {
+    public static DirectedSparseGraph<String, Edge> createDependencyGraph(String testDir) {
+
+
+        String dirPath = "testcpp/dependencyGraph/";
+
+////        String testDir = "test_3";
+//        String testDir = args[0]+"/";
+
+        String testDirPath = dirPath + testDir + "/";
+
+
+        File dir = new File(testDirPath);
+        String[] names = dir.list();
+        for (String fileName : names) {
+            if (fileName.endsWith(".cpp") || fileName.endsWith(".h")) {
+                String filePath = testDirPath + fileName;
+                String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
+//            String fileName = filePath.split("/")[filePath.split("/").length - 1];
+                System.out.print(fileName + "\n");
+                findAllNodes(xmlFilePath, fileName);
+            }
+        }
 
 
         DirectedSparseGraph<String, Edge> g = new DirectedSparseGraph<>();
 
         //add vertex
         for (DeclarationNode decl : declarationNodes) {
-            g.addVertex(decl.getLineNumber() + "-" + decl.getFileName());
+            if (!g.containsVertex(decl.getLineNumber() + "-" + decl.getFileName())) {
+                g.addVertex(decl.getLineNumber() + "-" + decl.getFileName());
+            }
         }
         for (DependenceNode depen : dependenceNodes) {
-            g.addVertex(depen.getLineNumber() + "-" + depen.getFileName());
+
+            if (!g.containsVertex(depen.getLineNumber() + "-" + depen.getFileName())) {
+                g.addVertex(depen.getLineNumber() + "-" + depen.getFileName());
+            }
         }
         //check .h define function and  .cpp define the body
         for (DeclarationNode d1 : declarationNodes) {
@@ -48,11 +76,12 @@ public class DependencyGraph {
                         && !d1.getFileName().equals(d2.getFileName())) {
                     if (d1.getName().equals(d2.getName()) && d1.getType().equals(d2.getType())) {
                         if (d1.getFileName().endsWith(".h")) {
-                            g.addEdge(new Edge("define " + d1.getType() + " " + d1.getName()), d2.getLineNumber() + "--" + d2.getFileName(), d1.getLineNumber() + "--" + d1.getFileName());
-//                       d1.dependencies.add(d2);
-                        } else {
-                            g.addEdge(new Edge("define " + d1.getType() + " " + d1.getName()), d1.getLineNumber() + "--" + d1.getFileName(), d2.getLineNumber() + "--" + d2.getFileName());
 
+                            Edge edge = new Edge("define " + d1.getType() + " " + d1.getName(), d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
+                            g.addEdge(edge, d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
+                        } else {
+                            Edge edge = new Edge("define " + d1.getType() + " " + d1.getName(), d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
+                            g.addEdge(edge, d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
                         }
                     }
                 }
@@ -78,10 +107,12 @@ public class DependencyGraph {
 
                     }
                     name = depen.getName();
-                    g.addEdge(new Edge(type + " " + name), depen.getLineNumber() + "--" + depen.getFileName(), decl.getLineNumber() + "--" + decl.getFileName());
+                    Edge edge = new Edge(type + " " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+                    g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
                 }
             }
         }
+
         return g;
     }
 
@@ -109,7 +140,6 @@ public class DependencyGraph {
         Entity entity = new Entity();
         for (String tag : entity.getOneLayerEntity()) {
             String query = "src:" + tag;
-            System.out.println(tag + "\n");
             if (entity.getDeclarationEntity().contains(tag)) {
                 findDeclarationNode(xmlFilePath, query, tag, fileName);
             } else if (entity.getDependencyEntity().contains(tag)) {
@@ -119,9 +149,6 @@ public class DependencyGraph {
 
         for (String tag : entity.getStmtEntity()) {
             String stmtTag = tag + "_stmt";
-
-            System.out.println(stmtTag + "\n");
-
             String query = "src:" + stmtTag + "/src:" + tag;
             if (entity.getDeclarationEntity().contains(tag)) {
                 findDeclarationNode(xmlFilePath, query, stmtTag, fileName);
@@ -214,17 +241,10 @@ public class DependencyGraph {
         String name_Query = "//" + query + "/src:name";
 
         searchQuery(xmlFilePath, name_Query, name_output);
-
-
         Document depStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
-
-
         Element nameList_root = (Element) depStmtNodeListTree.getChild(0);
-
         if (nameList_root.getChildElements().size() > 0) {
-
             Elements elements = nameList_root.getChildElements();
-
             for (int i = 0; i < elements.size(); i++) {
                 Element nameNode = elements.get(i);
                 if (((Element) nameNode.getChild(0)).getAttributeCount() > 0) {
@@ -240,8 +260,6 @@ public class DependencyGraph {
                         dependenceNodes.add(new DependenceNode(declStmt_name, tag, lineNum, fileName));
                     }
                 }
-
-//                String lineNum = ((Element) nameNode.getChild(0)).getAttribute(0).getValue();
                 System.out.print("");
             }
         }
@@ -289,25 +307,8 @@ public class DependencyGraph {
 
     public static void main(String[] args) {
 
-        String dirPath = "testcpp/dependencyGraph/";
-
-        String testDir = "test_3";
-        String testDirPath = dirPath + testDir + "/";
-
-
-        File dir = new File(testDirPath);
-        String[] names = dir.list();
-        for (String fileName : names) {
-            if (fileName.endsWith(".cpp") || fileName.endsWith(".h")) {
-                String filePath = testDirPath + fileName;
-                String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
-//            String fileName = filePath.split("/")[filePath.split("/").length - 1];
-                System.out.print(fileName + "\n");
-                findAllNodes(xmlFilePath, fileName);
-            }
-        }
-        DirectedSparseGraph<String, Edge> graph = createDependencyGraph();
-        System.out.print("the graph is : " + graph.toString());
+        String testDir = "test_10";
+        DirectedSparseGraph<String, Edge> graph = createDependencyGraph(testDir);
         visualizeGraph(graph);
 
     }
