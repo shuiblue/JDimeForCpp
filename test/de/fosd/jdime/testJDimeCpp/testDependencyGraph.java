@@ -37,19 +37,20 @@ public class testDependencyGraph {
         expect.addVertex("1-B.cpp");
         expect.addVertex("2-B.cpp");
 
+        //Func_decl,Call,Statment
         //add edge
-        expect.addEdge(new Edge("function_decl void SendColors", "1-A.cpp", "1-A.h"), "1-A.cpp", "1-A.h");
+        expect.addEdge(new Edge("<Func_decl> void SendColors", "1-A.cpp", "1-A.h"), "1-A.cpp", "1-A.h");
 
-        expect.addEdge(new Edge("int filesize", "12-A.cpp", "5-A.cpp"), "12-A.cpp", "5-A.cpp");
-        expect.addEdge(new Edge("int filesize", "13-A.cpp", "5-A.cpp"), "13-A.cpp", "5-A.cpp");
+        expect.addEdge(new Edge("<Statment> int filesize", "12-A.cpp", "5-A.cpp"), "12-A.cpp", "5-A.cpp");
+        expect.addEdge(new Edge("<Statment> int filesize", "13-A.cpp", "5-A.cpp"), "13-A.cpp", "5-A.cpp");
 
-        expect.addEdge(new Edge("String file", "15-A.cpp", "9-A.cpp"), "15-A.cpp", "9-A.cpp");
+        expect.addEdge(new Edge("<Statment> String file", "15-A.cpp", "9-A.cpp"), "15-A.cpp", "9-A.cpp");
 
-        expect.addEdge(new Edge("call print", "13-A.cpp", "7-A.cpp"), "13-A.cpp", "7-A.cpp");
+        expect.addEdge(new Edge("<Call> void print", "13-A.cpp", "7-A.cpp"), "13-A.cpp", "7-A.cpp");
 
-        expect.addEdge(new Edge("call write", "13-A.cpp", "8-A.cpp"), "13-A.cpp", "8-A.cpp");
-        expect.addEdge(new Edge("call write", "14-A.cpp", "8-A.cpp"), "14-A.cpp", "8-A.cpp");
-        expect.addEdge(new Edge("call write", "15-A.cpp", "8-A.cpp"), "15-A.cpp", "8-A.cpp");
+        expect.addEdge(new Edge("<Call> int write", "13-A.cpp", "8-A.cpp"), "13-A.cpp", "8-A.cpp");
+        expect.addEdge(new Edge("<Call> int write", "14-A.cpp", "8-A.cpp"), "14-A.cpp", "8-A.cpp");
+        expect.addEdge(new Edge("<Call> int write", "15-A.cpp", "8-A.cpp"), "15-A.cpp", "8-A.cpp");
 
 //expect.getInEdges()
         return expect;
@@ -157,8 +158,9 @@ public class testDependencyGraph {
 
         expect.addVertex("2-A.h");
         expect.addVertex("5-A.h");
-        expect.addEdge(new Edge("function_decl void CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
-        expect.addEdge(new Edge("<SAMENAME> class CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
+        expect.addEdge(new Edge("<Func_decl> constructor CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
+        expect.addEdge(new Edge("<Cons_Destruction> class CardReader", "10-A.cpp", "2-A.h"), "10-A.cpp", "2-A.h");
+        expect.addEdge(new Edge("<SAMENAME> CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
 
         assertTrue(compareTwoGraphs(result, expect));
     }
@@ -172,14 +174,15 @@ public class testDependencyGraph {
 
         expect.addVertex("2-A.h");
         expect.addVertex("5-A.h");
-        expect.addEdge(new Edge("function_decl void CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
-        expect.addEdge(new Edge("<SAMENAME> class CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
+        expect.addEdge(new Edge("<Func_decl> constructor CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
+        expect.addEdge(new Edge("<Cons_Destruction> class CardReader", "10-A.cpp", "2-A.h"), "10-A.cpp", "2-A.h");
+        expect.addEdge(new Edge("<SAMENAME> CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
 
         expect.addVertex("17-A.cpp");
         expect.addVertex("19-A.cpp");
         expect.addVertex("6-A.h");
-        expect.addEdge(new Edge("function_decl void ls","17-A.cpp","6-A.h"),"17-A.cpp","6-A.h");
-        expect.addEdge(new Edge("<SAME class> CardReader","17-A.cpp","2-A.h"),"17-A.cpp","2-A.h");
+        expect.addEdge(new Edge("<Func_decl> void ls","17-A.cpp","6-A.h"),"17-A.cpp","6-A.h");
+        expect.addEdge(new Edge("<BelongsToClass> CardReader","17-A.cpp","2-A.h"),"17-A.cpp","2-A.h");
 
         assertTrue(compareTwoGraphs(result, expect));
     }
@@ -191,20 +194,22 @@ public class testDependencyGraph {
 
         expect.addVertex("2-A.h");
         expect.addVertex("5-A.h");
-        expect.addEdge(new Edge("function_decl CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
-        expect.addEdge(new Edge("<SAMENAME> class CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
+        expect.addEdge(new Edge("<Func_decl> constructor CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
+        expect.addEdge(new Edge("<Cons_Destruction> class CardReader", "10-A.cpp", "2-A.h"), "10-A.cpp", "2-A.h");
+        expect.addEdge(new Edge("<SAMENAME> CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
 
         expect.addVertex("17-A.cpp");
         expect.addVertex("19-A.cpp");
         expect.addVertex("6-A.h");
-        expect.addEdge(new Edge("function_decl ls","17-A.cpp","6-A.h"),"17-A.cpp","6-A.h");
-        expect.addEdge(new Edge("<SAME class> CardReader","17-A.cpp","2-A.h"),"17-A.cpp","2-A.h");
+        expect.addEdge(new Edge("<Func_decl> void ls","17-A.cpp","6-A.h"),"17-A.cpp","6-A.h");
+        expect.addEdge(new Edge("<BelongsToClass> CardReader","17-A.cpp","2-A.h"),"17-A.cpp","2-A.h");
 
         expect.addVertex("21-A.cpp");
         expect.addVertex("22-A.cpp");
         expect.addVertex("23-A.cpp");
 
-        expect.addEdge(new Edge("call lcd_sdcard_print_menu","22-A.cpp","21-A.cpp"),"22-A.cpp","21-A.cpp");
+        expect.addEdge(new Edge("<Func_decl> void lcd_sdcard_print_menu","22-A.cpp","21-A.cpp"),"22-A.cpp","21-A.cpp");
+        expect.addEdge(new Edge("<SAMENAME> lcd_sdcard_print_menu","2-B.cpp","21-A.cpp"),"2-B.cpp","21-A.cpp");
 
         assertTrue(compareTwoGraphs(result, expect));
     }

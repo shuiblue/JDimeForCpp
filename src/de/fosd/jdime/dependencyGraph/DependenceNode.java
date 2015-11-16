@@ -7,6 +7,7 @@ public class DependenceNode {
     String lineNumber;
     String fileName;
     String name;
+    String type;
     String tag;
     DeclarationNode declaration;
 
@@ -17,7 +18,13 @@ public class DependenceNode {
         this.lineNumber = lineNumber;
     }
 
-
+    DependenceNode(String type,String name, String tag, String lineNumber, String fileName) {
+        this.type = type;
+        this.name = name;
+        this.fileName = fileName;
+        this.tag = tag;
+        this.lineNumber = lineNumber;
+    }
     public String getName() {
         return name;
     }

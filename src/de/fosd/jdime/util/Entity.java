@@ -19,7 +19,6 @@ public class Entity {
     Set<String> classBody = null;
 
 
-
     Set<String> oneLayerEntity = null;
     Set<String> stmtEntity = null;
 
@@ -27,8 +26,14 @@ public class Entity {
     Set<String> dependencyEntity = null;
 
     Set<String> funcionDeclarationEntity = null;
+    Set<String> funcionEntity = null;
+    Set<String> funcionBodyEntity = null;
 
+    Set<String> consDestructorEntity = null;
 
+    public Set<String> getConsDestructorEntity() {
+        return consDestructorEntity;
+    }
 
     public Entity() {
         nonTerminal = new HashSet<>();
@@ -115,12 +120,13 @@ public class Entity {
         classBody.add("protected");
 
         oneLayerEntity = new HashSet<>();
+
         oneLayerEntity.add("function");
         oneLayerEntity.add("function_decl");
         oneLayerEntity.add("class_decl");
         oneLayerEntity.add("constructor_decl");
         oneLayerEntity.add("destructor");
-
+        oneLayerEntity.add("constructor");
         oneLayerEntity.add("call");
         oneLayerEntity.add("expr");
 
@@ -129,24 +135,40 @@ public class Entity {
         stmtEntity.add("decl");
 
         declarationEntity = new HashSet<>();
-        declarationEntity.add("function");
         declarationEntity.add("function_decl");
         declarationEntity.add("class_decl");
         declarationEntity.add("constructor_decl");
-        declarationEntity.add("destructor");
         declarationEntity.add("decl");
 
         dependencyEntity = new HashSet<>();
         dependencyEntity.add("call");
         dependencyEntity.add("expr");
+        dependencyEntity.add("function");
+        dependencyEntity.add("constructor");
+        dependencyEntity.add("destructor");
+
+        funcionEntity = new HashSet<>();
+        funcionEntity.add("function_decl");
+        funcionEntity.add("function");
+        funcionEntity.add("constructor");
+        funcionEntity.add("constructor_decl");
+        funcionEntity.add("destructor");
+        funcionEntity.add("destructor_decl");
+
+        funcionBodyEntity = new HashSet<>();
+        funcionBodyEntity.add("function");
+        funcionBodyEntity.add("constructor");
+        funcionBodyEntity.add("destructor");
 
         funcionDeclarationEntity = new HashSet<>();
         funcionDeclarationEntity.add("function_decl");
-        funcionDeclarationEntity.add("function");
-        funcionDeclarationEntity.add("constructor");
         funcionDeclarationEntity.add("constructor_decl");
-        funcionDeclarationEntity.add("destructor");
         funcionDeclarationEntity.add("destructor_decl");
+
+        consDestructorEntity = new HashSet<>();
+        consDestructorEntity.add("constructor");
+        consDestructorEntity.add("destructor");
+
 
     }
 
@@ -191,8 +213,16 @@ public class Entity {
     public Set<String> getDependencyEntity() {
         return dependencyEntity;
     }
+
     public Set<String> getFuncionDeclarationEntity() {
         return funcionDeclarationEntity;
+    }
+    public Set<String> getFuncionBodyEntity() {
+        return funcionBodyEntity;
+    }
+
+    public Set<String> getFuncionEntity() {
+        return funcionEntity;
     }
 
 }

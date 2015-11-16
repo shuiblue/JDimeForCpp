@@ -71,108 +71,60 @@ public class DependencyGraph {
             }
         }
         //check .h define function and  .cpp define the body
-        for (DeclarationNode d1 : declarationNodes) {
-            for (DeclarationNode d2 : declarationNodes) {
-                //for example: A.cpp vs A.h
-
-//                if ((d1.getFileName().split("\\.")[0].equals(d2.getFileName().split("\\.")[0]))
-//                        && !d1.getFileName().equals(d2.getFileName())) {
-//
-//                    if (d1.getName().equals(d2.getName())) {
-                Relation relation = isRelated(d1, d2);
-                if(relation.equals(Relation.TRUE)){
-
-                    if(d1.getDecl_tag().contains("function")){
-                        if (d1.getDecl_tag().contains("decl")) {
-
-                            Edge edge = new Edge(d1.getDecl_tag()+" "+d1.getType()+" " + d1.getName(), d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-                            g.addEdge(edge, d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-                        } else {
-                            Edge edge = new Edge(d2.getDecl_tag()+" "+d2.getType()+" "  + d2.getName(), d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                            g.addEdge(edge, d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                        }
-                    }else if(d1.getFileName().equals(d2.getFileName())){
-
-//                        if (d1.getType().equals(d2.getType())) {
-                            if (d1.getFileName().endsWith(".h")) {
-
-                                Edge edge = new Edge(d1.getDecl_tag()+" "+d1.getType()+" " + d1.getName(), d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-                                g.addEdge(edge, d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-                            } else {
-                                Edge edge = new Edge(d2.getDecl_tag()+" "+d2.getType()+" "  + d2.getName(), d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                                g.addEdge(edge, d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                            }
-                        } else if (d1.getType().contains("class")) {
-                            if (d1.getType().endsWith("-func")) {
-                                Edge edge = new Edge("<SAME class> " + d1.getName(), d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                                g.addEdge(edge, d1.getLineNumber() + "-" + d1.getFileName(), d2.getLineNumber() + "-" + d2.getFileName());
-                            } else if(d2.getType().endsWith("-func")){
-                                Edge edge = new Edge("<SAME class>" + d2.getName(), d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-                                g.addEdge(edge, d2.getLineNumber() + "-" + d2.getFileName(), d1.getLineNumber() + "-" + d1.getFileName());
-
-                            }
-                        }
-//                    }
+        for (DependenceNode dep1 : dependenceNodes) {
+            for (DependenceNode dep2 : dependenceNodes) {
+                if (dep1.getName().equals(dep2.getName())) {
+                    Relation relation = isRelated(dep1, dep2);
+                    if (!relation.equals(Relation.False)) {
+                        Edge edge = new Edge("<" + relation.name() + "> " + dep1.getTag() + " " + dep1.getName(),
+                                dep1.getLineNumber() + "-" + dep1.getFileName(), dep2.getLineNumber() + "-" + dep2.getFileName());
+                        g.addEdge(edge, dep1.getLineNumber() + "-" + dep1.getFileName(), dep2.getLineNumber() + "-" + dep2.getFileName());
+                    }
                 }
             }
         }
-
         //find dependency between depen Node --> decl Node
         for (int i = 0; i < declarationNodes.size(); i++) {
             for (int j = 0; j < dependenceNodes.size(); j++) {
                 DeclarationNode decl = declarationNodes.get(i);
                 DependenceNode depen = dependenceNodes.get(j);
-                Relation relation = isRelated(decl, depen);
-                if (relation.equals(Relation.TRUE)) {
-
-                    //in .h file, function declaration is <expr_stmt><call>,
-                    //prevent .cpp function_decl ---> .h function declaration
-                    if (decl.getFileName().endsWith("cpp") && depen.getFileName().endsWith("h")) {
-                        //create edge
-                        String  name= depen.getName();
-                        Edge edge = new Edge("function_decl "+decl.getType()+" " + name, decl.getLineNumber() + "-" + decl.getFileName(), depen.getLineNumber() + "-" + depen.getFileName());
-                        g.addEdge(edge, decl.getLineNumber() + "-" + decl.getFileName(), depen.getLineNumber() + "-" + depen.getFileName());
-
+                if (decl.getName().equals(depen.getName())) {
+                    Relation relation = isRelated(decl, depen);
+                    String type = decl.getType();
+                    String name = decl.getName();
+                    if (relation.equals(Relation.BelongsToClass)) {
+                        Edge edge = new Edge("<" + relation.name() + "> " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+                        continue;
+                    }
+                    if (!relation.equals(Relation.SAMENAME)) {
+                        Edge edge = new Edge("<" + relation.name() + "> " + type + " " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
                     } else {
-                        decl.getDependencies().add(depen);
-                        depen.setDeclaration(decl);
-
-                        //create edge
-                        String type, name;
-                        if (decl.getDecl_tag().equals("decl_stmt")) {
-                            type = decl.getType();
-                        } else {
-                            type = depen.getTag();
-                        }
-                        name = depen.getName();
-                        Edge edge = new Edge(type + " " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+                        Edge edge = new Edge("<" + relation.name() + "> " + name,
+                                depen.getLineNumber() + "-" + depen.getFileName(),
+                                decl.getLineNumber() + "-" + decl.getFileName());
                         g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
 
                     }
-                } else if (relation.equals(Relation.SAMENAME)) {
-                    String type, name;
-                    type = decl.getType();
-                    name = depen.getName();
-                    Edge edge = new Edge("<SAMENAME> " + type + " " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
-                    g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
-
                 }
             }
         }
-
         return g;
     }
 
-    public static Relation isRelated(DeclarationNode d1,DeclarationNode d2){
-        if(d1.getType().equals(d2.getType())&&d1.getName().equals(d2.getName())){
-           if( d1.getDecl_tag()!=d2.getDecl_tag()){
-                return  Relation.TRUE;
-            }else{
-                return  Relation.FALSE;
+    public static Relation isRelated(DependenceNode d1, DependenceNode d2) {
+        Entity entity = new Entity();
+        if (d1.getTag() != d2.getTag()) {
+            if (d1.getFileName().endsWith("cpp") && d2.getFileName().endsWith("h")
+                    && entity.getConsDestructorEntity().contains(d1.getTag())
+                    && d2.getTag().equals("call")) {
+                return Relation.Func_decl;
             }
         }
-        return  Relation.FALSE;
+        return Relation.False;
     }
+
 
     /**
      * check whether two nodes has dependency relation
@@ -184,20 +136,22 @@ public class DependencyGraph {
     public static Relation isRelated(DeclarationNode decl, DependenceNode depen) {
         Entity entity = new Entity();
 
-        if (decl.getName().equals(depen.getName())) {
-            if (decl.getDecl_tag().equals("decl_stmt") && depen.getTag().contains("expr")) {
-                return Relation.TRUE;
-            } else if (depen.getTag().equals("call") && entity.getFuncionDeclarationEntity().contains(decl.getDecl_tag())) {
-                return Relation.TRUE;
-            }
-//            else if (decl.getDecl_tag().contains("class")) {
-//                return Relation.SAMENAME;
-//            }
-            else{
-                return  Relation.SAMENAME;
-            }
+//        if (decl.getName().equals(depen.getName())) {
+        if (decl.getDecl_tag().equals("decl_stmt") && depen.getTag().contains("expr")) {
+            return Relation.Statment;
+        } else if (depen.getTag().equals("call") && entity.getFuncionEntity().contains(decl.getDecl_tag())) {
+            return Relation.Call;
+        } else if (entity.getFuncionDeclarationEntity().contains(decl.getDecl_tag()) && entity.getFuncionBodyEntity().contains(depen.getTag())) {
+            return Relation.Func_decl;
+        } else if (decl.getType().equals("class") && entity.getConsDestructorEntity().contains(depen.getTag())) {
+            return Relation.Cons_Destruction;
+        } else if (depen.getTag().equals("Func_Class")) {
+            return Relation.BelongsToClass;
+        } else {
+            return Relation.SAMENAME;
         }
-        return Relation.FALSE;
+//        }
+//        return Relation.FALSE;
     }
 
 
@@ -283,26 +237,27 @@ public class DependencyGraph {
                     String type = typeNode.getValue();
                     declarationNodes.add(new DeclarationNode(declStmt_name, type, lineNum, decl_tag, fileName));
                 } else if ((nameNode.getChildElements().size() > 0)) {
-                    if (decl_tag.contains("function")) {
-                        //get type
-                        Element typeNode = typeList_root.getChildElements().get(0);
-                        String type = typeNode.getValue();
+//                    if (decl_tag.contains("function")) {
+                    //get type
+                    Element typeNode = typeList_root.getChildElements().get(0);
+                    String type = typeNode.getValue();
 
-                        String functionName = nameNode.getValue();
-                        String lineNum = nameNode.getChildElements().get(0).getAttribute(0).getValue();
+                    String functionName = nameNode.getValue();
+                    String lineNum = nameNode.getChildElements().get(0).getAttribute(0).getValue();
 
+                    declarationNodes.add(new DeclarationNode(functionName, type, lineNum, decl_tag, fileName));
 
-                        if (functionName.contains("::")) {
-                            String className = functionName.split("::")[0];
-                            String newfunctionName = functionName.split("::")[1];
-
-                            declarationNodes.add(new DeclarationNode(className, "class-func", lineNum, "class-func", fileName));
-                            declarationNodes.add(new DeclarationNode(newfunctionName, type, lineNum, decl_tag, fileName));
-                        } else {
-
-                            declarationNodes.add(new DeclarationNode(functionName, type, lineNum, decl_tag, fileName));
-                        }
-                    }
+//                    if (functionName.contains("::")) {
+////                        String className = functionName.split("::")[0];
+//                        String newfunctionName = functionName.split("::")[1];
+//
+////                        declarationNodes.add(new DeclarationNode(className, "class-func", lineNum, "class-func", fileName));
+//                        declarationNodes.add(new DeclarationNode(newfunctionName, type, lineNum, decl_tag, fileName));
+//                    } else {
+//
+//                        declarationNodes.add(new DeclarationNode(functionName, type, lineNum, decl_tag, fileName));
+//                    }
+//                    }
                 }
             }
         }
@@ -318,16 +273,30 @@ public class DependencyGraph {
         searchQuery(xmlFilePath, name_Query, name_output);
         Document depStmtNodeListTree = ioFunctionSet.getXmlDom(name_output);
         Element nameList_root = (Element) depStmtNodeListTree.getChild(0);
-        if (nameList_root.getChildElements().size() > 0) {
-            Elements elements = nameList_root.getChildElements();
-            for (int i = 0; i < elements.size(); i++) {
-                Element nameNode = elements.get(i);
-                if (((Element) nameNode.getChild(0)).getAttributeCount() > 0) {
-                    String depenStmt_name = nameNode.getValue();
-                    String lineNum = ((Element) nameNode.getChild(0)).getAttribute(0).getValue();
+        Elements elements = nameList_root.getChildElements();
+        for (int i = 0; i < elements.size(); i++) {
+            Element nameNode = elements.get(i);
+            if (((Element) nameNode.getChild(0)).getAttributeCount() > 0) {
+                String depenStmt_name = nameNode.getValue();
+                String lineNum = ((Element) nameNode.getChild(0)).getAttribute(0).getValue();
+                dependenceNodes.add(new DependenceNode(depenStmt_name, tag, lineNum, fileName));
+            } else if (((Element) nameNode.getChild(0)).getChildElements().size() > 0) {
+                Element e = (Element) nameNode.getChild(0);
+                if (e.getValue().contains("::")) {
+
+                    Element child = e.getChildElements().get(1);
+                    String depenStmt_name = child.getValue();
+                    String lineNum = child.getAttribute(0).getValue();
                     dependenceNodes.add(new DependenceNode(depenStmt_name, tag, lineNum, fileName));
-                } else if (((Element) nameNode.getChild(0)).getChildElements().size() > 0) {
-                    Element e = (Element) nameNode.getChild(0);
+
+                    if (tag.equals("function")) {
+                        Element className_element = e.getChildElements().get(0);
+                        String className = className_element.getValue();
+                        dependenceNodes.add(new DependenceNode(className, "Func_Class", lineNum, fileName));
+                    }
+
+                } else {
+//
                     for (int j = 0; j < e.getChildElements().size(); j++) {
                         Element child = e.getChildElements().get(j);
                         String depenStmt_name = child.getValue();
@@ -335,15 +304,15 @@ public class DependencyGraph {
                         dependenceNodes.add(new DependenceNode(depenStmt_name, tag, lineNum, fileName));
                     }
                 }
-                System.out.print("");
             }
+            System.out.print("");
         }
     }
 
 
     public static void visualizeGraph(DirectedSparseGraph<String, Edge> g) {
         VisualizationImageServer<String, Edge> vv =
-                new VisualizationImageServer<String, Edge>(new CircleLayout<String, Edge>(g), new Dimension(600, 600));
+                new VisualizationImageServer<String, Edge>(new CircleLayout<String, Edge>(g), new Dimension(800, 800));
 // Setup up a new vertex to paint transformer...
         Transformer<String, Paint> vertexPaint = new Transformer<String, Paint>() {
             public Paint transform(String str) {
