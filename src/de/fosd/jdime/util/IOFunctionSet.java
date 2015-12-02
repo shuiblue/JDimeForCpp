@@ -252,6 +252,8 @@ public class IOFunctionSet {
             if (!new File(outXmlFile).exists()) {
                 new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
             }
+        }else{
+            outXmlFile =inputFile+".xml";
         }
         //run srcML
         if (new File(inputFile).isFile()) {

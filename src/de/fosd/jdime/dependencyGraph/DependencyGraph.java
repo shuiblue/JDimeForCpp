@@ -1,28 +1,16 @@
 package de.fosd.jdime.dependencyGraph;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import de.fosd.jdime.util.Entity;
 import de.fosd.jdime.util.IOFunctionSet;
 import de.fosd.jdime.util.Relation;
-import edu.uci.ics.jung.graph.*;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import org.apache.commons.collections15.Transformer;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-import edu.uci.ics.jung.visualization.renderers.Renderer;
-import org.apache.commons.collections15.bag.SynchronizedBag;
 import org.apache.commons.io.FileUtils;
-
-import javax.swing.*;
 
 
 /**
@@ -33,7 +21,7 @@ public class DependencyGraph {
     static List<DependenceNode> dependenceNodes = new ArrayList<>();
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
 
-    public static DirectedSparseGraph<String, Edge> createDependencyGraph(String testDir) {
+    public static void createDependencyGraph(String testDir) {
 
         String dirPath = "testcpp/dependencyGraph/";
         String testDirPath = dirPath + testDir + "/";
@@ -46,7 +34,7 @@ public class DependencyGraph {
 
                 // src2srcml cannot parse .h file correctly, so change the suffix '+.cpp'
                 if (fileName.endsWith(".h")) {
-                   String newPath= "/Users/shuruiz/Work/tmpXMLFile" + filePath.replace("testcpp", "") + ".cpp";
+                    String newPath = "/Users/shuruiz/Work/tmpXMLFile" + filePath.replace("testcpp", "") + ".cpp";
 
                     try {
                         FileUtils.copyFile(new File(filePath), new File(newPath));
@@ -55,7 +43,7 @@ public class DependencyGraph {
                         e.printStackTrace();
                     }
                 }
-            // get xml file using src2srcml
+                // get xml file using src2srcml
                 String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
                 System.out.print(fileName + "\n");
                 findAllNodes(xmlFilePath, fileName);
@@ -63,19 +51,17 @@ public class DependencyGraph {
         }
 
 
-        DirectedSparseGraph<String, Edge> g = new DirectedSparseGraph<>();
-
         //add vertex
         for (DeclarationNode decl : declarationNodes) {
-            if (!g.containsVertex(decl.getLineNumber() + "-" + decl.getFileName())) {
-                g.addVertex(decl.getLineNumber() + "-" + decl.getFileName());
-            }
+//            if (!g.containsVertex(decl.getLineNumber() + "-" + decl.getFileName())) {
+//                g.addVertex(decl.getLineNumber() + "-" + decl.getFileName());
+//            }
         }
         for (DependenceNode depen : dependenceNodes) {
 
-            if (!g.containsVertex(depen.getLineNumber() + "-" + depen.getFileName())) {
-                g.addVertex(depen.getLineNumber() + "-" + depen.getFileName());
-            }
+//            if (!g.containsVertex(depen.getLineNumber() + "-" + depen.getFileName())) {
+//                g.addVertex(depen.getLineNumber() + "-" + depen.getFileName());
+//            }
         }
         //check .h define function and  .cpp define the body
         for (DependenceNode dep1 : dependenceNodes) {
@@ -85,7 +71,7 @@ public class DependencyGraph {
                     if (!relation.equals(Relation.False)) {
                         Edge edge = new Edge("<" + relation.name() + "> " + dep1.getTag() + " " + dep1.getName(),
                                 dep1.getLineNumber() + "-" + dep1.getFileName(), dep2.getLineNumber() + "-" + dep2.getFileName());
-                        g.addEdge(edge, dep1.getLineNumber() + "-" + dep1.getFileName(), dep2.getLineNumber() + "-" + dep2.getFileName());
+//                        g.addEdge(edge, dep1.getLineNumber() + "-" + dep1.getFileName(), dep2.getLineNumber() + "-" + dep2.getFileName());
                     }
                 }
             }
@@ -101,23 +87,22 @@ public class DependencyGraph {
                     String name = decl.getName();
                     if (relation.equals(Relation.BelongsToClass)) {
                         Edge edge = new Edge("<" + relation.name() + "> " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
-                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+//                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
                         continue;
                     }
                     if (!relation.equals(Relation.SAMENAME)) {
                         Edge edge = new Edge("<" + relation.name() + "> " + type + " " + name, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
-                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+//                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
                     } else {
                         Edge edge = new Edge("<" + relation.name() + "> " + name,
                                 depen.getLineNumber() + "-" + depen.getFileName(),
                                 decl.getLineNumber() + "-" + decl.getFileName());
-                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
+//                        g.addEdge(edge, depen.getLineNumber() + "-" + depen.getFileName(), decl.getLineNumber() + "-" + decl.getFileName());
 
                     }
                 }
             }
         }
-        return g;
     }
 
     public static Relation isRelated(DependenceNode d1, DependenceNode d2) {
@@ -164,18 +149,22 @@ public class DependencyGraph {
             String query = "src:" + tag;
             if (entity.getDeclarationEntity().contains(tag)) {
                 findDeclarationNode(xmlFilePath, query, tag, fileName);
-            } else if (entity.getDependencyEntity().contains(tag)) {
-                findDependencyNode(xmlFilePath, query, tag, fileName);
+            }
+            if(!fileName.contains(".h")) {
+                if (entity.getDependencyEntity().contains(tag)) {
+                    findDependencyNode(xmlFilePath, query, tag, fileName);
+                }
             }
         }
-
-        for (String tag : entity.getStmtEntity()) {
-            String stmtTag = tag + "_stmt";
-            String query = "src:" + stmtTag + "/src:" + tag;
-            if (entity.getDeclarationEntity().contains(tag)) {
-                findDeclarationNode(xmlFilePath, query, stmtTag, fileName);
-            } else if (entity.getDependencyEntity().contains(tag)) {
-                findDependencyNode(xmlFilePath, query, stmtTag, fileName);
+        if(!fileName.contains(".h")) {
+            for (String tag : entity.getStmtEntity()) {
+                String stmtTag = tag + "_stmt";
+                String query = "src:" + stmtTag + "/src:" + tag;
+                if (entity.getDeclarationEntity().contains(tag)) {
+                    findDeclarationNode(xmlFilePath, query, stmtTag, fileName);
+                } else if (entity.getDependencyEntity().contains(tag)) {
+                    findDependencyNode(xmlFilePath, query, stmtTag, fileName);
+                }
             }
         }
     }
@@ -315,8 +304,7 @@ public class DependencyGraph {
     public static void main(String[] args) {
 
         String testDir = "test_14";
-        DirectedSparseGraph<String, Edge> graph = createDependencyGraph(testDir);
-//        visualizeGraph(graph);
+        createDependencyGraph(testDir);
 
     }
 

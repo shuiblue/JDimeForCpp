@@ -129,6 +129,7 @@ public class Entity {
         oneLayerEntity.add("constructor");
         oneLayerEntity.add("call");
         oneLayerEntity.add("expr");
+        oneLayerEntity.add("struct");
 
 
         stmtEntity = new HashSet<>();
@@ -139,6 +140,7 @@ public class Entity {
         declarationEntity.add("class_decl");
         declarationEntity.add("constructor_decl");
         declarationEntity.add("decl");
+        declarationEntity.add("struct");
 
         dependencyEntity = new HashSet<>();
         dependencyEntity.add("call");
