@@ -55,7 +55,7 @@ public class DependencyGraph {
                         e.printStackTrace();
                     }
                 }
-
+            // get xml file using src2srcml
                 String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
                 System.out.print(fileName + "\n");
                 findAllNodes(xmlFilePath, fileName);
@@ -142,8 +142,6 @@ public class DependencyGraph {
      */
     public static Relation isRelated(DeclarationNode decl, DependenceNode depen) {
         Entity entity = new Entity();
-
-//        if (decl.getName().equals(depen.getName())) {
         if (decl.getDecl_tag().equals("decl_stmt") && depen.getTag().contains("expr")) {
             return Relation.Statment;
         } else if (depen.getTag().equals("call") && entity.getFuncionEntity().contains(decl.getDecl_tag())) {
@@ -157,8 +155,6 @@ public class DependencyGraph {
         } else {
             return Relation.SAMENAME;
         }
-//        }
-//        return Relation.FALSE;
     }
 
 
@@ -316,51 +312,11 @@ public class DependencyGraph {
         }
     }
 
-
-    public static void visualizeGraph(DirectedSparseGraph<String, Edge> g) {
-        VisualizationImageServer<String, Edge> vv =
-                new VisualizationImageServer<String, Edge>(new CircleLayout<String, Edge>(g), new Dimension(800, 800));
-// Setup up a new vertex to paint transformer...
-        Transformer<String, Paint> vertexPaint = new Transformer<String, Paint>() {
-            public Paint transform(String str) {
-                if (str.contains(".h")) {
-                    return Color.GREEN;
-                } else {
-                    return Color.PINK;
-                }
-            }
-        };
-
-
-// Set up a new stroke Transformer for the edges
-        float dash[] = {10.0f};
-        final Stroke edgeStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
-        Transformer<Edge, Stroke> edgeStrokeTransformer =
-                new Transformer<Edge, Stroke>() {
-                    public Stroke transform(Edge s) {
-                        return edgeStroke;
-                    }
-                };
-        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
-        vv.getRenderContext().setEdgeStrokeTransformer(edgeStrokeTransformer);
-        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
-        vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
-        vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
-
-        JFrame frame = new JFrame();
-        frame.getContentPane().add(vv);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-
     public static void main(String[] args) {
 
         String testDir = "test_14";
         DirectedSparseGraph<String, Edge> graph = createDependencyGraph(testDir);
-        visualizeGraph(graph);
+//        visualizeGraph(graph);
 
     }
 

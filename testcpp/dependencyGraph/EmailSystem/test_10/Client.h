@@ -7,7 +7,7 @@
  * email from internet > incoming > deliver > receipient receives mail
  * sender writes email > outgoing > mail > email sent through internet
  */
-class client
+struct client
 {
   char *name;
   NODE *outgoingBuffer;
