@@ -35,14 +35,8 @@ public class DependencyGraph {
 
     public static DirectedSparseGraph<String, Edge> createDependencyGraph(String testDir) {
 
-
         String dirPath = "testcpp/dependencyGraph/";
-
-////        String testDir = "test_3";
-//        String testDir = args[0]+"/";
-
         String testDirPath = dirPath + testDir + "/";
-
 
         File dir = new File(testDirPath);
         String[] names = dir.list();

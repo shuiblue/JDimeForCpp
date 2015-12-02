@@ -49,8 +49,6 @@ public class IOFunctionSet {
     }
 
 
-
-
     /**
      * This function presice the pretty print result of a block when:
      * 1)neighbor lines have the same condition
@@ -200,7 +198,7 @@ public class IOFunctionSet {
     }
 
 
-    public static  String clearBlank(String s) {
+    public static String clearBlank(String s) {
         return s.replace("\n", "").replace(" ", "").replace("\t", "");
     }
 
@@ -240,23 +238,28 @@ public class IOFunctionSet {
      */
     public static String getXmlFile(String inputFile) {
         // create dir for store xml files
-        String outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("testcpp", "") + ".xml";
-        String[] paths = inputFile.replace("testcpp", "").split("/");
-        String dir_suffix = "";
-        for (int i = 1; i < paths.length - 1; i++) {
-            dir_suffix += "/" + paths[i];
-        }
-        if (!new File(outXmlFile).exists()) {
-            new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
-        }
 
+        String outXmlFile = "";
+        if (!inputFile.contains(".h.")) {
+            outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("testcpp", "") + ".xml";
+
+            String[] paths = inputFile.replace("testcpp", "").split("/");
+            String dir_suffix = "";
+            for (int i = 1; i < paths.length - 1; i++) {
+                dir_suffix += "/" + paths[i];
+            }
+
+            if (!new File(outXmlFile).exists()) {
+                new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
+            }
+        }
         //run srcML
         if (new File(inputFile).isFile()) {
             try {
 //                new ProcessBuilder("/usr/local/bin/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
 //                        inputFile, "-o", outXmlFile).start();
 
-             ProcessBuilder processBuilder =    new ProcessBuilder("srcML/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
+                ProcessBuilder processBuilder = new ProcessBuilder("srcML/src2srcml", "--xmlns:PREFIX=http://www.sdml.info/srcML/position",
                         inputFile, "-o", outXmlFile);
                 Process process = processBuilder.start();
                 process.waitFor();
@@ -285,8 +288,8 @@ public class IOFunctionSet {
             File file = new File(xmlFilePath);
 
             sleep();
-            String xml =  readResult(xmlFilePath);
-            if(xml.length()>0) {
+            String xml = readResult(xmlFilePath);
+            if (xml.length() > 0) {
                 doc = builder.build(file);
 
             }
