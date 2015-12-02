@@ -20,6 +20,7 @@ import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import org.apache.commons.collections15.bag.SynchronizedBag;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 
@@ -46,10 +47,22 @@ public class DependencyGraph {
         File dir = new File(testDirPath);
         String[] names = dir.list();
         for (String fileName : names) {
-            if (fileName.endsWith(".cpp") || fileName.endsWith(".h")) {
+            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
                 String filePath = testDirPath + fileName;
+
+                // src2srcml cannot parse .h file correctly, so change the suffix '+.cpp'
+                if (fileName.endsWith(".h")) {
+                   String newPath= "/Users/shuruiz/Work/tmpXMLFile" + filePath.replace("testcpp", "") + ".cpp";
+
+                    try {
+                        FileUtils.copyFile(new File(filePath), new File(newPath));
+                        filePath = newPath;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
-//            String fileName = filePath.split("/")[filePath.split("/").length - 1];
                 System.out.print(fileName + "\n");
                 findAllNodes(xmlFilePath, fileName);
             }
@@ -351,7 +364,7 @@ public class DependencyGraph {
 
     public static void main(String[] args) {
 
-        String testDir = "test_13";
+        String testDir = "test_14";
         DirectedSparseGraph<String, Edge> graph = createDependencyGraph(testDir);
         visualizeGraph(graph);
 

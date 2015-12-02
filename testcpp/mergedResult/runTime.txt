@@ -14,3 +14,181 @@
 4675
 3 way merge: digipot_mcp4451.cpp file. 'upstream' repo merge with fork 'mattsch' 
 3132
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+4460
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'mattsch' 
+2685
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'mattsch' 
+41412
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'mattsch' 
+1872
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'mattsch' 
+47825
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+35679
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'jcrocholl' 
+194223
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+18598
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+6388
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+3971
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+4134
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1650
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+4915
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2347
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1830
+3 way merge: ConfigurationStore.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1566
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1779
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+12881
+3 way merge: MarlinSerial.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1780
+3 way merge: MarlinSerial.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1641
+3 way merge: motion_control.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1637
+3 way merge: motion_control.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1547
+3 way merge: Sd2Card.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+2319
+3 way merge: Sd2Card.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1827
+3 way merge: Sd2PinMap.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2189
+3 way merge: SdBaseFile.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+5113
+3 way merge: SdBaseFile.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2009
+3 way merge: SdFatConfig.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1583
+3 way merge: SdFatStructs.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2316
+3 way merge: SdFatUtil.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1576
+3 way merge: SdFatUtil.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1552
+3 way merge: SdInfo.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1724
+3 way merge: speed_lookuptable.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1689
+3 way merge: stepper.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+3705
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+3833
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1610
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+5613
+3 way merge: cardreader.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+3678
+3 way merge: cardreader.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1619
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+5508
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2595
+3 way merge: ConfigurationStore.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1876
+3 way merge: ConfigurationStore.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1550
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1782
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+6293
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2751
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+13408
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1781
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+8174
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+3130
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+14731
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2092
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+10224
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+3079
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+15045
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1823
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+27312
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+8045
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2689
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+14292
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1843
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+7100
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2589
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+13770
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1776
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+7476
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2668
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+13401
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1786
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+7779
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2510
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+14354
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1902
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+7810
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2708
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+14897
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1851
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2008
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1662
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+2002
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1579
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2192
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1586
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1860
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1588
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2265
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1568
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1975
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1578

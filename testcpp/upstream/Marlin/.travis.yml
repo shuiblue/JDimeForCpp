@@ -1,0 +1,120 @@
+---
+language: c
+
+before_install:
+  # Travis runs a detached head. We need to find the current branch
+  - git checkout `git branch --contains HEAD | grep -v '*'`
+  # Also tags for the root(s) of the minor version(s)
+  - git fetch origin --tags
+  - mkdir ~/bin
+install:
+  # Install arduino 1.6.5
+  - wget http://downloads-02.arduino.cc/arduino-1.6.5-linux64.tar.xz
+  - tar Jxf arduino-1.6.5-linux64.tar.xz
+  - sudo mv arduino-1.6.5 /usr/local/share/arduino
+  - ln -s /usr/local/share/arduino/arduino ~/bin/arduino
+  # Our custom build commands
+  - wget https://raw.githubusercontent.com/MarlinFirmware/Marlin/RC/LinuxAddons/bin/generate_version_header_for_marlin -q -O ~/bin/generate_version_header_for_marlin
+  - chmod +x ~/bin/*
+  - ls -la ~/bin
+  # install our platform
+  - cd
+  - git clone https://github.com/MarlinFirmware/MarlinDev.git
+  - cd MarlinDev
+  - git checkout IDE_1.6.5
+  - mv hardware/marlin /usr/local/share/arduino/hardware
+  # copy libraries to arduino dir, as conditional includes do not work in .ino files
+  - cp -r /usr/local/share/arduino/hardware/marlin/avr/libraries/* /usr/local/share/arduino/libraries/
+  ### - cp -r ArduinoAddons/Arduino_1.6.x/libraries/* /usr/local/share/arduino/libraries/
+  # add LiquidCrystal_I2C & LiquidTWI2 libraries
+  - cd $TRAVIS_BUILD_DIR
+  - git clone https://github.com/kiyoshigawa/LiquidCrystal_I2C.git
+  - mv LiquidCrystal_I2C/LiquidCrystal_I2C /usr/local/share/arduino/libraries/LiquidCrystal_I2C
+  - git clone https://github.com/lincomatic/LiquidTWI2.git
+  - mv LiquidTWI2 /usr/local/share/arduino/libraries/LiquidTWI2
+  # Install astyle
+  - wget https://github.com/timonwong/astyle-mirror/archive/master.zip
+  - unzip master.zip
+  - cd astyle-mirror-master/build/gcc/
+  - make prefix=$HOME astyle install
+  - cd ../../..
+  - rm -rf astyle-mirror-master
+  - ln -s $TRAVIS_BUILD_DIR /usr/local/share/arduino/libraries/MarlinFirmware
+before_script:
+  # arduino requires an X server even with command line
+  # https://github.com/arduino/Arduino/issues/1981
+  - Xvfb :1 -screen 0 1024x768x16 &> xvfb.log &
+  # change back to home directory for compiling
+  - cd $TRAVIS_BUILD_DIR
+  # Check style
+  - ~/bin/astyle --recursive --options=.astylerc -r "*.h" "*.cpp"
+  - pwd
+  - find . -type f | grep orig
+script:
+  # Abort on style errors
+  # if [ "0" != `find . -name "*.orig" | wc -l` ] ; then echo "Improperly styled source -- run astyle" ; exit -999; fi
+  # Relaxed Travis check
+  # if [ "0" != `find . -name "*.orig" | wc -l` ] ; then echo "Improperly styled source -- run astyle" ; fi
+  # build default config
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_01.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # add sensor for bed
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_02.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # change extruder numbers from 1 to 2
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_03.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # change extruder numbers from 2 to 3, needs to be a board with 3 extruders defined in pins.h
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_04.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # enable PIDTEMPBED
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_05.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # enable AUTO_BED_LEVELING
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_06.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # enable AUTO_BED_LEVELING with servos
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_07.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # enable EEPROM_SETTINGS & EEPROM_CHITCHAT
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_08.h" examples/MarlinFirmware/MarlinFirmware.ino
+  ### LCDS ###
+  # ULTIMAKERCONTROLLER
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_09.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # MAKRPANEL
+  # Needs to use melzi and sanguino hardware
+  #- DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_10.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # REPRAP_DISCOUNT_SMART_CONTROLLER
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_11.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # G3D_PANE
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_12.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_13.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # REPRAPWORLD_KEYPAD
+  # Cant find configuration details to get it to compile
+  #- DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_14.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # RA_CONTROL_PANEL
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_15.h" examples/MarlinFirmware/MarlinFirmware.ino
+  ### I2C PANELS ###
+  # LCD_I2C_SAINSMART_YWROBOT
+  # Failing at the moment needs different library
+  #- DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_16.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # LCD_I2C_PANELOLU2
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_17.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # LCD_I2C_VIKI
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_18.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Enable filament sensor
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_19.h" examples/MarlinFirmware/MarlinFirmware.ino
+   # Enable filament sensor with LCD display
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_20.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Enable COREXY
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_21.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Enable COREXZ
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_22.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Enable Z_DUAL_STEPPER_DRIVERS, Z_DUAL_ENDSTOPS
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/travis/Customization_23.h" examples/MarlinFirmware/MarlinFirmware.ino
+  ######## Example Configurations ##############
+  # Delta Config (generic)
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/deprecated_configurations/delta/generic/Configuration.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Delta Config (Mini Kossel)
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/deprecated_configurations/delta/kossel_mini/Configuration.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # Makibox Config  need to check board type for Teensy++ 2.0
+  #- DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/deprecated_configurations/makibox/Configuration.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # SCARA Config
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/deprecated_configurations/SCARA/Configuration.h" examples/MarlinFirmware/MarlinFirmware.ino
+  # tvrrug Config need to check board type for sanguino atmega644p
+  - DISPLAY=:1.0 ~/bin/arduino --verify --board marlin:avr:mega  --pref build.extra_flags=-DCUSTOMIZATION="configurations/deprecated_configurations/tvrrug/Round2/Configuration.h" examples/MarlinFirmware/MarlinFirmware.ino
+  ######## Board Types #############

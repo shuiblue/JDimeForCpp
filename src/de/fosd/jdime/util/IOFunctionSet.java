@@ -256,10 +256,15 @@ public class IOFunctionSet {
 //                new ProcessBuilder("/usr/local/bin/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
 //                        inputFile, "-o", outXmlFile).start();
 
-                new ProcessBuilder("srcML/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
-                        inputFile, "-o", outXmlFile).start();
-                sleep();
+             ProcessBuilder processBuilder =    new ProcessBuilder("srcML/src2srcml","--xmlns:PREFIX=http://www.sdml.info/srcML/position",
+                        inputFile, "-o", outXmlFile);
+                Process process = processBuilder.start();
+                process.waitFor();
+//                sleep();
+
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {

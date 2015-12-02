@@ -21,40 +21,40 @@ public class MergeRepo {
         File upstream = new File(main_repo);
         File[] matches = upstream.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".cpp");
-//               return name.endsWith(".h") || name.endsWith(".cpp");
+//                return name.endsWith(".cpp");
+               return name.endsWith(".h") || name.endsWith(".cpp");
             }
         });
 
-        for (File f : matches) {
+//        for (File f : matches) {
+//
+//            if (!f.getName().contains("planner")
+//                    && !f.getName().contains("temperature")
+//                    && !f.getName().contains("LiquidCrystalRus")
+//                    && !f.getName().contains("SdFile")
+//                    && !f.getName().contains("SdVolume")
+//                    && !f.getName().contains("fastio")
+//                    && !f.getName().contains("anguage")
+//                    && !f.getName().contains("stepper.h")
+//                    && !f.getName().contains("pins.h")
+//                    && !f.getName().contains("thermistortables.h")
+//                    ) {
+//                mergedFiles.add(f.getName());
+//            }
+//
+//        }
+//        File dir = new File(path);
+//        String[] names = dir.list();
+//        for (String name : names) {
+//            if (new File(path + name).isDirectory()) {
+//                if (!name.equals("upstream")) {
+//                    forkName.add(name);
+//                }
+//            }
+//
+//        }
 
-            if (!f.getName().contains("planner")
-                    && !f.getName().contains("temperature")
-                    && !f.getName().contains("LiquidCrystalRus")
-                    && !f.getName().contains("SdFile")
-                    && !f.getName().contains("SdVolume")
-                    && !f.getName().contains("fastio")
-                    && !f.getName().contains("anguage")
-                    && !f.getName().contains("stepper.h")
-                    && !f.getName().contains("pins.h")
-                    && !f.getName().contains("thermistortables.h")
-                    ) {
-                mergedFiles.add(f.getName());
-            }
-
-        }
-        File dir = new File(path);
-        String[] names = dir.list();
-        for (String name : names) {
-            if (new File(path + name).isDirectory()) {
-                if (!name.equals("upstream")) {
-                    forkName.add(name);
-                }
-            }
-
-        }
-
-//        forkName.add("quickshot");
+        forkName.add("jcrocholl");
 //        forkName.add("marlin4Due");
 //        forkName.add("johnnyr");
 //        forkName.add("yuroller");
@@ -62,7 +62,10 @@ public class MergeRepo {
 //        forkName.add("DinoMesina");
 //        forkName.add("wgm4321");
 //        forkName.add("mattsch");
-//        mergedFiles.add("ultralcd.cpp");
+        mergedFiles.add("Configuration.h");
+        mergedFiles.add("Configuration_adv.h");
+        mergedFiles.add("Marlin_main.cpp");
+        mergedFiles.add("Marlin.h");
         return forkName;
     }
 
@@ -101,7 +104,8 @@ public class MergeRepo {
             IOFunctionSet ioFunctionSet = new IOFunctionSet();
             String mergedBlock = "";
             try {
-                mergedBlock = ioFunctionSet.presicePrettyprint(testInitial.readResult(filePath));
+//                mergedBlock = ioFunctionSet.presicePrettyprint(testInitial.readResult(filePath));
+                mergedBlock = testInitial.readResult(filePath);
                 ioFunctionSet.writeTofile(mergedBlock, filePath + ".new");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -148,7 +152,7 @@ public class MergeRepo {
                             upstreamNewLine += blockLength;
                         } else if (b.contains(combination.get(1)) && !b.contains(combination.get(0)) && !b.contains(combination.get(2))) {//fork
 
-                            ioFunctionSet.writeTofile(fork + " Unique:\n " + b + "\n", "testcpp/statistics/result_mattsch_unique.txt");
+                            ioFunctionSet.writeTofile(fork + " Unique:\n " + b + "\n", "testcpp/statistics/result_jcrocholl_unique.txt");
                             forkUnique++;
                             forkNewLine += blockLength;
 
