@@ -48,6 +48,22 @@ public class IOFunctionSet {
         }
     }
 
+    public void rewriteFile(String content, String filepath) {
+
+        try {
+            File file = new File(filepath);
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * This function presice the pretty print result of a block when:

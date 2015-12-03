@@ -30,10 +30,13 @@ public class Entity {
     Set<String> funcionBodyEntity = null;
 
     Set<String> consDestructorEntity = null;
+    Set<String> noTypeEntity = null;
 
     public Set<String> getConsDestructorEntity() {
         return consDestructorEntity;
     }
+
+
 
     public Entity() {
         nonTerminal = new HashSet<>();
@@ -139,8 +142,9 @@ public class Entity {
         declarationEntity.add("function_decl");
         declarationEntity.add("class_decl");
         declarationEntity.add("constructor_decl");
-        declarationEntity.add("decl");
-        declarationEntity.add("struct");
+//        declarationEntity.add("decl");
+        declarationEntity.add("decl_stmt");
+        declarationEntity.add("struct_decl");
 
         dependencyEntity = new HashSet<>();
         dependencyEntity.add("call");
@@ -148,6 +152,7 @@ public class Entity {
         dependencyEntity.add("function");
         dependencyEntity.add("constructor");
         dependencyEntity.add("destructor");
+        dependencyEntity.add("struct");
 
         funcionEntity = new HashSet<>();
         funcionEntity.add("function_decl");
@@ -171,6 +176,10 @@ public class Entity {
         consDestructorEntity.add("constructor");
         consDestructorEntity.add("destructor");
 
+        noTypeEntity = new HashSet<>();
+        noTypeEntity.add("struct");
+        noTypeEntity.add("call");
+        noTypeEntity.add("expr");
 
     }
 
@@ -226,5 +235,7 @@ public class Entity {
     public Set<String> getFuncionEntity() {
         return funcionEntity;
     }
-
+    public Set<String> getNoTypeEntity() {
+        return noTypeEntity;
+    }
 }

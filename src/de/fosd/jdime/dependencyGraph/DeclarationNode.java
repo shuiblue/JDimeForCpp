@@ -15,7 +15,8 @@ public class DeclarationNode {
     String decl_tag;
     HashSet<DependenceNode> dependencies;
 
-    DeclarationNode(String name, String type, String lineNumber, String decl_tag,String fileName) {
+    DeclarationNode( String name, String type, String lineNumber, String decl_tag, String fileName) {
+
         this.name = name;
         this.type = type;
         this.lineNumber = lineNumber;
@@ -39,10 +40,13 @@ public class DeclarationNode {
     public String getDecl_tag() {
         return decl_tag;
     }
+
     public String getFileName() {
         return fileName;
     }
+
     public HashSet<DependenceNode> getDependencies() {
         return dependencies;
     }
+
 }
