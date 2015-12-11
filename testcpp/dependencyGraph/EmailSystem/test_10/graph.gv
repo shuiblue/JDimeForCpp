@@ -12,9 +12,14 @@ digraph {
 11 [label = "21-Client.c"];
 12 [label = "29-Client.c"];
 13 [label = "38-Client.c"];
-14 [label = "10-Client.h"];
+14 [label = "13-Client.c"];
+30 [label = "10-Client.h"];
 11 -> 1[ label="<Func_decl> outgoing" ];
 13 -> 2[ label="<Func_decl> incoming" ];
+7 -> 3[ label="<Statment> name" ];
+14 -> 4[ label="<Statment> outgoingBuffer" ];
+5 -> 4[ label="<Statment> outgoingBuffer" ];
+6 -> 4[ label="<Statment> outgoingBuffer" ];
 8 -> 10[ label="<Call> mail" ];
 9 -> 12[ label="<Call> deliver" ];
 }

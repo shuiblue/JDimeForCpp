@@ -122,21 +122,21 @@ public class Entity {
         classBody.add("public");
         classBody.add("protected");
 
-        oneLayerEntity = new HashSet<>();
-
-        oneLayerEntity.add("function");
-        oneLayerEntity.add("function_decl");
-        oneLayerEntity.add("class_decl");
-        oneLayerEntity.add("constructor_decl");
-        oneLayerEntity.add("destructor");
-        oneLayerEntity.add("constructor");
-        oneLayerEntity.add("call");
-        oneLayerEntity.add("expr");
-        oneLayerEntity.add("struct");
-
-
-        stmtEntity = new HashSet<>();
-        stmtEntity.add("decl");
+//        oneLayerEntity = new HashSet<>();
+//
+//        oneLayerEntity.add("function");
+//        oneLayerEntity.add("function_decl");
+//        oneLayerEntity.add("class_decl");
+//        oneLayerEntity.add("constructor_decl");
+//        oneLayerEntity.add("destructor");
+//        oneLayerEntity.add("constructor");
+//        oneLayerEntity.add("call");
+//        oneLayerEntity.add("expr");
+//        oneLayerEntity.add("struct");
+//
+//
+//        stmtEntity = new HashSet<>();
+//        stmtEntity.add("decl");
 
         declarationEntity = new HashSet<>();
         declarationEntity.add("function_decl");
@@ -149,6 +149,7 @@ public class Entity {
         dependencyEntity = new HashSet<>();
         dependencyEntity.add("call");
         dependencyEntity.add("expr");
+//        dependencyEntity.add("expr_stmt");
         dependencyEntity.add("function");
         dependencyEntity.add("constructor");
         dependencyEntity.add("destructor");
