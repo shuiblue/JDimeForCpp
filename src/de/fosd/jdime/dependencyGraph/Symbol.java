@@ -6,22 +6,29 @@ package de.fosd.jdime.dependencyGraph;
 public class Symbol {
     String type;
     String name;
-    String kind;
+    String tag;
     String fileName;
     String lineNumber;
 
+    int scope;
 
-    Symbol(String name, String type, String lineNumber, String kind, String fileName) {
+
+    Symbol(String name, String type, String lineNumber, String tag, String fileName,int scope) {
 
         this.name = name;
         this.type = type;
         this.lineNumber = lineNumber;
-        this.kind = kind;
+        this.tag = tag;
         this.fileName = fileName;
+        this.scope = scope;
     }
 
     public String getLineNumber() {
         return lineNumber;
+    }
+
+    public int getScope() {
+        return scope;
     }
 
     public String getType() {
@@ -37,7 +44,11 @@ public class Symbol {
         return fileName;
     }
 
-    public String getKind() {
-        return kind;
+    public String getTag() {
+        return tag;
     }
+
+
+
+
 }
