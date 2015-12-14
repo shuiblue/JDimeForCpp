@@ -11,8 +11,8 @@ digraph {
 5 [label = "10-Client.h"];
 6 [label = "12-Client.h"];
 7 [label = "13-Client.h"];
-6 -> 5[label="<child>"];
 7 -> 5[label="<child>"];
+6 -> 5[label="<child>"];
 8 [label = "16-Client.h"];
 9 [label = "18-Client.h"];
-}}}
+}

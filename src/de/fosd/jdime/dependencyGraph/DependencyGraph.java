@@ -140,10 +140,12 @@ public class DependencyGraph {
             } else if (ele.getLocalName().equals("expr_stmt")) {
                 Element expr_Node = ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
                 //<expr> <name>
-                if (expr_Node.getFirstChildElement("name", "http://www.sdml.info/srcML/src") != null) {
-                    Elements nameList = expr_Node.getFirstChildElement("name", "http://www.sdml.info/srcML/src").getChildElements();
-                    if (nameList.size() > 0) {
-                        findExpr(ele, fileName, scope);
+                if (expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src") != null) {
+                    for (int x = 0; x < expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").size(); x++) {
+                        Elements nameList = expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").get(x).getChildElements();
+                        if (nameList.size() > 0) {
+                            findExpr(ele, fileName, scope);
+                        }
                     }
                 }
 
@@ -151,7 +153,6 @@ public class DependencyGraph {
                 if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
                     Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
                     if (call_children.size() > 0) {
-
                         findCall(ele, fileName, scope);
                     }
                 }
@@ -178,6 +179,8 @@ public class DependencyGraph {
                 }
             } else if (ele.getLocalName().equals("function_decl")) {
                 tmpSymbolList.add(findSymbol(ele, "function_decl", fileName, scope));
+            } else if (ele.getLocalName().equals("return")) {
+                findExpr(ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src"), fileName, scope);
             }
 
             //remove symbol, whose scope >1
@@ -293,9 +296,13 @@ public class DependencyGraph {
 
         Element nameNode;
         //<expr><name> <name1...><name2...> </name>  </expr>
-        if (element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src") != null) {
-            nameNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src")
-                    .getFirstChildElement("name", "http://www.sdml.info/srcML/src");
+        Element exprNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
+        if (exprNode != null) {
+            if (exprNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src") != null) {
+                nameNode = exprNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src");
+            } else {
+                nameNode = exprNode;
+            }
         } else {
             nameNode = element;
         }
@@ -405,7 +412,7 @@ public class DependencyGraph {
                         edgeLable = "<Call> " + funcName;
                     }
                 } else if (depend.getTag().equals("function")) {
-                    if (s.getTag().equals("func_decl")) {
+                    if (s.getTag().equals("function_decl")) {
                         edgeLable = "<func_decl> " + funcName;
                     }
                 }

@@ -48,7 +48,7 @@ public class testDependencyGraph {
         expect_edges = createExpectGraph();
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void test10() {
         String fileName = "EmailSystem/test_10";
@@ -56,6 +56,7 @@ public class testDependencyGraph {
         assertTrue(compareTwoGraphs(result));
     }
 
+    //@Ignore
     @Test
     public void test11() {
         String fileName = "EmailSystem/test_11";
@@ -74,52 +75,29 @@ public class testDependencyGraph {
 
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void test12() {
-        String fileName = "test_12";
-//        DirectedSparseGraph<String, Edge> result = DependencyGraph.createDependencyGraph(fileName);
+        String fileName = "EmailSystem/test_12";
+        expect_edges.add("38-Client.c->18-Client.h");
+        expect_edges.add("40-Client.c->29-Client.c");
+        expect_edges.add("40-Client.c->38-Client.c");
 
-//        expect.addVertex("2-A.h");
-//        expect.addVertex("5-A.h");
-//        expect.addEdge(new Edge("<Func_decl> constructor CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
-//        expect.addEdge(new Edge("<Cons_Destruction> class CardReader", "10-A.cpp", "2-A.h"), "10-A.cpp", "2-A.h");
-//        expect.addEdge(new Edge("<SAMENAME> CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
-//
-//        expect.addVertex("17-A.cpp");
-//        expect.addVertex("19-A.cpp");
-//        expect.addVertex("6-A.h");
-//        expect.addEdge(new Edge("<Func_decl> void ls", "17-A.cpp", "6-A.h"), "17-A.cpp", "6-A.h");
-//        expect.addEdge(new Edge("<BelongsToClass> CardReader", "17-A.cpp", "2-A.h"), "17-A.cpp", "2-A.h");
-
-//        assertTrue(compareTwoGraphs(result, expect));
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
     }
 
-    @Ignore
+
     @Test
     public void test13() {
-        String fileName = "test_13";
-//        DirectedSparseGraph<String, Edge> result = DependencyGraph.createDependencyGraph(fileName);
+        String fileName = "EmailSystem/test_13";
+        expect_edges.add("7-Email.c->10-Email.h");
+        expect_edges.add("24-Email.c->12-Email.h");
+        expect_edges.add("35-Email.c->14-Email.h");
+        expect_edges.add("20-Email.c->9-Email.c");
 
-//        expect.addVertex("2-A.h");
-//        expect.addVertex("5-A.h");
-//        expect.addEdge(new Edge("<Func_decl> constructor CardReader", "10-A.cpp", "5-A.h"), "10-A.cpp", "5-A.h");
-//        expect.addEdge(new Edge("<Cons_Destruction> class CardReader", "10-A.cpp", "2-A.h"), "10-A.cpp", "2-A.h");
-//        expect.addEdge(new Edge("<SAMENAME> CardReader", "5-A.h", "2-A.h"), "5-A.h", "2-A.h");
-//
-//        expect.addVertex("17-A.cpp");
-//        expect.addVertex("19-A.cpp");
-//        expect.addVertex("6-A.h");
-//        expect.addEdge(new Edge("<Func_decl> void ls", "17-A.cpp", "6-A.h"), "17-A.cpp", "6-A.h");
-//        expect.addEdge(new Edge("<BelongsToClass> CardReader", "17-A.cpp", "2-A.h"), "17-A.cpp", "2-A.h");
-//
-//        expect.addVertex("21-A.cpp");
-//        expect.addVertex("22-A.cpp");
-//        expect.addVertex("23-A.cpp");
-//
-//        expect.addEdge(new Edge("<Func_decl> void lcd_sdcard_print_menu", "22-A.cpp", "21-A.cpp"), "22-A.cpp", "21-A.cpp");
-//        expect.addEdge(new Edge("<SAMENAME> lcd_sdcard_print_menu", "2-B.cpp", "21-A.cpp"), "2-B.cpp", "21-A.cpp");
 
-//        assertTrue(compareTwoGraphs(result, expect));
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
     }
 }
