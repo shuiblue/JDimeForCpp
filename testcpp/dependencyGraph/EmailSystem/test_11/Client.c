@@ -15,3 +15,11 @@ mail (struct client *client, struct email *msg)
   else
     list_insert_after (client->outgoingBuffer, msg);
 }
+
+// emails to be sent are processed by this method before beeing mailed.
+void
+outgoing (struct client *client, struct email *msg)
+{
+  msg->from = strdup (client->name);
+  mail (client, msg);
+}

@@ -26,6 +26,7 @@ public class DependencyGraph {
     /**
      * This function will parse the test directory and iteratively parse each file (.c/.cpp/.h)
      * to create dependency graph in each file
+     *
      * @param testDir directory that contains .c/cpp/h files
      * @return edgeList for testing goal
      */
@@ -58,14 +59,42 @@ public class DependencyGraph {
                 String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
                 System.out.print(fileName + "\n");
 
+                //parse dependency graph in each file
                 Element root = ioFunctionSet.getXmlDom(xmlFilePath).getRootElement();
                 symbolTable.addAll(parseDependency(root, fileName, 1));
 
             }
         }
 
+
+        //create edges cross files
+        addEdgesCrossFiles();
+
         ioFunctionSet.writeTofile("}", graph.getPath());
         return edgeList;
+    }
+
+    /**
+     * this function add edges cross files
+     */
+    private static void addEdgesCrossFiles() {
+
+        //add call-> function/func_decl
+        for (Symbol dependent : dependentTable) {
+            String tag = dependent.getTag();
+            if (tag.equals("call")) {
+                findFuncDependency(dependent);
+            } else if (tag.equals("name")) {
+                findVarDependency(dependent);
+            }
+        }
+        //add function->func_decl
+        for (Symbol dependent : symbolTable) {
+            String tag = dependent.getTag();
+            if (tag.equals("function")) {
+                findFuncDependency(dependent);
+            }
+        }
     }
 
     /**
@@ -73,7 +102,7 @@ public class DependencyGraph {
      *
      * @param root     root node for an AST
      * @param fileName prefix of the graph node (filename+line#)
-     * @param scope is the level of the declaration node. (1 means the symbol is in the file level, 2 means the symbol is in a function level)
+     * @param scope    is the level of the declaration node. (1 means the symbol is in the file level, 2 means the symbol is in a function level)
      * @return symbol list for the AST
      */
     public static HashSet<Symbol> parseDependency(Element root, String fileName, int scope) {
@@ -122,6 +151,7 @@ public class DependencyGraph {
                 if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
                     Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
                     if (call_children.size() > 0) {
+
                         findCall(ele, fileName, scope);
                     }
                 }
@@ -136,7 +166,7 @@ public class DependencyGraph {
                 //block
                 Element block = ele.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
                 for (int s = 0; s < block.getChildElements().size(); s++) {
-                    Element group = block.getChildElements().get(i);
+                    Element group = block.getChildElements().get(s);
 
                     //get children
                     HashSet<Symbol> children = parseDependency(group, fileName, scope);
@@ -144,20 +174,39 @@ public class DependencyGraph {
 
                     //link children -> parent
                     linkChildToParent(children, parent);
-                    System.out.print("");
+
                 }
-            }else if(ele.getLocalName().equals("function_decl")){
-                tmpSymbolList.add(findSymbol(ele,"function_decl",fileName,scope));
+            } else if (ele.getLocalName().equals("function_decl")) {
+                tmpSymbolList.add(findSymbol(ele, "function_decl", fileName, scope));
+            }
+
+            //remove symbol, whose scope >1
+            if (((Element) ele.getParent()).getLocalName().equals("unit")) {
+                symbolTable = removeLocalSymbol(symbolTable);
+                dependentTable = removeLocalSymbol(dependentTable);
             }
         }
+
+
         return tmpSymbolList;
+    }
+
+    private static HashSet<Symbol> removeLocalSymbol(HashSet<Symbol> tmpSymbolList) {
+        HashSet<Symbol> finalSymbolList = new HashSet<>();
+        for (Symbol s : tmpSymbolList) {
+            if (s.getScope() == 1)
+                finalSymbolList.add(s);
+        }
+        return finalSymbolList;
     }
 
     /**
      * This function create the edge from child to parent (used for struct)
+     *
      * @param children symbols belong to struct
-     * @param parent struct node
+     * @param parent   struct node
      */
+
     private static void linkChildToParent(HashSet<Symbol> children, Symbol parent) {
         for (Symbol child : children) {
             String depenNodeLabel = child.getLineNumber() + "-" + child.getFileName();
@@ -168,10 +217,11 @@ public class DependencyGraph {
     /**
      * This function parses the function node.
      * First, create symbol for the function, scope is 1
-     * Second, use {@link #parseDependency(Element,String,int)} function to parse the <block> subtree
-     * @param element function element
+     * Second, use {@link #parseDependency(Element, String, int)} function to parse the <block> subtree
+     *
+     * @param element  function element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
-     * @param scope function's scope is 1, symbol in block is 2
+     * @param scope    function's scope is 1, symbol in block is 2
      * @return symbolList in function scope
      */
     private static HashSet<Symbol> parseFunctionNode(Element element, String fileName, int scope) {
@@ -199,10 +249,11 @@ public class DependencyGraph {
 
     /**
      * This function finds symbol and add it to symbolTable
-     * @param element declaration element
-     * @param tag srcml tag
+     *
+     * @param element  declaration element
+     * @param tag      srcml tag
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
-     * @param scope function's scope is 1, symbol in block is 2
+     * @param scope    function's scope is 1, symbol in block is 2
      * @return new symbol
      */
     private static Symbol findSymbol(Element element, String tag, String fileName, int scope) {
@@ -233,9 +284,10 @@ public class DependencyGraph {
 
     /**
      * This function find variables exist in expression
-     * @param element expression element
+     *
+     * @param element  expression element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
-     * @param scope is used for mark the symbol's position
+     * @param scope    is used for mark the symbol's position
      */
     private static void findExpr(Element element, String fileName, int scope) {
 
@@ -269,15 +321,16 @@ public class DependencyGraph {
                 //write into graph file
                 ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
             }
-            findVarDependency(var, scope, nodeLabel);
+            findVarDependency(dependent);
         }
     }
 
     /**
      * This function find call element
-     * @param element call element
+     *
+     * @param element  call element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
-     * @param scope is used for mark the symbol's position
+     * @param scope    is used for mark the symbol's position
      */
     private static void findCall(Element element, String fileName, int scope) {
         //<expr><call> <name> <argument_list> </call> </expr>
@@ -288,12 +341,21 @@ public class DependencyGraph {
         String callName = callNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src").getValue();
         String lineNumber = callNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src").getAttribute(0).getValue();
         String nodeLabel = lineNumber + "-" + fileName;
-        findFuncDependency(callName, scope, nodeLabel);
 
         //save into dependent Table
-        Symbol call = new Symbol(callName, "", lineNumber, "call", fileName, scope);
+        //TODO: call's level is 1?
+        Symbol call = new Symbol(callName, "", lineNumber, "call", fileName, 1);
         dependentTable.add(call);
 
+        //save into nodeList
+        if (!nodeList.containsKey(nodeLabel)) {
+            id++;
+            nodeList.put(nodeLabel, id);
+            //write into graph file
+            ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
+        }
+
+        findFuncDependency(call);
 
         //argument list
         Elements argument_List = callNode.getFirstChildElement("argument_list", "http://www.sdml.info/srcML/src").getChildElements();
@@ -306,12 +368,16 @@ public class DependencyGraph {
     }
 
     /**
-     * This function finds the use of variable declaration, and create edge between 'def-use'
-     * @param var variable name
-     * @param scope position of the variable
-     * @param depenNodeLabel dependent node's label: lineNumber-filename
+     * * This function finds the use of variable declaration, and create edge between 'def-use'
+     *
+     * @param variable 'use' variable symbol is looking for 'def' of variable
      */
-    public static void findVarDependency(String var, int scope, String depenNodeLabel) {
+
+//    public static void findVarDependency() {
+    public static void findVarDependency(Symbol variable) {
+        String var = variable.getName();
+        int scope = variable.getScope();
+        String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
         for (Symbol s : symbolTable) {
             if (s.getName().equals(var) && scope >= s.getScope()) {
                 String edgeLable = "<Def-Use> " + var;
@@ -321,34 +387,46 @@ public class DependencyGraph {
     }
 
     /**
-     * This function find the edge between call->function and call->function_declaration
-     * @param funcName function Name
-     * @param scope function scope
-     * @param depenNodeLabel call symbol's label (lineNumber-fileName)
+     * * This function find the edge between call->function and call->function_declaration
+     *
+     * @param depend function node / call node
      */
-    public static void findFuncDependency(String funcName, int scope, String depenNodeLabel) {
+
+//    public static void findFuncDependency(String funcName, int scope, String depenNodeLabel) {
+    public static void findFuncDependency(Symbol depend) {
+        String funcName = depend.getName();
+        String depen_position = depend.getLineNumber() + "-" + depend.getFileName();
+        String edgeLable = "";
         for (Symbol s : symbolTable) {
-            if (s.getName().equals(funcName)) {
-                if (s.getTag().equals("func_decl") || s.getTag().equals("function")) {
-                    String edgeLable = "<Call> " + funcName;
-                    addEdgesToFile(depenNodeLabel, s, edgeLable);
+            String s_position = s.getLineNumber() + "-" + s.getFileName();
+            if (s.getName().equals(funcName) && !depen_position.equals(s_position)) {
+                if (depend.getTag().equals("call")) {
+                    if (s.getTag().equals("func_decl") || s.getTag().equals("function")) {
+                        edgeLable = "<Call> " + funcName;
+                    }
+                } else if (depend.getTag().equals("function")) {
+                    if (s.getTag().equals("func_decl")) {
+                        edgeLable = "<func_decl> " + funcName;
+                    }
                 }
+                addEdgesToFile(depen_position, s, edgeLable);
             }
         }
     }
 
     /**
      * This function write edge into graph file
-     * @param depenNodeLabel dependent node lable
-     * @param decl declaration symbol
-     * @param edgeLabel  edge label
+     *
+     * @param depen_position dependent node position (lineNumber_filename)
+     * @param decl           declaration symbol
+     * @param edgeLabel      edge label
      */
-    public static void addEdgesToFile(String depenNodeLabel, Symbol decl, String edgeLabel) {
-        int dependId = nodeList.get(depenNodeLabel);
+    public static void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
+        int dependId = nodeList.get(depen_position);
         String declNodeLabel = decl.getLineNumber() + "-" + decl.getFileName();
         int declId = nodeList.get(declNodeLabel);
         ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
-        edgeList.add(depenNodeLabel + "->" + declNodeLabel);
+        edgeList.add(depen_position + "->" + declNodeLabel);
     }
 
     public static void main(String[] args) {
