@@ -16,7 +16,7 @@ import java.util.HashSet;
 public class DependencyGraph {
 
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
-    static HashSet<Symbol> symbolTable = new HashSet<>();
+    static HashSet<Symbol> symbolTable;
     static HashSet<Symbol> dependentTable = new HashSet<>();
     static File graph;
     static int id;
@@ -41,6 +41,11 @@ public class DependencyGraph {
 
         File dir = new File(testDirPath);
         String[] names = dir.list();
+
+        symbolTable = new HashSet<>();
+        nodeList = new HashMap<>();
+        edgeList = new HashSet<>();
+
         for (String fileName : names) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
                 String filePath = testDirPath + fileName;
