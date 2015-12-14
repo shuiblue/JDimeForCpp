@@ -17,11 +17,11 @@ public class DependencyGraph {
 
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
     static HashSet<Symbol> symbolTable;
-    static HashSet<Symbol> dependentTable = new HashSet<>();
+    static HashSet<Symbol> dependentTable ;
     static File graph;
     static int id;
-    static HashMap<String, Integer> nodeList = new HashMap<>();
-    static HashSet<String> edgeList = new HashSet<>();
+    static HashMap<String, Integer> nodeList ;
+    static HashSet<String> edgeList;
 
     /**
      * This function will parse the test directory and iteratively parse each file (.c/.cpp/.h)
@@ -43,11 +43,13 @@ public class DependencyGraph {
         String[] names = dir.list();
 
         symbolTable = new HashSet<>();
+        dependentTable = new HashSet<>();
         nodeList = new HashMap<>();
         edgeList = new HashSet<>();
 
         for (String fileName : names) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
+
                 String filePath = testDirPath + fileName;
 
                 // src2srcml cannot parse .h file correctly, so change the suffix '+.cpp'
@@ -88,7 +90,9 @@ public class DependencyGraph {
         for (Symbol dependent : dependentTable) {
             String tag = dependent.getTag();
             if (tag.equals("call")) {
-                findFuncDependency(dependent);
+                if (!dependent.getName().equals("printf")) {
+                    findFuncDependency(dependent);
+                }
             } else if (tag.equals("name")) {
                 findVarDependency(dependent);
             }
@@ -304,7 +308,7 @@ public class DependencyGraph {
     /**
      * This function find variables exist in expression
      *
-     * @param element an element contains expression element
+     * @param element  an element contains expression element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
@@ -433,7 +437,7 @@ public class DependencyGraph {
             String s_position = s.getLineNumber() + "-" + s.getFileName();
             if (s.getName().equals(funcName) && !depen_position.equals(s_position)) {
                 if (depend.getTag().equals("call")) {
-                    if (s.getTag().equals("func_decl") || s.getTag().equals("function")) {
+                    if (s.getTag().equals("function_decl") || s.getTag().equals("function")) {
                         edgeLable = "<Call> " + funcName;
                     }
                 } else if (depend.getTag().equals("function")) {
@@ -454,6 +458,9 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public static void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
+           if(depen_position.equals("40-Client.c")) {
+               System.out.print(depen_position + "!!\n");
+           }
         int dependId = nodeList.get(depen_position);
         String declNodeLabel = decl.getLineNumber() + "-" + decl.getFileName();
         int declId = nodeList.get(declNodeLabel);

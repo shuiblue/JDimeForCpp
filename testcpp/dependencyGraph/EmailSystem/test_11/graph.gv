@@ -19,8 +19,8 @@ digraph {
 17 [label = "10-Client.h"];
 18 [label = "12-Client.h"];
 19 [label = "13-Client.h"];
-19 -> 17[label="<child>"];
 18 -> 17[label="<child>"];
+19 -> 17[label="<child>"];
 20 [label = "16-Client.h"];
 21 [label = "18-Client.h"];
 16 -> 10[label="<Call> mail"];

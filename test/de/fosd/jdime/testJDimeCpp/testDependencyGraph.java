@@ -43,7 +43,7 @@ public class testDependencyGraph {
 //          expect_edges.add("8-Client.c->10-Client.h");
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void test10() {
         expect_edges = new HashSet<>();
@@ -68,7 +68,7 @@ public class testDependencyGraph {
 
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void test11() {
         expect_edges = new HashSet<>();
@@ -86,7 +86,7 @@ public class testDependencyGraph {
         expect_edges.add("40-Client.c->38-Client.c");//incoming block param->function param
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void test12() {
         String fileName = "EmailSystem/test_12";
@@ -106,7 +106,7 @@ public class testDependencyGraph {
         expect_edges.add("20-Email.c->9-Email.c");//return clone ->local var def
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void test13() {
         String fileName = "EmailSystem/test_13";
@@ -116,8 +116,8 @@ public class testDependencyGraph {
         expect_12();
         expect_13();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
-        assertTrue(compareTwoGraphs(result));
+        HashSet<String> result13 = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result13));
     }
 
     public void  expect_14() {
@@ -155,7 +155,7 @@ public class testDependencyGraph {
         expect_13();
         expect_14();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
-        assertTrue(compareTwoGraphs(result));
+        HashSet<String> result14 = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result14));
     }
 }

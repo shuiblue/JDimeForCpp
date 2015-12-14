@@ -25,13 +25,12 @@ digraph {
 32 [label = "10-Client.h"];
 33 [label = "12-Client.h"];
 34 [label = "13-Client.h"];
-33 -> 32[label="<child>"];
 34 -> 32[label="<child>"];
+33 -> 32[label="<child>"];
 35 [label = "16-Client.h"];
 36 [label = "18-Client.h"];
-28 -> 22[label="<Call> mail"];
 31 -> 29[label="<Call> deliver"];
 28 -> 22[label="<Call> mail"];
-30 -> 36[label="<func_decl> incoming"];
 26 -> 35[label="<func_decl> outgoing"];
+30 -> 36[label="<func_decl> incoming"];
 }
