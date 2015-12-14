@@ -117,6 +117,7 @@ public class DependencyGraph {
 
         for (int i = 0; i < elements.size(); i++) {
             Element ele = elements.get(i);
+//            System.out.print(ele.getValue()+"!\n");
             if (ele.getLocalName().equals("function")) {
                 tmpSymbolList.addAll(parseFunctionNode(ele, fileName, scope));
             } else if (ele.getLocalName().equals("if")) {
@@ -142,6 +143,13 @@ public class DependencyGraph {
                         tmpSymbolList.addAll(parseDependency(else_Node, fileName, scope));
                     }
                 }
+            } else if (ele.getLocalName().equals("while")) {
+                //<while><condition><block>
+                Element condition = ele.getFirstChildElement("condition", "http://www.sdml.info/srcML/src");
+                findExpr(condition, fileName, scope);
+
+                Element block = ele.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
+                tmpSymbolList.addAll(parseDependency(block, fileName, scope));
             } else if (ele.getLocalName().equals("expr_stmt")) {
                 Element expr_Node = ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
                 //<expr> <name>
@@ -153,7 +161,6 @@ public class DependencyGraph {
                         }
                     }
                 }
-
                 //<expr> <call>
                 if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
                     Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
@@ -184,8 +191,12 @@ public class DependencyGraph {
                 }
             } else if (ele.getLocalName().equals("function_decl")) {
                 tmpSymbolList.add(findSymbol(ele, "function_decl", fileName, scope));
+
             } else if (ele.getLocalName().equals("return")) {
-                findExpr(ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src"), fileName, scope);
+                Element returnContent = ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
+                if (returnContent != null) {
+                    findExpr(ele, fileName, scope);
+                }
             }
 
             //remove symbol, whose scope >1
@@ -293,48 +304,51 @@ public class DependencyGraph {
     /**
      * This function find variables exist in expression
      *
-     * @param element  expression element
+     * @param element an element contains expression element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
     private static void findExpr(Element element, String fileName, int scope) {
 
-        Element nameNode;
-        //<expr><name> <name1...><name2...> </name>  </expr>
         Element exprNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
-        if (exprNode != null) {
-            if (exprNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src") != null) {
-                nameNode = exprNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src");
-            } else {
-                nameNode = exprNode;
+
+        //<expr><name> <name1...><name2...> </name>  </expr>
+        Elements name_Elements = exprNode.getChildElements("name", "http://www.sdml.info/srcML/src");
+
+        //<expr><call>
+        Element callElement = exprNode.getFirstChildElement("call", "http://www.sdml.info/srcML/src");
+        if (name_Elements.size() > 0) {
+            for (int i = 0; i < name_Elements.size(); i++) {
+                Elements nameList = name_Elements.get(i).getChildElements();
+                if (nameList.size() > 0) {
+                    saveDependentSymbol(nameList.get(i), fileName, scope);
+                } else {
+                    saveDependentSymbol(name_Elements.get(i), fileName, scope);
+                }
             }
-        } else {
-            nameNode = element;
+        } else if (callElement != null) {
+            //<expr><call>
+            findCall(callElement, fileName, scope);
         }
+    }
 
-        Elements nameList = nameNode.getChildElements();
-        if (nameList.size() > 0) {
-            for (int i = 0; i < nameList.size(); i++) {
-                findExpr(nameList.get(i), fileName, scope);
-            }
-        } else {
-            String var = nameNode.getValue();
-            String lineNumber = nameNode.getAttribute(0).getValue();
+    public static void saveDependentSymbol(Element element, String fileName, int scope) {
+        String var = element.getValue();
+        String lineNumber = element.getAttribute(0).getValue();
 
-            //save into dependent Table
-            Symbol dependent = new Symbol(var, "", lineNumber, "name", fileName, scope);
-            dependentTable.add(dependent);
+        //save into dependent Table
+        Symbol dependent = new Symbol(var, "", lineNumber, "name", fileName, scope);
+        dependentTable.add(dependent);
 
-            //save into nodeList
-            String nodeLabel = lineNumber + "-" + fileName;
-            if (!nodeList.containsKey(nodeLabel)) {
-                id++;
-                nodeList.put(nodeLabel, id);
-                //write into graph file
-                ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
-            }
-            findVarDependency(dependent);
+        //save into nodeList
+        String nodeLabel = lineNumber + "-" + fileName;
+        if (!nodeList.containsKey(nodeLabel)) {
+            id++;
+            nodeList.put(nodeLabel, id);
+            //write into graph file
+            ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
         }
+        findVarDependency(dependent);
     }
 
     /**
@@ -348,8 +362,14 @@ public class DependencyGraph {
         //<expr><call> <name> <argument_list> </call> </expr>
 
         //call node
-        Element callNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src")
-                .getFirstChildElement("call", "http://www.sdml.info/srcML/src");
+
+        Element exprNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
+        Element callNode;
+        if (exprNode != null) {
+            callNode = exprNode.getFirstChildElement("call", "http://www.sdml.info/srcML/src");
+        } else {
+            callNode = element;
+        }
         String callName = callNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src").getValue();
         String lineNumber = callNode.getFirstChildElement("name", "http://www.sdml.info/srcML/src").getAttribute(0).getValue();
         String nodeLabel = lineNumber + "-" + fileName;
