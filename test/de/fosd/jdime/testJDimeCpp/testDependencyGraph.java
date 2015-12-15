@@ -116,8 +116,8 @@ public class testDependencyGraph {
         expect_12();
         expect_13();
 
-        HashSet<String> result13 = DependencyGraph.createDependencyGraph(fileName);
-        assertTrue(compareTwoGraphs(result13));
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
     }
 
     public void  expect_14() {
@@ -146,6 +146,7 @@ public class testDependencyGraph {
 
     }
 
+    //addressBook feature
     //@Ignore
     @Test
     public void test14() {
@@ -155,7 +156,53 @@ public class testDependencyGraph {
         expect_13();
         expect_14();
 
-        HashSet<String> result14 = DependencyGraph.createDependencyGraph(fileName);
-        assertTrue(compareTwoGraphs(result14));
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
+    }
+
+    public void  expect_15() {
+        expect_edges.add("14-Client.h->10-Client.h");//Node addressBook->struct client
+        expect_edges.add("15-Client.h->10-Client.h");//Node autoResponse->struct client
+        expect_edges.add("21-Client.h->18-Client.h");//struct addressBookEntry
+        expect_edges.add("20-Client.h->18-Client.h");
+        expect_edges.add("44-Client.c->42-Client.c");//incoming block param->function param
+        expect_edges.add("45-Client.c->42-Client.c");//incoming block param->function param
+        expect_edges.add("54-Client.c->50-Client.c");//searchdata block param->function param
+        expect_edges.add("53-Client.c->50-Client.c");//listdata block param->function param
+
+        expect_edges.add("28-Client.c->8-Client.c"); //mail call->function
+        expect_edges.add("45-Client.c->33-Client.c");//deliver call->function
+        expect_edges.add("44-Client.c->85-Client.c");//autoRespond call->function
+        expect_edges.add("78-Client.c->21-Client.c");//outgoing call->function
+        expect_edges.add("97-Client.c->21-Client.c");//outgoing call->function
+        expect_edges.add("68-Client.c->67-Client.c");// NODE *address use->def
+        expect_edges.add("73-Client.c->67-Client.c");// NODE *address use->def
+        expect_edges.add("76-Client.c->75-Client.c");// struct email *newmsg use->def
+
+        expect_edges.add("21-Client.c->24-Client.h"); //outgoing func->func_decl
+        expect_edges.add("78-Client.c->24-Client.h");//outgoing call->func_DECL
+        expect_edges.add("97-Client.c->24-Client.h");//outgoing call->func_DECL
+        expect_edges.add("42-Client.c->26-Client.h");//incoming func->func_decl
+        expect_edges.add("58-Client.c->29-Client.h");//resolveAlias func->func_decl
+
+        expect_edges.add("85-Client.c->31-Client.h");//autoRespond func->func_decl
+        expect_edges.add("44-Client.c->85-Client.c");//autoRespond CALL->function
+        expect_edges.add("44-Client.c->31-Client.h");//autoRespond CALL->function
+
+
+    }
+
+    //autoResponder feature
+    //@Ignore
+    @Test
+    public void test15() {
+        String fileName = "EmailSystem/test_15";
+        expect_edges = new HashSet<>();
+        expect_10();
+        expect_13();
+        expect_15();
+
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
     }
 }
