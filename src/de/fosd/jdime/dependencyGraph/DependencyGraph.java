@@ -125,28 +125,7 @@ public class DependencyGraph {
             if (ele.getLocalName().equals("function")) {
                 tmpSymbolList.addAll(parseFunctionNode(ele, fileName, scope));
             } else if (ele.getLocalName().equals("if")) {
-                //<if><condition><then>[<else>], else is optional
-                Element condition = ele.getFirstChildElement("condition", "http://www.sdml.info/srcML/src");
-                findExpr(condition, fileName, scope);
-
-                //<then> [<block>], block is optional
-                Element then_Node = ele.getFirstChildElement("then", "http://www.sdml.info/srcML/src");
-                if (then_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src") != null) {
-                    Element block = then_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
-                    tmpSymbolList.addAll(parseDependency(block, fileName, scope));
-                } else {
-                    tmpSymbolList.addAll(parseDependency(then_Node, fileName, scope));
-                }
-                //else is optional
-                Element else_Node = ele.getFirstChildElement("else", "http://www.sdml.info/srcML/src");
-                if (else_Node != null) {
-                    if (else_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src") != null) {
-                        Element block = else_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
-                        tmpSymbolList.addAll(parseDependency(block, fileName, scope));
-                    } else {
-                        tmpSymbolList.addAll(parseDependency(else_Node, fileName, scope));
-                    }
-                }
+                tmpSymbolList.addAll(parseIfStmt(ele, fileName, scope));
             } else if (ele.getLocalName().equals("while")) {
                 //<while><condition><block>
                 Element condition = ele.getFirstChildElement("condition", "http://www.sdml.info/srcML/src");
@@ -156,22 +135,6 @@ public class DependencyGraph {
                 tmpSymbolList.addAll(parseDependency(block, fileName, scope));
             } else if (ele.getLocalName().equals("expr_stmt")) {
                 Element expr_Node = ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
-//                //<expr> <name>
-//                if (expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src") != null) {
-//                    for (int x = 0; x < expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").size(); x++) {
-//                        Elements nameList = expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").get(x).getChildElements();
-//                        if (nameList.size() > 0) {
-//                            findExpr(ele, fileName, scope);
-//                        }
-//                    }
-//                }
-//                //<expr> <call>
-//                if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
-//                    Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
-//                    if (call_children.size() > 0) {
-//                        findCall(ele, fileName, scope);
-//                    }
-//                }
                 findExpr(ele, fileName, scope);
             } else if (ele.getLocalName().equals("decl_stmt")) {
                 Element decl = ele.getFirstChildElement("decl", "http://www.sdml.info/srcML/src");
@@ -192,7 +155,6 @@ public class DependencyGraph {
 
                     //link children -> parent
                     linkChildToParent(children, parent);
-
                 }
             } else if (ele.getLocalName().equals("function_decl")) {
                 tmpSymbolList.add(findSymbol(ele, "function_decl", fileName, scope));
@@ -215,6 +177,11 @@ public class DependencyGraph {
         return tmpSymbolList;
     }
 
+    /**
+     * this function remove the symbols that in the 2 level , prepare for find edge cross files
+     * @param tmpSymbolList symbol table
+     * @return symbol table only contains 1st level symbols
+     */
     private static HashSet<Symbol> removeLocalSymbol(HashSet<Symbol> tmpSymbolList) {
         HashSet<Symbol> finalSymbolList = new HashSet<>();
         for (Symbol s : tmpSymbolList) {
@@ -272,15 +239,49 @@ public class DependencyGraph {
     }
 
     /**
-     * This function finds symbol and add it to symbolTable
-     * <decl_stmt><decl><type><name> [<init>]
-     *
-     * @param element  declaration element
-     * @param tag      srcml tag
-     * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
-     * @param scope    function's scope is 1, symbol in block is 2
-     * @return new symbol
+     * this function parse if statement
+     * @param ele if  element
+     * @param fileName fileName of this node
+     * @param scope level of the node
+     * @return symbols
      */
+    private  static  HashSet<Symbol> parseIfStmt(Element ele, String fileName, int scope) {
+        HashSet<Symbol> tmpSymbolList = new HashSet<>();
+
+        //<if><condition><then>[<else>], else is optional
+        Element condition = ele.getFirstChildElement("condition", "http://www.sdml.info/srcML/src");
+        findExpr(condition, fileName, scope);
+
+        //<then> [<block>], block is optional
+        Element then_Node = ele.getFirstChildElement("then", "http://www.sdml.info/srcML/src");
+        if (then_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src") != null) {
+            Element block = then_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
+            tmpSymbolList.addAll(parseDependency(block, fileName, scope));
+        } else {
+            tmpSymbolList.addAll(parseDependency(then_Node, fileName, scope));
+        }
+        //else is optional
+        Element else_Node = ele.getFirstChildElement("else", "http://www.sdml.info/srcML/src");
+        if (else_Node != null) {
+            if (else_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src") != null) {
+                Element block = else_Node.getFirstChildElement("block", "http://www.sdml.info/srcML/src");
+                tmpSymbolList.addAll(parseDependency(block, fileName, scope));
+            } else {
+                tmpSymbolList.addAll(parseDependency(else_Node, fileName, scope));
+            }
+        }
+        return  tmpSymbolList;
+    }
+        /**
+         * This function finds symbol and add it to symbolTable
+         * <decl_stmt><decl><type><name> [<init>]
+         *
+         * @param element  declaration element
+         * @param tag      srcml tag
+         * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
+         * @param scope    function's scope is 1, symbol in block is 2
+         * @return new symbol
+         */
     private static Symbol findSymbol(Element element, String tag, String fileName, int scope) {
         String type;
         Element type_Node = element.getFirstChildElement("type", "http://www.sdml.info/srcML/src");
@@ -345,6 +346,12 @@ public class DependencyGraph {
         }
     }
 
+    /**
+     * this function stores the dependent symbols, used for search cross file edges
+     * @param element elements contains dependent symbole
+     * @param fileName file name of the node
+     * @param scope level of the symbol
+     */
     public static void saveDependentSymbol(Element element, String fileName, int scope) {
         String var = element.getValue();
         String lineNumber = element.getAttribute(0).getValue();

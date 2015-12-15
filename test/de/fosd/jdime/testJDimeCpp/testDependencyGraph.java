@@ -43,7 +43,7 @@ public class testDependencyGraph {
 //          expect_edges.add("8-Client.c->10-Client.h");
     }
 
-        @Ignore
+//        @Ignore
     @Test
     public void test10() {
         expect_edges = new HashSet<>();
@@ -68,7 +68,7 @@ public class testDependencyGraph {
 
     }
 
-        @Ignore
+//        @Ignore
     @Test
     public void test11() {
         expect_edges = new HashSet<>();
@@ -86,7 +86,7 @@ public class testDependencyGraph {
         expect_edges.add("40-Client.c->38-Client.c");//incoming block param->function param
     }
 
-        @Ignore
+//        @Ignore
     @Test
     public void test12() {
         String fileName = "EmailSystem/test_12";
@@ -106,7 +106,7 @@ public class testDependencyGraph {
         expect_edges.add("20-Email.c->9-Email.c");//return clone ->local var def
     }
 
-        @Ignore
+//        @Ignore
     @Test
     public void test13() {
         String fileName = "EmailSystem/test_13";
@@ -147,7 +147,7 @@ public class testDependencyGraph {
     }
 
     //addressBook feature
-    @Ignore
+//    @Ignore
     @Test
     public void test14() {
         String fileName = "EmailSystem/test_14";
@@ -192,7 +192,7 @@ public class testDependencyGraph {
     }
 
     //autoResponder feature
-    @Ignore
+//    @Ignore
     @Test
     public void test15() {
         String fileName = "EmailSystem/test_15";
