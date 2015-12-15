@@ -189,7 +189,6 @@ public class testDependencyGraph {
         expect_edges.add("44-Client.c->85-Client.c");//autoRespond CALL->function
         expect_edges.add("44-Client.c->31-Client.h");//autoRespond CALL->function
 
-
     }
 
     //autoResponder feature
@@ -197,6 +196,20 @@ public class testDependencyGraph {
     @Test
     public void test15() {
         String fileName = "EmailSystem/test_15";
+        expect_edges = new HashSet<>();
+        expect_10();
+        expect_13();
+        expect_15();
+
+        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
+    }
+
+    //Encrypt feature
+    //@Ignore
+    @Test
+    public void test16() {
+        String fileName = "EmailSystem/test_1";
         expect_edges = new HashSet<>();
         expect_10();
         expect_13();
