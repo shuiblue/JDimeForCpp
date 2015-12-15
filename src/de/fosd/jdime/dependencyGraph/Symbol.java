@@ -9,12 +9,9 @@ public class Symbol {
     String tag;
     String fileName;
     String lineNumber;
-
     int scope;
 
-
     Symbol(String name, String type, String lineNumber, String tag, String fileName,int scope) {
-
         this.name = name;
         this.type = type;
         this.lineNumber = lineNumber;

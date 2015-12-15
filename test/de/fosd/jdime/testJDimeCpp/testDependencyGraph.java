@@ -8,13 +8,12 @@ import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-
 /**
  * Created by shuruiz on 11/5/15.
  */
 public class testDependencyGraph {
     HashSet<String> expect_edges;
-
+    DependencyGraph dependencyGraph = new DependencyGraph();
     public boolean compareTwoGraphs(HashSet<String> result) {
         boolean compare = true;
         for (String edge : expect_edges) {
@@ -50,7 +49,7 @@ public class testDependencyGraph {
         expect_10();
 
         String fileName = "EmailSystem/test_10";
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 
@@ -75,7 +74,7 @@ public class testDependencyGraph {
         String fileName = "EmailSystem/test_11";
         expect_10();
         expect_11();
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
 
     }
@@ -95,7 +94,7 @@ public class testDependencyGraph {
         expect_11();
         expect_12();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 
@@ -116,7 +115,7 @@ public class testDependencyGraph {
         expect_12();
         expect_13();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 
@@ -156,7 +155,7 @@ public class testDependencyGraph {
         expect_13();
         expect_14();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 
@@ -191,7 +190,7 @@ public class testDependencyGraph {
 
     }
 
-    //autoResponder feature
+//autoResponder feature
 //    @Ignore
     @Test
     public void test15() {
@@ -201,7 +200,7 @@ public class testDependencyGraph {
         expect_13();
         expect_15();
 
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 
@@ -228,7 +227,6 @@ public class testDependencyGraph {
         expect_edges.add("65-Client.c->106-Client.c");//autoRespond call->function
         expect_edges.add("99-Client.c->29-Client.c");//outgoing call->function
         expect_edges.add("118-Client.c->29-Client.c");//outgoing call->function
-
 
         expect_edges.add("54-Client.c->26-Client.h");//incoming func->func_decl
         expect_edges.add("40-Client.c->29-Client.c");//deliver call->function
@@ -273,16 +271,12 @@ public class testDependencyGraph {
         expect_edges.add("47-Email.c->56-Email.c");
         expect_edges.add("56-Email.c->18-Email.h");
 
-
         //decrypt
         expect_edges.add("62-Client.c->141-Client.c");
         expect_edges.add("141-Client.c->40-Client.h");
         expect_edges.add("145-Client.c->141-Client.c");
         expect_edges.add("148-Client.c->141-Client.c");
-
-
     }
-
 
     //Encrypt feature
     //@Ignore
@@ -291,8 +285,7 @@ public class testDependencyGraph {
         String fileName = "EmailSystem/test_16";
         expect_edges = new HashSet<>();
         expect_16();
-
-        HashSet<String> result = DependencyGraph.createDependencyGraph(fileName);
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
 }
