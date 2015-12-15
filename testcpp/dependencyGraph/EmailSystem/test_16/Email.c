@@ -17,6 +17,11 @@ cloneEmail (struct email *msg)
     clone->subject = strdup (msg->subject);
   if (msg->body)
     clone->body = strdup (msg->body);
+ //----encrypt ----
+  clone->isEncrypted = msg->isEncrypted;
+  if (msg->encryptionKey)
+    clone->encryptionKey = strdup (msg->encryptionKey);
+  //----encrypt ----
   return clone;
 }
 
@@ -29,10 +34,27 @@ printMail (struct email *msg)
   printf ("SUBJECT:\n  %s\n", msg->subject);
   printf ("IS_READABLE\n  %i\n", isReadable (msg));
   printf ("BODY:\n  %s\n", msg->body);
+//----encrypt ----
+  printf ("ENCRYPTED\n  %i\n", msg->isEncrypted);
+  printf ("ENCRYPTION KEY\n  %s\n", msg->encryptionKey);
+//----encrypt ----
 }
 
 int
 isReadable (struct email *msg)
 {
-  return 1;
+  //----encrypt ----
+ if (0 == isEncrypted (msg))
+    return 1;
+  else
+    return 0;
+  //----encrypt ----
 }
+
+ //----encrypt ----
+int
+isEncrypted (struct email *msg)
+{
+  return msg->isEncrypted;
+}
+ //----encrypt ----

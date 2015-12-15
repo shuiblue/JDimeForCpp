@@ -30,5 +30,12 @@ void resolveAlias (struct client *client, struct email *msg);
 
 void autoRespond (struct client *client, struct email *msg);
 
+//-----encrypt----
 // TODO remove
 void encrypt (struct client *client, struct email *msg);
+//-----encrypt----
+
+//-----decrypt----
+// TODO remove
+void decrypt (struct client *client, struct email *msg);
+//-----decrypt----
