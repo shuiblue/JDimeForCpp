@@ -30,7 +30,7 @@ public class DependencyGraph {
      * @param testDir directory that contains .c/cpp/h files
      * @return edgeList for testing goal
      */
-    public static HashSet<String> createDependencyGraph(String testDir) {
+    public  HashSet<String> createDependencyGraph(String testDir) {
 
         String dirPath = "testcpp/dependencyGraph/";
         String testDirPath = dirPath + testDir + "/";
@@ -84,7 +84,7 @@ public class DependencyGraph {
     /**
      * this function add edges cross files
      */
-    private static void addEdgesCrossFiles() {
+    private  void addEdgesCrossFiles() {
 
         //add call-> function/func_decl
         for (Symbol dependent : dependentTable) {
@@ -114,7 +114,7 @@ public class DependencyGraph {
      * @param scope    is the level of the declaration node. (1 means the symbol is in the file level, 2 means the symbol is in a function level)
      * @return symbol list for the AST
      */
-    public static HashSet<Symbol> parseDependency(Element root, String fileName, int scope) {
+    public  HashSet<Symbol> parseDependency(Element root, String fileName, int scope) {
 
         HashSet<Symbol> tmpSymbolList = new HashSet<>();
         Elements elements = root.getChildElements();
@@ -182,7 +182,7 @@ public class DependencyGraph {
      * @param tmpSymbolList symbol table
      * @return symbol table only contains 1st level symbols
      */
-    private static HashSet<Symbol> removeLocalSymbol(HashSet<Symbol> tmpSymbolList) {
+    private  HashSet<Symbol> removeLocalSymbol(HashSet<Symbol> tmpSymbolList) {
         HashSet<Symbol> finalSymbolList = new HashSet<>();
         for (Symbol s : tmpSymbolList) {
             if (s.getScope() == 1)
@@ -198,7 +198,7 @@ public class DependencyGraph {
      * @param parent   struct node
      */
 
-    private static void linkChildToParent(HashSet<Symbol> children, Symbol parent) {
+    private  void linkChildToParent(HashSet<Symbol> children, Symbol parent) {
         for (Symbol child : children) {
             String depenNodeLabel = child.getLineNumber() + "-" + child.getFileName();
             addEdgesToFile(depenNodeLabel, parent, "<child>");
@@ -215,7 +215,7 @@ public class DependencyGraph {
      * @param scope    function's scope is 1, symbol in block is 2
      * @return symbolList in function scope
      */
-    private static HashSet<Symbol> parseFunctionNode(Element element, String fileName, int scope) {
+    private  HashSet<Symbol> parseFunctionNode(Element element, String fileName, int scope) {
         HashSet<Symbol> tmpSymbolList = new HashSet<>();
 
         //add function to symbol table
@@ -245,7 +245,7 @@ public class DependencyGraph {
      * @param scope level of the node
      * @return symbols
      */
-    private  static  HashSet<Symbol> parseIfStmt(Element ele, String fileName, int scope) {
+    private    HashSet<Symbol> parseIfStmt(Element ele, String fileName, int scope) {
         HashSet<Symbol> tmpSymbolList = new HashSet<>();
 
         //<if><condition><then>[<else>], else is optional
@@ -282,7 +282,7 @@ public class DependencyGraph {
          * @param scope    function's scope is 1, symbol in block is 2
          * @return new symbol
          */
-    private static Symbol findSymbol(Element element, String tag, String fileName, int scope) {
+    private  Symbol findSymbol(Element element, String tag, String fileName, int scope) {
         String type;
         Element type_Node = element.getFirstChildElement("type", "http://www.sdml.info/srcML/src");
         if (type_Node != null) {
@@ -322,7 +322,7 @@ public class DependencyGraph {
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
-    private static void findExpr(Element element, String fileName, int scope) {
+    private  void findExpr(Element element, String fileName, int scope) {
 
         Element exprNode = element.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
 
@@ -352,7 +352,7 @@ public class DependencyGraph {
      * @param fileName file name of the node
      * @param scope level of the symbol
      */
-    public static void saveDependentSymbol(Element element, String fileName, int scope) {
+    public  void saveDependentSymbol(Element element, String fileName, int scope) {
         String var = element.getValue();
         String lineNumber = element.getAttribute(0).getValue();
 
@@ -378,7 +378,7 @@ public class DependencyGraph {
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
-    private static void findCall(Element element, String fileName, int scope) {
+    private  void findCall(Element element, String fileName, int scope) {
         //<expr><call> <name> <argument_list> </call> </expr>
 
         //call node
@@ -426,7 +426,7 @@ public class DependencyGraph {
      */
 
 //    public static void findVarDependency() {
-    public static void findVarDependency(Symbol variable) {
+    public  void findVarDependency(Symbol variable) {
         String var = variable.getName();
         int scope = variable.getScope();
         String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
@@ -445,7 +445,7 @@ public class DependencyGraph {
      */
 
 //    public static void findFuncDependency(String funcName, int scope, String depenNodeLabel) {
-    public static void findFuncDependency(Symbol depend) {
+    public  void findFuncDependency(Symbol depend) {
         String funcName = depend.getName();
         String depen_position = depend.getLineNumber() + "-" + depend.getFileName();
         String edgeLable = "";
@@ -456,12 +456,15 @@ public class DependencyGraph {
                     if (s.getTag().equals("function_decl") || s.getTag().equals("function")) {
                         edgeLable = "<Call> " + funcName;
                     }
+                    addEdgesToFile(depen_position, s, edgeLable);
                 } else if (depend.getTag().equals("function")) {
                     if (s.getTag().equals("function_decl")) {
                         edgeLable = "<func_decl> " + funcName;
+                        addEdgesToFile(depen_position, s, edgeLable);
                     }
+
                 }
-                addEdgesToFile(depen_position, s, edgeLable);
+
             }
         }
     }
@@ -473,7 +476,7 @@ public class DependencyGraph {
      * @param decl           declaration symbol
      * @param edgeLabel      edge label
      */
-    public static void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
+    public  void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
         if (depen_position.equals("40-Client.c")) {
             System.out.print(depen_position + "!!\n");
         }
@@ -484,7 +487,7 @@ public class DependencyGraph {
         edgeList.add(depen_position + "->" + declNodeLabel);
     }
 
-    public static void main(String[] args) {
+    public  void main(String[] args) {
 
         String testDir = "EmailSystem/test_10";
         createDependencyGraph(testDir);
