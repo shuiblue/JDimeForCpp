@@ -18,7 +18,7 @@ public class DependencyGraph {
 
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
     static HashSet<Symbol> symbolTable;
-    static HashSet<Symbol> dependentTable;
+    static HashSet<Symbol> lonelySymbolSet;
 
     static HashMap<String, HashSet<Symbol>> sameNameMap;
 
@@ -48,7 +48,7 @@ public class DependencyGraph {
         String[] names = dir.list();
 
         symbolTable = new HashSet<>();
-        dependentTable = new HashSet<>();
+        lonelySymbolSet = new HashSet<>();
         sameNameMap = new HashMap<>();
         nodeList = new HashMap<>();
         edgeList = new HashSet<>();
@@ -118,7 +118,7 @@ public class DependencyGraph {
     private void addEdgesCrossFiles() {
 
         //add call-> function/func_decl
-        for (Symbol dependent : dependentTable) {
+        for (Symbol dependent : lonelySymbolSet) {
             String tag = dependent.getTag();
             if (tag.equals("call")) {
                 if (!dependent.getName().equals("printf")) {
@@ -198,7 +198,7 @@ public class DependencyGraph {
             //remove symbol, whose scope >1
             if (((Element) ele.getParent()).getLocalName().equals("unit")) {
                 symbolTable = removeLocalSymbol(symbolTable);
-                dependentTable = removeLocalSymbol(dependentTable);
+                lonelySymbolSet = removeLocalSymbol(lonelySymbolSet);
             }
         }
 
@@ -357,7 +357,6 @@ public class DependencyGraph {
      * @param scope    is used for mark the symbol's position
      */
     private void findExpr(Element element, String fileName, int scope) {
-
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
 
         //<expr><name> <name1...><name2...> </name>  </expr>
@@ -365,45 +364,32 @@ public class DependencyGraph {
 
         //<expr><call>
         Element callElement = exprNode.getFirstChildElement("call", NAMESPACEURI);
+
         if (name_Elements.size() > 0) {
             for (int i = 0; i < name_Elements.size(); i++) {
                 Elements nameList = name_Elements.get(i).getChildElements();
+
+                String var ;
+                String lineNumber;
+                Symbol dependent;
                 if (nameList.size() > 0) {
-                    saveDependentSymbol(nameList.get(i), fileName, scope);
+                    for(int x = 0;x<nameList.size();x++) {
+                        var = nameList.get(x).getValue();
+                        lineNumber =nameList.get(x).getAttribute(0).getValue();
+                        dependent = new Symbol(var, "", lineNumber, "name", fileName, scope);
+                        findVarDependency(dependent);
+                    }
                 } else {
-                    saveDependentSymbol(name_Elements.get(i), fileName, scope);
+                    var = name_Elements.get(i).getValue();
+                    lineNumber =name_Elements.get(i).getAttribute(0).getValue();
+                    dependent = new Symbol(var, "", lineNumber, "name", fileName, scope);
+                    findVarDependency(dependent);
                 }
             }
         } else if (callElement != null) {
             //<expr><call>
             findCall(callElement, fileName, scope);
         }
-    }
-
-    /**
-     * this function stores the dependent symbols, used for search cross file edges
-     *
-     * @param element  elements contains dependent symbole
-     * @param fileName file name of the node
-     * @param scope    level of the symbol
-     */
-    public void saveDependentSymbol(Element element, String fileName, int scope) {
-        String var = element.getValue();
-        String lineNumber = element.getAttribute(0).getValue();
-
-        //save into dependent Table
-        Symbol dependent = new Symbol(var, "", lineNumber, "name", fileName, scope);
-        dependentTable.add(dependent);
-
-        //save into nodeList
-        String nodeLabel = lineNumber + "-" + fileName;
-        if (!nodeList.containsKey(nodeLabel)) {
-            id++;
-            nodeList.put(nodeLabel, id);
-            //write into graph file
-            ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
-        }
-        findVarDependency(dependent);
     }
 
     /**
@@ -417,7 +403,6 @@ public class DependencyGraph {
         //<expr><call> <name> <argument_list> </call> </expr>
 
         //call node
-
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
         Element callNode;
         if (exprNode != null) {
@@ -432,7 +417,7 @@ public class DependencyGraph {
         //save into dependent Table
         //TODO: call's level is 1?
         Symbol call = new Symbol(callName, "", lineNumber, "call", fileName, 1);
-        dependentTable.add(call);
+        lonelySymbolSet.add(call);
 
         //save into nodeList
         if (!nodeList.containsKey(nodeLabel)) {
@@ -460,26 +445,35 @@ public class DependencyGraph {
      * @param variable 'use' variable symbol is looking for 'def' of variable
      */
 
-//    public static void findVarDependency() {
     public void findVarDependency(Symbol variable) {
         String var = variable.getName();
         int scope = variable.getScope();
         String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
+
+        if (!nodeList.containsKey(depenNodeLabel)) {
+            id++;
+            nodeList.put(depenNodeLabel, id);
+            //write into graph file
+            ioFunctionSet.writeTofile(id + " [label = \"" + depenNodeLabel + "\"];\n", graph.getPath());
+        }
+        int edgeNum = 0;
         for (Symbol s : symbolTable) {
             if (s.getName().equals(var) && scope >= s.getScope()) {
                 String edgeLable = "<Def-Use> " + var;
                 addEdgesToFile(depenNodeLabel, s, edgeLable);
+                edgeNum++;
             }
+        }
+        if(edgeNum==0){
+            lonelySymbolSet.add(variable);
         }
     }
 
     /**
-     * * This function add the edge between call->function and call->function_declaration
-     *
+     * This function add the edge between call->function and call->function_declaration
      * @param depend function node / call node
      */
 
-//    public static void findFuncDependency(String funcName, int scope, String depenNodeLabel) {
     public void addFuncDependency(Symbol depend) {
         String funcName = depend.getName();
         String depen_position = depend.getLineNumber() + "-" + depend.getFileName();
@@ -510,9 +504,6 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
-        if (depen_position.equals("40-Client.c")) {
-            System.out.print(depen_position + "!!\n");
-        }
         int dependId = nodeList.get(depen_position);
         String declNodeLabel = decl.getLineNumber() + "-" + decl.getFileName();
         int declId = nodeList.get(declNodeLabel);

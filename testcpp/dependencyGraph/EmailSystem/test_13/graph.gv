@@ -23,8 +23,8 @@ digraph {
 47 [label = "10-Client.h"];
 48 [label = "12-Client.h"];
 49 [label = "13-Client.h"];
-49 -> 47[label="<child>"];
 48 -> 47[label="<child>"];
+49 -> 47[label="<child>"];
 50 [label = "16-Client.h"];
 51 [label = "18-Client.h"];
 52 [label = "7-Email.c"];
@@ -33,6 +33,7 @@ digraph {
 54 -> 52[label="<Def-Use> msg"];
 55 [label = "11-Email.c"];
 55 -> 53[label="<Def-Use> clone"];
+55 -> 52[label="<Def-Use> msg"];
 56 [label = "12-Email.c"];
 56 -> 52[label="<Def-Use> msg"];
 57 [label = "13-Email.c"];
@@ -71,21 +72,21 @@ digraph {
 76 [label = "5-Email.h"];
 77 [label = "6-Email.h"];
 78 [label = "7-Email.h"];
-78 -> 73[label="<child>"];
-75 -> 73[label="<child>"];
-74 -> 73[label="<child>"];
 76 -> 73[label="<child>"];
+75 -> 73[label="<child>"];
+78 -> 73[label="<child>"];
 77 -> 73[label="<child>"];
+74 -> 73[label="<child>"];
 79 [label = "10-Email.h"];
 80 [label = "12-Email.h"];
 81 [label = "14-Email.h"];
-46 -> 44[label="<Call> deliver"];
 43 -> 37[label="<Call> mail"];
-70 -> 81[label="<Call> isReadable"];
+46 -> 44[label="<Call> deliver"];
 70 -> 72[label="<Call> isReadable"];
-41 -> 50[label="<func_decl> outgoing"];
+70 -> 81[label="<Call> isReadable"];
+65 -> 80[label="<func_decl> printMail"];
 45 -> 51[label="<func_decl> incoming"];
+41 -> 50[label="<func_decl> outgoing"];
 72 -> 81[label="<func_decl> isReadable"];
 52 -> 79[label="<func_decl> cloneEmail"];
-65 -> 80[label="<func_decl> printMail"];
 }
