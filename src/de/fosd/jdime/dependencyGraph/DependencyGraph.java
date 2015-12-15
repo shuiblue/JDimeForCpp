@@ -17,10 +17,10 @@ public class DependencyGraph {
 
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
     static HashSet<Symbol> symbolTable;
-    static HashSet<Symbol> dependentTable ;
+    static HashSet<Symbol> dependentTable;
     static File graph;
     static int id;
-    static HashMap<String, Integer> nodeList ;
+    static HashMap<String, Integer> nodeList;
     static HashSet<String> edgeList;
 
     /**
@@ -156,22 +156,23 @@ public class DependencyGraph {
                 tmpSymbolList.addAll(parseDependency(block, fileName, scope));
             } else if (ele.getLocalName().equals("expr_stmt")) {
                 Element expr_Node = ele.getFirstChildElement("expr", "http://www.sdml.info/srcML/src");
-                //<expr> <name>
-                if (expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src") != null) {
-                    for (int x = 0; x < expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").size(); x++) {
-                        Elements nameList = expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").get(x).getChildElements();
-                        if (nameList.size() > 0) {
-                            findExpr(ele, fileName, scope);
-                        }
-                    }
-                }
-                //<expr> <call>
-                if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
-                    Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
-                    if (call_children.size() > 0) {
-                        findCall(ele, fileName, scope);
-                    }
-                }
+//                //<expr> <name>
+//                if (expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src") != null) {
+//                    for (int x = 0; x < expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").size(); x++) {
+//                        Elements nameList = expr_Node.getChildElements("name", "http://www.sdml.info/srcML/src").get(x).getChildElements();
+//                        if (nameList.size() > 0) {
+//                            findExpr(ele, fileName, scope);
+//                        }
+//                    }
+//                }
+//                //<expr> <call>
+//                if (expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src") != null) {
+//                    Elements call_children = expr_Node.getFirstChildElement("call", "http://www.sdml.info/srcML/src").getChildElements();
+//                    if (call_children.size() > 0) {
+//                        findCall(ele, fileName, scope);
+//                    }
+//                }
+                findExpr(ele, fileName, scope);
             } else if (ele.getLocalName().equals("decl_stmt")) {
                 Element decl = ele.getFirstChildElement("decl", "http://www.sdml.info/srcML/src");
                 tmpSymbolList.add(findSymbol(decl, "decl_stmt", fileName, scope));
@@ -272,6 +273,7 @@ public class DependencyGraph {
 
     /**
      * This function finds symbol and add it to symbolTable
+     * <decl_stmt><decl><type><name> [<init>]
      *
      * @param element  declaration element
      * @param tag      srcml tag
@@ -302,6 +304,13 @@ public class DependencyGraph {
             //write into graph file
             ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
         }
+
+        // init is optional
+        Element initNode = element.getFirstChildElement("init", "http://www.sdml.info/srcML/src");
+        if (initNode != null) {
+            findExpr(initNode, fileName, scope);
+        }
+
         return symbol;
     }
 
@@ -458,9 +467,9 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public static void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
-           if(depen_position.equals("40-Client.c")) {
-               System.out.print(depen_position + "!!\n");
-           }
+        if (depen_position.equals("40-Client.c")) {
+            System.out.print(depen_position + "!!\n");
+        }
         int dependId = nodeList.get(depen_position);
         String declNodeLabel = decl.getLineNumber() + "-" + decl.getFileName();
         int declId = nodeList.get(declNodeLabel);
