@@ -29,6 +29,8 @@ public class testDependencyGraph {
         expect_edges.add("13-Client.c->8-Client.c");//mail function block->param
         expect_edges.add("14-Client.c->8-Client.c");
         expect_edges.add("16-Client.c->8-Client.c");
+
+        //struct children
         expect_edges.add("12-Client.h->10-Client.h");
         expect_edges.add("13-Client.h->10-Client.h");
 
@@ -70,6 +72,12 @@ public class testDependencyGraph {
 
     }
 
+    public void expect_children_11(){
+        //block->function
+        expect_edges.add("23-Client.c->21-Client.c");
+        expect_edges.add("24-Client.c->21-Client.c");
+
+    }
 //        @Ignore
     @Test
     public void test11() {
@@ -77,6 +85,7 @@ public class testDependencyGraph {
         String fileName = "EmailSystem/test_11";
         expect_10();
         expect_11();
+        expect_children_11();
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
 
@@ -88,6 +97,11 @@ public class testDependencyGraph {
         expect_edges.add("40-Client.c->38-Client.c");//incoming block param->function param
     }
 
+    public void expect_children_12(){
+        //block->function
+        expect_edges.add("40-Client.c->38-Client.c");
+    }
+
 //        @Ignore
     @Test
     public void test12() {
@@ -95,7 +109,9 @@ public class testDependencyGraph {
         expect_edges = new HashSet<>();
         expect_10();
         expect_11();
+        expect_children_11();
         expect_12();
+        expect_children_12();
 
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
@@ -127,6 +143,25 @@ public class testDependencyGraph {
 
 
     }
+    public void expect_children_13(){
+        //clone email child->function
+        expect_edges.add("9-Email.c->7-Email.c");
+        expect_edges.add("10-Email.c->7-Email.c");
+        expect_edges.add("11-Email.c->7-Email.c");
+        expect_edges.add("20-Email.c->7-Email.c");
+
+        //if child=>parent
+        expect_edges.add("11-Email.c->10-Email.c");
+        expect_edges.add("13-Email.c->12-Email.c");
+        expect_edges.add("19-Email.c->18-Email.c");
+
+
+        //printmail child->function
+        expect_edges.add("26-Email.c->24-Email.c");
+        expect_edges.add("27-Email.c->24-Email.c");
+        expect_edges.add("31-Email.c->24-Email.c");
+        expect_edges.add("37-Email.c->35-Email.c");
+    }
 
 //        @Ignore
     @Test
@@ -137,6 +172,9 @@ public class testDependencyGraph {
         expect_11();
         expect_12();
         expect_13();
+        expect_children_11();
+        expect_children_12();
+        expect_children_13();
 
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
@@ -151,7 +189,6 @@ public class testDependencyGraph {
         expect_edges.add("27-Client.c->21-Client.c");//outgoing block -> outgoing function
         expect_edges.add("28-Client.c->21-Client.c");//outgoing block -> outgoing function
         expect_edges.add("44-Client.c->42-Client.c");//incoming block param->function param
-        expect_edges.add("53-Client.c->49-Client.c");//searchdata block param->function param
 
         expect_edges.add("28-Client.c->8-Client.c"); //mail call->function
         expect_edges.add("44-Client.c->33-Client.c");//deliver call->function
@@ -212,8 +249,7 @@ public class testDependencyGraph {
         expect_edges.add("20-Client.h->18-Client.h");
         expect_edges.add("44-Client.c->42-Client.c");//incoming block param->function param
         expect_edges.add("45-Client.c->42-Client.c");//incoming block param->function param
-        expect_edges.add("54-Client.c->50-Client.c");//searchdata block param->function param
-        expect_edges.add("53-Client.c->50-Client.c");//listdata block param->function param
+        expect_edges.add("52-Client.c->50-Client.c");//listdata block param->function param
 
         expect_edges.add("28-Client.c->8-Client.c"); //mail call->function
         expect_edges.add("45-Client.c->33-Client.c");//deliver call->function
@@ -316,8 +352,6 @@ public class testDependencyGraph {
         expect_edges.add("62-Client.c->54-Client.c");
         expect_edges.add("65-Client.c->54-Client.c");
         expect_edges.add("66-Client.c->54-Client.c");
-
-        expect_edges.add("75-Client.c->71-Client.c");//findAddressbookEntry param: searchdata block param->function param
 
         expect_edges.add("99-Client.c->24-Client.h");//outgoing call->func_DECL
         expect_edges.add("118-Client.c->24-Client.h");//outgoing call->func_DECL
