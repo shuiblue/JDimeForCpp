@@ -32,14 +32,20 @@ public class testDependencyGraph {
         expect_edges.add("12-Client.h->10-Client.h");
         expect_edges.add("13-Client.h->10-Client.h");
 
-        //TODO:outgoingBuffer??
-        //scope  =  2 ?
-//        expect_edges.add("13-Client.c->13-Client.h");
-//        expect_edges.add("14-Client.c->13-Client.h");
-//        expect_edges.add("16-Client.c->13-Client.h");
+        //outgoingBuffer -> struct client. outgoingbuffer
+        expect_edges.add("13-Client.c->13-Client.h");
+        expect_edges.add("14-Client.c->13-Client.h");
+        expect_edges.add("16-Client.c->13-Client.h");
 
-        //TODO: struct type
-//          expect_edges.add("8-Client.c->10-Client.h");
+        //block->function
+        expect_edges.add("13-Client.c->8-Client.c");
+        expect_edges.add("14-Client.c->8-Client.c");
+        expect_edges.add("16-Client.c->8-Client.c");
+
+        //block->if condition
+        expect_edges.add("14-Client.c->13-Client.c");
+        expect_edges.add("16-Client.c->13-Client.c");
+
     }
 
 //        @Ignore
@@ -59,11 +65,8 @@ public class testDependencyGraph {
         expect_edges.add("24-Client.c->21-Client.c");//outgoing block -> outgoing function
         expect_edges.add("24-Client.c->8-Client.c");//mail call->function
 
-        //TODO:name ??
-        //scope  =  2 ?
-//        expect_edges.add("23-Client.c->12-Client.h");
-//        expect_edges.add("14-Client.c->13-Client.h");
-//        expect_edges.add("16-Client.c->13-Client.h");
+        //struct name
+        expect_edges.add("23-Client.c->12-Client.h");
 
     }
 
@@ -103,6 +106,26 @@ public class testDependencyGraph {
         expect_edges.add("24-Email.c->12-Email.h");//printMail function->decl
         expect_edges.add("35-Email.c->14-Email.h");//isReadable  function->decl
         expect_edges.add("20-Email.c->9-Email.c");//return clone ->local var def
+
+
+        //id  var->struct var
+        expect_edges.add("10-Email.c->3-Email.h");
+        expect_edges.add("11-Email.c->3-Email.h");
+        //from  var->struct var
+        expect_edges.add("23-Client.c->4-Email.h");
+        expect_edges.add("12-Email.c->4-Email.h");
+        expect_edges.add("13-Email.c->4-Email.h");
+        //to  var->struct var
+        expect_edges.add("14-Email.c->5-Email.h");
+        expect_edges.add("15-Email.c->5-Email.h");
+        //subject  var->struct var
+        expect_edges.add("16-Email.c->6-Email.h");
+        expect_edges.add("17-Email.c->6-Email.h");
+        //body  var->struct var
+        expect_edges.add("18-Email.c->7-Email.h");
+        expect_edges.add("19-Email.c->7-Email.h");
+
+
     }
 
 //        @Ignore
@@ -142,7 +165,31 @@ public class testDependencyGraph {
         expect_edges.add("42-Client.c->25-Client.h");//incoming func->func_decl
         expect_edges.add("57-Client.c->28-Client.h");//resolveAlias func->func_decl
 
+        expect_edges.add("7-Email.c->10-Email.h"); //cloneEmail function->decl
+        expect_edges.add("24-Email.c->12-Email.h");//printMail function->decl
+        expect_edges.add("35-Email.c->14-Email.h");//isReadable  function->decl
+        expect_edges.add("20-Email.c->9-Email.c");//return clone ->local var def
 
+
+        //id  var->struct var
+        expect_edges.add("10-Email.c->3-Email.h");
+        expect_edges.add("11-Email.c->3-Email.h");
+        //from  var->struct var
+        expect_edges.add("27-Client.c->4-Email.h");
+        expect_edges.add("12-Email.c->4-Email.h");
+        expect_edges.add("13-Email.c->4-Email.h");
+        //to  var->struct var
+        expect_edges.add("14-Email.c->5-Email.h");
+        expect_edges.add("15-Email.c->5-Email.h");
+        //subject  var->struct var
+        expect_edges.add("16-Email.c->6-Email.h");
+        expect_edges.add("17-Email.c->6-Email.h");
+        //body  var->struct var
+        expect_edges.add("18-Email.c->7-Email.h");
+        expect_edges.add("19-Email.c->7-Email.h");
+
+        //struct name
+        expect_edges.add("27-Client.c->12-Client.h");
     }
 
     //addressBook feature
@@ -152,7 +199,6 @@ public class testDependencyGraph {
         String fileName = "EmailSystem/test_14";
         expect_edges = new HashSet<>();
         expect_10();
-        expect_13();
         expect_14();
 
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
@@ -188,6 +234,30 @@ public class testDependencyGraph {
         expect_edges.add("44-Client.c->85-Client.c");//autoRespond CALL->function
         expect_edges.add("44-Client.c->31-Client.h");//autoRespond CALL->function
 
+        expect_edges.add("7-Email.c->10-Email.h"); //cloneEmail function->decl
+        expect_edges.add("24-Email.c->12-Email.h");//printMail function->decl
+        expect_edges.add("35-Email.c->14-Email.h");//isReadable  function->decl
+        expect_edges.add("20-Email.c->9-Email.c");//return clone ->local var def
+
+        //id  var->struct var
+        expect_edges.add("10-Email.c->3-Email.h");
+        expect_edges.add("11-Email.c->3-Email.h");
+        //from  var->struct var
+        expect_edges.add("27-Client.c->4-Email.h");
+        expect_edges.add("12-Email.c->4-Email.h");
+        expect_edges.add("13-Email.c->4-Email.h");
+        //to  var->struct var
+        expect_edges.add("14-Email.c->5-Email.h");
+        expect_edges.add("15-Email.c->5-Email.h");
+        //subject  var->struct var
+        expect_edges.add("16-Email.c->6-Email.h");
+        expect_edges.add("17-Email.c->6-Email.h");
+        //body  var->struct var
+        expect_edges.add("18-Email.c->7-Email.h");
+        expect_edges.add("19-Email.c->7-Email.h");
+
+        //struct name
+        expect_edges.add("27-Client.c->12-Client.h");
     }
 
 //autoResponder feature
@@ -197,7 +267,6 @@ public class testDependencyGraph {
         String fileName = "EmailSystem/test_15";
         expect_edges = new HashSet<>();
         expect_10();
-        expect_13();
         expect_15();
 
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
@@ -279,12 +348,30 @@ public class testDependencyGraph {
     }
 
     //Encrypt feature
-    //@Ignore
+//   @Ignore
     @Test
     public void test16() {
         String fileName = "EmailSystem/test_16";
         expect_edges = new HashSet<>();
         expect_16();
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
+    }
+
+    public void expect_17() {
+        expect_edges.add("5-test12.c->4-test12.c");
+        expect_edges.add("9-test12.c->1-test12.c");
+        expect_edges.add("10-test12.c->2-test12.c");
+        expect_edges.add("11-test12.c->1-test3.c");
+    }
+
+    //test local and global var
+//   @Ignore
+    @Test
+    public void test17() {
+        String fileName = "EmailSystem/test_17";
+        expect_edges = new HashSet<>();
+        expect_17();
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }

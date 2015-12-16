@@ -4,14 +4,7 @@ digraph {
 2 -> 1[label="<Def-Use> client"];
 3 [label = "14-Client.c"];
 3 -> 1[label="<Def-Use> client"];
+3 -> 1[label="<Def-Use> msg"];
 4 [label = "16-Client.c"];
 4 -> 1[label="<Def-Use> client"];
 4 -> 1[label="<Def-Use> msg"];
-5 [label = "10-Client.h"];
-6 [label = "12-Client.h"];
-7 [label = "13-Client.h"];
-7 -> 5[label="<child>"];
-6 -> 5[label="<child>"];
-8 [label = "16-Client.h"];
-9 [label = "18-Client.h"];
-}
