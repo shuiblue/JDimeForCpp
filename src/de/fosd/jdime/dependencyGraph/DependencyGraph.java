@@ -156,12 +156,12 @@ public class DependencyGraph {
             } else if (ele.getLocalName().equals("while")) {
                 //<while><condition><block>
                 Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
-                findExpr(condition, "",fileName, scope, parentLocation);
+                findExpr(condition, "", fileName, scope, parentLocation, false);
                 //Block
                 Element block = ele.getFirstChildElement("block", NAMESPACEURI);
                 tmpSymbolList.addAll(parseDependency(block, fileName, scope, parentLocation));
             } else if (ele.getLocalName().equals("expr_stmt")) {
-                findExpr(ele,"", fileName, scope, parentLocation);
+                findExpr(ele, "", fileName, scope, parentLocation, false);
             } else if (ele.getLocalName().equals("decl_stmt")) {
                 Element decl = ele.getFirstChildElement("decl", NAMESPACEURI);
                 tmpSymbolList.add(findSymbol(decl, "decl_stmt", fileName, scope, parentLocation));
@@ -188,7 +188,7 @@ public class DependencyGraph {
             } else if (ele.getLocalName().equals("return")) {
                 Element returnContent = ele.getFirstChildElement("expr", NAMESPACEURI);
                 if (returnContent != null) {
-                    findExpr(ele,"", fileName, scope, parentLocation);
+                    findExpr(ele, "", fileName, scope, parentLocation, false);
                 }
             }
 
@@ -224,7 +224,7 @@ public class DependencyGraph {
      * @param parentLocation struct node
      */
 
-       private void linkChildToParent(HashSet<Symbol> children, String parentLocation, String label) {
+    private void linkChildToParent(HashSet<Symbol> children, String parentLocation, String label) {
         for (Symbol child : children) {
             String depenNodeLabel = child.getLineNumber() + "-" + child.getFileName();
             addEdgesToFile(depenNodeLabel, parentLocation, label);
@@ -233,6 +233,7 @@ public class DependencyGraph {
 
     /**
      * This function link children to parent, used for block -> function, then-> if
+     *
      * @param childLabel
      * @param parentLocation
      */
@@ -289,7 +290,7 @@ public class DependencyGraph {
 
         //<if><condition><then>[<else>], else is optional
         Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
-        String ifStmtLocation = findExpr(condition,"", fileName, scope, parentLocation);
+        String ifStmtLocation = findExpr(condition, "", fileName, scope, parentLocation, false);
 
         //<then> [<block>], block is optional
         Element then_Node = ele.getFirstChildElement("then", NAMESPACEURI);
@@ -351,7 +352,8 @@ public class DependencyGraph {
         // init is optional
         Element initNode = element.getFirstChildElement("init", NAMESPACEURI);
         if (initNode != null) {
-            findExpr(initNode, lineNumber,fileName, scope, parentLocation);
+//            String initParent = lineNumber + "-" + fileName;
+            findExpr(initNode, lineNumber, fileName, scope, parentLocation, true);
         }
 
         return symbol;
@@ -364,7 +366,7 @@ public class DependencyGraph {
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
-    private String findExpr(Element element,String stmtLineNumber, String fileName, int scope, String parentLocation) {
+    private String findExpr(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
 
         String exprLocation = "";
@@ -379,10 +381,10 @@ public class DependencyGraph {
                 String var;
                 Symbol dependent;
                 if (nameList.size() > 0) {
-                    if(stmtLineNumber.equals("")) {
+                    if (stmtLineNumber.equals("")) {
                         stmtLineNumber = nameList.get(0).getAttribute(0).getValue();
                     }
-                        exprLocation = stmtLineNumber + "-" + fileName;
+                    exprLocation = stmtLineNumber + "-" + fileName;
 
                     for (int x = 0; x < nameList.size(); x++) {
                         var = nameList.get(x).getValue();
@@ -391,7 +393,7 @@ public class DependencyGraph {
                     }
                 } else {
                     var = name_Elements.get(i).getValue();
-                    if(stmtLineNumber.equals("")) {
+                    if (stmtLineNumber.equals("")) {
                         stmtLineNumber = name_Elements.get(i).getAttribute(0).getValue();
                     }
                     dependent = new Symbol(var, "", stmtLineNumber, "name", fileName, scope);
@@ -410,7 +412,7 @@ public class DependencyGraph {
         //<expr><call>
         Element callElement = exprNode.getFirstChildElement("call", NAMESPACEURI);
         if (callElement != null) {
-            exprLocation = findCall(callElement, fileName, scope, parentLocation);
+            exprLocation = findCall(callElement,stmtLineNumber, fileName, scope, parentLocation, isInit);
         }
 
         //<expr><sizeof>
@@ -422,7 +424,7 @@ public class DependencyGraph {
 
             //argument list
             Elements argumentList = sizeofElement.getFirstChildElement("argument_list", NAMESPACEURI).getChildElements();
-            handleArgumentList(argumentList,stmtLineNumber, fileName, scope, parentLocation);
+            handleArgumentList(argumentList, stmtLineNumber, fileName, scope, parentLocation);
 
         }
         //return nodes has its own line Number
@@ -440,8 +442,9 @@ public class DependencyGraph {
         if (!parentLocation.equals("") && !exprLocation.equals("")) {
             System.out.print(exprLocation + "\n");
 
-
-            linkChildToParent(exprLocation, parentLocation);
+            if (!exprLocation.equals(parentLocation)) {
+                linkChildToParent(exprLocation, parentLocation);
+            }
         }
         return exprLocation;
     }
@@ -453,7 +456,8 @@ public class DependencyGraph {
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    is used for mark the symbol's position
      */
-    private String findCall(Element element, String fileName, int scope, String parentLocation) {
+//    private String findCall(Element element, String fileName, int scope, String parentLocation) {
+    private String findCall(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
         //<expr><call> <name> <argument_list> </call> </expr>
         //call node
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
@@ -464,7 +468,13 @@ public class DependencyGraph {
             callNode = element;
         }
         String callName = callNode.getFirstChildElement("name", NAMESPACEURI).getValue();
-        String lineNumber = callNode.getFirstChildElement("name", NAMESPACEURI).getAttribute(0).getValue();
+        String lineNumber;
+        if (isInit) {
+            lineNumber = stmtLineNumber;
+        } else {
+            lineNumber = callNode.getFirstChildElement("name", NAMESPACEURI).getAttribute(0).getValue();
+
+        }
         String nodeLabel = lineNumber + "-" + fileName;
 
 
@@ -485,7 +495,7 @@ public class DependencyGraph {
 
         //argument list
         Elements argumentList = callNode.getFirstChildElement("argument_list", NAMESPACEURI).getChildElements();
-        handleArgumentList(argumentList,lineNumber, fileName, scope, parentLocation);
+        handleArgumentList(argumentList, lineNumber, fileName, scope, parentLocation);
 
         return nodeLabel;
     }
@@ -498,10 +508,10 @@ public class DependencyGraph {
      * @param scope
      * @param parentLocation
      */
-    public void handleArgumentList(Elements argument_List,String stmtLineNumber, String fileName, int scope, String parentLocation) {
+    public void handleArgumentList(Elements argument_List, String stmtLineNumber, String fileName, int scope, String parentLocation) {
         for (int i = 0; i < argument_List.size(); i++) {
             Element argument = argument_List.get(i);
-            findExpr(argument,stmtLineNumber, fileName, scope, parentLocation);
+            findExpr(argument, stmtLineNumber, fileName, scope, parentLocation, false);
         }
     }
 
@@ -564,7 +574,7 @@ public class DependencyGraph {
                         addEdgesToFile(depen_position, s, edgeLable);
 
                     }
-                   } else if (depend.getTag().equals("function")) {
+                } else if (depend.getTag().equals("function")) {
                     if (s.getTag().equals("function_decl")) {
                         edgeLable = "<func_decl> " + funcName;
                         addEdgesToFile(depen_position, s, edgeLable);

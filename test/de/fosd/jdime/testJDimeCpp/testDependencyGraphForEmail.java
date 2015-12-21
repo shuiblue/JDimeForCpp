@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by shuruiz on 11/5/15.
  */
-public class testDependencyGraph {
+public class testDependencyGraphForEmail {
     HashSet<String> expect_edges;
     DependencyGraph dependencyGraph = new DependencyGraph();
     public boolean compareTwoGraphs(HashSet<String> result) {
@@ -369,7 +369,6 @@ public class testDependencyGraph {
         //encrypt
         expect_edges.add("32-Client.c->124-Client.c");
         expect_edges.add("124-Client.c->35-Client.h");
-        expect_edges.add("127-Client.c->124-Client.c");
         expect_edges.add("128-Client.c->126-Client.c");
         expect_edges.add("47-Email.c->56-Email.c");
         expect_edges.add("56-Email.c->18-Email.h");
@@ -377,7 +376,7 @@ public class testDependencyGraph {
         //decrypt
         expect_edges.add("62-Client.c->141-Client.c");
         expect_edges.add("141-Client.c->40-Client.h");
-        expect_edges.add("145-Client.c->141-Client.c");
+        expect_edges.add("144-Client.c->141-Client.c");
         expect_edges.add("148-Client.c->141-Client.c");
     }
 
