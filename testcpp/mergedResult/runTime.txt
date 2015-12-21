@@ -192,3 +192,13 @@
 1975
 3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
 1578
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+2209
+3 way merge: Configuration_adv.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1577
+3 way merge: Marlin_main.cpp file. 'upstream' repo merge with fork 'jcrocholl' 
+1909
+3 way merge: Marlin.h file. 'upstream' repo merge with fork 'jcrocholl' 
+1582
+3 way merge: Configuration.h file. 'upstream' repo merge with fork 'jcrocholl' 
+38076

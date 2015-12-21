@@ -26,23 +26,23 @@ public class MergeRepo {
             }
         });
 
-//        for (File f : matches) {
-//
-//            if (!f.getName().contains("planner")
-//                    && !f.getName().contains("temperature")
-//                    && !f.getName().contains("LiquidCrystalRus")
-//                    && !f.getName().contains("SdFile")
-//                    && !f.getName().contains("SdVolume")
-//                    && !f.getName().contains("fastio")
-//                    && !f.getName().contains("anguage")
-//                    && !f.getName().contains("stepper.h")
-//                    && !f.getName().contains("pins.h")
-//                    && !f.getName().contains("thermistortables.h")
-//                    ) {
-//                mergedFiles.add(f.getName());
-//            }
-//
-//        }
+        for (File f : matches) {
+
+            if (!f.getName().contains("planner")
+                    && !f.getName().contains("temperature")
+                    && !f.getName().contains("LiquidCrystalRus")
+                    && !f.getName().contains("SdFile")
+                    && !f.getName().contains("SdVolume")
+                    && !f.getName().contains("fastio")
+                    && !f.getName().contains("anguage")
+                    && !f.getName().contains("stepper.h")
+                    && !f.getName().contains("pins.h")
+                    && !f.getName().contains("thermistortables.h")
+                    ) {
+                mergedFiles.add(f.getName());
+            }
+
+        }
 //        File dir = new File(path);
 //        String[] names = dir.list();
 //        for (String name : names) {
@@ -54,18 +54,18 @@ public class MergeRepo {
 //
 //        }
 
-        forkName.add("jcrocholl");
+//        forkName.add("jcrocholl");
 //        forkName.add("marlin4Due");
 //        forkName.add("johnnyr");
 //        forkName.add("yuroller");
 //        forkName.add("oysteinkrog");
 //        forkName.add("DinoMesina");
 //        forkName.add("wgm4321");
-//        forkName.add("mattsch");
-        mergedFiles.add("Configuration.h");
-        mergedFiles.add("Configuration_adv.h");
-        mergedFiles.add("Marlin_main.cpp");
-        mergedFiles.add("Marlin.h");
+        forkName.add("mattsch");
+//        mergedFiles.add("Configuration.h");
+//        mergedFiles.add("Configuration_adv.h");
+//        mergedFiles.add("Marlin_main.cpp");
+//        mergedFiles.add("Marlin.h");
         return forkName;
     }
 
