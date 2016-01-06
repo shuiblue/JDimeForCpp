@@ -17,9 +17,9 @@ public class testDPMarlin {
         boolean compare = true;
         for (String edge : expect_edges) {
             compare = compare && result.contains(edge);
-            if (result.contains(edge) == false) {
-                System.out.print(edge + "\n");
-            }
+//            if (result.contains(edge) == false) {
+//                System.out.print(edge + "\n");
+//            }
         }
         return compare;
     }
@@ -42,5 +42,16 @@ public class testDPMarlin {
         assertTrue(compareTwoGraphs(result));
     }
 
+
+    //        @Ignore
+    @Test
+    public void test11() {
+        expect_edges = new HashSet<>();
+        expect_10();
+
+        String fileName = "test_11";
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
+    }
 
 }

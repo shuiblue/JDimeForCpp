@@ -386,4 +386,9 @@ digraph {
 98 -> 114[label="<func_decl> isReadable"];
 73 -> 112[label="<func_decl> cloneEmail"];
 52 -> 72[label="<func_decl> decrypt"];
-}
+}1 -> 1[label="<Def-Use> client"];
+1 -> 1[label="<Def-Use> msg"];
+1 -> 1[label="<Def-Use> client"];
+1 -> 1[label="<Def-Use> msg"];
+1 -> 1[label="<Def-Use> client"];
+1 -> 1[label="<Def-Use> msg"];

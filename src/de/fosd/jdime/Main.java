@@ -27,19 +27,14 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import de.fosd.jdime.common.ASTNodeArtifact;
-import de.fosd.jdime.common.ArtifactList;
-import de.fosd.jdime.common.FileArtifact;
-import de.fosd.jdime.common.MergeContext;
-import de.fosd.jdime.common.MergeScenario;
-import de.fosd.jdime.common.MergeType;
-import de.fosd.jdime.common.Revision;
+import de.fosd.jdime.common.*;
 import de.fosd.jdime.common.operations.MergeOperation;
 import de.fosd.jdime.common.operations.Operation;
 import de.fosd.jdime.stats.Statistics;
@@ -62,8 +57,8 @@ import static de.fosd.jdime.JDimeConfig.*;
  */
 public final class Main {
 
-	private static final Logger LOG = Logger.getLogger(Main.class
-			.getCanonicalName());
+    private static final Logger LOG = Logger.getLogger(Main.class
+            .getCanonicalName());
 
     private static final String TOOLNAME = "jdime";
     private static final String VERSION = "0.3.11-develop";
@@ -73,8 +68,8 @@ public final class Main {
      *
      * @param args command line arguments
      */
-	public static void main(final String[] args) throws IOException,
-			ParseException, InterruptedException {
+    public static void main(final String[] args) throws IOException,
+            ParseException, InterruptedException {
         MergeContext context = new MergeContext();
 
         if (!parseCommandLineArgs(context, args)) {
@@ -96,14 +91,14 @@ public final class Main {
         }
 
         if (output != null && output.exists() && !output.isEmpty()) {
-                LOG.warning("File exists and will be overwritten.");
-                boolean isDirectory = output.isDirectory();
-                output.remove();
+            LOG.warning("File exists and will be overwritten.");
+            boolean isDirectory = output.isDirectory();
+            output.remove();
 
-                if (isDirectory) {
-                    output.getFile().mkdir();
-                }
+            if (isDirectory) {
+                output.getFile().mkdir();
             }
+        }
 
         if (context.isBugfixing()) {
             bugfixing(context);
@@ -130,15 +125,13 @@ public final class Main {
             }
             LOG.config(sb.toString());
         }
-
-//		System.exit(0);
     }
+
 
     /**
      * Outputs the given <code>Statistics</code> according to the set configuration options.
      *
-     * @param statistics
-     *         the <code>Statistics</code> to output
+     * @param statistics the <code>Statistics</code> to output
      */
     private static void outputStatistics(Statistics statistics) {
         Config config = getConfig();
@@ -206,8 +199,7 @@ public final class Main {
      * <code>f</code>. If <code>f</code> exists an increasing number is appended to the name of <code>f</code> until
      * a <code>File</code> is found that does not exist.
      *
-     * @param f
-     *         the <code>File</code> to find a non existent version of
+     * @param f the <code>File</code> to find a non existent version of
      * @return a <code>File</code> in the parent directory of <code>f</code> that does not exist
      */
     private static File findNonExistent(File f) {
@@ -253,12 +245,12 @@ public final class Main {
      * @throws ParseException If arguments cannot be parsed
      */
     private static boolean parseCommandLineArgs(final MergeContext context,
-            final String[] args) throws IOException, ParseException {
+                                                final String[] args) throws IOException, ParseException {
         assert (context != null);
-		LOG.fine(() -> "Parsing command line arguments: "
-				+ Arrays.toString(args));
+        LOG.fine(() -> "Parsing command line arguments: "
+                + Arrays.toString(args));
 
-		boolean continueRun = true;
+        boolean continueRun = true;
         Options options = new Options();
         options.addOption("debug", true, "set debug level"
 
@@ -313,55 +305,55 @@ public final class Main {
             if (cmd.hasOption("mode")) {
                 try {
                     switch (cmd.getOptionValue("mode").toLowerCase()) {
-                    case "list":
-                        printStrategies();
-                        return false;
-                    case "bugfixing":
-                        context.setMergeStrategy(MergeStrategy
-                                .parse("structured"));
-						
-                        context.setBugfixing();
-                        break;
-                    case "de/fosd/jdime/test":
-                        InternalTests.run();
-                        return false;
-                    case "testenvironment":
-                        InternalTests.runEnvironmentTest();
-                        return false;
-                    case "dumptree":
-                        // User only wants to display the ASTs
-                        context.setMergeStrategy(MergeStrategy
-                                .parse("structured"));
-				
-                        context.setDumpTree(true);
-                        context.setGuiDump(false);
-                        break;
-                    case "dumpgraph":
-                        // User only wants to display the ASTs
-                        context.setMergeStrategy(MergeStrategy
-                                .parse("structured"));
-				
-                        context.setDumpTree(true);
-                        context.setGuiDump(true);
-                        break;
-                    case "dumpfile":
-                        // User only wants to display the files
-                        context.setMergeStrategy(MergeStrategy
-                                .parse("linebased"));
-                        context.setDumpFiles(true);
-                        break;
-                    case "prettyprint":
-                        // User wants to parse and pretty-print file
-                        context.setMergeStrategy(MergeStrategy
-                                .parse("structured"));
-				
-                        context.setDumpFiles(true);
-                        break;
-                    default:
-                        // User wants to merge
-                        context.setMergeStrategy(MergeStrategy.parse(cmd
-                                .getOptionValue("mode")));
-                        break;
+                        case "list":
+                            printStrategies();
+                            return false;
+                        case "bugfixing":
+                            context.setMergeStrategy(MergeStrategy
+                                    .parse("structured"));
+
+                            context.setBugfixing();
+                            break;
+                        case "de/fosd/jdime/test":
+                            InternalTests.run();
+                            return false;
+                        case "testenvironment":
+                            InternalTests.runEnvironmentTest();
+                            return false;
+                        case "dumptree":
+                            // User only wants to display the ASTs
+                            context.setMergeStrategy(MergeStrategy
+                                    .parse("structured"));
+
+                            context.setDumpTree(true);
+                            context.setGuiDump(false);
+                            break;
+                        case "dumpgraph":
+                            // User only wants to display the ASTs
+                            context.setMergeStrategy(MergeStrategy
+                                    .parse("structured"));
+
+                            context.setDumpTree(true);
+                            context.setGuiDump(true);
+                            break;
+                        case "dumpfile":
+                            // User only wants to display the files
+                            context.setMergeStrategy(MergeStrategy
+                                    .parse("linebased"));
+                            context.setDumpFiles(true);
+                            break;
+                        case "prettyprint":
+                            // User wants to parse and pretty-print file
+                            context.setMergeStrategy(MergeStrategy
+                                    .parse("structured"));
+
+                            context.setDumpFiles(true);
+                            break;
+                        default:
+                            // User wants to merge
+                            context.setMergeStrategy(MergeStrategy.parse(cmd
+                                    .getOptionValue("mode")));
+                            break;
                     }
                 } catch (StrategyNotFoundException e) {
                     LOG.severe(e.getMessage());
@@ -399,7 +391,7 @@ public final class Main {
                 try {
                     lookAhead = Integer.parseInt(lookAheadValue);
                 } catch (NumberFormatException e) {
-                    switch(lookAheadValue) {
+                    switch (lookAheadValue) {
                         case "off":
                             break;
                         case "full":
@@ -415,14 +407,14 @@ public final class Main {
             context.collectStatistics(cmd.hasOption("stats"));
             context.setForceOverwriting(cmd.hasOption("f"));
             context.setRecursive(cmd.hasOption("r"));
-            
+
             if (cmd.hasOption("p")) {
                 context.setPretend(true);
                 context.setQuiet(false);
             } else if (cmd.hasOption('q')) {
                 context.setQuiet(true);
             }
-            
+
             context.setKeepGoing(cmd.hasOption("keepgoing"));
 
             if (cmd.hasOption("showconfig")) {
@@ -462,18 +454,17 @@ public final class Main {
                 }
 
 
-
-				FileArtifact newArtifact = new FileArtifact(new File(
+                FileArtifact newArtifact = new FileArtifact(new File(
                         ((String) filename).split("\\+")[0]));
-				 
-                    if (context.isConditionalMerge()) {
+
+                if (context.isConditionalMerge()) {
 //                    newArtifact                        .setRevision(new Revision(String.valueOf(cond++)));
                     newArtifact.setRevision(new Revision(((String) filename).split("\\+")[1]));
-                    }
-                    if (targetIsFile) {
-                        targetIsFile = !newArtifact.isDirectory();
-                    }
-                    inputArtifacts.add(newArtifact);
+                }
+                if (targetIsFile) {
+                    targetIsFile = !newArtifact.isDirectory();
+                }
+                inputArtifacts.add(newArtifact);
 
             }
 
@@ -484,7 +475,7 @@ public final class Main {
                 file.getParentFile().mkdirs();
                 new FileWriter(file);
 
-				context.setOutputFile(new FileArtifact(new Revision("merge"),
+                context.setOutputFile(new FileArtifact(new Revision("merge"),
                         file, true, targetIsFile));
                 context.setPretend(false);
             }
@@ -498,14 +489,14 @@ public final class Main {
 
     /**
      * Print short information.
-	 * 
+     *
      * @param context merge context
      */
     private static void info(final MergeContext context) {
         version();
         System.out.println();
-		System.out
-				.println("Run the program with the argument '--help' in order to retrieve information on its usage!");
+        System.out
+                .println("Run the program with the argument '--help' in order to retrieve information on its usage!");
     }
 
     /**
@@ -529,19 +520,19 @@ public final class Main {
      * Set the logging level. The levels in descending order are:<br>
      * <p>
      * <ul>
-     *  <li>ALL</li>
-     *  <li>SEVERE (highest value)</li>
-     *  <li>WARNING</li>
-     *  <li>INFO</li>
-     *  <li>CONFIG</li>
-     *  <li>FINE</li>
-     *  <li>FINER</li>
-     *  <li>FINEST (lowest value)</li>
-     *  <li>OFF</li>
+     * <li>ALL</li>
+     * <li>SEVERE (highest value)</li>
+     * <li>WARNING</li>
+     * <li>INFO</li>
+     * <li>CONFIG</li>
+     * <li>FINE</li>
+     * <li>FINER</li>
+     * <li>FINEST (lowest value)</li>
+     * <li>OFF</li>
      * </ul>
      *
      * @param logLevel one of the valid log levels according to
-	 *            {@link Level#parse(String)}
+     *                 {@link Level#parse(String)}
      */
     private static void setLogLevel(String logLevel) {
         Level level;
@@ -594,9 +585,9 @@ public final class Main {
     public static void merge(final MergeContext context) throws IOException,
             InterruptedException {
         assert (context != null);
-		Operation<FileArtifact> merge = new MergeOperation<>(
-				context.getInputFiles(), context.getOutputFile(), null, null,
-				context.isConditionalMerge());
+        Operation<FileArtifact> merge = new MergeOperation<>(
+                context.getInputFiles(), context.getOutputFile(), null, null,
+                context.isConditionalMerge());
         merge.apply(context);
     }
 
@@ -607,13 +598,13 @@ public final class Main {
      * @throws IOException If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
-	private static void dumpTrees(final MergeContext context)
-			throws IOException {
+    private static void dumpTrees(final MergeContext context)
+            throws IOException {
         for (FileArtifact artifact : context.getInputFiles()) {
-			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
-					.getMergeStrategy();
-			System.out
-					.println(strategy.dumpTree(artifact, context.isGuiDump()));
+            MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+                    .getMergeStrategy();
+            System.out
+                    .println(strategy.dumpTree(artifact, context.isGuiDump()));
         }
     }
 
@@ -624,13 +615,13 @@ public final class Main {
      * @throws IOException If an input output exception occurs
      */
     @SuppressWarnings("unchecked")
-	private static void dumpFiles(final MergeContext context)
-			throws IOException {
+    private static void dumpFiles(final MergeContext context)
+            throws IOException {
         for (FileArtifact artifact : context.getInputFiles()) {
-			MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
-					.getMergeStrategy();
-			System.out
-					.println(strategy.dumpFile(artifact, context.isGuiDump()));
+            MergeStrategy<FileArtifact> strategy = (MergeStrategy<FileArtifact>) context
+                    .getMergeStrategy();
+            System.out
+                    .println(strategy.dumpFile(artifact, context.isGuiDump()));
         }
     }
 
@@ -646,9 +637,9 @@ public final class Main {
 
         for (FileArtifact artifact : context.getInputFiles()) {
             ASTNodeArtifact ast = new ASTNodeArtifact(artifact);
-			 System.out.println(ast.getASTNode().dumpTree());
-			 System.out.println(ast.getASTNode());
-			 System.out.println(ast.prettyPrint());
+            System.out.println(ast.getASTNode().dumpTree());
+            System.out.println(ast.getASTNode());
+            System.out.println(ast.prettyPrint());
             System.out.println(ast.dumpTree());
             System.out.println("--");
             //int[] s = ast.getStats();

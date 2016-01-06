@@ -1,6 +1,7 @@
 package de.fosd.jdime.testJDimeCpp;
 
 import de.fosd.jdime.Main;
+import de.fosd.jdime.common.CppNodeArtifact;
 import de.fosd.jdime.util.IOFunctionSet;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
@@ -135,6 +136,13 @@ public class TestInitial {
 
     }
 
+    /**
+     * this function check n-way merge repository is correct or not
+     * @param path marlin project path
+     * @param fork fork name
+     * @param mergedFile file name
+     * @return merged result
+     */
     public String checkMergeRepo(String path, String fork, String mergedFile){
         ArrayList<String> inputFilePaths = new ArrayList<>();
         String result = "";
@@ -234,6 +242,10 @@ public class TestInitial {
         }
         return  result;
     }
+
+
+
+
 
     /**
      * check merged file is equal to expect result

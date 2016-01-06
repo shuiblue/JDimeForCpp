@@ -39,7 +39,9 @@ import de.fosd.jdime.common.MergeScenario;
 import de.fosd.jdime.common.MergeType;
 import de.fosd.jdime.common.Revision;
 import de.fosd.jdime.common.operations.MergeOperation;
+import de.fosd.jdime.dependencyGraph.DependencyGraph;
 import de.fosd.jdime.util.IOFunctionSet;
+import nu.xom.Element;
 
 /**
  * Performs a structured merge on <code>FileArtifacts</code>.
@@ -50,7 +52,7 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
 
     private static final Logger LOG = Logger.getLogger(NWayStrategy.class.getCanonicalName());
     IOFunctionSet ioFunctionSet = new IOFunctionSet();
-
+DependencyGraph dependencyGraph = new DependencyGraph();
     /**
      * The source <code>FileArtifacts</code> are extracted from the
      * <code>MergeOperation</code>, parsed by the <code>JastAddJ</code> parser
@@ -152,7 +154,10 @@ public class NWayStrategy extends MergeStrategy<FileArtifact> {
                 }
             }
         }
+
+
         String prettyPrint = targetNode.prettyPrint();
+
         prettyPrint = ioFunctionSet.presicePrettyprint(prettyPrint);
         try (BufferedReader buf = new BufferedReader(new StringReader(prettyPrint))) {
             String line;
