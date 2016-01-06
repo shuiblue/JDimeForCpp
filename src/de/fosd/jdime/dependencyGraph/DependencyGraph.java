@@ -376,7 +376,14 @@ public class DependencyGraph {
         return tmpSymbolList;
     }
 
-
+    /**
+     * this function add control flow dependency relationship,
+     * add edges: first symbol of  symbolList -> head
+     * in symbol List: after stmt->pre stmt
+     * @param headLocation condition stmt
+     * @param symbolList set of symbol (e.g, then block, else block, while block, switch case..)
+     * @param fileName file Name for node label
+     */
     private void addControlFlowDependency(String headLocation, ArrayList<Symbol> symbolList, String fileName) {
         addEdgesToFile(headLocation, symbolList.get(0), CONTROLFLOW_LABEL + " if-then");
         for (int i = 0; i < symbolList.size() - 1; i++) {
