@@ -54,4 +54,15 @@ public class testDPMarlin {
         assertTrue(compareTwoGraphs(result));
     }
 
+
+    //        @Ignore
+    @Test
+    public void test14() {
+        expect_edges = new HashSet<>();
+
+        String fileName = "test_14";
+        HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
+        assertTrue(compareTwoGraphs(result));
+    }
+
 }
