@@ -11,8 +11,6 @@ digraph {
 4 -> 2[label="<child>"];
 4 -> 1[label="<Def-Use> msg"];
 2 -> 3[label="<Control-Flow> if-then"];
-3 -> 3[label="<Control-Flow>"];
-3 -> 3[label="<Control-Flow>"];
 2 -> 4[label="<Control-Flow> if-then"];
 5 [label = "21-Client.c"];
 6 [label = "23-Client.c"];
@@ -35,12 +33,12 @@ digraph {
 13 -> 11[label="<belongToStruct>"];
 14 [label = "16-Client.h"];
 15 [label = "18-Client.h"];
-6 -> 12[label="<Def-Use> name"];
-4 -> 13[label="<Def-Use> outgoingBuffer"];
-3 -> 13[label="<Def-Use> outgoingBuffer"];
-7 -> 1[label="<Call> mail"];
 10 -> 8[label="<Call> deliver"];
+6 -> 12[label="<Def-Use> name"];
 2 -> 13[label="<Def-Use> outgoingBuffer"];
+4 -> 13[label="<Def-Use> outgoingBuffer"];
+7 -> 1[label="<Call> mail"];
+3 -> 13[label="<Def-Use> outgoingBuffer"];
 9 -> 15[label="<func_decl> incoming"];
 5 -> 14[label="<func_decl> outgoing"];
 }

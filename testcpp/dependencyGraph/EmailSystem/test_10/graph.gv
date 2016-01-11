@@ -11,8 +11,6 @@ digraph {
 4 -> 2[label="<child>"];
 4 -> 1[label="<Def-Use> msg"];
 2 -> 3[label="<Control-Flow> if-then"];
-3 -> 3[label="<Control-Flow>"];
-3 -> 3[label="<Control-Flow>"];
 2 -> 4[label="<Control-Flow> if-then"];
 5 [label = "10-Client.h"];
 6 [label = "12-Client.h"];

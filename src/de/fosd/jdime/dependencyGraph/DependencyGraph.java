@@ -1,6 +1,5 @@
 package de.fosd.jdime.dependencyGraph;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import de.fosd.jdime.util.IOFunctionSet;
 import nu.xom.Element;
 import nu.xom.Elements;
@@ -36,7 +35,7 @@ public class DependencyGraph {
      * to create dependency graph in each file
      *
      * @param testDir directory that contains .c/cpp/h files
-     * @return edgeList for testing goal
+     * @return edgeList for testing directory
      */
     public HashSet<String> createDependencyGraph(String testDir) {
 
@@ -77,7 +76,7 @@ public class DependencyGraph {
 
                 //parse dependency graph in each file
                 Element root = ioFunctionSet.getXmlDom(xmlFilePath).getRootElement();
-                storeSymbols(parseDependencyForSubTree(root, fileName, 1, ""));
+                parseDependencyForSubTree(root, fileName, 1, "");
             }
         }
         //create edges cross files
@@ -88,9 +87,9 @@ public class DependencyGraph {
     }
 
     /**
-     * This function store a set of symbols into Symbol table and nameMap.
+     * This function store a set of symbols to Symbol table and nameMap.
      *
-     * @param symbols hashSet of symbols
+     * @param symbols ArrayList of symbols
      */
     private void storeSymbols(ArrayList<Symbol> symbols) {
         //add to symbol table
@@ -122,7 +121,6 @@ public class DependencyGraph {
      * 2. symbolTable(func_decl)
      */
     private void addEdgesCrossFiles() {
-
         //add call-> function/func_decl
         for (Symbol dependent : lonelySymbolSet) {
             String tag = dependent.getTag();
@@ -152,10 +150,10 @@ public class DependencyGraph {
      * @param fileName       prefix of the graph node (filename+line#)
      * @param scope          is the level of the declaration node. (1 means the symbol is in the file level, 2 means the symbol is in a function level)
      * @param parentLocation parent node of the root, used for creating edge: root->parent
-     * @return symbol list for the sub tree
+     * @return a list of statement locations of the subtree
      */
-    public ArrayList<Symbol> parseDependencyForSubTree(Element subTreeRoot, String fileName, int scope, String parentLocation) {
-        ArrayList<Symbol> tmpSymbolList = new ArrayList<>();
+    public ArrayList<String> parseDependencyForSubTree(Element subTreeRoot, String fileName, int scope, String parentLocation) {
+        ArrayList<String> tmpStmtList = new ArrayList<>();
         Elements elements = subTreeRoot.getChildElements();
 
         for (int i = 0; i < elements.size(); i++) {
@@ -171,44 +169,28 @@ public class DependencyGraph {
                 String line = ele.getAttribute(0).getValue();
                 Symbol macro = new Symbol(macroName, "", line, "macro", fileName, scope);
                 storeIntoNodeList(line + "-" + fileName);
-                tmpSymbolList.add(macro);
+                symbolTable.add(macro);
 
             } else if (ele.getLocalName().equals("if") && ele.getNamespacePrefix().equals("cpp")) {
                 Element expr = ele.getFirstChildElement("expr", NAMESPACEURI);
                 if (expr != null) {
-                    handleVarInExpr(ele, "", fileName, scope, parentLocation, false);
+                    tmpStmtList.add(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
                 }
             } else if (ele.getLocalName().equals("function") || ele.getLocalName().equals("constructor")) {
-                tmpSymbolList.addAll(parseFunctionNode(ele, fileName, scope));
+                parseFunctionNode(ele, fileName, scope);
             } else if (ele.getLocalName().equals("if") && !ele.getNamespacePrefix().equals("cpp")) {
-                tmpSymbolList.addAll(parseIfStmt(ele, fileName, scope, parentLocation));
+                tmpStmtList.addAll(parseIfStmt(ele, fileName, scope, parentLocation));
             } else if (ele.getLocalName().equals("while")) {
-                //<while><condition><block>
-                Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
-                tmpSymbolList.addAll(handleVarInExpr(condition, "", fileName, scope, parentLocation, false));
-                //Block
-                Element block = ele.getFirstChildElement("block", NAMESPACEURI);
-//                tmpSymbolList.addAll(parseDependency(block, fileName, scope, parentLocation));
-                String lineNumber = ele.getAttribute(0).getValue();
-                String whileLocation = lineNumber + "-" + fileName;
-
-                if (block != null) {
-                    tmpSymbolList.addAll(parseDependencyForSubTree(block, fileName, scope + 1, whileLocation));
-                }
-
-                Element expr = ele.getFirstChildElement("expr_stmt", NAMESPACEURI);
-                if (expr != null) {
-                    tmpSymbolList.addAll(handleVarInExpr(expr, "", fileName, scope, parentLocation, false));
-                }
+                tmpStmtList.addAll(parseWhileStmt(ele, fileName, scope, parentLocation));
             } else if (ele.getLocalName().equals("expr_stmt")) {
-                tmpSymbolList.addAll(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
+                tmpStmtList.add(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
             } else if (ele.getLocalName().equals("decl_stmt")) {
                 Element decl = ele.getFirstChildElement("decl", NAMESPACEURI);
-                tmpSymbolList.add(addDeclarationSymbol(decl, "decl_stmt", fileName, scope, parentLocation));
+                Symbol declSymbol = addDeclarationSymbol(decl, "decl_stmt", fileName, scope, parentLocation);
+                tmpStmtList.add(declSymbol.getLineNumber() + "-" + fileName);
             } else if (ele.getLocalName().equals("struct")) {
                 //struct
                 Symbol parent = addDeclarationSymbol(ele, "struct", fileName, scope, parentLocation);
-                tmpSymbolList.add(parent);
                 parentLocation = parent.getLineNumber() + "-" + fileName;
                 //block
                 Element block = ele.getFirstChildElement("block", NAMESPACEURI);
@@ -217,33 +199,27 @@ public class DependencyGraph {
 
                     //get children
 //                    HashSet<Symbol>
-                    ArrayList<Symbol> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
-                    tmpSymbolList.addAll(children);
-
+                    ArrayList<String> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
                     //link children -> parent
                     linkChildToParent(children, parentLocation, "<belongToStruct>");
                 }
             } else if (ele.getLocalName().equals("function_decl")) {
-                tmpSymbolList.add(addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation));
+                addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation);
 
             } else if (ele.getLocalName().equals("return")) {
                 Element returnContent = ele.getFirstChildElement("expr", NAMESPACEURI);
                 if (returnContent != null) {
-                    tmpSymbolList.addAll(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
+                    tmpStmtList.add(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
                 }
             } else if (ele.getLocalName().equals("for")) {
-
-                tmpSymbolList.addAll(parseForStmt(ele, fileName, scope, parentLocation));
+                tmpStmtList.addAll(parseForStmt(ele, fileName, scope, parentLocation));
             }
-
             //remove symbol, whose scope >1
             if (((Element) ele.getParent()).getLocalName().equals("unit")) {
                 symbolTable = removeLocalSymbol(symbolTable);
             }
         }
-
-
-        return tmpSymbolList;
+        return tmpStmtList;
     }
 
     /**
@@ -264,26 +240,25 @@ public class DependencyGraph {
     /**
      * This function create the edge from a set of child to parent (used for struct)
      *
-     * @param children       symbols belong to struct
-     * @param parentLocation struct node
+     * @param childrenLocations       statements' location
+     * @param parentLocation struct node's location
      */
 
-    private void linkChildToParent(ArrayList<Symbol> children, String parentLocation, String label) {
-        for (Symbol child : children) {
-            String depenNodeLabel = child.getLineNumber() + "-" + child.getFileName();
-            addEdgesToFile(depenNodeLabel, parentLocation, label);
+    private void linkChildToParent(ArrayList<String> childrenLocations, String parentLocation, String label) {
+        for (String child : childrenLocations) {
+            addEdgesToFile(child, parentLocation, label);
         }
     }
 
     /**
      * This function link children to parent, used for block -> function, then-> if, else->if
      *
-     * @param childLabel
+     * @param childLocation
      * @param parentLocation
      */
-    private void linkChildToParent(String childLabel, String parentLocation) {
-        if (!edgeList.contains(childLabel + "->" + parentLocation)) {
-            addEdgesToFile(childLabel, parentLocation, "<child>");
+    private void linkChildToParent(String childLocation, String parentLocation) {
+        if (!edgeList.contains(childLocation + "->" + parentLocation)) {
+            addEdgesToFile(childLocation, parentLocation, "<child>");
         }
     }
 
@@ -295,33 +270,24 @@ public class DependencyGraph {
      * @param element  function element
      * @param fileName current filename, used for mark dependency graph's node name (lineNumber-fileName)
      * @param scope    function's scope is 1, symbol in block is 2
-     * @return symbolList in function scope
      */
-    private HashSet<Symbol> parseFunctionNode(Element element, String fileName, int scope) {
-        HashSet<Symbol> tmpSymbolList = new HashSet<>();
-
+    private void parseFunctionNode(Element element, String fileName, int scope) {
         //add function to symbol table
         Symbol functionSymbol = addDeclarationSymbol(element, "function", fileName, scope, "");
-        tmpSymbolList.add(functionSymbol);
         String parentLocation = functionSymbol.getLineNumber() + "-" + fileName;
         //check parameters
         Element parameter_list = element.getFirstChildElement("parameter_list", NAMESPACEURI);
         if (parameter_list.getChildElements() != null) {
             for (int i = 0; i < parameter_list.getChildElements("param", NAMESPACEURI).size(); i++) {
                 Element paramNode = parameter_list.getChildElements("param", NAMESPACEURI).get(i);
-
                 //add Parameter to symbol table
-                tmpSymbolList.add(addDeclarationSymbol((Element) paramNode.getChild(0), "param", fileName, scope + 1, parentLocation));
+                addDeclarationSymbol((Element) paramNode.getChild(0), "param", fileName, scope + 1, parentLocation);
             }
         }
 
         //check block
         Element block = element.getFirstChildElement("block", NAMESPACEURI);
-
-        tmpSymbolList.addAll(parseDependencyForSubTree(block, fileName, scope + 1, parentLocation));
-
-
-        return tmpSymbolList;
+        parseDependencyForSubTree(block, fileName, scope + 1, parentLocation);
     }
 
     /**
@@ -330,17 +296,15 @@ public class DependencyGraph {
      * @param ele      if  element
      * @param fileName fileName of this node
      * @param scope    level of the node
-     * @return symbols
+     * @return list of statement location
      */
-//    private void parseIfStmt(Element ele, String fileName, int scope, String parentLocation) {
-    private ArrayList<Symbol> parseIfStmt(Element ele, String fileName, int scope, String parentLocation) {
+    private ArrayList<String> parseIfStmt(Element ele, String fileName, int scope, String parentLocation) {
         //<if><condition><then>[<else>], else is optional
         Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
 
-        ArrayList<Symbol> symbolList = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
-        String ifStmtLocation = symbolList.get(0).getLineNumber() + "-" + fileName;
-
-
+        ArrayList<String> stmtList = new ArrayList<>();
+        String ifStmtLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
+        stmtList.add(ifStmtLocation);
         //control flow analysis dependency
         if (!CONTROL_FLOW) {
             ifStmtLocation = "";
@@ -348,7 +312,7 @@ public class DependencyGraph {
 
         //<then> [<block>], block is optional
         Element then_Node = ele.getFirstChildElement("then", NAMESPACEURI);
-        ArrayList<Symbol> symbolsInThen = null;
+        ArrayList<String> symbolsInThen = null;
         if (then_Node.getFirstChildElement("block", NAMESPACEURI) != null) {
             Element block = then_Node.getFirstChildElement("block", NAMESPACEURI);
             symbolsInThen = parseDependencyForSubTree(block, fileName, scope, ifStmtLocation);
@@ -356,7 +320,7 @@ public class DependencyGraph {
             symbolsInThen = parseDependencyForSubTree(then_Node, fileName, scope, ifStmtLocation);
         }
 
-        ArrayList<Symbol> symbolsInElse = null;
+        ArrayList<String> symbolsInElse = null;
 
         //else is optional
         Element else_Node = ele.getFirstChildElement("else", NAMESPACEURI);
@@ -370,26 +334,71 @@ public class DependencyGraph {
         }
 
         //add control flow dependency
-        if (CONTROL_FLOW) {
+        if (CONTROL_FLOW && symbolsInThen.size() > 0) {
             addControlFlowDependency(ifStmtLocation, symbolsInThen, fileName);
-            if (symbolsInElse.size() > 0) {
+            if (symbolsInElse != null && symbolsInElse.size() > 0) {
                 addControlFlowDependency(ifStmtLocation, symbolsInElse, fileName);
             }
         }
 
-
-        symbolList.addAll(symbolsInThen);
-        symbolList.addAll(symbolsInElse);
-        return symbolList;
+        stmtList.addAll(symbolsInThen);
+        if (symbolsInElse != null) {
+            stmtList.addAll(symbolsInElse);
+        }
+        return stmtList;
     }
 
 
-    private void addControlFlowDependency(String headLocation, ArrayList<Symbol> symbolList, String fileName) {
-        addEdgesToFile(headLocation, symbolList.get(0), CONTROLFLOW_LABEL + " if-then");
-        for (int i = 0; i < symbolList.size() - 1; i++) {
-            String pre_loc = symbolList.get(i).getLineNumber() + "-" + fileName;
-            String after_loc = symbolList.get(i + 1).getLineNumber() + "-" + fileName;
-            addEdgesToFile(pre_loc, after_loc, CONTROLFLOW_LABEL);
+    /**
+     * this function parse while node.
+     *
+     * @param ele            while node , type is element
+     * @param fileName       file name
+     * @param scope          while node's scope
+     * @param parentLocation parent's location
+     * @return a list of statement location of 'while' node
+     */
+    private ArrayList<String> parseWhileStmt(Element ele, String fileName, int scope, String parentLocation) {
+
+        //<while><condition><block>
+        Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
+        ArrayList<String> stmtList = new ArrayList<>();
+        String whileLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
+
+        stmtList.add(whileLocation);
+        //Block
+        Element block = ele.getFirstChildElement("block", NAMESPACEURI);
+
+        if (block != null) {
+            stmtList.addAll(parseDependencyForSubTree(block, fileName, scope + 1, whileLocation));
+        }
+
+        Element expr = ele.getFirstChildElement("expr_stmt", NAMESPACEURI);
+        if (expr != null) {
+            stmtList.add(handleVarInExpr(expr, "", fileName, scope, parentLocation, false));
+        }
+
+        //add control flow dependency
+        if (CONTROL_FLOW && stmtList.size() > 0) {
+            addControlFlowDependency(whileLocation, stmtList, fileName);
+        }
+        return stmtList;
+    }
+
+    /**
+     * this function add control flow dependency for if-then-else, while, etc.
+     * @param headLocation condition location
+     * @param stmtList statement list in block
+     * @param fileName current file, used for marking location
+     */
+    private void addControlFlowDependency(String headLocation, ArrayList<String> stmtList, String fileName) {
+        addEdgesToFile(headLocation, stmtList.get(0), CONTROLFLOW_LABEL + " if-then");
+        for (int i = 0; i < stmtList.size() - 1; i++) {
+            String pre_loc = stmtList.get(i);
+            String after_loc = stmtList.get(i + 1);
+            if (!pre_loc.equals(after_loc)) {
+                addEdgesToFile(after_loc, pre_loc, CONTROLFLOW_LABEL);
+            }
         }
     }
 
@@ -401,21 +410,20 @@ public class DependencyGraph {
      * @param fileName
      * @param scope
      * @param parentLocation
-     * @return tmpSymbolList
+     * @return List of statement location
      */
-    private ArrayList<Symbol> parseForStmt(Element ele, String fileName, int scope, String parentLocation) {
-//        HashSet<Symbol> tmpSymbolList = new HashSet<>();
-        ArrayList<Symbol> tmpSymbolList = new ArrayList<>();
+    private ArrayList<String> parseForStmt(Element ele, String fileName, int scope, String parentLocation) {
+        ArrayList<String> tmpStmtList = new ArrayList<>();
 
         Element init = ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("decl", NAMESPACEURI);
         Symbol initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
-        tmpSymbolList.add(initVarSymbol);
+        tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
         String lineNumber = ele.getAttribute(0).getValue();
         String forLocation = lineNumber + "-" + fileName;
 
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
         if (block != null) {
-            tmpSymbolList.addAll(parseDependencyForSubTree(block, fileName, scope + 1, forLocation));
+            tmpStmtList.addAll(parseDependencyForSubTree(block, fileName, scope + 1, forLocation));
         }
 
         Element expr = ele.getFirstChildElement("expr_stmt", NAMESPACEURI);
@@ -423,7 +431,7 @@ public class DependencyGraph {
             handleVarInExpr(expr, "", fileName, scope, parentLocation, false);
         }
 
-        return tmpSymbolList;
+        return tmpStmtList;
     }
 
     /**
@@ -453,9 +461,7 @@ public class DependencyGraph {
         if (nameElement != null) {
             String name = nameElement.getValue();
 
-//        String className="";
             if (name.contains("::")) {
-//            className =name.split("::")[0];
                 name = name.split("::")[1];
             }
 
@@ -467,7 +473,6 @@ public class DependencyGraph {
             }
 
             symbol = new Symbol(name, type, lineNumber, tag, fileName, scope);
-//            HashSet<Symbol> newsymbol = new HashSet<>();
             ArrayList<Symbol> newsymbol = new ArrayList<>();
             newsymbol.add(symbol);
             storeSymbols(newsymbol);
@@ -497,13 +502,10 @@ public class DependencyGraph {
      * @param isInit         whether this element is a initial (function call)
      * @return expression's Location
      */
-//    private String handleVarInExpr(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
-    private ArrayList<Symbol> handleVarInExpr(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
+    private String handleVarInExpr(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
 
         String exprLocation = "";
-        ArrayList<Symbol> symbolsInExpr = new ArrayList<>();
-//        String stmtLineNumber;
         //<expr><name> [<name1...><name2...>] </name>  </expr>
         Elements name_Elements = exprNode.getChildElements("name", NAMESPACEURI);
         if (name_Elements.size() > 0) {
@@ -523,8 +525,6 @@ public class DependencyGraph {
                     for (int x = 0; x < nameList.size(); x++) {
                         var = nameList.get(x).getValue();
                         dependent = new Symbol(var, "", stmtLineNumber, "name", fileName, scope);
-
-                        symbolsInExpr.add(dependent);
                         findVarDependency(dependent);
 
                     }
@@ -534,7 +534,6 @@ public class DependencyGraph {
                         stmtLineNumber = name_Elements.get(i).getAttribute(0).getValue();
                     }
                     dependent = new Symbol(var, "", stmtLineNumber, "name", fileName, scope);
-                    symbolsInExpr.add(dependent);
                     exprLocation = stmtLineNumber + "-" + fileName;
                     //save into nodeList
                     storeIntoNodeList(exprLocation);
@@ -551,7 +550,10 @@ public class DependencyGraph {
         //<expr><call>
         Element callElement = exprNode.getFirstChildElement("call", NAMESPACEURI);
         if (callElement != null) {
-            symbolsInExpr.addAll(handleCallNode(callElement, stmtLineNumber, fileName, scope, parentLocation, isInit));
+            String callLocation = handleCallNode(callElement, stmtLineNumber, fileName, scope, parentLocation, isInit);
+            if (exprLocation.equals("")) {
+                exprLocation = callLocation;
+            }
         }
 
         //<expr><sizeof>
@@ -562,7 +564,6 @@ public class DependencyGraph {
 
             //argument list
             Elements argumentList = sizeofElement.getFirstChildElement("argument_list", NAMESPACEURI).getChildElements();
-            symbolsInExpr.addAll(handleArgumentList(argumentList, stmtLineNumber, fileName, scope, parentLocation));
         }
         //return nodes has its own line Number
         if (element.getLocalName().equals("return")) {
@@ -578,8 +579,7 @@ public class DependencyGraph {
                 linkChildToParent(exprLocation, parentLocation);
             }
         }
-//        return exprLocation;
-        return symbolsInExpr;
+        return exprLocation;
     }
 
     /**
@@ -611,11 +611,7 @@ public class DependencyGraph {
      * @return call node Location
      */
 
-//    private String handleCallNode(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
-    private ArrayList<Symbol> handleCallNode(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
-
-        ArrayList<Symbol> symbolsInCall = new ArrayList<>();
-
+    private String handleCallNode(Element element, String stmtLineNumber, String fileName, int scope, String parentLocation, boolean isInit) {
         //call node
         Element exprNode = element.getFirstChildElement("expr", NAMESPACEURI);
         Element callNode;
@@ -642,7 +638,6 @@ public class DependencyGraph {
         //save into dependent Table
         //call's level is 1
         Symbol call = new Symbol(callName, "", lineNumber, "call", fileName, 1);
-        symbolsInCall.add(call);
         lonelySymbolSet.add(call);
 
         //save into nodeList
@@ -652,15 +647,12 @@ public class DependencyGraph {
             //write into graph file
             ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
         }
-
         addFuncDependency(call);
 
         //argument list
         Elements argumentList = callNode.getFirstChildElement("argument_list", NAMESPACEURI).getChildElements();
         handleArgumentList(argumentList, lineNumber, fileName, scope, parentLocation);
-
-        return symbolsInCall;
-//        return nodeLabel;
+        return nodeLabel;
     }
 
     /**
@@ -671,16 +663,11 @@ public class DependencyGraph {
      * @param scope
      * @param parentLocation
      */
-//    public void handleArgumentList(Elements argument_List, String stmtLineNumber, String fileName, int scope, String parentLocation) {
-    public ArrayList<Symbol> handleArgumentList(Elements argument_List, String stmtLineNumber, String fileName, int scope, String parentLocation) {
-        ArrayList<Symbol> symbolsInArgumentList = new ArrayList<>();
-
+    public void handleArgumentList(Elements argument_List, String stmtLineNumber, String fileName, int scope, String parentLocation) {
         for (int i = 0; i < argument_List.size(); i++) {
             Element argument = argument_List.get(i);
-            symbolsInArgumentList.addAll(handleVarInExpr(argument, stmtLineNumber, fileName, scope, parentLocation, false));
+          handleVarInExpr(argument, stmtLineNumber, fileName, scope, parentLocation, false);
         }
-
-        return symbolsInArgumentList;
     }
 
     /**

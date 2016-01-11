@@ -11,9 +11,12 @@ digraph {
 6 -> 5[label="<child>"];
 7 [label = "10-test12.c"];
 7 -> 2[label="<Call> test1"];
+7 -> 5[label="<child>"];
 8 [label = "11-test12.c"];
+8 -> 5[label="<child>"];
 9 [label = "1-test3.c"];
 10 [label = "2-test3.c"];
+10 -> 9[label="<child>"];
 7 -> 2[label="<Call> test1"];
 8 -> 9[label="<Call> test3"];
 }

@@ -389,6 +389,21 @@ public class testDependencyGraphForEmail {
         String fileName = "EmailSystem/test_16";
         expect_edges = new HashSet<>();
         expect_16();
+
+        //control flow "if()"
+        expect_edges.add("91-Client.c->89-Client.c");
+        expect_edges.add("92-Client.c->91-Client.c");
+        expect_edges.add("130-Client.c->128-Client.c");
+        expect_edges.add("130-Client.c->128-Client.c");
+        expect_edges.add("133-Client.c->130-Client.c");
+
+
+        //control flow "while"
+        expect_edges.add("96-Client.c->94-Client.c");
+        expect_edges.add("97-Client.c->96-Client.c");
+        expect_edges.add("98-Client.c->97-Client.c");
+
+
         HashSet<String> result = dependencyGraph.createDependencyGraph(fileName);
         assertTrue(compareTwoGraphs(result));
     }
