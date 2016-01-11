@@ -1,12 +1,56 @@
 
-// This is for text that flows Right to Left
-void LiquidCrystalRus::rightToLeft(void) {
-  _displaymode &= ~LCD_ENTRYLEFT;
-  command(LCD_ENTRYMODESET | _displaymode);
-}
+static void axis_is_at_home(int axis) {
 
-// This will 'right justify' text from the cursor
-void LiquidCrystalRus::autoscroll(void) {
-  _displaymode |= LCD_ENTRYSHIFTINCREMENT;
-  command(LCD_ENTRYMODESET | _displaymode);
+#ifdef SCARA
+ 
+   
+   if (axis < 2)
+   {
+   
+     for (i=0; i<3; i++)
+     {
+        homeposition[i] = base_home_pos(i); 
+     }  
+	// SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
+   //  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
+   // Works out real Homeposition angles using inverse kinematics, 
+   // and calculates homing offset using forward kinematics
+     calculate_delta(homeposition);
+     
+    // SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+     
+     for (i=0; i<2; i++)
+     {
+        delta[i] -= add_homing[i];
+     } 
+     
+    // SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);
+	// SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);
+    // SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
+      
+     calculate_SCARA_forward_Transform(delta);
+     
+    // SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);
+    // SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);
+     
+    current_position[axis] = delta[axis];
+    
+    // SCARA home positions are based on configuration since the actual limits are determined by the 
+    // inverse kinematic transform.
+    min_pos[axis] =          base_min_pos(axis); // + (delta[axis] - base_home_pos(axis));
+    max_pos[axis] =          base_max_pos(axis); // + (delta[axis] - base_home_pos(axis));
+   } 
+   else
+   {
+      current_position[axis] = base_home_pos(axis) + add_homing[axis];
+      min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
+      max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
+   }
+#else
+  current_position[axis] = base_home_pos(axis) + add_homing[axis];
+  min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
+  max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
+#endif
 }

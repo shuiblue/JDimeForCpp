@@ -415,11 +415,28 @@ public class DependencyGraph {
     private ArrayList<String> parseForStmt(Element ele, String fileName, int scope, String parentLocation) {
         ArrayList<String> tmpStmtList = new ArrayList<>();
 
-        Element init = ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("decl", NAMESPACEURI);
-        Symbol initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
-        tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
         String lineNumber = ele.getAttribute(0).getValue();
         String forLocation = lineNumber + "-" + fileName;
+        Element init = ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("decl", NAMESPACEURI);
+        Symbol initVarSymbol;
+        if(init!=null){
+        initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
+        }else{
+            init=  ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("expr", NAMESPACEURI);
+            Elements name_Elements = init.getChildElements("name", NAMESPACEURI);
+            String name = name_Elements.get(0).getValue();
+            initVarSymbol = new Symbol(name, "", lineNumber, "for", fileName, scope);
+            ArrayList<Symbol> newsymbol = new ArrayList<>();
+            newsymbol.add(initVarSymbol);
+            storeSymbols(newsymbol);
+
+            //save into nodeList
+            String nodeLabel = lineNumber + "-" + fileName;
+            storeIntoNodeList(nodeLabel);
+
+        }
+        tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
+
 
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
         if (block != null) {
