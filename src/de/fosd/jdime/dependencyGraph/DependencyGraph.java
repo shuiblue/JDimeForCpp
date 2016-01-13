@@ -26,6 +26,7 @@ public class DependencyGraph {
     static File graph;
     static int id;
     static HashMap<String, Integer> nodeList;
+    static HashMap<String,HashSet<String>> dependencyGraph;
     static HashSet<String> edgeList;
     static HashSet<Edge> edges;
     static final public String NAMESPACEURI = "http://www.sdml.info/srcML/src";
@@ -39,9 +40,7 @@ public class DependencyGraph {
      * @param testDir directory that contains .c/cpp/h files
      * @return edgeList for testing directory
      */
-//    public HashSet<String> createDependencyGraph(String testDir) {
-    public HashSet<Edge> createDependencyGraph(String testDir) {
-
+    public HashSet<String> createDependencyGraph(String testDir) {
         String dirPath = "testcpp/dependencyGraph/";
         String testDirPath = dirPath + testDir + "/";
 
@@ -57,6 +56,8 @@ public class DependencyGraph {
         sameNameMap = new HashMap<>();
         nodeList = new HashMap<>();
         edgeList = new HashSet<>();
+        edges = new HashSet<>();
+        dependencyGraph = new HashMap<>();
         id = 0;
 
         for (String fileName : names) {
@@ -86,9 +87,20 @@ public class DependencyGraph {
         addEdgesCrossFiles();
 
         ioFunctionSet.writeTofile("}", graph.getPath());
-//        return edgeList;
-        return edges;
+        return edgeList;
     }
+
+    /**
+     * This function just call the create Dependency Graph, used for cluster nodes.
+     * TODO modify compareTwoGraphs return type
+     * @param testDir
+     * @return dependency graph, no edge label stored.
+     */
+
+   public HashMap<String,HashSet<String>> getDependencyGraph(String  testDir) {
+       createDependencyGraph(testDir);
+       return  dependencyGraph;
+   }
 
     /**
      * This function store a set of symbols to Symbol table and nameMap.
@@ -401,7 +413,7 @@ public class DependencyGraph {
      * @param fileName current file, used for marking location
      */
     private void addControlFlowDependency(String headLocation, ArrayList<String> stmtList, String fileName) {
-        addEdgesToFile(headLocation, stmtList.get(0), CONTROLFLOW_LABEL + " if-then");
+        addEdgesToFile(stmtList.get(0), headLocation, CONTROLFLOW_LABEL + " if-then");
         for (int i = 0; i < stmtList.size() - 1; i++) {
             String pre_loc = stmtList.get(i);
             String after_loc = stmtList.get(i + 1);
@@ -624,6 +636,10 @@ public class DependencyGraph {
         if (!nodeList.containsKey(exprLocation)) {
             id++;
             nodeList.put(exprLocation, id);
+
+            dependencyGraph.put(exprLocation,new HashSet<>());
+
+
             //write into graph file
             ioFunctionSet.writeTofile(id + " [label = \"" + exprLocation + "\"];\n", graph.getPath());
         }
@@ -781,13 +797,16 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
-        int dependId = nodeList.get(depen_position);
+//        int dependId = nodeList.get(depen_position);
+//        String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
+//        int declId = nodeList.get(decl_position);
+//        ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
+//        edgeList.add(depen_position + "->" + decl_position);
+//        //add edge obj
+//        edges.add(new Edge(edgeLabel,depen_position,decl_position));
+
         String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
-        int declId = nodeList.get(decl_position);
-        ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
-        edgeList.add(depen_position + "->" + decl_position);
-        //add edge obj
-        edges.add(new Edge(edgeLabel,depen_position,decl_position));
+        addEdgesToFile(depen_position,decl_position,edgeLabel);
     }
 
     /**
@@ -802,6 +821,15 @@ public class DependencyGraph {
         int declId = nodeList.get(decl_position);
         ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
         edgeList.add(depen_position + "->" + decl_position);
+
+        //add to dependency graph
+       HashSet<String> dependNodes = dependencyGraph.get(decl_position);
+        if(dependNodes==null){
+            dependNodes = new HashSet<>();
+        }
+        dependNodes.add(depen_position);
+        dependencyGraph.put(decl_position,dependNodes);
+
 
         //add edge obj
         edges.add(new Edge(edgeLabel,depen_position,decl_position));
