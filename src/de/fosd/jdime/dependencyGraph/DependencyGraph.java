@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+
 /**
  * Created by shuruiz on 12/10/15.
  */
@@ -26,6 +27,7 @@ public class DependencyGraph {
     static int id;
     static HashMap<String, Integer> nodeList;
     static HashSet<String> edgeList;
+    static HashSet<Edge> edges;
     static final public String NAMESPACEURI = "http://www.sdml.info/srcML/src";
     static final public boolean CONTROL_FLOW = true;
     static final public String CONTROLFLOW_LABEL = "<Control-Flow>";
@@ -365,6 +367,11 @@ public class DependencyGraph {
         ArrayList<String> stmtList = new ArrayList<>();
         String whileLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
 
+        if(whileLocation.equals("")){
+            whileLocation = condition.getAttribute(0).getValue()+"-"+fileName;
+            //save into nodeList
+            storeIntoNodeList(whileLocation);
+        }
         stmtList.add(whileLocation);
         //Block
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
@@ -379,7 +386,7 @@ public class DependencyGraph {
         }
 
         //add control flow dependency
-        if (CONTROL_FLOW && stmtList.size() > 0) {
+        if (CONTROL_FLOW && stmtList.size() > 1) {
             addControlFlowDependency(whileLocation, stmtList, fileName);
         }
         return stmtList;
@@ -421,21 +428,27 @@ public class DependencyGraph {
         Symbol initVarSymbol;
         if(init!=null){
         initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
+            tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
         }else{
-            init=  ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("expr", NAMESPACEURI);
-            Elements name_Elements = init.getChildElements("name", NAMESPACEURI);
-            String name = name_Elements.get(0).getValue();
-            initVarSymbol = new Symbol(name, "", lineNumber, "for", fileName, scope);
-            ArrayList<Symbol> newsymbol = new ArrayList<>();
-            newsymbol.add(initVarSymbol);
-            storeSymbols(newsymbol);
+
+            Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
+
+           handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
+//            stmtList.add(ifStmtLocation);
+
+//            init=  ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("expr", NAMESPACEURI);
+//            Elements name_Elements = init.getChildElements("name", NAMESPACEURI);
+//            String name = name_Elements.get(0).getValue();
+//            initVarSymbol = new Symbol(name, "", lineNumber, "for", fileName, scope);
+//            ArrayList<Symbol> newsymbol = new ArrayList<>();
+//            newsymbol.add(initVarSymbol);
+//            storeSymbols(newsymbol);
 
             //save into nodeList
             String nodeLabel = lineNumber + "-" + fileName;
             storeIntoNodeList(nodeLabel);
 
         }
-        tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
 
 
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
@@ -767,10 +780,12 @@ public class DependencyGraph {
      */
     public void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
         int dependId = nodeList.get(depen_position);
-        String declNodeLabel = decl.getLineNumber() + "-" + decl.getFileName();
-        int declId = nodeList.get(declNodeLabel);
+        String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
+        int declId = nodeList.get(decl_position);
         ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
-        edgeList.add(depen_position + "->" + declNodeLabel);
+        edgeList.add(depen_position + "->" + decl_position);
+        //add edge obj
+        edges.add(new Edge(edgeLabel,depen_position,decl_position));
     }
 
     /**
@@ -785,6 +800,9 @@ public class DependencyGraph {
         int declId = nodeList.get(decl_position);
         ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
         edgeList.add(depen_position + "->" + decl_position);
+
+        //add edge obj
+        edges.add(new Edge(edgeLabel,depen_position,decl_position));
     }
 
     public void main(String[] args) {
