@@ -39,7 +39,8 @@ public class DependencyGraph {
      * @param testDir directory that contains .c/cpp/h files
      * @return edgeList for testing directory
      */
-    public HashSet<String> createDependencyGraph(String testDir) {
+//    public HashSet<String> createDependencyGraph(String testDir) {
+    public HashSet<Edge> createDependencyGraph(String testDir) {
 
         String dirPath = "testcpp/dependencyGraph/";
         String testDirPath = dirPath + testDir + "/";
@@ -85,7 +86,8 @@ public class DependencyGraph {
         addEdgesCrossFiles();
 
         ioFunctionSet.writeTofile("}", graph.getPath());
-        return edgeList;
+//        return edgeList;
+        return edges;
     }
 
     /**
