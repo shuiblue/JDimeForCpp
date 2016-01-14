@@ -33,12 +33,12 @@ digraph {
 13 -> 11[label="<belongToStruct>"];
 14 [label = "16-Client.h"];
 15 [label = "18-Client.h"];
-2 -> 13[label="<Def-Use> outgoingBuffer"];
+7 -> 1[label="<Call> mail"];
+10 -> 8[label="<Call> deliver"];
+3 -> 13[label="<Def-Use> outgoingBuffer"];
 4 -> 13[label="<Def-Use> outgoingBuffer"];
 6 -> 12[label="<Def-Use> name"];
-3 -> 13[label="<Def-Use> outgoingBuffer"];
-10 -> 8[label="<Call> deliver"];
-7 -> 1[label="<Call> mail"];
+2 -> 13[label="<Def-Use> outgoingBuffer"];
 9 -> 15[label="<func_decl> incoming"];
 5 -> 14[label="<func_decl> outgoing"];
 }

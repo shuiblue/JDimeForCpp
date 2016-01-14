@@ -19,7 +19,7 @@ digraph {
 7 -> 5[label="<belongToStruct>"];
 8 [label = "16-Client.h"];
 9 [label = "18-Client.h"];
-2 -> 7[label="<Def-Use> outgoingBuffer"];
-3 -> 7[label="<Def-Use> outgoingBuffer"];
 4 -> 7[label="<Def-Use> outgoingBuffer"];
+3 -> 7[label="<Def-Use> outgoingBuffer"];
+2 -> 7[label="<Def-Use> outgoingBuffer"];
 }

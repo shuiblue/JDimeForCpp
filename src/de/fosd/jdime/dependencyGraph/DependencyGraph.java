@@ -145,7 +145,7 @@ public class DependencyGraph {
                     addFuncDependency(dependent);
                 }
             } else if (tag.equals("name")) {
-                findVarDependency(dependent);
+                findVarDependency(dependent,"");
             }
         }
         //add function->func_decl
@@ -569,7 +569,8 @@ public class DependencyGraph {
                     for (int x = 0; x < nameList.size(); x++) {
                         var = nameList.get(x).getValue();
                         dependent = new Symbol(var, "", stmtLineNumber, "name", fileName, scope);
-                        findVarDependency(dependent);
+                        findVarDependency(dependent,exprLocation);
+//                        findVarDependency(dependent);
 
                     }
                 } else {
@@ -581,7 +582,8 @@ public class DependencyGraph {
                     exprLocation = stmtLineNumber + "-" + fileName;
                     //save into nodeList
                     storeIntoNodeList(exprLocation);
-                    findVarDependency(dependent);
+//                    findVarDependency(dependent);
+                    findVarDependency(dependent,exprLocation);
 
                     if (!parentLocation.equals("")) {
                         String childLocation = stmtLineNumber + "-" + fileName;
@@ -724,11 +726,13 @@ public class DependencyGraph {
      * @param variable 'use' variable symbol is looking for 'def' of variable
      */
 
-    public void findVarDependency(Symbol variable) {
+    public void findVarDependency(Symbol variable,String depenNodeLabel) {
+//    public void findVarDependency(Symbol variable) {
         String var = variable.getName();
         int scope = variable.getScope();
-        String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
-
+        if(depenNodeLabel.equals("")) {
+        depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
+        }
         if (!nodeList.containsKey(depenNodeLabel)) {
             id++;
             nodeList.put(depenNodeLabel, id);

@@ -37,16 +37,37 @@ public class ClusterNode {
             System.out.println("Key is: " + node.getKey());
             String currentNode = (String) node.getKey();
             if (!checkedNodes.contains(currentNode)) {
-                checkedNodes.add(currentNode);
-                HashSet<String> clusterNodes = getClusterNodes(currentNode);
-                cluster.addAll(clusterNodes);
-                if (cluster.size() > 0) {
-                    clusterSet.add(cluster);
-                    cluster = new HashSet<>();
+                if (dependencyGraph.get(currentNode).size() > 0) {
+                    checkedNodes.add(currentNode);
+                    HashSet<String> tmpcluster = getClusterNodes(currentNode);
+                    boolean isNewCluster = isNewCluster(tmpcluster);
+                    if (isNewCluster) {
+                        clusterSet.add(tmpcluster);
+//                    cluster = new HashSet<>();
+                    }
+                } else {
+                    if (!checkedNodes.contains(currentNode)) {
+                        singleNodes.add(currentNode);
+                    }
                 }
             }
         }
+
+
         return clusterSet;
+    }
+
+
+    public boolean isNewCluster(HashSet<String> tmpcluster) {
+        for (HashSet<String> tmpCluster : clusterSet) {
+            for (String n : tmpcluster) {
+                if (tmpCluster.contains(n)) {
+                    tmpCluster.addAll(tmpcluster);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public HashSet<String> getClusterNodes(String currentNode) {
@@ -54,50 +75,24 @@ public class ClusterNode {
         HashSet<String> nodeSet = new HashSet<>();
 
         nodeSet.add(currentNode);
-        if (currentDependencies != null) {
-            if (currentDependencies.size() == 0) {
-                singleNodes.add(currentNode);
-                return nodeSet;
-            }
 
-
-            for (String node : currentDependencies) {
+        for (String node : currentDependencies) {
+            if (!checkedNodes.contains(node)) {
                 if (singleNodes.contains(node)) {
                     singleNodes.remove(node);
                 }
 
-                if (!checkedNodes.contains(node)) {
-
-                    checkedNodes.add(node);
-                    nodeSet.add(node);
-                    HashSet<String> depends = dependencyGraph.get(node);
-                    if (depends != null) {
-                        nodeSet.addAll(getClusterNodes(node));
-                    }
-                } else {
-                    for (HashSet<String> cluster : clusterSet) {
-                        if (cluster.contains(node)) {
-                            cluster.add(currentNode);
-                            for (String n : currentDependencies) {
-                                if (!checkedNodes.contains(n)) {
-                                    HashSet<String> dependencies = getClusterNodes(n);
-//                                    cluster.add(node);
-                                    cluster.addAll(dependencies);
-                                }
-                            }
-                            nodeSet = new HashSet<>();
-                            return nodeSet;
-                        }
-                    }
+                checkedNodes.add(node);
+                nodeSet.add(node);
+                HashSet<String> depends = dependencyGraph.get(node);
+                if (depends != null && depends.size() > 0) {
+                    nodeSet.addAll(getClusterNodes(node));
                 }
-
+            }else {
+                nodeSet.add(node);
             }
         }
-
-
         return nodeSet;
-
-
     }
 
 

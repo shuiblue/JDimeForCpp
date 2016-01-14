@@ -27,10 +27,10 @@ digraph {
 10 -> 8[label="<belongToStruct>"];
 11 [label = "16-Client.h"];
 12 [label = "18-Client.h"];
-7 -> 1[label="<Call> mail"];
 2 -> 10[label="<Def-Use> outgoingBuffer"];
+7 -> 1[label="<Call> mail"];
+4 -> 10[label="<Def-Use> outgoingBuffer"];
 6 -> 9[label="<Def-Use> name"];
 3 -> 10[label="<Def-Use> outgoingBuffer"];
-4 -> 10[label="<Def-Use> outgoingBuffer"];
 5 -> 11[label="<func_decl> outgoing"];
 }

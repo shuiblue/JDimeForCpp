@@ -1,0 +1,20 @@
+digraph {
+1 [label = "2-Email.c"];
+2 [label = "4-Email.c"];
+2 -> 1[label="<Def-Use> client"];
+2 -> 1[label="<Def-Use> msg"];
+3 [label = "6-Email.c"];
+3 -> 2[label="<Def-Use> foundPublicKeyPair"];
+3 -> 1[label="<child>"];
+4 [label = "8-Email.c"];
+4 -> 1[label="<Def-Use> msg"];
+5 [label = "9-Email.c"];
+5 -> 3[label="<child>"];
+5 -> 2[label="<Def-Use> foundPublicKeyPair"];
+4 -> 3[label="<child>"];
+6 [label = "11-Email.c"];
+6 -> 1[label="<Def-Use> msg"];
+6 -> 3[label="<child>"];
+4 -> 3[label="<Control-Flow> if-then"];
+6 -> 4[label="<Control-Flow>"];
+}
