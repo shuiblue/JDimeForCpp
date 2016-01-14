@@ -20,7 +20,7 @@ public class testClusteringForEmail {
     @Test
     public void test10() {
 
-        String fileName = "EmailSystem/test_18";
+        String fileName = "EmailSystem/test_16";
 
         nodes = dependencyGraph.getDependencyGraph(fileName);
         clusterNode.greedyAlgorithm(nodes);

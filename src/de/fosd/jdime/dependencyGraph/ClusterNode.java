@@ -14,15 +14,14 @@ public class ClusterNode {
     HashMap<String, HashSet<String>> dependencyGraph;
     HashSet<String> checkedNodes;
     HashSet<String> singleNodes;
-    HashSet<HashSet<String>> clusterSet;
+    ArrayList<HashSet<String>> clusterSet;
 
-    public HashSet<HashSet<String>> greedyAlgorithm(HashMap<String, HashSet<String>> dependencyGraph) {
+    public ArrayList<HashSet<String>> greedyAlgorithm(HashMap<String, HashSet<String>> dependencyGraph) {
 
         this.dependencyGraph = dependencyGraph;
         checkedNodes = new HashSet<>();
-        clusterSet = new HashSet<>();
+        clusterSet = new ArrayList<>();
         singleNodes = new HashSet<>();
-        HashSet<String> cluster = new HashSet<>();
 
         // Getting a Set of Key-value pairs
         Set entrySet = dependencyGraph.entrySet();
@@ -43,7 +42,6 @@ public class ClusterNode {
                     boolean isNewCluster = isNewCluster(tmpcluster);
                     if (isNewCluster) {
                         clusterSet.add(tmpcluster);
-//                    cluster = new HashSet<>();
                     }
                 } else {
                     if (!checkedNodes.contains(currentNode)) {
@@ -59,15 +57,41 @@ public class ClusterNode {
 
 
     public boolean isNewCluster(HashSet<String> tmpcluster) {
-        for (HashSet<String> tmpCluster : clusterSet) {
+       ArrayList<Integer> overlaps = new ArrayList<>();
+        for (int i =0;i<clusterSet.size();i++) {
+            HashSet<String> cluster = clusterSet.get(i);
             for (String n : tmpcluster) {
-                if (tmpCluster.contains(n)) {
-                    tmpCluster.addAll(tmpcluster);
-                    return false;
+                if (cluster.contains(n)) {
+                    if(!overlaps.contains(i)) {
+                        overlaps.add(i);
+                    }
+
                 }
             }
         }
-        return true;
+        if(overlaps.size()>0){
+
+            if(overlaps.size()>1){
+                System.out.print("");
+                clusterSet.get(overlaps.get(0)).addAll(tmpcluster);
+                for(int x=0;x<overlaps.size()-1;x++){
+
+                    HashSet<String> c1 = clusterSet.get(overlaps.get(x));
+                    HashSet<String> c2 = clusterSet.get(overlaps.get(x+1));
+                    c1.addAll(c2);
+                    clusterSet.set(overlaps.get(x+1),new HashSet<>());
+//                    c2 = new HashSet<>();
+//                    clusterSet.add(c2);
+                    overlaps.set(x+1,overlaps.get(x));
+                }
+
+            }else {
+                clusterSet.get(overlaps.get(0)).addAll(tmpcluster);
+            }
+            return false;
+        }else {
+            return true;
+        }
     }
 
     public HashSet<String> getClusterNodes(String currentNode) {
