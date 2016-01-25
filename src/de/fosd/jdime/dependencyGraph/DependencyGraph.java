@@ -26,12 +26,16 @@ public class DependencyGraph {
     static File graph;
     static int id;
     static HashMap<String, Integer> nodeList;
-    static HashMap<String,HashSet<String>> dependencyGraph;
+    static HashMap<String, HashSet<String[]>> dependencyGraph;
     static HashSet<String> edgeList;
-    static HashSet<Edge> edges;
     static final public String NAMESPACEURI = "http://www.sdml.info/srcML/src";
-    static final public boolean CONTROL_FLOW = true;
     static final public String CONTROLFLOW_LABEL = "<Control-Flow>";
+
+    static public boolean HIERACHICAL = true;
+    static final public boolean CONTROL_FLOW = true;
+
+    String dirPath;
+    String testDirPath;
 
     /**
      * This function will parse the test directory and iteratively parse each file (.c/.cpp/.h)
@@ -41,8 +45,8 @@ public class DependencyGraph {
      * @return edgeList for testing directory
      */
     public HashSet<String> createDependencyGraph(String testDir) {
-        String dirPath = "testcpp/dependencyGraph/";
-        String testDirPath = dirPath + testDir + "/";
+         dirPath = "testcpp/dependencyGraph/";
+         testDirPath = dirPath + testDir + "/";
 
         //create graph file
         graph = new File(testDirPath + "graph.gv");
@@ -51,12 +55,24 @@ public class DependencyGraph {
         File dir = new File(testDirPath);
         String[] names = dir.list();
 
+        //symbol Table stores all the declaration nodes.
         symbolTable = new HashSet<>();
+
+        // lonelySymbolSet stores all the nodes that haven't find any node that could be point to.
         lonelySymbolSet = new HashSet<>();
+
+        // this map stores the same name node, used for search for finding dependencies effectively.
         sameNameMap = new HashMap<>();
+
+        //node list stores  the id for the node, used for create graph file. HashMap<String, Integer>
         nodeList = new HashMap<>();
+
+        //edge list stores all the edges, used for testing
         edgeList = new HashSet<>();
-        edges = new HashSet<>();
+
+        // this is the dependency Graph HashMap<String, HashSet<String[]>> ;
+        // key: node label
+        //
         dependencyGraph = new HashMap<>();
         id = 0;
 
@@ -93,14 +109,17 @@ public class DependencyGraph {
     /**
      * This function just call the create Dependency Graph, used for cluster nodes.
      * TODO modify compareTwoGraphs return type
+     *
      * @param testDir
      * @return dependency graph, no edge label stored.
      */
 
-   public HashMap<String,HashSet<String>> getDependencyGraph(String  testDir) {
-       createDependencyGraph(testDir);
-       return  dependencyGraph;
-   }
+    public HashMap<String, HashSet<String[]>> getDependencyGraph(String testDir) {
+        createDependencyGraph(testDir);
+        ioFunctionSet.writeToPajekFile(dependencyGraph,nodeList,testDirPath);
+
+        return dependencyGraph;
+    }
 
     /**
      * This function store a set of symbols to Symbol table and nameMap.
@@ -216,8 +235,16 @@ public class DependencyGraph {
                     //get children
 //                    HashSet<Symbol>
                     ArrayList<String> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
+                    boolean tmpHierarchy=true;
+                    if(!HIERACHICAL){
+                        tmpHierarchy=HIERACHICAL;
+                        HIERACHICAL=true;
+                    }
                     //link children -> parent
                     linkChildToParent(children, parentLocation, "<belongToStruct>");
+                    if(!tmpHierarchy){
+                        HIERACHICAL = tmpHierarchy;
+                    }
                 }
             } else if (ele.getLocalName().equals("function_decl")) {
                 addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation);
@@ -256,13 +283,15 @@ public class DependencyGraph {
     /**
      * This function create the edge from a set of child to parent (used for struct)
      *
-     * @param childrenLocations       statements' location
-     * @param parentLocation struct node's location
+     * @param childrenLocations statements' location
+     * @param parentLocation    struct node's location
      */
 
     private void linkChildToParent(ArrayList<String> childrenLocations, String parentLocation, String label) {
-        for (String child : childrenLocations) {
-            addEdgesToFile(child, parentLocation, label);
+        if (HIERACHICAL) {
+            for (String child : childrenLocations) {
+                addEdgesToFile(child, parentLocation, label);
+            }
         }
     }
 
@@ -273,8 +302,10 @@ public class DependencyGraph {
      * @param parentLocation
      */
     private void linkChildToParent(String childLocation, String parentLocation) {
-        if (!edgeList.contains(childLocation + "->" + parentLocation)) {
-            addEdgesToFile(childLocation, parentLocation, "<child>");
+        if (HIERACHICAL) {
+//            if (!edgeList.contains(childLocation + "->" + parentLocation)) {
+                addEdgesToFile(childLocation, parentLocation, "<child>");
+//            }
         }
     }
 
@@ -303,6 +334,7 @@ public class DependencyGraph {
 
         //check block
         Element block = element.getFirstChildElement("block", NAMESPACEURI);
+
         parseDependencyForSubTree(block, fileName, scope + 1, parentLocation);
     }
 
@@ -381,12 +413,12 @@ public class DependencyGraph {
         ArrayList<String> stmtList = new ArrayList<>();
         String whileLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
 
-        if(whileLocation.equals("")){
-            whileLocation = condition.getAttribute(0).getValue()+"-"+fileName;
+        if (whileLocation.equals("")) {
+            whileLocation = condition.getAttribute(0).getValue() + "-" + fileName;
             //save into nodeList
             storeIntoNodeList(whileLocation);
         }
-        stmtList.add(whileLocation);
+//        stmtList.add(whileLocation);
         //Block
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
 
@@ -400,7 +432,7 @@ public class DependencyGraph {
         }
 
         //add control flow dependency
-        if (CONTROL_FLOW && stmtList.size() > 1) {
+        if (CONTROL_FLOW && stmtList.size() > 0) {
             addControlFlowDependency(whileLocation, stmtList, fileName);
         }
         return stmtList;
@@ -408,9 +440,10 @@ public class DependencyGraph {
 
     /**
      * this function add control flow dependency for if-then-else, while, etc.
+     *
      * @param headLocation condition location
-     * @param stmtList statement list in block
-     * @param fileName current file, used for marking location
+     * @param stmtList     statement list in block
+     * @param fileName     current file, used for marking location
      */
     private void addControlFlowDependency(String headLocation, ArrayList<String> stmtList, String fileName) {
         addEdgesToFile(stmtList.get(0), headLocation, CONTROLFLOW_LABEL + " if-then");
@@ -440,14 +473,14 @@ public class DependencyGraph {
         String forLocation = lineNumber + "-" + fileName;
         Element init = ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("decl", NAMESPACEURI);
         Symbol initVarSymbol;
-        if(init!=null){
-        initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
+        if (init != null) {
+            initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
             tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
-        }else{
+        } else {
 
             Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
 
-           handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
+            handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
 //            stmtList.add(ifStmtLocation);
 
 //            init=  ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("expr", NAMESPACEURI);
@@ -597,8 +630,8 @@ public class DependencyGraph {
         Element callElement = exprNode.getFirstChildElement("call", NAMESPACEURI);
         if (callElement != null) {
             // <expr> <name> = <call>, call is initializing the name
-            if(!exprLocation.equals("")){
-                isInit=true;
+            if (!exprLocation.equals("")) {
+                isInit = true;
             }
             String callLocation = handleCallNode(callElement, stmtLineNumber, fileName, scope, parentLocation, isInit);
             if (exprLocation.equals("")) {
@@ -643,7 +676,7 @@ public class DependencyGraph {
             id++;
             nodeList.put(exprLocation, id);
 
-            dependencyGraph.put(exprLocation,new HashSet<>());
+            dependencyGraph.put(exprLocation, new HashSet<>());
 
 
             //write into graph file
@@ -720,7 +753,7 @@ public class DependencyGraph {
     public void handleArgumentList(Elements argument_List, String stmtLineNumber, String fileName, int scope, String parentLocation) {
         for (int i = 0; i < argument_List.size(); i++) {
             Element argument = argument_List.get(i);
-          handleVarInExpr(argument, stmtLineNumber, fileName, scope, parentLocation, false);
+            handleVarInExpr(argument, stmtLineNumber, fileName, scope, parentLocation, false);
         }
     }
 
@@ -734,7 +767,7 @@ public class DependencyGraph {
 //    public void findVarDependency(Symbol variable) {
         String var = variable.getName();
         int scope = variable.getScope();
-       String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
+        String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
         if (!nodeList.containsKey(depenNodeLabel)) {
             id++;
             nodeList.put(depenNodeLabel, id);
@@ -803,16 +836,8 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
-//        int dependId = nodeList.get(depen_position);
-//        String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
-//        int declId = nodeList.get(decl_position);
-//        ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
-//        edgeList.add(depen_position + "->" + decl_position);
-//        //add edge obj
-//        edges.add(new Edge(edgeLabel,depen_position,decl_position));
-
         String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
-        addEdgesToFile(depen_position,decl_position,edgeLabel);
+        addEdgesToFile(depen_position, decl_position, edgeLabel);
     }
 
     /**
@@ -823,22 +848,22 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, String decl_position, String edgeLabel) {
-        int dependId = nodeList.get(depen_position);
-        int declId = nodeList.get(decl_position);
-        ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
-        edgeList.add(depen_position + "->" + decl_position);
+        if (!edgeList.contains(depen_position + "->" + decl_position)) {
+            int dependId = nodeList.get(depen_position);
+            int declId = nodeList.get(decl_position);
+            ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
+            edgeList.add(depen_position + "->" + decl_position);
 
-        //add to dependency graph
-       HashSet<String> dependNodes = dependencyGraph.get(decl_position);
-        if(dependNodes==null){
-            dependNodes = new HashSet<>();
+            //add to dependency graph
+            HashSet<String[]> dependNodes = dependencyGraph.get(decl_position);
+            if (dependNodes == null) {
+                dependNodes = new HashSet<>();
+            }
+            String[] tmpEdge = {depen_position, edgeLabel};
+            dependNodes.add(tmpEdge);
+            dependencyGraph.put(decl_position, dependNodes);
+
         }
-        dependNodes.add(depen_position);
-        dependencyGraph.put(decl_position,dependNodes);
-
-
-        //add edge obj
-        edges.add(new Edge(edgeLabel,depen_position,decl_position));
     }
 
     public void main(String[] args) {

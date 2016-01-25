@@ -23,7 +23,7 @@ printMail (struct email *msg)
   printf ("TO:\n  %s\n", msg->to);
   printf ("SUBJECT:\n  %s\n", msg->subject);
   printf ("IS_READABLE\n  %i\n", isReadable (msg));
-  printf ("BODY:\n  %s\n", msg->body);
+  0printf ("BODY:\n  %s\n", msg->body);
 }
 
 int

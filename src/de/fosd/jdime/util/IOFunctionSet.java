@@ -7,7 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.validation.SchemaFactory;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by shuruiz on 8/31/15.
@@ -64,6 +64,72 @@ public class IOFunctionSet {
             e.printStackTrace();
         }
     }
+
+
+    public void writeToPajekFile(HashMap<String, HashSet<String[]>> dependencyGraph, HashMap<String, Integer> nodeList, String filepath) {
+
+        String pajek = "graph.pajek.net";
+        rewriteFile("*Vertices " + nodeList.size() + "\n", filepath + pajek);
+        rewriteFile("", filepath + "node.csv");
+
+
+        // Getting a Set of Key-value pairs
+        Set nodeSet = nodeList.entrySet();
+        // Obtaining an iterator for the entry set
+        Iterator it_node = nodeSet.iterator();
+
+        while (it_node.hasNext()) {
+            Map.Entry node = (Map.Entry) it_node.next();
+
+            String nodeId = (String) node.getKey();
+            writeTofile(nodeList.get(nodeId) + " \"" + nodeId + "\"\n", filepath + pajek);
+
+            writeTofile(nodeList.get(nodeId) + ",\"" + nodeId + "\"\n", filepath + "node.csv");
+
+
+        }
+
+
+        // Getting a Set of Key-value pairs
+        Set entrySet = dependencyGraph.entrySet();
+
+        writeTofile("*arcs \n", filepath + pajek);
+//        writeTofile("*Arcslist \n", filepath + pajek);
+
+        // Obtaining an iterator for the entry set
+        Iterator it_edge = entrySet.iterator();
+
+        // Iterate through HashMap entries(Key-Value pairs)
+        System.out.println("HashMap Key-Value Pairs : ");
+        while (it_edge.hasNext()) {
+            Map.Entry node = (Map.Entry) it_edge.next();
+
+            String currentNode = (String) node.getKey();
+
+            String from = nodeList.get(currentNode).toString();
+            HashSet<String[]> dependencyNodes = (HashSet<String[]>) node.getValue();
+//            writeTofile(from+" ", filepath + pajek);
+            for (String[] dn : dependencyNodes) {
+//                writeTofile( nodeList.get(dn[0])+" ", filepath + pajek);
+
+                String weight = "";
+                if (dn[1].contains("belongToStruct") || dn[1].contains("Call") || dn[1].contains("Def-Use")||dn[1].contains("func_decl")) {
+                    weight = 10 + "";
+                } else if (dn[1].contains("child")) {
+                    weight = 1 + "";
+                } else if(dn[1].contains("Control-Flow")){
+                    weight = 3 + "";
+                }
+                writeTofile(from + " " + nodeList.get(dn[0]) +" "+ weight+"\n", filepath + pajek);
+
+            }
+
+//            writeTofile("\n", filepath + pajek);
+
+
+        }
+    }
+
 
     /**
      * This function presice the pretty print result of a block when:
@@ -268,8 +334,8 @@ public class IOFunctionSet {
             if (!new File(outXmlFile).exists()) {
                 new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix).mkdirs();
             }
-        }else{
-            outXmlFile =inputFile+".xml";
+        } else {
+            outXmlFile = inputFile + ".xml";
         }
         //run srcML
         if (new File(inputFile).isFile()) {

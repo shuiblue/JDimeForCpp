@@ -11,12 +11,18 @@ public class ClusterNode {
      * to cluster nodes
      */
 
-    HashMap<String, HashSet<String>> dependencyGraph;
+    HashMap<String, HashSet<String[]>> dependencyGraph;
     HashSet<String> checkedNodes;
     HashSet<String> singleNodes;
     ArrayList<HashSet<String>> clusterSet;
 
-    public ArrayList<HashSet<String>> greedyAlgorithm(HashMap<String, HashSet<String>> dependencyGraph) {
+    /**
+     * greedy algorithm for clustering code
+     *
+     * @param dependencyGraph
+     * @return
+     */
+    public ArrayList<HashSet<String>> greedyAlgorithm(HashMap<String, HashSet<String[]>> dependencyGraph) {
 
         this.dependencyGraph = dependencyGraph;
         checkedNodes = new HashSet<>();
@@ -50,70 +56,88 @@ public class ClusterNode {
                 }
             }
         }
-
+        if (singleNodes.size() > 0) {
+            for (String single : singleNodes) {
+                HashSet<String> singleCluster = new HashSet<>();
+                singleCluster.add(single);
+                clusterSet.add(singleCluster);
+            }
+        }
 
         return clusterSet;
     }
 
 
+    /**
+     * This function checks whether the tmpcluster belongs to existing clusters or not.
+     *
+     * @param tmpcluster
+     * @return
+     */
     public boolean isNewCluster(HashSet<String> tmpcluster) {
-       ArrayList<Integer> overlaps = new ArrayList<>();
-        for (int i =0;i<clusterSet.size();i++) {
+        ArrayList<Integer> overlaps = new ArrayList<>();
+        for (int i = 0; i < clusterSet.size(); i++) {
             HashSet<String> cluster = clusterSet.get(i);
             for (String n : tmpcluster) {
                 if (cluster.contains(n)) {
-                    if(!overlaps.contains(i)) {
+                    if (!overlaps.contains(i)) {
                         overlaps.add(i);
                     }
 
                 }
             }
         }
-        if(overlaps.size()>0){
+        if (overlaps.size() > 0) {
 
-            if(overlaps.size()>1){
+            if (overlaps.size() > 1) {
                 System.out.print("");
                 clusterSet.get(overlaps.get(0)).addAll(tmpcluster);
-                for(int x=0;x<overlaps.size()-1;x++){
+                for (int x = 0; x < overlaps.size() - 1; x++) {
 
                     HashSet<String> c1 = clusterSet.get(overlaps.get(x));
-                    HashSet<String> c2 = clusterSet.get(overlaps.get(x+1));
+                    HashSet<String> c2 = clusterSet.get(overlaps.get(x + 1));
                     c1.addAll(c2);
-                    clusterSet.set(overlaps.get(x+1),new HashSet<>());
+                    clusterSet.set(overlaps.get(x + 1), new HashSet<>());
 //                    c2 = new HashSet<>();
 //                    clusterSet.add(c2);
-                    overlaps.set(x+1,overlaps.get(x));
+                    overlaps.set(x + 1, overlaps.get(x));
                 }
 
-            }else {
+            } else {
                 clusterSet.get(overlaps.get(0)).addAll(tmpcluster);
             }
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
+    /**
+     * This function get cluster nodes for current Node
+     *
+     * @param currentNode
+     * @return
+     */
     public HashSet<String> getClusterNodes(String currentNode) {
-        HashSet<String> currentDependencies = dependencyGraph.get(currentNode);
+        HashSet<String[]> currentDependencies = dependencyGraph.get(currentNode);
         HashSet<String> nodeSet = new HashSet<>();
 
         nodeSet.add(currentNode);
 
-        for (String node : currentDependencies) {
-            if (!checkedNodes.contains(node)) {
-                if (singleNodes.contains(node)) {
-                    singleNodes.remove(node);
+        for (String[] node : currentDependencies) {
+            if (!checkedNodes.contains(node[0])) {
+                if (singleNodes.contains(node[0])) {
+                    singleNodes.remove(node[0]);
                 }
 
-                checkedNodes.add(node);
-                nodeSet.add(node);
-                HashSet<String> depends = dependencyGraph.get(node);
+                checkedNodes.add(node[0]);
+                nodeSet.add(node[0]);
+                HashSet<String[]> depends = dependencyGraph.get(node[0]);
                 if (depends != null && depends.size() > 0) {
-                    nodeSet.addAll(getClusterNodes(node));
+                    nodeSet.addAll(getClusterNodes(node[0]));
                 }
-            }else {
-                nodeSet.add(node);
+            } else {
+                nodeSet.add(node[0]);
             }
         }
         return nodeSet;
