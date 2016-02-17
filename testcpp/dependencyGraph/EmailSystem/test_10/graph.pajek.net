@@ -1,0 +1,26 @@
+*Vertices 9
+5 "10-Client.h"
+1 "8-Client.c"
+3 "14-Client.c"
+4 "16-Client.c"
+6 "12-Client.h"
+2 "13-Client.c"
+9 "18-Client.h"
+8 "16-Client.h"
+7 "13-Client.h"
+*arcs 
+7 5 1
+6 5 1
+2 1 1
+3 1 1
+4 1 1
+4 1 1
+2 1 1
+3 1 1
+4 2 1
+4 2 1
+3 2 1
+3 2 1
+2 7 1
+4 7 1
+3 7 1

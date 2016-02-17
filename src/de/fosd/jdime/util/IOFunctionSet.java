@@ -2,11 +2,7 @@ package de.fosd.jdime.util;
 
 import nu.xom.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.validation.SchemaFactory;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -67,7 +63,6 @@ public class IOFunctionSet {
 
 
     public void writeToPajekFile(HashMap<String, HashSet<String[]>> dependencyGraph, HashMap<String, Integer> nodeList, String filepath) {
-
         String pajek = "graph.pajek.net";
         rewriteFile("*Vertices " + nodeList.size() + "\n", filepath + pajek);
         rewriteFile("", filepath + "node.csv");
@@ -106,26 +101,26 @@ public class IOFunctionSet {
 
             String currentNode = (String) node.getKey();
 
-            String from = nodeList.get(currentNode).toString();
+            String to = nodeList.get(currentNode).toString();
             HashSet<String[]> dependencyNodes = (HashSet<String[]>) node.getValue();
 //            writeTofile(from+" ", filepath + pajek);
             for (String[] dn : dependencyNodes) {
 //                writeTofile( nodeList.get(dn[0])+" ", filepath + pajek);
 
                 String weight = "";
-                if (dn[1].contains("belongToStruct") || dn[1].contains("Call") || dn[1].contains("Def-Use")||dn[1].contains("func_decl")) {
-                    weight = 10 + "";
-                } else if (dn[1].contains("child")) {
-                    weight = 1 + "";
-                } else if(dn[1].contains("Control-Flow")){
-                    weight = 3 + "";
+                if (dn[1].contains("belongToStruct")  || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
+                    weight =1 + "";
+                }else if (dn[1].contains("Call")){
+                    weight =1 + "";
                 }
-                writeTofile(from + " " + nodeList.get(dn[0]) +" "+ weight+"\n", filepath + pajek);
+                else if (dn[1].contains("child")) {
+                    weight = 1 + "";
+                } else if (dn[1].contains("Control-Flow")) {
+                    weight = 1 + "";
+                }
+                writeTofile(nodeList.get(dn[0]) + " " + to + " " + weight + "\n", filepath + pajek);
 
             }
-
-//            writeTofile("\n", filepath + pajek);
-
 
         }
     }
@@ -389,5 +384,7 @@ public class IOFunctionSet {
             Thread.currentThread().interrupt();
         }
     }
+
+
 
 }

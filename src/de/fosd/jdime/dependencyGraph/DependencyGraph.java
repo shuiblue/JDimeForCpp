@@ -7,10 +7,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
+import java.util.*;
 
 /**
  * Created by shuruiz on 12/10/15.
@@ -37,6 +34,7 @@ public class DependencyGraph {
     String dirPath;
     String testDirPath;
 
+
     /**
      * This function will parse the test directory and iteratively parse each file (.c/.cpp/.h)
      * to create dependency graph in each file
@@ -45,8 +43,8 @@ public class DependencyGraph {
      * @return edgeList for testing directory
      */
     public HashSet<String> createDependencyGraph(String testDir) {
-         dirPath = "testcpp/dependencyGraph/";
-         testDirPath = dirPath + testDir + "/";
+        dirPath = "testcpp/dependencyGraph/";
+        testDirPath = dirPath + testDir + "/";
 
         //create graph file
         graph = new File(testDirPath + "graph.gv");
@@ -66,6 +64,7 @@ public class DependencyGraph {
 
         //node list stores  the id for the node, used for create graph file. HashMap<String, Integer>
         nodeList = new HashMap<>();
+        id = 0;
 
         //edge list stores all the edges, used for testing
         edgeList = new HashSet<>();
@@ -74,7 +73,7 @@ public class DependencyGraph {
         // key: node label
         //
         dependencyGraph = new HashMap<>();
-        id = 0;
+
 
         for (String fileName : names) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
@@ -116,7 +115,8 @@ public class DependencyGraph {
 
     public HashMap<String, HashSet<String[]>> getDependencyGraph(String testDir) {
         createDependencyGraph(testDir);
-        ioFunctionSet.writeToPajekFile(dependencyGraph,nodeList,testDirPath);
+
+        ioFunctionSet.writeToPajekFile(dependencyGraph, nodeList, testDirPath);
 
         return dependencyGraph;
     }
@@ -235,14 +235,14 @@ public class DependencyGraph {
                     //get children
 //                    HashSet<Symbol>
                     ArrayList<String> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
-                    boolean tmpHierarchy=true;
-                    if(!HIERACHICAL){
-                        tmpHierarchy=HIERACHICAL;
-                        HIERACHICAL=true;
+                    boolean tmpHierarchy = true;
+                    if (!HIERACHICAL) {
+                        tmpHierarchy = HIERACHICAL;
+                        HIERACHICAL = true;
                     }
                     //link children -> parent
                     linkChildToParent(children, parentLocation, "<belongToStruct>");
-                    if(!tmpHierarchy){
+                    if (!tmpHierarchy) {
                         HIERACHICAL = tmpHierarchy;
                     }
                 }
@@ -304,7 +304,7 @@ public class DependencyGraph {
     private void linkChildToParent(String childLocation, String parentLocation) {
         if (HIERACHICAL) {
 //            if (!edgeList.contains(childLocation + "->" + parentLocation)) {
-                addEdgesToFile(childLocation, parentLocation, "<child>");
+            addEdgesToFile(childLocation, parentLocation, "<child>");
 //            }
         }
     }
@@ -768,6 +768,7 @@ public class DependencyGraph {
         String var = variable.getName();
         int scope = variable.getScope();
         String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
+//        if (!nodeList.containsKey(depenNodeLabel)) {
         if (!nodeList.containsKey(depenNodeLabel)) {
             id++;
             nodeList.put(depenNodeLabel, id);
@@ -776,21 +777,28 @@ public class DependencyGraph {
         }
         int edgeNum = 0;
         for (Symbol s : symbolTable) {
+//            if (s != null) {
             if (s != null) {
-                //check local variable
-                if (s.getName().equals(var) && scope == s.getScope()) {
-                    String edgeLable = "<Def-Use> " + var;
-                    addEdgesToFile(depenNodeLabel, s, edgeLable);
-                    edgeNum++;
-                    break;
-                }
 
-                // if the variable is not local, then check global variable def
-                if (s.getName().equals(var) && scope > s.getScope()) {
-                    String edgeLable = "<Def-Use> " + var;
-                    addEdgesToFile(depenNodeLabel, s, edgeLable);
-                    edgeNum++;
+                if (!s.tag.contains("function")) {
+                    //check local variable
+                    if (s.getName().equals(var) && scope == s.getScope()) {
+                        String declLabel = s.getLineNumber()+"-"+s.getFileName();
+                        if(!declLabel.equals(depenNodeLabel)) {
+                            String edgeLable = "<Def-Use> " + var;
+                            addEdgesToFile(depenNodeLabel, s, edgeLable);
+                            edgeNum++;
+                            break;
+                        }
+                    }
 
+                    // if the variable is not local, then check global variable def
+                    if (s.getName().equals(var) && scope > s.getScope()) {
+                        String edgeLable = "<Def-Use> " + var;
+                        addEdgesToFile(depenNodeLabel, s, edgeLable);
+                        edgeNum++;
+
+                    }
                 }
             }
         }
@@ -848,7 +856,28 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, String decl_position, String edgeLabel) {
-        if (!edgeList.contains(depen_position + "->" + decl_position)) {
+//# reserve multipul edges between 2 nodes
+
+        boolean addNewEdge = true;
+        HashSet<String[]> dependencyNodes = dependencyGraph.get(decl_position);
+
+        if (dependencyNodes != null && dependencyNodes.size() > 0) {
+            for (String[] sn : dependencyNodes) {
+                if (sn[0].equals(depen_position)) {
+
+                    // not allow : multipul edges between 2 nodes
+//                    addNewEdge = false;
+//                    break;
+                    if (sn[1].contains(edgeLabel)) {
+//                        // allow : same edge with different label appears twice
+                        addNewEdge = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (addNewEdge) {
             int dependId = nodeList.get(depen_position);
             int declId = nodeList.get(decl_position);
             ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
@@ -862,9 +891,9 @@ public class DependencyGraph {
             String[] tmpEdge = {depen_position, edgeLabel};
             dependNodes.add(tmpEdge);
             dependencyGraph.put(decl_position, dependNodes);
-
         }
     }
+
 
     public void main(String[] args) {
 

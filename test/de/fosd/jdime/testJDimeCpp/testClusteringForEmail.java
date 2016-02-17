@@ -17,17 +17,19 @@ public class testClusteringForEmail {
     DependencyGraph dependencyGraph = new DependencyGraph();
     ClusterNode clusterNode = new ClusterNode();
     HashMap<String, HashSet<String[]>> nodes;
+
     //        @Ignore
     @Test
     public void test10() {
 
-        String fileName = "EmailSystem/test_16";
+        String fileName = "EmailSystem/test_18";
+//        String fileName = "test_14";
 
         nodes = dependencyGraph.getDependencyGraph(fileName);
 
 
 
-
+        System.out.print("");
 //        clusterNode.greedyAlgorithm(nodes);
 //        assertTrue();
     }

@@ -2,12 +2,17 @@ digraph {
 1 [label = "8-Client.c"];
 2 [label = "13-Client.c"];
 2 -> 1[label="<Def-Use> client"];
+2 -> 1[label="<child>"];
 3 [label = "14-Client.c"];
 3 -> 1[label="<Def-Use> client"];
 3 -> 1[label="<Def-Use> msg"];
+3 -> 2[label="<child>"];
 4 [label = "16-Client.c"];
 4 -> 1[label="<Def-Use> client"];
+4 -> 2[label="<child>"];
 4 -> 1[label="<Def-Use> msg"];
+3 -> 2[label="<Control-Flow> if-then"];
+4 -> 2[label="<Control-Flow> if-then"];
 5 [label = "10-Client.h"];
 6 [label = "12-Client.h"];
 7 [label = "13-Client.h"];
@@ -15,7 +20,7 @@ digraph {
 7 -> 5[label="<belongToStruct>"];
 8 [label = "16-Client.h"];
 9 [label = "18-Client.h"];
-3 -> 7[label="<Def-Use> outgoingBuffer"];
-2 -> 7[label="<Def-Use> outgoingBuffer"];
 4 -> 7[label="<Def-Use> outgoingBuffer"];
+2 -> 7[label="<Def-Use> outgoingBuffer"];
+3 -> 7[label="<Def-Use> outgoingBuffer"];
 }
