@@ -3,7 +3,10 @@ package de.fosd.jdime.util;
 import nu.xom.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by shuruiz on 8/31/15.
@@ -108,12 +111,11 @@ public class IOFunctionSet {
 //                writeTofile( nodeList.get(dn[0])+" ", filepath + pajek);
 
                 String weight = "";
-                if (dn[1].contains("belongToStruct")  || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
-                    weight =1 + "";
-                }else if (dn[1].contains("Call")){
-                    weight =1 + "";
-                }
-                else if (dn[1].contains("child")) {
+                if (dn[1].contains("belongToStruct") || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
+                    weight = 1 + "";
+                } else if (dn[1].contains("Call")) {
+                    weight = 1 + "";
+                } else if (dn[1].contains("child")) {
                     weight = 1 + "";
                 } else if (dn[1].contains("Control-Flow")) {
                     weight = 1 + "";
@@ -308,6 +310,17 @@ public class IOFunctionSet {
     }
 
 
+    public static String readCertainLine(int lineNum,String filePath) {
+
+        String content = "";
+        try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
+            content = lines.skip(lineNum - 1).findFirst().get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
     /**
      * @param inputFile file that need to be parsed by srcML
      * @return path of XML file
@@ -384,7 +397,6 @@ public class IOFunctionSet {
             Thread.currentThread().interrupt();
         }
     }
-
 
 
 }
