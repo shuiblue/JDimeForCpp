@@ -90,7 +90,7 @@ public class RCommunityDetection {
 
     private void printOriginNodeList(HashMap<Integer, String> nodelist, String fileDir) {
         StringBuffer nodeList_print = new StringBuffer();
-        nodeList_print.append("NodeList:\n");
+//        nodeList_print.append("NodeList:\n");
         Iterator it_e = nodelist.entrySet().iterator();
         while (it_e.hasNext()) {
             Map.Entry node = (Map.Entry) it_e.next();
@@ -190,16 +190,16 @@ public class RCommunityDetection {
 
         //print
         StringBuffer membership_print = new StringBuffer();
-
+        membership_print.append("\n---"+clusters.entrySet().size()+" communities\n");
         Iterator it = clusters.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry cluster = (Map.Entry) it.next();
             ArrayList<Integer> mem = (ArrayList<Integer>) cluster.getValue();
-            membership_print.append("\n---group" + cluster.getKey() + "[");
+            membership_print.append("[");
             for (Integer m : mem) {
                 membership_print.append(m + " , ");
             }
-            membership_print.append("]");
+            membership_print.append("]\n");
         }
         //print old edge
         ioFunc.writeTofile(membership_print.toString(), projectPath + fileDir + "/cluster.txt");

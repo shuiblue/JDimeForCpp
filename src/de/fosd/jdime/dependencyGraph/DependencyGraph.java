@@ -95,7 +95,12 @@ public class DependencyGraph {
 
                 //parse dependency graph in each file
                 Element root = ioFunctionSet.getXmlDom(xmlFilePath).getRootElement();
-                parseDependencyForSubTree(root, fileName, 1, "");
+
+                //Rewrite the file name for html purpose
+                String newFileName = "";
+                String suffix = fileName.split("\\.")[1];
+                newFileName = fileName.replace("."+suffix,suffix.toUpperCase());
+                parseDependencyForSubTree(root, newFileName, 1, "");
             }
         }
         //create edges cross files
@@ -198,12 +203,12 @@ public class DependencyGraph {
                 String line = ele.getAttribute(0).getValue();
                 Symbol ifdef = new Symbol(macroName, "", line, "ifdef", fileName, scope);
                 lonelySymbolSet.add(ifdef);
-                storeIntoNodeList(line + "-" + fileName);
+                storeIntoNodeList( fileName+ "-" +line );
             } else if (ele.getLocalName().equals("define")) {
                 String macroName = ele.getChildElements().get(1).getValue();
                 String line = ele.getAttribute(0).getValue();
                 Symbol macro = new Symbol(macroName, "", line, "macro", fileName, scope);
-                storeIntoNodeList(line + "-" + fileName);
+                storeIntoNodeList(fileName+ "-" +line);
                 symbolTable.add(macro);
 
             } else if (ele.getLocalName().equals("if") && ele.getNamespacePrefix().equals("cpp")) {
@@ -222,11 +227,14 @@ public class DependencyGraph {
             } else if (ele.getLocalName().equals("decl_stmt")) {
                 Element decl = ele.getFirstChildElement("decl", NAMESPACEURI);
                 Symbol declSymbol = addDeclarationSymbol(decl, "decl_stmt", fileName, scope, parentLocation);
-                tmpStmtList.add(declSymbol.getLineNumber() + "-" + fileName);
+//                tmpStmtList.add(declSymbol.getLineNumber() + "-" + fileName);
+                tmpStmtList.add(fileName + "-" + declSymbol.getLineNumber());
             } else if (ele.getLocalName().equals("struct")) {
+                //TODO: ele.getLocalName().equals("typedef")
+
                 //struct
                 Symbol parent = addDeclarationSymbol(ele, "struct", fileName, scope, parentLocation);
-                parentLocation = parent.getLineNumber() + "-" + fileName;
+                parentLocation = fileName  + "-" +parent.getLineNumber();
                 //block
                 Element block = ele.getFirstChildElement("block", NAMESPACEURI);
                 for (int s = 0; s < block.getChildElements().size(); s++) {
@@ -321,7 +329,7 @@ public class DependencyGraph {
     private void parseFunctionNode(Element element, String fileName, int scope) {
         //add function to symbol table
         Symbol functionSymbol = addDeclarationSymbol(element, "function", fileName, scope, "");
-        String parentLocation = functionSymbol.getLineNumber() + "-" + fileName;
+        String parentLocation = fileName + "-" +functionSymbol.getLineNumber() ;
         //check parameters
         Element parameter_list = element.getFirstChildElement("parameter_list", NAMESPACEURI);
         if (parameter_list.getChildElements() != null) {
@@ -414,7 +422,7 @@ public class DependencyGraph {
         String whileLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
 
         if (whileLocation.equals("")) {
-            whileLocation = condition.getAttribute(0).getValue() + "-" + fileName;
+            whileLocation = fileName + "-" + condition.getAttribute(0).getValue();
             //save into nodeList
             storeIntoNodeList(whileLocation);
         }
@@ -470,12 +478,12 @@ public class DependencyGraph {
         ArrayList<String> tmpStmtList = new ArrayList<>();
 
         String lineNumber = ele.getAttribute(0).getValue();
-        String forLocation = lineNumber + "-" + fileName;
+        String forLocation =fileName  + "-" + lineNumber;
         Element init = ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("decl", NAMESPACEURI);
         Symbol initVarSymbol;
         if (init != null) {
             initVarSymbol = addDeclarationSymbol(init, "for", fileName, scope, parentLocation);
-            tmpStmtList.add(initVarSymbol.getLineNumber() + "-" + fileName);
+            tmpStmtList.add(fileName+ "-" + initVarSymbol.getLineNumber() );
         } else {
 
             Element condition = ele.getFirstChildElement("condition", NAMESPACEURI);
@@ -492,7 +500,7 @@ public class DependencyGraph {
 //            storeSymbols(newsymbol);
 
             //save into nodeList
-            String nodeLabel = lineNumber + "-" + fileName;
+            String nodeLabel = fileName + "-" +  lineNumber;
             storeIntoNodeList(nodeLabel);
 
         }
@@ -555,7 +563,7 @@ public class DependencyGraph {
             storeSymbols(newsymbol);
 
             //save into nodeList
-            String nodeLabel = lineNumber + "-" + fileName;
+            String nodeLabel = fileName + "-" +lineNumber ;
             storeIntoNodeList(nodeLabel);
 
             // init is optional
@@ -594,7 +602,7 @@ public class DependencyGraph {
                     if (stmtLineNumber.equals("")) {
                         stmtLineNumber = nameList.get(0).getAttribute(0).getValue();
                     }
-                    exprLocation = stmtLineNumber + "-" + fileName;
+                    exprLocation =fileName + "-" +stmtLineNumber  ;
 
                     //save into nodeList
                     storeIntoNodeList(exprLocation);
@@ -612,14 +620,14 @@ public class DependencyGraph {
                         stmtLineNumber = name_Elements.get(i).getAttribute(0).getValue();
                     }
                     dependent = new Symbol(var, "", stmtLineNumber, "name", fileName, scope);
-                    exprLocation = stmtLineNumber + "-" + fileName;
+                    exprLocation = fileName + "-" +stmtLineNumber ;
                     //save into nodeList
                     storeIntoNodeList(exprLocation);
 //                    findVarDependency(dependent);
                     findVarDependency(dependent);
 
                     if (!parentLocation.equals("")) {
-                        String childLocation = stmtLineNumber + "-" + fileName;
+                        String childLocation = fileName + "-" +stmtLineNumber ;
                         linkChildToParent(childLocation, parentLocation);
                     }
                 }
@@ -643,14 +651,14 @@ public class DependencyGraph {
         Element sizeofElement = exprNode.getFirstChildElement("sizeof", NAMESPACEURI);
         if (sizeofElement != null) {
             stmtLineNumber = sizeofElement.getAttribute(0).getValue();
-            exprLocation = stmtLineNumber + "-" + fileName;
+            exprLocation =  fileName+ "-" +stmtLineNumber ;
 
             //argument list
             Elements argumentList = sizeofElement.getFirstChildElement("argument_list", NAMESPACEURI).getChildElements();
         }
         //return nodes has its own line Number
         if (element.getLocalName().equals("return")) {
-            exprLocation = element.getAttribute(0).getValue() + "-" + fileName;
+            exprLocation =fileName  + "-" +element.getAttribute(0).getValue() ;
             //save into nodeList
             storeIntoNodeList(exprLocation);
         }
@@ -720,7 +728,7 @@ public class DependencyGraph {
                 lineNumber = callNameElement.getFirstChildElement("name", NAMESPACEURI).getAttribute(0).getValue();
             }
         }
-        String nodeLabel = lineNumber + "-" + fileName;
+        String nodeLabel =fileName  + "-" +lineNumber ;
 
         //save into dependent Table
         //call's level is 1
@@ -767,7 +775,7 @@ public class DependencyGraph {
 //    public void findVarDependency(Symbol variable) {
         String var = variable.getName();
         int scope = variable.getScope();
-        String depenNodeLabel = variable.getLineNumber() + "-" + variable.getFileName();
+        String depenNodeLabel = variable.getFileName() + "-" +variable.getLineNumber() ;
 //        if (!nodeList.containsKey(depenNodeLabel)) {
         if (!nodeList.containsKey(depenNodeLabel)) {
             id++;
@@ -783,7 +791,7 @@ public class DependencyGraph {
                 if (!s.tag.contains("function")) {
                     //check local variable
                     if (s.getName().equals(var) && scope == s.getScope()) {
-                        String declLabel = s.getLineNumber()+"-"+s.getFileName();
+                        String declLabel =s.getFileName() +"-"+s.getLineNumber();
                         if(!declLabel.equals(depenNodeLabel)) {
                             String edgeLable = "<Def-Use> " + var;
                             addEdgesToFile(depenNodeLabel, s, edgeLable);
@@ -815,7 +823,7 @@ public class DependencyGraph {
 
     public void addFuncDependency(Symbol depend) {
         String funcName = depend.getName();
-        String depen_position = depend.getLineNumber() + "-" + depend.getFileName();
+        String depen_position = depend.getFileName() + "-" +depend.getLineNumber() ;
         String edgeLable = "";
         if (sameNameMap.containsKey(depend.getName())) {
             HashSet<Symbol> candidates = sameNameMap.get(depend.getName());
@@ -844,7 +852,7 @@ public class DependencyGraph {
      * @param edgeLabel      edge label
      */
     public void addEdgesToFile(String depen_position, Symbol decl, String edgeLabel) {
-        String decl_position = decl.getLineNumber() + "-" + decl.getFileName();
+        String decl_position = decl.getFileName() + "-" +decl.getLineNumber() ;
         addEdgesToFile(depen_position, decl_position, edgeLabel);
     }
 
