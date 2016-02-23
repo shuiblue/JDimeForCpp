@@ -158,7 +158,7 @@ public class ColorCodeBlocks {
                 int nodeID = Integer.parseInt(elementList[j].trim());
                 String nodeLabel = nodeMap.get(nodeID);
 
-                if(nodeLabel.equals("ClientC-65")){
+                if(nodeLabel.equals("ClientC-108")||nodeLabel.equals("ClientC-99")){
                     System.out.print("");
                 }
                 if (upstreamNode.contains(nodeLabel)) {

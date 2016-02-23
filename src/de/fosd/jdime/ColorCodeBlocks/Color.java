@@ -18,14 +18,14 @@ public class Color {
         colorList.add("LightGreen");
         colorList.add("DeepPink");
         colorList.add("BlueViolet");
-        colorList.add("Aqua");
+        colorList.add("DarkSeaGreen");
         colorList.add("Fuchsia");
         colorList.add("Pink");
         colorList.add("LightCyan");
         colorList.add("HotPink");
         colorList.add("BurlyWood");
+        colorList.add("MediumPurple ");
         colorList.add("DarkGoldenRod");
-        colorList.add("DarkSeaGreen");
         colorList.add("Plum");
         colorList.add("Teal");
         colorList.add("PeachPuff");
