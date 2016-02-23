@@ -20,7 +20,7 @@ public class DependencyGraph {
 
     static HashMap<String, HashSet<Symbol>> sameNameMap;
 
-    static File graph;
+    static File edgeListTxt;
     static int id;
     static HashMap<String, Integer> nodeList;
     static HashMap<String, HashSet<String[]>> dependencyGraph;
@@ -47,8 +47,8 @@ public class DependencyGraph {
         testDirPath = dirPath + testDir + "/";
 
         //create graph file
-        graph = new File(testDirPath + "graph.gv");
-        ioFunctionSet.rewriteFile("digraph {\n", graph.getPath());
+        edgeListTxt = new File(testDirPath + "edgeList.txt");
+        ioFunctionSet.rewriteFile("", edgeListTxt.getPath());
 
         File dir = new File(testDirPath);
         String[] names = dir.list();
@@ -106,7 +106,7 @@ public class DependencyGraph {
         //create edges cross files
         addEdgesCrossFiles();
 
-        ioFunctionSet.writeTofile("}", graph.getPath());
+//        ioFunctionSet.writeTofile("}", graph.getPath());
         return edgeList;
     }
 
@@ -230,31 +230,21 @@ public class DependencyGraph {
 //                tmpStmtList.add(declSymbol.getLineNumber() + "-" + fileName);
                 tmpStmtList.add(fileName + "-" + declSymbol.getLineNumber());
             } else if (ele.getLocalName().equals("struct")) {
-                //TODO: ele.getLocalName().equals("typedef")
+                parseStruct( ele, fileName,scope,parentLocation,"");
+            }  else if (ele.getLocalName().equals("typedef")) {
+                Element firstChild= (Element) ele.getFirstChildElement("type", NAMESPACEURI).getChild(0);
 
-                //struct
-                Symbol parent = addDeclarationSymbol(ele, "struct", fileName, scope, parentLocation);
-                parentLocation = fileName  + "-" +parent.getLineNumber();
-                //block
-                Element block = ele.getFirstChildElement("block", NAMESPACEURI);
-                for (int s = 0; s < block.getChildElements().size(); s++) {
-                    Element group = block.getChildElements().get(s);
+               if(firstChild.getLocalName().equals("struct")){
+                   String alias = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
+                   parseStruct(firstChild,fileName,scope,parentLocation,alias);
+               }
+                   System.out.print("");
 
-                    //get children
-//                    HashSet<Symbol>
-                    ArrayList<String> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
-                    boolean tmpHierarchy = true;
-                    if (!HIERACHICAL) {
-                        tmpHierarchy = HIERACHICAL;
-                        HIERACHICAL = true;
-                    }
-                    //link children -> parent
-                    linkChildToParent(children, parentLocation, "<belongToStruct>");
-                    if (!tmpHierarchy) {
-                        HIERACHICAL = tmpHierarchy;
-                    }
-                }
-            } else if (ele.getLocalName().equals("function_decl")) {
+            }
+
+
+
+            else if (ele.getLocalName().equals("function_decl")) {
                 addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation);
 
             } else if (ele.getLocalName().equals("return")) {
@@ -314,6 +304,38 @@ public class DependencyGraph {
 //            if (!edgeList.contains(childLocation + "->" + parentLocation)) {
             addEdgesToFile(childLocation, parentLocation, "<child>");
 //            }
+        }
+    }
+
+
+    private void parseStruct(Element ele, String fileName, int scope, String parentLocation,String alias){
+        //struct
+        Symbol parent = addDeclarationSymbol(ele, "struct", fileName, scope, parentLocation);
+        if (alias != "") {
+            String name = parent.getName();
+            parent.setAlias(name);
+            parent.setName(alias);
+        }
+
+        parentLocation = fileName  + "-" +parent.getLineNumber();
+        //block
+        Element block = ele.getFirstChildElement("block", NAMESPACEURI);
+        for (int s = 0; s < block.getChildElements().size(); s++) {
+            Element group = block.getChildElements().get(s);
+
+            //get children
+//                    HashSet<Symbol>
+            ArrayList<String> children = parseDependencyForSubTree(group, fileName, scope, parentLocation);
+            boolean tmpHierarchy = true;
+            if (!HIERACHICAL) {
+                tmpHierarchy = HIERACHICAL;
+                HIERACHICAL = true;
+            }
+            //link children -> parent
+            linkChildToParent(children, parentLocation, "<belongToStruct>");
+            if (!tmpHierarchy) {
+                HIERACHICAL = tmpHierarchy;
+            }
         }
     }
 
@@ -687,8 +709,8 @@ public class DependencyGraph {
             dependencyGraph.put(exprLocation, new HashSet<>());
 
 
-            //write into graph file
-            ioFunctionSet.writeTofile(id + " [label = \"" + exprLocation + "\"];\n", graph.getPath());
+            //write into graph file .gv
+//            ioFunctionSet.writeTofile(id + " [label = \"" + exprLocation + "\"];\n", graph.getPath());
         }
     }
 
@@ -739,8 +761,8 @@ public class DependencyGraph {
         if (!nodeList.containsKey(nodeLabel)) {
             id++;
             nodeList.put(nodeLabel, id);
-            //write into graph file
-            ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
+            //write into graph file .gv
+//            ioFunctionSet.writeTofile(id + " [label = \"" + nodeLabel + "\"];\n", graph.getPath());
         }
         addFuncDependency(call);
 
@@ -780,8 +802,8 @@ public class DependencyGraph {
         if (!nodeList.containsKey(depenNodeLabel)) {
             id++;
             nodeList.put(depenNodeLabel, id);
-            //write into graph file
-            ioFunctionSet.writeTofile(id + " [label = \"" + depenNodeLabel + "\"];\n", graph.getPath());
+            //write into graph file .gv
+//            ioFunctionSet.writeTofile(id + " [label = \"" + depenNodeLabel + "\"];\n", graph.getPath());
         }
         int edgeNum = 0;
         for (Symbol s : symbolTable) {
@@ -888,7 +910,7 @@ public class DependencyGraph {
         if (addNewEdge) {
             int dependId = nodeList.get(depen_position);
             int declId = nodeList.get(decl_position);
-            ioFunctionSet.writeTofile(dependId + " -> " + declId + "[label=\"" + edgeLabel + "\"];\n", graph.getPath());
+            ioFunctionSet.writeTofile(dependId + "," + declId + "," + edgeLabel + "\n", edgeListTxt.getPath());
             edgeList.add(depen_position + "->" + decl_position);
 
             //add to dependency graph

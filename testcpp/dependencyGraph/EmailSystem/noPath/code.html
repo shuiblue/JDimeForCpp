@@ -1,0 +1,453 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+</head>
+<body ginger_software_stylesheet="true" ginger_software_doc="true">
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	 <style>
+        .prettyprint ol.linenums > li { list-style-type: decimal; }
+    </style>
+<h1>Client.c</h1>
+<pre  class="prettyprint linenums"><front id="ClientC-1">#include &lt;stdlib.h&gt;</front>
+<front id="ClientC-2">#include &lt;stdio.h&gt;</front>
+<front id="ClientC-3">#include &lt;string.h&gt;</front>
+<front id="ClientC-4">#include "Client.h"</front>
+<front id="ClientC-5"></front>
+<front id="ClientC-6">// outgoing emails leave the client at this point. here they are put in an outgoing queue instead.</front>
+<front id="ClientC-7">void</front>
+<front id="ClientC-8">mail (struct client *client, struct email *msg)</front>
+<front id="ClientC-9">{</front>
+<front id="ClientC-10">  //----encrypt ----</front>
+<front id="ClientC-11">// VERIFICATION HOOK</front>
+<front id="ClientC-12">  int verificationHook_isEncrypted = isEncrypted (msg);</front>
+<front id="ClientC-13">  printf ("mail:\nisEncrypted = %i\nid = %i\n", verificationHook_isEncrypted,</front>
+<front id="ClientC-14">    msg-&gt;id);</front>
+<front id="ClientC-15">// VERIFICATION HOOK END</front>
+<front id="ClientC-16">//----encrypt ----</front>
+<front id="ClientC-17">  </front>
+<front id="ClientC-18">  //TODO </front>
+<front id="ClientC-19">//  printf ("=&gt; %s MAIL\n", client-&gt;name);</front>
+<front id="ClientC-20">//  printMail (msg);</front>
+<front id="ClientC-21">  if (!client-&gt;outgoingBuffer)</front>
+<front id="ClientC-22">    client-&gt;outgoingBuffer = list_create (msg);</front>
+<front id="ClientC-23">  else</front>
+<front id="ClientC-24">    list_insert_after (client-&gt;outgoingBuffer, msg);</front>
+<front id="ClientC-25">}</front>
+<front id="ClientC-26"></front>
+<front id="ClientC-27">// emails to be sent are processed by this method before beeing mailed.</front>
+<front id="ClientC-28">void</front>
+<front id="ClientC-29">outgoing (struct client *client, struct email *msg)</front>
+<front id="ClientC-30">{</front>
+<front id="ClientC-31">   //----encrypt ----</front>
+<front id="ClientC-32">   encrypt (client, msg);</front>
+<front id="ClientC-33">    //----encrypt ----</front>
+<front id="ClientC-34"></front>
+<front id="ClientC-35">  //----addressBook ----</front>
+<front id="ClientC-36">  resolveAlias (client, msg);</front>
+<front id="ClientC-37">  //----addressBook ----</front>
+<front id="ClientC-38"></front>
+<front id="ClientC-39">  msg-&gt;from = strdup (client-&gt;name);</front>
+<front id="ClientC-40">  mail (client, msg);</front>
+<front id="ClientC-41">}</front>
+<front id="ClientC-42"></front>
+<front id="ClientC-43">// incoming emails reach the user at this point. here they are put in a mailbox.</front>
+<front id="ClientC-44">void</front>
+<front id="ClientC-45">deliver (struct client *client, struct email *msg)</front>
+<front id="ClientC-46">{</front>
+<front id="ClientC-47">  //TODO</front>
+<front id="ClientC-48">  // printf ("=&gt; %s DELIVER\n", client-&gt;name);</front>
+<front id="ClientC-49">  //printMail (msg);</front>
+<front id="ClientC-50">}</front>
+<front id="ClientC-51"></front>
+<front id="ClientC-52">// incoming emails are processed by this method before delivery.</front>
+<front id="ClientC-53">void</front>
+<front id="ClientC-54">incoming (struct client *client, struct email *msg)</front>
+<front id="ClientC-55">{</front>
+<front id="ClientC-56">  //-----decrypt----</front>
+<front id="ClientC-57">// VERIFICATION HOOK</front>
+<front id="ClientC-58">  int verificationHook_isEncrypted = isEncrypted (msg);</front>
+<front id="ClientC-59">  printf ("incoming:\nisEncrypted = %i\nid = %i\n",</front>
+<front id="ClientC-60">    verificationHook_isEncrypted, msg-&gt;id);</front>
+<front id="ClientC-61">// VERIFICATION HOOK END</front>
+<front id="ClientC-62">  decrypt (client, msg);</front>
+<front id="ClientC-63">//-----decrypt----</front>
+<front id="ClientC-64">  </front>
+<front id="ClientC-65">  autoRespond (client, msg);</front>
+<front id="ClientC-66">  deliver (client, msg);</front>
+<front id="ClientC-67">}</front>
+<front id="ClientC-68"></front>
+<front id="ClientC-69">//----addressBook ----</front>
+<front id="ClientC-70">int</front>
+<front id="ClientC-71">findAddressBookEntry (void *listdata, void *searchdata)</front>
+<front id="ClientC-72">{</front>
+<front id="ClientC-73">  return strcmp</front>
+<front id="ClientC-74">    (((struct addressBookEntry *) listdata)-&gt;alias,</front>
+<front id="ClientC-75">     (char *) searchdata) ? 0 : 1;</front>
+<front id="ClientC-76">}</front>
+<front id="ClientC-77"></front>
+<front id="ClientC-78">void</front>
+<front id="ClientC-79">resolveAlias (struct client *client, struct email *msg)</front>
+<front id="ClientC-80">{</front>
+<front id="ClientC-81">  if (!client-&gt;addressBook)</front>
+<front id="ClientC-82">    return;</front>
+<front id="ClientC-83">  struct email *clone = cloneEmail (msg);</front>
+<front id="ClientC-84">  NODE *found =</front>
+<front id="ClientC-85">    list_find (client-&gt;addressBook, findAddressBookEntry, clone-&gt;to);</front>
+<front id="ClientC-86">  if (!found)</front>
+<front id="ClientC-87">    return;</front>
+<front id="ClientC-88">  NODE *address = ((struct addressBookEntry *) found-&gt;data)-&gt;address;</front>
+<front id="ClientC-89">  if (address)</front>
+<front id="ClientC-90">    {</front>
+<front id="ClientC-91">      msg-&gt;to = strdup (address-&gt;data);</front>
+<front id="ClientC-92">      address = address-&gt;next;</front>
+<front id="ClientC-93">    }</front>
+<front id="ClientC-94">  while (address)</front>
+<front id="ClientC-95">    {</front>
+<front id="ClientC-96">      struct email *newmsg = cloneEmail (clone);</front>
+<front id="ClientC-97">      newmsg-&gt;to = strdup (address-&gt;data);</front>
+<front id="ClientC-98">      address = address-&gt;next;</front>
+<front id="ClientC-99">      outgoing (client, newmsg);</front>
+<front id="ClientC-100">    }</front>
+<front id="ClientC-101">}</front>
+<front id="ClientC-102">//----addressBook ----</front>
+<front id="ClientC-103"></front>
+<front id="ClientC-104">//----autoResponder ----</front>
+<front id="ClientC-105">void</front>
+<front id="ClientC-106">autoRespond (struct client *client, struct email *msg)</front>
+<front id="ClientC-107">{</front>
+<front id="ClientC-108">  if (!client-&gt;autoResponse || !isReadable (msg))</front>
+<front id="ClientC-109">    return;</front>
+<front id="ClientC-110">  struct email *response = cloneEmail (msg);</front>
+<front id="ClientC-111">  response-&gt;to = strdup (msg-&gt;from);</front>
+<front id="ClientC-112">  response-&gt;body = strdup (client-&gt;autoResponse);</front>
+<front id="ClientC-113">  char *respondPrefix = "Auto-Response ";</front>
+<front id="ClientC-114">  response-&gt;subject =</front>
+<front id="ClientC-115">    (char *) malloc (strlen (respondPrefix) + strlen (msg-&gt;subject));</front>
+<front id="ClientC-116">  strcat (response-&gt;subject, respondPrefix);</front>
+<front id="ClientC-117">  strcat (response-&gt;subject, msg-&gt;subject);</front>
+<front id="ClientC-118">  outgoing (client, response);</front>
+<front id="ClientC-119">}</front>
+<front id="ClientC-120">//----autoResponder ----</front>
+<front id="ClientC-121"></front>
+<front id="ClientC-122">//----encrypt ----</front>
+<front id="ClientC-123">void</front>
+<front id="ClientC-124">encrypt (struct client *client, struct email *msg)</front>
+<front id="ClientC-125">{</front>
+<front id="ClientC-126">  NODE *foundPublicKeyPair =</front>
+<front id="ClientC-127">    list_find (client-&gt;userPublicKeyPairs, findUserPublicKeyPair, msg-&gt;to);</front>
+<front id="ClientC-128">  if (foundPublicKeyPair)</front>
+<front id="ClientC-129">    {</front>
+<front id="ClientC-130">      msg-&gt;encryptionKey =</front>
+<front id="ClientC-131">  strdup (((struct userPublicKeyPair *) foundPublicKeyPair-&gt;data)-&gt;</front>
+<front id="ClientC-132">    publicKey);</front>
+<front id="ClientC-133">      msg-&gt;isEncrypted = 1;</front>
+<front id="ClientC-134">    }</front>
+<front id="ClientC-135">}</front>
+<front id="ClientC-136">//----encrypt ----</front>
+<front id="ClientC-137"></front>
+<front id="ClientC-138">//-----decrypt----</front>
+<front id="ClientC-139">// removes the decryption flag if possible</front>
+<front id="ClientC-140">void</front>
+<front id="ClientC-141">decrypt (struct client *client, struct email *msg)</front>
+<front id="ClientC-142">{</front>
+<front id="ClientC-143">// VERIFICATION HOOK</front>
+<front id="ClientC-144">  int verificationHook_isKeyPairValid =</front>
+<front id="ClientC-145">    isKeyPairValid (msg-&gt;encryptionKey, client-&gt;privateKey);</front>
+<front id="ClientC-146">// printf ("\n&gt; hook\n%i\n\n", verificationHook_isKeyPairValid);</front>
+<front id="ClientC-147">// VERIFICATION HOOK END</front>
+<front id="ClientC-148">  if (!client-&gt;privateKey)</front>
+<front id="ClientC-149">    return;</front>
+<front id="ClientC-150">  if (msg-&gt;isEncrypted == 1</front>
+<front id="ClientC-151">      && 0 == strcmp (msg-&gt;encryptionKey, client-&gt;privateKey))</front>
+<front id="ClientC-152">    {</front>
+<front id="ClientC-153">      msg-&gt;encryptionKey = NULL;</front>
+<front id="ClientC-154">      msg-&gt;isEncrypted = 0;</front>
+<front id="ClientC-155">    }</front>
+<front id="ClientC-156">}</front>
+<front id="ClientC-157">//-----decrypt----</front>
+<front id="ClientC-158"></front>
+<front id="ClientC-159"></front>
+<front id="ClientC-160">//-----keys----</front>
+<front id="ClientC-161">int</front>
+<front id="ClientC-162">findUserPublicKeyPair (void *listdata, void *searchdata)</front>
+<front id="ClientC-163">{</front>
+<front id="ClientC-164">  if (!listdata || !searchdata)</front>
+<front id="ClientC-165">    return 0;</front>
+<front id="ClientC-166">  return strcmp</front>
+<front id="ClientC-167">    (((struct userPublicKeyPair *) listdata)-&gt;user,</front>
+<front id="ClientC-168">     (char *) searchdata) ? 0 : 1;</front>
+<front id="ClientC-169">}</front>
+<front id="ClientC-170"></front>
+<front id="ClientC-171">int</front>
+<front id="ClientC-172">isKeyPairValid (char *publicKey, char *privateKey)</front>
+<front id="ClientC-173">{</front>
+<front id="ClientC-174">  if (!publicKey || !privateKey)</front>
+<front id="ClientC-175">    return 0;</front>
+<front id="ClientC-176">  return strcmp (publicKey, privateKey) ? 0 : 1;</front>
+<front id="ClientC-177">}</front>
+<front id="ClientC-178">//-----keys----</front>
+<front id="ClientC-179"></front>
+<front id="ClientC-180"></front>
+ </pre>
+<h1>Client.h</h1>
+<pre  class="prettyprint linenums"><front id="ClientH-1">#include "Email.h"</front>
+<front id="ClientH-2">#include "slist.h"</front>
+<front id="ClientH-3"></front>
+<front id="ClientH-4">/*</front>
+<front id="ClientH-5"> * two sorts of emails are processed by this client: incoming and outgoing ones.</front>
+<front id="ClientH-6"> * control flow is</front>
+<front id="ClientH-7"> * email from internet &gt; incoming &gt; deliver &gt; receipient receives mail</front>
+<front id="ClientH-8"> * sender writes email &gt; outgoing &gt; mail &gt; email sent through internet</front>
+<front id="ClientH-9"> */</front>
+<front id="ClientH-10">struct client</front>
+<front id="ClientH-11">{</front>
+<front id="ClientH-12">  char *name;</front>
+<front id="ClientH-13">  NODE *outgoingBuffer;</front>
+<front id="ClientH-14">  NODE *addressBook;</front>
+<front id="ClientH-15">  char *autoResponse;</front>
+<front id="ClientH-16">  //----keys----</front>
+<front id="ClientH-17">  NODE *userPublicKeyPairs;</front>
+<front id="ClientH-18">  char *privateKey;</front>
+<front id="ClientH-19">  //----keys----</front>
+<front id="ClientH-20">};</front>
+<front id="ClientH-21"></front>
+<front id="ClientH-22">struct addressBookEntry</front>
+<front id="ClientH-23">{</front>
+<front id="ClientH-24">  char *alias;</front>
+<front id="ClientH-25">  NODE *address;</front>
+<front id="ClientH-26">};</front>
+<front id="ClientH-27">  //----keys----</front>
+<front id="ClientH-28">struct userPublicKeyPair</front>
+<front id="ClientH-29">{</front>
+<front id="ClientH-30">  char *user;</front>
+<front id="ClientH-31">  char *publicKey;</front>
+<front id="ClientH-32">};</front>
+<front id="ClientH-33">  //----keys----</front>
+<front id="ClientH-34">void outgoing (struct client *client, struct email *msg);</front>
+<front id="ClientH-35"></front>
+<front id="ClientH-36">void incoming (struct client *client, struct email *msg);</front>
+<front id="ClientH-37"></front>
+<front id="ClientH-38">// TODO remove after fixing the composition-function-order-problem</front>
+<front id="ClientH-39">void resolveAlias (struct client *client, struct email *msg);</front>
+<front id="ClientH-40"></front>
+<front id="ClientH-41">void autoRespond (struct client *client, struct email *msg);</front>
+<front id="ClientH-42"></front>
+<front id="ClientH-43">//-----encrypt----</front>
+<front id="ClientH-44">// TODO remove</front>
+<front id="ClientH-45">void encrypt (struct client *client, struct email *msg);</front>
+<front id="ClientH-46">//-----encrypt----</front>
+<front id="ClientH-47"></front>
+<front id="ClientH-48">//-----decrypt----</front>
+<front id="ClientH-49">// TODO remove</front>
+<front id="ClientH-50">void decrypt (struct client *client, struct email *msg);</front>
+<front id="ClientH-51">//-----decrypt----</front>
+<front id="ClientH-52"></front>
+<front id="ClientH-53">int isKeyPairValid (char *publicKey, char *privateKey);</front>
+ </pre>
+<h1>Email.c</h1>
+<pre  class="prettyprint linenums"><front id="EmailC-1">#include &lt;stdio.h&gt;</front>
+<front id="EmailC-2">#include &lt;stdlib.h&gt;</front>
+<front id="EmailC-3">#include &lt;string.h&gt;</front>
+<front id="EmailC-4">#include "Email.h"</front>
+<front id="EmailC-5"></front>
+<front id="EmailC-6">struct email *</front>
+<front id="EmailC-7">cloneEmail (struct email *msg)</front>
+<front id="EmailC-8">{</front>
+<front id="EmailC-9">  struct email *clone = (struct email *) malloc (sizeof (struct email));</front>
+<front id="EmailC-10">  if (msg-&gt;id)</front>
+<front id="EmailC-11">    clone-&gt;id = msg-&gt;id;</front>
+<front id="EmailC-12">  if (msg-&gt;from)</front>
+<front id="EmailC-13">    clone-&gt;from = strdup (msg-&gt;from);</front>
+<front id="EmailC-14">  if (msg-&gt;to)</front>
+<front id="EmailC-15">    clone-&gt;to = strdup (msg-&gt;to);</front>
+<front id="EmailC-16">  if (msg-&gt;subject)</front>
+<front id="EmailC-17">    clone-&gt;subject = strdup (msg-&gt;subject);</front>
+<front id="EmailC-18">  if (msg-&gt;body)</front>
+<front id="EmailC-19">    clone-&gt;body = strdup (msg-&gt;body);</front>
+<front id="EmailC-20"> //----encrypt ----</front>
+<front id="EmailC-21">  clone-&gt;isEncrypted = msg-&gt;isEncrypted;</front>
+<front id="EmailC-22">  if (msg-&gt;encryptionKey)</front>
+<front id="EmailC-23">    clone-&gt;encryptionKey = strdup (msg-&gt;encryptionKey);</front>
+<front id="EmailC-24">  //----encrypt ----</front>
+<front id="EmailC-25">  return clone;</front>
+<front id="EmailC-26">}</front>
+<front id="EmailC-27"></front>
+<front id="EmailC-28">void</front>
+<front id="EmailC-29">printMail (struct email *msg)</front>
+<front id="EmailC-30">{</front>
+<front id="EmailC-31">  printf ("ID:\n  %i\n", msg-&gt;id);</front>
+<front id="EmailC-32">  printf ("FROM:\n  %s\n", msg-&gt;from);</front>
+<front id="EmailC-33">  printf ("TO:\n  %s\n", msg-&gt;to);</front>
+<front id="EmailC-34">  printf ("SUBJECT:\n  %s\n", msg-&gt;subject);</front>
+<front id="EmailC-35">  printf ("IS_READABLE\n  %i\n", isReadable (msg));</front>
+<front id="EmailC-36">  printf ("BODY:\n  %s\n", msg-&gt;body);</front>
+<front id="EmailC-37">//----encrypt ----</front>
+<front id="EmailC-38">  printf ("ENCRYPTED\n  %i\n", msg-&gt;isEncrypted);</front>
+<front id="EmailC-39">  printf ("ENCRYPTION KEY\n  %s\n", msg-&gt;encryptionKey);</front>
+<front id="EmailC-40">//----encrypt ----</front>
+<front id="EmailC-41">}</front>
+<front id="EmailC-42"></front>
+<front id="EmailC-43">int</front>
+<front id="EmailC-44">isReadable (struct email *msg)</front>
+<front id="EmailC-45">{</front>
+<front id="EmailC-46">  //----encrypt ----</front>
+<front id="EmailC-47"> if (0 == isEncrypted (msg))</front>
+<front id="EmailC-48">    return 1;</front>
+<front id="EmailC-49">  else</front>
+<front id="EmailC-50">    return 0;</front>
+<front id="EmailC-51">  //----encrypt ----</front>
+<front id="EmailC-52">}</front>
+<front id="EmailC-53"></front>
+<front id="EmailC-54"> //----encrypt ----</front>
+<front id="EmailC-55">int</front>
+<front id="EmailC-56">isEncrypted (struct email *msg)</front>
+<front id="EmailC-57">{</front>
+<front id="EmailC-58">  return msg-&gt;isEncrypted;</front>
+<front id="EmailC-59">}</front>
+<front id="EmailC-60"> //----encrypt ----</front>
+ </pre>
+<h1>Email.h</h1>
+<pre  class="prettyprint linenums"><front id="EmailH-1">struct email</front>
+<front id="EmailH-2">{</front>
+<front id="EmailH-3">  int id;</front>
+<front id="EmailH-4">  char *from;</front>
+<front id="EmailH-5">  char *to;</front>
+<front id="EmailH-6">  char *subject;</front>
+<front id="EmailH-7">  char *body;</front>
+<front id="EmailH-8">  int isEncrypted;</front>
+<front id="EmailH-9">  char *encryptionKey;</front>
+<front id="EmailH-10">};</front>
+<front id="EmailH-11"></front>
+<front id="EmailH-12">struct email *cloneEmail (struct email *msg);</front>
+<front id="EmailH-13"></front>
+<front id="EmailH-14">void printMail (struct email *msg);</front>
+<front id="EmailH-15"></front>
+<front id="EmailH-16">int isReadable (struct email *msg);</front>
+<front id="EmailH-17"></front>
+<front id="EmailH-18">int isEncrypted (struct email *msg);</front>
+ </pre>
+<h1>slist.c</h1>
+<pre  class="prettyprint linenums"><front id="slistC-1">/* Copyright (c) 2009 the authors listed at the following URL, and/or</front>
+<front id="slistC-2">the authors of referenced articles or incorporated external code:</front>
+<front id="slistC-3">http://en.literateprograms.org/Singly_linked_list_(C)?action=history&offset=20081126164854</front>
+<front id="slistC-4"></front>
+<front id="slistC-5">Permission is hereby granted, free of charge, to any person obtaining</front>
+<front id="slistC-6">a copy of this software and associated documentation files (the</front>
+<front id="slistC-7">"Software"), to deal in the Software without restriction, including</front>
+<front id="slistC-8">without limitation the rights to use, copy, modify, merge, publish,</front>
+<front id="slistC-9">distribute, sublicense, and/or sell copies of the Software, and to</front>
+<front id="slistC-10">permit persons to whom the Software is furnished to do so, subject to</front>
+<front id="slistC-11">the following conditions:</front>
+<front id="slistC-12"></front>
+<front id="slistC-13">The above copyright notice and this permission notice shall be</front>
+<front id="slistC-14">included in all copies or substantial portions of the Software.</front>
+<front id="slistC-15"></front>
+<front id="slistC-16">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,</front>
+<front id="slistC-17">EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</front>
+<front id="slistC-18">MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</front>
+<front id="slistC-19">IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY</front>
+<front id="slistC-20">CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,</front>
+<front id="slistC-21">TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE</front>
+<front id="slistC-22">SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</front>
+<front id="slistC-23"></front>
+<front id="slistC-24">Retrieved from: http://en.literateprograms.org/Singly_linked_list_(C)?oldid=15494</front>
+<front id="slistC-25">*/</front>
+<front id="slistC-26"></front>
+<front id="slistC-27">#include "slist.h"</front>
+<front id="slistC-28">#include&lt;stdlib.h&gt;</front>
+<front id="slistC-29">#include&lt;stdio.h&gt;</front>
+<front id="slistC-30"></front>
+<front id="slistC-31">NODE *</front>
+<front id="slistC-32">list_create (void *data)</front>
+<front id="slistC-33">{</front>
+<front id="slistC-34">  NODE *node;</front>
+<front id="slistC-35">  if (!(node = malloc (sizeof (NODE))))</front>
+<front id="slistC-36">    return NULL;</front>
+<front id="slistC-37">  node-&gt;data = data;</front>
+<front id="slistC-38">  node-&gt;next = NULL;</front>
+<front id="slistC-39">  return node;</front>
+<front id="slistC-40">}</front>
+<front id="slistC-41"></front>
+<front id="slistC-42">NODE *</front>
+<front id="slistC-43">list_insert_after (NODE * node, void *data)</front>
+<front id="slistC-44">{</front>
+<front id="slistC-45">  NODE *newnode;</front>
+<front id="slistC-46">  newnode = list_create (data);</front>
+<front id="slistC-47">  newnode-&gt;next = node-&gt;next;</front>
+<front id="slistC-48">  node-&gt;next = newnode;</front>
+<front id="slistC-49">  return newnode;</front>
+<front id="slistC-50">}</front>
+<front id="slistC-51"></front>
+<front id="slistC-52">NODE *</front>
+<front id="slistC-53">list_insert_beginning (NODE * list, void *data)</front>
+<front id="slistC-54">{</front>
+<front id="slistC-55">  NODE *newnode;</front>
+<front id="slistC-56">  newnode = list_create (data);</front>
+<front id="slistC-57">  newnode-&gt;next = list;</front>
+<front id="slistC-58">  return newnode;</front>
+<front id="slistC-59">}</front>
+<front id="slistC-60"></front>
+<front id="slistC-61">int</front>
+<front id="slistC-62">list_remove (NODE * list, NODE * node)</front>
+<front id="slistC-63">{</front>
+<front id="slistC-64">  while (list-&gt;next && list-&gt;next != node)</front>
+<front id="slistC-65">    list = list-&gt;next;</front>
+<front id="slistC-66">  if (list-&gt;next)</front>
+<front id="slistC-67">    {</front>
+<front id="slistC-68">      list-&gt;next = node-&gt;next;</front>
+<front id="slistC-69">      free (node);</front>
+<front id="slistC-70">      return 0;</front>
+<front id="slistC-71">    }</front>
+<front id="slistC-72">  else</front>
+<front id="slistC-73">    return -1;</front>
+<front id="slistC-74">}</front>
+<front id="slistC-75"></front>
+<front id="slistC-76">int</front>
+<front id="slistC-77">list_foreach (NODE * node, int (*func) (void *))</front>
+<front id="slistC-78">{</front>
+<front id="slistC-79">  while (node)</front>
+<front id="slistC-80">    {</front>
+<front id="slistC-81">      if (func (node-&gt;data) != 0)</front>
+<front id="slistC-82">	return -1;</front>
+<front id="slistC-83">      node = node-&gt;next;</front>
+<front id="slistC-84">    }</front>
+<front id="slistC-85">  return 0;</front>
+<front id="slistC-86">}</front>
+<front id="slistC-87"></front>
+<front id="slistC-88">NODE *</front>
+<front id="slistC-89">list_find (NODE * node, int (*func) (void *, void *), void *data)</front>
+<front id="slistC-90">{</front>
+<front id="slistC-91">  while (node)</front>
+<front id="slistC-92">    {</front>
+<front id="slistC-93">      if (func (node-&gt;data, data) &gt; 0)</front>
+<front id="slistC-94">	return node;</front>
+<front id="slistC-95">      node = node-&gt;next;</front>
+<front id="slistC-96">    }</front>
+<front id="slistC-97">  return NULL;</front>
+<front id="slistC-98">}</front>
+ </pre>
+<h1>slist.h</h1>
+<pre  class="prettyprint linenums"><front id="slistH-1">typedef struct node_s</front>
+<front id="slistH-2">{</front>
+<front id="slistH-3">  void *data;</front>
+<front id="slistH-4">  struct node_s *next;</front>
+<front id="slistH-5">} NODE;</front>
+<front id="slistH-6"></front>
+<front id="slistH-7"></front>
+<front id="slistH-8">NODE *list_create (void *data);</front>
+<front id="slistH-9"></front>
+<front id="slistH-10">NODE *list_insert_after (NODE * node, void *data);</front>
+<front id="slistH-11"></front>
+<front id="slistH-12">NODE *list_insert_beginning (NODE * list, void *data);</front>
+<front id="slistH-13"></front>
+<front id="slistH-14">int list_remove (NODE * list, NODE * node);</front>
+<front id="slistH-15"></front>
+<front id="slistH-16">int list_foreach (NODE * node, int (*func) (void *));</front>
+<front id="slistH-17"></front>
+<front id="slistH-18">NODE *list_find (NODE * node, int (*func) (void *, void *), void *data);</front>
+ </pre>
+<script src="svgDraw.js"></script>
+</body>
+</html>

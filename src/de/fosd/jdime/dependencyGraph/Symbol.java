@@ -8,11 +8,17 @@ import java.util.HashSet;
  */
 public class Symbol {
     String type;
+
+
+
     String name;
     String tag;
     String fileName;
     String lineNumber;
     int scope;
+
+
+    String alias;
 
     Symbol(String name, String type, String lineNumber, String tag, String fileName, int scope) {
         this.name = name;
@@ -24,7 +30,16 @@ public class Symbol {
 
     }
 
+    public String getAlias() {
+        return alias;
+    }
 
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getLineNumber() {
         return lineNumber;
