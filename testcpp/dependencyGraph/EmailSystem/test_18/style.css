@@ -1,781 +1,1056 @@
-#svgContainer{
+#expectIMG{
+	position:fixed;
+	top:100px;
+	right:50px;
+}
+#resultIMG{
+	position:fixed;
+	top:500px;
+	right:50px;
+}#svgContainer{
 	position:absolute;
 }
 #ClientC-8{
-	background-color:Gray;
-
-}
-#ClientC-21{
-	background-color:Gray;
-
-}
-#ClientC-22{
-	background-color:Gray;
-
-}
-#ClientC-24{
-	background-color:Gray;
-
-}
-#ClientC-29{
-	background-color:Gray;
-
-}
-#ClientC-39{
-	background-color:Gray;
-
-}
-#ClientC-40{
-	background-color:Gray;
-
-}
-#ClientH-10{
-	background-color:Gray;
-
-}
-#ClientH-12{
-	background-color:Gray;
-
-}
-#ClientH-13{
-	background-color:Gray;
-
-}
-#ClientH-34{
-	background-color:Gray;
-
-}
-#EmailC-7{
-	background-color:Gray;
-
-}
-#EmailC-9{
-	background-color:Gray;
-
-}
-#EmailC-10{
-	background-color:Gray;
-
-}
-#EmailC-11{
-	background-color:Gray;
-
-}
-#EmailC-12{
-	background-color:Gray;
-
-}
-#EmailC-13{
-	background-color:Gray;
-
-}
-#EmailC-14{
-	background-color:Gray;
-
-}
-#EmailC-15{
-	background-color:Gray;
-
-}
-#EmailC-16{
-	background-color:Gray;
-
-}
-#EmailC-17{
-	background-color:Gray;
-
-}
-#EmailC-18{
-	background-color:Gray;
-
-}
-#EmailC-19{
-	background-color:Gray;
-
-}
-#EmailC-25{
-	background-color:Gray;
-
-}
-#EmailC-29{
-	background-color:Gray;
-
-}
-#EmailC-31{
-	background-color:Gray;
-
-}
-#EmailC-32{
-	background-color:Gray;
-
-}
-#EmailC-33{
-	background-color:Gray;
-
-}
-#EmailC-34{
-	background-color:Gray;
-
-}
-#EmailC-35{
-	background-color:Gray;
-
-}
-#EmailC-36{
-	background-color:Gray;
-
-}
-#EmailC-44{
-	background-color:Gray;
-
-}
-#EmailH-1{
-	background-color:Gray;
-
-}
-#EmailH-3{
-	background-color:Gray;
-
-}
-#EmailH-4{
-	background-color:Gray;
-
-}
-#EmailH-5{
-	background-color:Gray;
-
-}
-#EmailH-6{
-	background-color:Gray;
-
-}
-#EmailH-7{
-	background-color:Gray;
-
-}
-#EmailH-12{
-	background-color:Gray;
-
-}
-#EmailH-14{
-	background-color:Gray;
-
-}
-#EmailH-16{
-	background-color:Gray;
-
-}
-#slistC-32{
-	background-color:Gray;
-
-}
-#slistC-34{
-	background-color:Gray;
-
-}
-#slistC-37{
-	background-color:Gray;
-
-}
-#slistC-38{
-	background-color:Gray;
-
-}
-#slistC-39{
-	background-color:Gray;
-
-}
-#slistC-43{
-	background-color:Gray;
-
-}
-#slistC-45{
-	background-color:Gray;
-
-}
-#slistC-46{
-	background-color:Gray;
-
-}
-#slistC-47{
-	background-color:Gray;
-
-}
-#slistC-48{
-	background-color:Gray;
-
-}
-#slistC-49{
-	background-color:Gray;
-
-}
-#slistC-53{
-	background-color:Gray;
-
-}
-#slistC-55{
-	background-color:Gray;
-
-}
-#slistC-56{
-	background-color:Gray;
-
-}
-#slistC-57{
-	background-color:Gray;
-
-}
-#slistC-58{
-	background-color:Gray;
-
-}
-#slistC-62{
-	background-color:Gray;
-
-}
-#slistC-64{
-	background-color:Gray;
-
-}
-#slistC-65{
-	background-color:Gray;
-
-}
-#slistC-66{
-	background-color:Gray;
-
-}
-#slistC-68{
-	background-color:Gray;
-
-}
-#slistC-69{
-	background-color:Gray;
-
-}
-#slistC-77{
-	background-color:Gray;
-
-}
-#slistC-79{
-	background-color:Gray;
-
-}
-#slistC-81{
-	background-color:Gray;
-
-}
-#slistC-83{
-	background-color:Gray;
-
-}
-#slistC-89{
-	background-color:Gray;
-
-}
-#slistC-91{
-	background-color:Gray;
-
-}
-#slistC-93{
-	background-color:Gray;
-
-}
-#slistC-94{
-	background-color:Gray;
-
-}
-#slistC-95{
-	background-color:Gray;
-
-}
-#slistC-97{
-	background-color:Gray;
-
-}
-#slistH-1{
-	background-color:Gray;
-
-}
-#slistH-3{
-	background-color:Gray;
-
-}
-#slistH-4{
-	background-color:Gray;
-
-}
-#slistH-8{
-	background-color:Gray;
-
-}
-#slistH-10{
-	background-color:Gray;
-
-}
-#slistH-12{
-	background-color:Gray;
-
-}
-#slistH-14{
-	background-color:Gray;
-
-}
-#slistH-16{
-	background-color:Gray;
-
-}
-#slistH-18{
-	background-color:Gray;
-
-}
-#ClientC-12{
-	background-color:Red;
+	background-color:deb7fc;
 	border-style: solid;
-	border-color: white white white Red;
-}
-#ClientC-58{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#ClientC-59{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailC-47{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailC-48{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailC-50{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailC-56{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailC-58{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#EmailH-18{
-	background-color:Red;
-	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
 #ClientC-13{
-	background-color:Yellow;
+	background-color:9987da;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-32{
-	background-color:RoyalBlue;
+#ClientC-21{
+	background-color:83fef8;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-22{
+	background-color:e5fd9e;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-24{
+	background-color:9ae1dd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-29{
+	background-color:e4a687;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-39{
+	background-color:e68dd7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-40{
+	background-color:fcae87;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-108{
+	background-color:83a9f8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientH-10{
+	background-color:91da94;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientH-12{
+	background-color:9d98c8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientH-13{
+	background-color:d2a7ae;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientH-34{
+	background-color:dda2c8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-7{
+	background-color:f381af;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-9{
+	background-color:bf9cea;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-10{
+	background-color:fd9488;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-11{
+	background-color:8eeaa7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-12{
+	background-color:a8baa4;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-13{
+	background-color:88ada0;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-14{
+	background-color:82a9f7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-15{
+	background-color:c482f9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-16{
+	background-color:e887b4;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-17{
+	background-color:88b5b2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-18{
+	background-color:a4b8bd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-19{
+	background-color:e3d599;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-23{
+	background-color:9faca4;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-124{
-	background-color:RoyalBlue;
+#EmailC-25{
+	background-color:b594fa;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientC-126{
-	background-color:RoyalBlue;
+#EmailC-29{
+	background-color:c8cab2;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientC-128{
-	background-color:RoyalBlue;
+#EmailC-31{
+	background-color:d7e1ae;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientC-130{
-	background-color:RoyalBlue;
+#EmailC-32{
+	background-color:c6a2ce;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientC-133{
-	background-color:RoyalBlue;
+#EmailC-33{
+	background-color:bfceb3;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientH-17{
-	background-color:RoyalBlue;
+#EmailC-34{
+	background-color:e4f2dd;
 	border-style: solid;
-	border-color: white white white Cyan;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
-#ClientH-45{
-	background-color:RoyalBlue;
+#EmailC-35{
+	background-color:b2fde1;
 	border-style: solid;
-	border-color: white white white Red;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-36{
+	background-color:93cba6;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailC-44{
+	background-color:f6bc86;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-1{
+	background-color:848fd8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-3{
+	background-color:e896b2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-4{
+	background-color:a5b0f9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-5{
+	background-color:ddd4fc;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-6{
+	background-color:ffeaf9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-7{
+	background-color:f7adee;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-12{
+	background-color:a29ebd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-14{
+	background-color:dcefdc;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#EmailH-16{
+	background-color:f2fb99;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-32{
+	background-color:d38f81;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-34{
+	background-color:918bd6;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-35{
+	background-color:e9d1d2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-36{
+	background-color:c29083;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-37{
+	background-color:b4c5c5;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-38{
+	background-color:8efef1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-39{
+	background-color:e7a2b3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-43{
+	background-color:e689b8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-45{
+	background-color:c0bcfd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-46{
+	background-color:ecc490;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-47{
+	background-color:b0d1c8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-48{
+	background-color:a282da;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-49{
+	background-color:ceedfc;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-53{
+	background-color:8b84bb;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-55{
+	background-color:9689c1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-56{
+	background-color:b28ca3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-57{
+	background-color:b3e8df;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-58{
+	background-color:a8e3bb;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-62{
+	background-color:dffe82;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-64{
+	background-color:bc91ef;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-65{
+	background-color:a3ffdf;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-66{
+	background-color:b8e2e2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-68{
+	background-color:90f3dd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-69{
+	background-color:86c8ae;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-70{
+	background-color:8ad3d0;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-73{
+	background-color:99c79c;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-77{
+	background-color:fac5a1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-79{
+	background-color:9cd1b9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-81{
+	background-color:9a87aa;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-82{
+	background-color:d78199;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-83{
+	background-color:bfc5d2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-85{
+	background-color:f6f086;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-89{
+	background-color:f0cdbb;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-91{
+	background-color:aeebd9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-93{
+	background-color:ccfea1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-94{
+	background-color:cc84b6;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-95{
+	background-color:c3b7db;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistC-97{
+	background-color:f0f0c3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-1{
+	background-color:b8958b;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-3{
+	background-color:bcb0f7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-4{
+	background-color:b1c5d5;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-8{
+	background-color:a094ff;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-10{
+	background-color:8afac7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-12{
+	background-color:f89cf9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-14{
+	background-color:c1d7a8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-16{
+	background-color:848dff;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#slistH-18{
+	background-color:a5c4a0;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
 }
 #ClientC-36{
-	background-color:Cyan;
+	background-color:e6f7c2;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
-}
-#ClientC-79{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-81{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-83{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-84{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-86{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-88{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-89{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-91{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-92{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-94{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-96{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-97{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-98{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-99{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientH-14{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientH-39{
-	background-color:Cyan;
-	border-style: solid;
-	border-color: white white white Yellow;
-}
-#ClientC-45{
-	background-color:Gray;
-
-}
-#ClientC-54{
-	background-color:Gray;
-
-}
-#ClientC-62{
-	background-color:LightGreen;
-	border-style: solid;
-	border-color: white white white Red;
-}
-#ClientC-65{
-	background-color:LightGreen;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-66{
-	background-color:Gray;
-
-}
-#ClientH-36{
-	background-color:Gray;
-
-}
-#ClientH-41{
-	background-color:LightGreen;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientH-50{
-	background-color:LightGreen;
-	border-style: solid;
-	border-color: white white white Red;
 }
 #ClientC-71{
-	background-color:DeepPink;
+	background-color:dd9ef6;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
 }
 #ClientC-73{
-	background-color:DeepPink;
+	background-color:98bfed;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-79{
+	background-color:e486ce;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-81{
+	background-color:fac7b9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-83{
+	background-color:9087c7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-84{
+	background-color:94bed8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-86{
+	background-color:e4f4b7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-88{
+	background-color:96969d;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-89{
+	background-color:c0a4a8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-91{
+	background-color:dee3d9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-92{
+	background-color:fbd29c;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-94{
+	background-color:ec8faf;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-96{
+	background-color:fef1ca;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-97{
+	background-color:d19986;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-98{
+	background-color:fecce7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientC-99{
+	background-color:8ccefa;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#ClientH-14{
+	background-color:95d7e9;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
 }
 #ClientH-22{
-	background-color:DeepPink;
+	background-color:d89195;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
 }
 #ClientH-24{
-	background-color:DeepPink;
+	background-color:8ebb89;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
 }
 #ClientH-25{
-	background-color:DeepPink;
+	background-color:c8fca9;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Yellow;
 }
-#ClientC-106{
-	background-color:BlueViolet;
+#ClientH-39{
+	background-color:c9f8c5;
 	border-style: solid;
-	border-color: white white white RoyalBlue;
+	border-width: thin thick;
+	border-color: white white white Yellow;
 }
-#ClientC-110{
-	background-color:BlueViolet;
+#ClientC-12{
+	background-color:adb0a7;
 	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-111{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-112{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-113{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-114{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-115{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-116{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-117{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-118{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientH-15{
-	background-color:BlueViolet;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-108{
-	background-color:DarkSeaGreen;
-	border-style: solid;
-	border-color: white white white RoyalBlue;
-}
-#ClientC-141{
-	background-color:Fuchsia;
-	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-144{
-	background-color:Fuchsia;
+#ClientC-45{
+	background-color:ceb9d5;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-54{
+	background-color:bedbe1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientC-58{
+	background-color:d7b6ed;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-148{
-	background-color:Fuchsia;
+#ClientC-59{
+	background-color:86fad5;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-150{
-	background-color:Fuchsia;
+#ClientC-62{
+	background-color:b0b9a7;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-153{
-	background-color:Fuchsia;
+#ClientC-65{
+	background-color:d1b284;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-66{
+	background-color:aef8ac;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientH-36{
+	background-color:bcb1ae;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Gray;
+}
+#ClientH-41{
+	background-color:beb9ea;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientH-50{
+	background-color:dbbd97;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientC-154{
-	background-color:Fuchsia;
+#EmailC-47{
+	background-color:d9f6df;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#ClientH-18{
-	background-color:Fuchsia;
+#EmailC-48{
+	background-color:cb8af1;
 	border-style: solid;
-	border-color: white white white Cyan;
-}
-#EmailC-21{
-	background-color:Fuchsia;
-	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#EmailC-22{
-	background-color:Fuchsia;
+#EmailC-50{
+	background-color:e284d1;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#EmailC-38{
-	background-color:Fuchsia;
+#EmailC-56{
+	background-color:cce89f;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#EmailC-39{
-	background-color:Fuchsia;
+#EmailC-58{
+	background-color:e5aad2;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#EmailH-8{
-	background-color:Fuchsia;
+#EmailH-18{
+	background-color:a3868d;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#EmailH-9{
-	background-color:Fuchsia;
+#ClientC-32{
+	background-color:c5bfa9;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-124{
+	background-color:9c80fa;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-126{
+	background-color:dbe1da;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-128{
+	background-color:e78ec9;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-130{
+	background-color:eac1f7;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-133{
+	background-color:b28cb6;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
 #ClientC-162{
-	background-color:Pink;
+	background-color:908de7;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-164{
-	background-color:Pink;
+	background-color:b9f0e7;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-165{
-	background-color:Pink;
+	background-color:bcc895;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-166{
-	background-color:Pink;
+	background-color:eca9fe;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#ClientH-17{
+	background-color:a1869a;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientH-28{
-	background-color:Pink;
+	background-color:d59499;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientH-30{
-	background-color:Pink;
+	background-color:f4dbfa;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientH-31{
-	background-color:Pink;
+	background-color:80b780;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
-#ClientC-172{
-	background-color:LightCyan;
+#ClientH-45{
+	background-color:b48496;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-106{
+	background-color:e4c1ae;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-110{
+	background-color:fe8191;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-111{
+	background-color:a9878d;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-112{
+	background-color:aca2b0;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-113{
+	background-color:c9a2ed;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-114{
+	background-color:f8c1e3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-115{
+	background-color:e9b28a;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-116{
+	background-color:88fca3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-117{
+	background-color:b5edf8;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-118{
+	background-color:eec1f0;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientH-15{
+	background-color:a4a2c3;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#ClientC-141{
+	background-color:fbe785;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-144{
+	background-color:aea9ee;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-148{
+	background-color:f8ebeb;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-150{
+	background-color:c6d7c2;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-153{
+	background-color:c295bc;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-154{
+	background-color:8be5f4;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#ClientC-172{
+	background-color:a0eaed;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-174{
-	background-color:LightCyan;
+	background-color:fcc3ad;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-175{
-	background-color:LightCyan;
+	background-color:aec9db;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientC-176{
-	background-color:LightCyan;
+	background-color:acccbc;
 	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#ClientH-18{
+	background-color:94bbbe;
+	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
 #ClientH-53{
-	background-color:LightCyan;
+	background-color:8889a8;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Cyan;
 }
-#EmailC-23{
-	background-color:HotPink;
+#EmailC-21{
+	background-color:ddd188;
 	border-style: solid;
+	border-width: thin thick;
 	border-color: white white white Red;
 }
-#slistC-35{
-	background-color:BurlyWood;
-
+#EmailC-22{
+	background-color:9982df;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
 }
-#slistC-36{
-	background-color:Gray;
-
+#EmailC-38{
+	background-color:a0dab1;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
 }
-#slistC-70{
-	background-color:MediumPurple ;
-
+#EmailC-39{
+	background-color:948ccb;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
 }
-#slistC-73{
-	background-color:DarkGoldenRod;
-
+#EmailH-8{
+	background-color:92affd;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
 }
-#slistC-82{
-	background-color:Plum;
-
-}
-#slistC-85{
-	background-color:Teal;
-
+#EmailH-9{
+	background-color:8a9187;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
 }

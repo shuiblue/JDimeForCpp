@@ -1,0 +1,466 @@
+img{
+	position:fixed;
+	top:100px;
+	right:50px;
+}
+#svgContainer{
+	position:absolute;
+}
+#EnvironmentC-8{
+	background-color:Gray;
+
+}
+#EnvironmentC-10{
+	background-color:Gray;
+
+}
+#EnvironmentC-12{
+	background-color:Gray;
+
+}
+#EnvironmentC-13{
+	background-color:Gray;
+
+}
+#EnvironmentC-14{
+	background-color:Gray;
+
+}
+#EnvironmentC-18{
+	background-color:Gray;
+
+}
+#EnvironmentC-19{
+	background-color:Gray;
+
+}
+#EnvironmentC-20{
+	background-color:Gray;
+
+}
+#EnvironmentC-24{
+	background-color:Gray;
+
+}
+#EnvironmentC-25{
+	background-color:Gray;
+
+}
+#EnvironmentC-26{
+	background-color:Gray;
+
+}
+#EnvironmentC-28{
+	background-color:Gray;
+
+}
+#EnvironmentC-32{
+	background-color:Gray;
+
+}
+#EnvironmentC-33{
+	background-color:Gray;
+
+}
+#EnvironmentC-37{
+	background-color:Gray;
+
+}
+#EnvironmentC-38{
+	background-color:Gray;
+
+}
+#EnvironmentC-39{
+	background-color:Gray;
+
+}
+#EnvironmentC-40{
+	background-color:Gray;
+
+}
+#EnvironmentC-41{
+	background-color:Gray;
+
+}
+#EnvironmentC-43{
+	background-color:Gray;
+
+}
+#EnvironmentC-44{
+	background-color:Gray;
+
+}
+#EnvironmentC-47{
+	background-color:Gray;
+
+}
+#EnvironmentC-48{
+	background-color:Gray;
+
+}
+#EnvironmentH-3{
+	background-color:Gray;
+
+}
+#EnvironmentH-4{
+	background-color:Gray;
+
+}
+#EnvironmentH-5{
+	background-color:Gray;
+
+}
+#EnvironmentH-6{
+	background-color:Gray;
+
+}
+#EnvironmentH-7{
+	background-color:Gray;
+
+}
+#EnvironmentH-9{
+	background-color:Gray;
+
+}
+#MinePumpC-5{
+	background-color:Gray;
+
+}
+#MinePumpC-6{
+	background-color:Gray;
+
+}
+#MinePumpC-8{
+	background-color:Gray;
+
+}
+#MinePumpC-9{
+	background-color:Gray;
+
+}
+#MinePumpC-10{
+	background-color:Gray;
+
+}
+#MinePumpC-11{
+	background-color:Gray;
+
+}
+#MinePumpC-12{
+	background-color:Gray;
+
+}
+#MinePumpC-14{
+	background-color:Gray;
+
+}
+#MinePumpC-16{
+	background-color:Red;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#MinePumpC-33{
+	background-color:Gray;
+
+}
+#MinePumpC-41{
+	background-color:Gray;
+
+}
+#MinePumpC-42{
+	background-color:Gray;
+
+}
+#MinePumpC-45{
+	background-color:Gray;
+
+}
+#MinePumpC-46{
+	background-color:Gray;
+
+}
+#MinePumpC-49{
+	background-color:Gray;
+
+}
+#MinePumpC-50{
+	background-color:Gray;
+
+}
+#MinePumpC-53{
+	background-color:Gray;
+
+}
+#MinePumpC-54{
+	background-color:Gray;
+
+}
+#MinePumpC-55{
+	background-color:Gray;
+
+}
+#MinePumpC-56{
+	background-color:Gray;
+
+}
+#MinePumpC-58{
+	background-color:Gray;
+
+}
+#MinePumpC-59{
+	background-color:Gray;
+
+}
+#MinePumpC-60{
+	background-color:Gray;
+
+}
+#MinePumpC-61{
+	background-color:Gray;
+
+}
+#MinePumpC-63{
+	background-color:Gray;
+
+}
+#MinePumpC-64{
+	background-color:Gray;
+
+}
+#MinePumpC-65{
+	background-color:Gray;
+
+}
+#MinePumpC-66{
+	background-color:Gray;
+
+}
+#MinePumpH-3{
+	background-color:Gray;
+
+}
+#MinePumpH-5{
+	background-color:Gray;
+
+}
+#MinePumpH-6{
+	background-color:Gray;
+
+}
+#MinePumpH-8{
+	background-color:Gray;
+
+}
+#EnvironmentC-52{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#EnvironmentC-55{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#EnvironmentC-56{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#EnvironmentC-58{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#EnvironmentH-11{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#MinePumpC-70{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#MinePumpC-71{
+	background-color:Yellow;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#EnvironmentC-62{
+	background-color:RoyalBlue;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#EnvironmentC-63{
+	background-color:RoyalBlue;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#EnvironmentH-14{
+	background-color:RoyalBlue;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#MinePumpC-75{
+	background-color:RoyalBlue;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#MinePumpC-76{
+	background-color:RoyalBlue;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#featureselectC-7{
+	background-color:Gray;
+
+}
+#featureselectC-8{
+	background-color:Gray;
+
+}
+#featureselectC-9{
+	background-color:Gray;
+
+}
+#featureselectH-7{
+	background-color:Gray;
+
+}
+#featureselectC-12{
+	background-color:Gray;
+
+}
+#featureselectH-8{
+	background-color:Gray;
+
+}
+#featureselectC-17{
+	background-color:Gray;
+
+}
+#featureselectH-9{
+	background-color:Gray;
+
+}
+#featureselectC-21{
+	background-color:Gray;
+
+}
+#featureselectC-22{
+	background-color:Gray;
+
+}
+#featureselectH-10{
+	background-color:Gray;
+
+}
+#featureselectH-2{
+	background-color:Gray;
+
+}
+#MinePumpC-17{
+	background-color:DarkSeaGreen;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Red;
+}
+#MinePumpC-29{
+	background-color:Gray;
+
+}
+#MinePumpC-31{
+	background-color:DarkSeaGreen;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white MediumPurple ;
+}
+#MinePumpH-4{
+	background-color:Gray;
+
+}
+#MinePumpC-20{
+	background-color:Fuchsia;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#MinePumpC-21{
+	background-color:Fuchsia;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Yellow;
+}
+#MinePumpC-24{
+	background-color:Pink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white LightGreen;
+}
+#MinePumpC-25{
+	background-color:Pink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white LightGreen;
+}
+#MinePumpC-80{
+	background-color:LightCyan;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#MinePumpC-82{
+	background-color:LightCyan;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#MinePumpH-10{
+	background-color:LightCyan;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white RoyalBlue;
+}
+#MinePumpC-85{
+	background-color:HotPink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#MinePumpC-86{
+	background-color:HotPink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#MinePumpC-87{
+	background-color:HotPink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#MinePumpC-90{
+	background-color:HotPink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}
+#MinePumpH-12{
+	background-color:HotPink;
+	border-style: solid;
+	border-width: thin thick;
+	border-color: white white white Cyan;
+}

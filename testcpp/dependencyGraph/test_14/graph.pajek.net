@@ -1,11 +1,7 @@
-*Vertices 5
-1 "2-Client.c"
-3 "1-Client.h"
-4 "3-Client.h"
-2 "4-Client.c"
-5 "4-Client.h"
+*Vertices 3
+1 "plannerH-2"
+3 "plannerH-4"
+2 "plannerH-3"
 *arcs 
-2 3 
-5 3 
-4 3 
-2 5 
+2 1 2
+3 1 2

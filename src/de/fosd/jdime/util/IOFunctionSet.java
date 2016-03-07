@@ -112,9 +112,9 @@ public class IOFunctionSet {
 
                 String weight = "";
                 if (dn[1].contains("belongToStruct") || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
-                    weight = 1 + "";
+                    weight = 2 + "";
                 } else if (dn[1].contains("Call")) {
-                    weight = 1 + "";
+                    weight =2 + "";
                 } else if (dn[1].contains("child")) {
                     weight = 1 + "";
                 } else if (dn[1].contains("Control-Flow")) {

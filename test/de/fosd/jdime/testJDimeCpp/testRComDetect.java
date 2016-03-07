@@ -19,14 +19,15 @@ public class testRComDetect {
     public void test10() {
 
         boolean printPath=false;
-        String filePath = "EmailSystem/test_18";
-//        String filePath = "test_18";
-
+//        String filePath = "EmailSystem/test_18";
+//        String filePath = "MinePump/test_11";
+        String filePath = "Marlin";
+//        String filePath = "test_14";
+//
 //        nodes = dependencyGraph.getDependencyGraph(filePath);
-//        new RCommunityDetection(filePath);
-        ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
-        colorCodeBlocks.visualizeGraph(printPath);
+        new RCommunityDetection(filePath);
+//        ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
+//        colorCodeBlocks.visualizeGraph(printPath,filePath);
 
-        System.out.print("");
     }
 }

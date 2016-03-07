@@ -1,0 +1,245 @@
+<html>
+<head>
+	<title></title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+</head>
+<body ginger_software_stylesheet="true" ginger_software_doc="true">
+	<IMG SRC="expect.png" style="float: right;width:250px;height:200px;" /> 
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	 <style>
+        .prettyprint ol.linenums > li { list-style-type: decimal; }
+    </style>
+<h1>Environment.c</h1>
+<pre  class="prettyprint linenums"><front id="EnvironmentC-1">	#include "Environment.h"</front>
+<front id="EnvironmentC-2">	/*</front>
+<front id="EnvironmentC-3">	 * Waterlevels:</front>
+<front id="EnvironmentC-4">	 * 0: below the low sensor</front>
+<front id="EnvironmentC-5">	 * 1: between low and high sensors</front>
+<front id="EnvironmentC-6">	 * 2: above high sensor</front>
+<front id="EnvironmentC-7">	 */</front>
+<front id="EnvironmentC-8">	 int waterLevel = 1;</front>
+<front id="EnvironmentC-9"></front>
+<front id="EnvironmentC-10">	 int methaneLevelCritical = 0;</front>
+<front id="EnvironmentC-11"></front>
+<front id="EnvironmentC-12">	void lowerWaterLevel() {</front>
+<front id="EnvironmentC-13">		if (waterLevel &gt; 0) {</front>
+<front id="EnvironmentC-14">			waterLevel = waterLevel-1;</front>
+<front id="EnvironmentC-15">		}</front>
+<front id="EnvironmentC-16">	}</front>
+<front id="EnvironmentC-17"></front>
+<front id="EnvironmentC-18">	void waterRise() {</front>
+<front id="EnvironmentC-19">		if (waterLevel &lt; 2) {</front>
+<front id="EnvironmentC-20">			waterLevel = waterLevel+1;</front>
+<front id="EnvironmentC-21">		}</front>
+<front id="EnvironmentC-22">	}</front>
+<front id="EnvironmentC-23"></front>
+<front id="EnvironmentC-24">	void changeMethaneLevel() {</front>
+<front id="EnvironmentC-25">		if (methaneLevelCritical) {</front>
+<front id="EnvironmentC-26">			methaneLevelCritical = 0;</front>
+<front id="EnvironmentC-27">		} else {</front>
+<front id="EnvironmentC-28">			methaneLevelCritical = 1;</front>
+<front id="EnvironmentC-29">		}</front>
+<front id="EnvironmentC-30">	}</front>
+<front id="EnvironmentC-31"></front>
+<front id="EnvironmentC-32">	int isMethaneLevelCritical() {</front>
+<front id="EnvironmentC-33">		return methaneLevelCritical;</front>
+<front id="EnvironmentC-34">	}</front>
+<front id="EnvironmentC-35"></front>
+<front id="EnvironmentC-36"></front>
+<front id="EnvironmentC-37">	void printEnvironment() {</front>
+<front id="EnvironmentC-38">		printf("Env(Water:%i", waterLevel);</front>
+<front id="EnvironmentC-39">		printf(",Meth:");</front>
+<front id="EnvironmentC-40">		if (methaneLevelCritical)</front>
+<front id="EnvironmentC-41">			printf("CRIT");</front>
+<front id="EnvironmentC-42">		else</front>
+<front id="EnvironmentC-43">			printf("OK");</front>
+<front id="EnvironmentC-44">		printf(")");</front>
+<front id="EnvironmentC-45">	}</front>
+<front id="EnvironmentC-46"></front>
+<front id="EnvironmentC-47">	int getWaterLevel() {</front>
+<front id="EnvironmentC-48">		return waterLevel;</front>
+<front id="EnvironmentC-49">	}</front>
+<front id="EnvironmentC-50"></front>
+<front id="EnvironmentC-51">	//-------highWaterSensor-------</front>
+<front id="EnvironmentC-52">	int isHighWaterSensorDry() {</front>
+<front id="EnvironmentC-53">		// cpachecker bug</front>
+<front id="EnvironmentC-54">		//return waterLevel &lt; 2;</front>
+<front id="EnvironmentC-55">		if (waterLevel &lt; 2) {</front>
+<front id="EnvironmentC-56">			return 1;</front>
+<front id="EnvironmentC-57">		} else {</front>
+<front id="EnvironmentC-58">			return 0;</front>
+<front id="EnvironmentC-59">		}</front>
+<front id="EnvironmentC-60">	}</front>
+<front id="EnvironmentC-61">	//-------LowWaterSensor-------</front>
+<front id="EnvironmentC-62">	int isLowWaterSensorDry() {</front>
+<front id="EnvironmentC-63">		return waterLevel == 0;</front>
+<front id="EnvironmentC-64">	}</front>
+ </pre>
+<h1>Environment.h</h1>
+<pre  class="prettyprint linenums"><front id="EnvironmentH-1">#include "featureselect.h"</front>
+<front id="EnvironmentH-2"></front>
+<front id="EnvironmentH-3">void lowerWaterLevel() ;</front>
+<front id="EnvironmentH-4">void waterRise();</front>
+<front id="EnvironmentH-5">void changeMethaneLevel();</front>
+<front id="EnvironmentH-6">int isMethaneLevelCritical();</front>
+<front id="EnvironmentH-7">int getWaterLevel();</front>
+<front id="EnvironmentH-8"></front>
+<front id="EnvironmentH-9">void printEnvironment();</front>
+<front id="EnvironmentH-10">//-------highWaterSensor-------</front>
+<front id="EnvironmentH-11">int isHighWaterSensorDry() ;</front>
+<front id="EnvironmentH-12"></front>
+<front id="EnvironmentH-13">//-------LowWaterSensor-------</front>
+<front id="EnvironmentH-14">int isLowWaterSensorDry() ;</front>
+ </pre>
+<h1>featureselect.c</h1>
+<pre  class="prettyprint linenums"><front id="featureselectC-1">#include "featureselect.h"</front>
+<front id="featureselectC-2"></front>
+<front id="featureselectC-3">/*</front>
+<front id="featureselectC-4"> * dummy feature selection</front>
+<front id="featureselectC-5"> */</front>
+<front id="featureselectC-6"></front>
+<front id="featureselectC-7">int select_one() {</front>
+<front id="featureselectC-8">	int choice;</front>
+<front id="featureselectC-9">	return choice;</front>
+<front id="featureselectC-10">}</front>
+<front id="featureselectC-11"></front>
+<front id="featureselectC-12">void select_features() {</front>
+<front id="featureselectC-13"></front>
+<front id="featureselectC-14">}</front>
+<front id="featureselectC-15"></front>
+<front id="featureselectC-16"></front>
+<front id="featureselectC-17">void select_helpers() {</front>
+<front id="featureselectC-18"></front>
+<front id="featureselectC-19">}</front>
+<front id="featureselectC-20"></front>
+<front id="featureselectC-21">int valid_product() {</front>
+<front id="featureselectC-22">	 return 1;</front>
+<front id="featureselectC-23">}</front>
+ </pre>
+<h1>featureselect.h</h1>
+<pre  class="prettyprint linenums"><front id="featureselectH-1">#ifndef FEATURESELECT_H</front>
+<front id="featureselectH-2">#define FEATURESELECT_H</front>
+<front id="featureselectH-3">/*</front>
+<front id="featureselectH-4"> * dummy featureselect</front>
+<front id="featureselectH-5"> */</front>
+<front id="featureselectH-6"></front>
+<front id="featureselectH-7">int select_one();</front>
+<front id="featureselectH-8">void select_features();</front>
+<front id="featureselectH-9">void select_helpers();</front>
+<front id="featureselectH-10">int valid_product();</front>
+<front id="featureselectH-11">#endif</front>
+ </pre>
+<h1>MinePump.c</h1>
+<pre  class="prettyprint linenums"><front id="MinePumpC-1">	#include "Environment.h"</front>
+<front id="MinePumpC-2">	#include "MinePump.h"</front>
+<front id="MinePumpC-3"></front>
+<front id="MinePumpC-4"></front>
+<front id="MinePumpC-5">int pumpRunning = 0;</front>
+<front id="MinePumpC-6">int systemActive = 1;</front>
+<front id="MinePumpC-7"></front>
+<front id="MinePumpC-8">	void timeShift() {</front>
+<front id="MinePumpC-9">		if (pumpRunning)</front>
+<front id="MinePumpC-10">			lowerWaterLevel();</front>
+<front id="MinePumpC-11">		if (systemActive)</front>
+<front id="MinePumpC-12">			processEnvironment();</front>
+<front id="MinePumpC-13">	}</front>
+<front id="MinePumpC-14">	void processEnvironment() {</front>
+<front id="MinePumpC-15">		//-------highWaterSensor-------</front>
+<front id="MinePumpC-16">		if (!pumpRunning && isHighWaterLevel()) {</front>
+<front id="MinePumpC-17">			activatePump();</front>
+<front id="MinePumpC-18">		} </front>
+<front id="MinePumpC-19">		//-------LowWaterSensor-------</front>
+<front id="MinePumpC-20">		if (pumpRunning && isLowWaterLevel()) {</front>
+<front id="MinePumpC-21">			deactivatePump();</front>
+<front id="MinePumpC-22">		} </front>
+<front id="MinePumpC-23">		//-------methaneAlarm-------</front>
+<front id="MinePumpC-24">		if (pumpRunning && isMethaneAlarm()) {</front>
+<front id="MinePumpC-25">			deactivatePump();</front>
+<front id="MinePumpC-26">		}</front>
+<front id="MinePumpC-27">	}</front>
+<front id="MinePumpC-28"></front>
+<front id="MinePumpC-29">	void activatePump() {</front>
+<front id="MinePumpC-30">        //-------methaneQuery-------</front>
+<front id="MinePumpC-31">		if (!isMethaneAlarm()) {</front>
+<front id="MinePumpC-32">			//---origin---</front>
+<front id="MinePumpC-33">			pumpRunning = 1;</front>
+<front id="MinePumpC-34">			//---origin---</front>
+<front id="MinePumpC-35">		} else {</front>
+<front id="MinePumpC-36">			//System.out.println("Pump not activated due to methane alarm");</front>
+<front id="MinePumpC-37">		}</front>
+<front id="MinePumpC-38">		</front>
+<front id="MinePumpC-39">	}</front>
+<front id="MinePumpC-40"></front>
+<front id="MinePumpC-41">	void deactivatePump() {</front>
+<front id="MinePumpC-42">		pumpRunning = 0;</front>
+<front id="MinePumpC-43">	}</front>
+<front id="MinePumpC-44">	</front>
+<front id="MinePumpC-45">	int isMethaneAlarm() {</front>
+<front id="MinePumpC-46">		return isMethaneLevelCritical();</front>
+<front id="MinePumpC-47">	}</front>
+<front id="MinePumpC-48"></front>
+<front id="MinePumpC-49">	int isPumpRunning() {</front>
+<front id="MinePumpC-50">		return pumpRunning;</front>
+<front id="MinePumpC-51">	}</front>
+<front id="MinePumpC-52"></front>
+<front id="MinePumpC-53">	void printPump() {</front>
+<front id="MinePumpC-54">		printf("Pump(System:");</front>
+<front id="MinePumpC-55">		if (systemActive)</front>
+<front id="MinePumpC-56">			printf("On");</front>
+<front id="MinePumpC-57">		else</front>
+<front id="MinePumpC-58">			printf("Off");</front>
+<front id="MinePumpC-59">		printf(",Pump:");</front>
+<front id="MinePumpC-60">		if (pumpRunning)</front>
+<front id="MinePumpC-61">			printf("On");</front>
+<front id="MinePumpC-62">		else</front>
+<front id="MinePumpC-63">			printf("Off");</front>
+<front id="MinePumpC-64">		printf(") ");</front>
+<front id="MinePumpC-65">		printEnvironment();</front>
+<front id="MinePumpC-66">		printf("\n");</front>
+<front id="MinePumpC-67">	}</front>
+<front id="MinePumpC-68"></front>
+<front id="MinePumpC-69">	//-------highWaterSensor-------</front>
+<front id="MinePumpC-70">	int isHighWaterLevel() {</front>
+<front id="MinePumpC-71">		return ! isHighWaterSensorDry();</front>
+<front id="MinePumpC-72">	}</front>
+<front id="MinePumpC-73">	</front>
+<front id="MinePumpC-74">	//-------LowWaterSensor-------</front>
+<front id="MinePumpC-75">	int isLowWaterLevel() {</front>
+<front id="MinePumpC-76">		return ! isLowWaterSensorDry();</front>
+<front id="MinePumpC-77">	}</front>
+<front id="MinePumpC-78"></front>
+<front id="MinePumpC-79">	//-------startCommand-------</front>
+<front id="MinePumpC-80">	void startSystem() {</front>
+<front id="MinePumpC-81">		// assert !pumpRunning;</front>
+<front id="MinePumpC-82">		systemActive = 1;</front>
+<front id="MinePumpC-83">	}</front>
+<front id="MinePumpC-84">	//-------stopCommand-------</front>
+<front id="MinePumpC-85">	void stopSystem() {</front>
+<front id="MinePumpC-86">		if (pumpRunning) {</front>
+<front id="MinePumpC-87">			deactivatePump();</front>
+<front id="MinePumpC-88">		}</front>
+<front id="MinePumpC-89">		// assert !pumpRunning;</front>
+<front id="MinePumpC-90">		systemActive = 0;</front>
+<front id="MinePumpC-91">	}</front>
+<front id="MinePumpC-92"></front>
+<front id="MinePumpC-93"></front>
+ </pre>
+<h1>MinePump.h</h1>
+<pre  class="prettyprint linenums"><front id="MinePumpH-1">#include "featureselect.h"</front>
+<front id="MinePumpH-2"></front>
+<front id="MinePumpH-3">void timeShift();</front>
+<front id="MinePumpH-4">void activatePump();</front>
+<front id="MinePumpH-5">void deactivatePump();</front>
+<front id="MinePumpH-6">int isPumpRunning();</front>
+<front id="MinePumpH-7"></front>
+<front id="MinePumpH-8">void printPump();</front>
+<front id="MinePumpH-9">//-------startCommand-------</front>
+<front id="MinePumpH-10">void startSystem();</front>
+<front id="MinePumpH-11">//-------stopCommand-------</front>
+<front id="MinePumpH-12">void stopSystem();</front>
+ </pre>
+<script src="svgDraw.js"></script>
+</body>
+</html>

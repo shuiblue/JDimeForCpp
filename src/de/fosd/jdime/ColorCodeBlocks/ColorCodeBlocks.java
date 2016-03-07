@@ -2,27 +2,33 @@ package de.fosd.jdime.ColorCodeBlocks;
 
 import de.fosd.jdime.util.IOFunctionSet;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by shuruiz on 2/9/16.
  */
 public class ColorCodeBlocks {
+
+    //    static String testDir = "/MinePump/test_11";
+    static String testDir;
+//        static String testDir = "/EmailSystem/test_18";
+
+
     static IOFunctionSet iofunc = new IOFunctionSet();
     static String dir = "/Users/shuruiz/Work/JDIME/NWayJDime/jdime";
     static String dgPath = "/testcpp/dependencyGraph";
-    static String testDir = "/EmailSystem/test_18";
-    static String testDirPath = dir + dgPath + testDir;
-
+    static String testDirPath ;
     static String clusterstxt = "/maxModularityCluster.txt";
     static String expectTxt = "/expectCluster.txt";
-
     static String sourceCodeTxt = "/sourceCode.txt";
     static String nodeListTxt = "/NodeList.txt";
     static String upstreamNodeTxt = "/upstreamNode.txt";
+    static String forkAddedNodeTxt = "/forkAddedNode.txt";
     static String graphFile = "/upstreamNode.txt";
     static String edgeListTxt = "/edgeList.txt";
     static String pathListScript = "/pathscript.txt";
@@ -37,7 +43,8 @@ public class ColorCodeBlocks {
 
         try {
             br = new BufferedReader(new FileReader(clusterFilePath));
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && !line.equals("")) {
+
                 // use comma as separator
                 clusters.add(line.replace("[", "").replace("]", ""));
             }
@@ -78,7 +85,7 @@ public class ColorCodeBlocks {
                 BufferedReader result_br = null;
                 int lineNumber = 1;
                 try {
-                    result_br = new BufferedReader(new FileReader(testDirPath +"/"+ fileName));
+                    result_br = new BufferedReader(new FileReader(testDirPath + "/" + fileName));
 
                     String line;
                     while ((line = result_br.readLine()) != null) {
@@ -113,7 +120,7 @@ public class ColorCodeBlocks {
         String line;
         nodeMap = new HashMap<>();
 
-        Color color = new Color();
+        BackgroundColor bgcolor = new BackgroundColor();
 
         try {
             br = new BufferedReader(new FileReader(testDirPath + nodeListTxt));
@@ -127,47 +134,97 @@ public class ColorCodeBlocks {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //get upstream Node
         String upstreamNode = "";
-        try {
-            upstreamNode = iofunc.readResult(testDirPath + upstreamNodeTxt);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        File upstreamNodeFile = new File(testDirPath + upstreamNodeTxt);
+        if (upstreamNodeFile.exists()) {
+            try {
+                upstreamNode = iofunc.readResult(testDirPath + upstreamNodeTxt);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //get fork added node
+        String forkAddedNode = "";
+        File forkAddedFile = new File(testDirPath + forkAddedNodeTxt);
+        if (forkAddedFile.exists()) {
+            try {
+                forkAddedNode = iofunc.readResult(testDirPath + forkAddedNodeTxt);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        String expectNode="";
+        String expectNode = "";
         try {
             expectNode = iofunc.readResult(testDirPath + expectTxt);
         } catch (IOException e) {
             e.printStackTrace();
         }
-       HashMap<String,Integer> expectNodeMap = new HashMap<>();
+        HashMap<String, Integer> expectNodeMap = new HashMap<>();
         String[] nodeCluster = expectNode.split("\n");
-        for(int i=0;i<nodeCluster.length;i++){
+        for (int i = 0; i < nodeCluster.length; i++) {
             expectNodeMap.put(nodeCluster[i].split(" ")[0], Integer.valueOf(nodeCluster[i].split(" ")[1]));
         }
 
-        List<String> colorList = color.getColorList();
+//        List<String> colorList = bgcolor.getColorList();
+        List<String> colorList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
+        sb.append("#expectIMG{\n\tposition:fixed;\n\ttop:100px;\n\tright:50px;\n" +
+                "}\n#resultIMG{\n\tposition:fixed;\n\ttop:500px;\n\tright:50px;\n}");
         sb.append("#svgContainer{\n\tposition:absolute;\n}\n");
         for (int i = 0; i < clusters.size(); i++) {
 
             String[] elementList = clusters.get(i).trim().split(",");
             for (int j = 0; j < elementList.length; j++) {
-                String current_color = colorList.get(i);
+//                String current_color = colorList.get(i);
+                String current_color = "";
 
+//            creating ramdom color
+                Random rand = new Random();
+                float r = (float) (rand.nextFloat() / 2f + 0.5);
+                float g = (float) (rand.nextFloat() / 2f + 0.5);
+                float b = (float) (rand.nextFloat() / 2f + 0.5);
+                Color randomColor = new Color(r, g, b);
+                current_color = Integer.toHexString(randomColor.getRGB() & 0x00ffffff);
+
+
+                System.out.println("elementList[j]:" + elementList[j]);
                 int nodeID = Integer.parseInt(elementList[j].trim());
                 String nodeLabel = nodeMap.get(nodeID);
 
-                if(nodeLabel.equals("ClientC-108")||nodeLabel.equals("ClientC-99")){
-                    System.out.print("");
-                }
-                if (upstreamNode.contains(nodeLabel)) {
-                    current_color = "Gray";
-                }
+
                 sb.append("#" + nodeLabel + "{\n\tbackground-color:" + current_color + ";\n");
-                if(expectNodeMap.get(nodeLabel)!=null){
-                    sb.append("\tborder-style: solid;\n\tborder-color: white white white "+ colorList.get(expectNodeMap.get(nodeLabel))+";");
+
+
+//                if(!upstreamNode.equals("")) {
+//                    if (upstreamNode.contains(nodeLabel)) {
+//                        current_color = "Gray";
+//                    }
+//                }else if(!forkAddedNode.equals("")){
+//                    if (!forkAddedNode.contains(nodeLabel)) {
+//                        current_color = "Gray";
+//                    }
+//                }
+
+                String sidebarColor = "";
+                if (expectNodeMap.get(nodeLabel) != null) {
+                    sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
                 }
+                if (!upstreamNode.equals("")) {
+                    if (upstreamNode.contains(nodeLabel)) {
+                        sidebarColor = "Gray";
+                    }
+                } else if (!forkAddedNode.equals("")) {
+                    if (!forkAddedNode.contains(nodeLabel)) {
+                        sidebarColor = "Gray";
+                    }
+                }
+
+
+                sb.append("\tborder-style: solid;\n\tborder-width: thin thick;\n\tborder-color: white white white " + sidebarColor + ";");
+
 
                 sb.append("\n}\n");
 
@@ -179,7 +236,7 @@ public class ColorCodeBlocks {
 
     }
 
-    public static void createPaths(boolean printPath) {
+    public static void createEdges(boolean printPath) {
         if (printPath) {
             String edgeList = null;
             try {
@@ -257,7 +314,9 @@ public class ColorCodeBlocks {
     }
 
 
-    public static void visualizeGraph(boolean printPath) {
+    public static void visualizeGraph(boolean printEdges, String filePath) {
+        testDir = "/"+filePath+"/";
+        testDirPath = dir + dgPath + testDir;
         try {
             createSourceFileHtml();
         } catch (IOException e) {
@@ -268,14 +327,14 @@ public class ColorCodeBlocks {
         writeClusterToCSS(clusters);
 
 
-        createPaths(printPath);
+        createEdges(printEdges);
 
         combineFiles();
     }
 
     public static void main(String[] args) {
 
-        visualizeGraph(false);
+        visualizeGraph(false, testDir);
     }
 
 

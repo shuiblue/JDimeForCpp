@@ -4,28 +4,32 @@ import de.fosd.jdime.util.IOFunctionSet;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class RCommunityDetection {
     ArrayList<Double> modularityArray;
     HashSet<String> upstreamNode;
+    HashSet<String> forkAddedNode;
     HashSet<String> upstreamEdge;
     HashMap<Integer, Boolean> checkedEdges;
     Graph originGraph;
     String projectPath = "/Users/shuruiz/Work/JDIME/NWayJDime/jdime/testcpp/dependencyGraph/";
+
+    static String upstreamNodeTxt = "/upstreamNode.txt";
+    static String forkAddedNodeTxt = "/forkAddedNode.txt";
+
     public ArrayList<Integer> cutSequence;
     IOFunctionSet ioFunc = new IOFunctionSet();
-
+    HashMap<Integer, Double> modularityMap;
 
     public RCommunityDetection(String fileDir) {
         modularityArray = new ArrayList<>();
         checkedEdges = new HashMap<>();
         cutSequence = new ArrayList<>();
         upstreamNode = new HashSet<>();
+        forkAddedNode = new HashSet<>();
+        modularityMap = new HashMap<>();
         //start import R library
         System.out.println("Creating Rengine (with arguments)");
         //If not started with --vanilla, funny things may happen in this R shell.
@@ -44,6 +48,7 @@ public class RCommunityDetection {
         // removes the loop and/or multiple edges from a graph.
         re.eval("g<-simplify(oldg)");
         re.eval("g<-as.undirected(g)");
+        re.eval("originalg<-g");
 
         // get original graph
         REXP edgelist_R = re.eval("get.edgelist(g)", true);
@@ -54,9 +59,18 @@ public class RCommunityDetection {
 
         printOriginNodeList(originGraph.getNodelist(), fileDir);
 
+        File upstreamNodeFile = new File(projectPath + fileDir + upstreamNodeTxt);
+        if (upstreamNodeFile.exists()) {
+            //get nodes/edges belong to upstream
+            storeNodes(fileDir, upstreamNodeTxt);
+        }
+        //get fork added node
+        File forkAddedFile = new File(projectPath + fileDir + forkAddedNodeTxt);
+        if (forkAddedFile.exists()) {
+            storeNodes(fileDir, forkAddedNodeTxt);
+        }
 
-        //get nodes/edges belong to upstream
-        storeUpstreamNodes(fileDir);
+
         upstreamEdge = findUpstreamEdges(originGraph, fileDir);
         //print old edge
         ioFunc.writeTofile("", projectPath + fileDir + "/cluster.txt");
@@ -78,14 +92,49 @@ public class RCommunityDetection {
 
 
         StringBuffer cutResult = new StringBuffer();
-        String detectResult = findBestClusterResult(originGraph, cutSequence);
+        String detectResult = findBestClusterResult(originGraph, cutSequence, fileDir);
 
         cutResult.append("\n\nCut Sequence(" + cutSequence.size() + " steps): ");
         cutResult.append(detectResult);
         ioFunc.writeTofile(cutResult.toString(), projectPath + fileDir + "/cluster.txt");
 
+        writeToModularityCSV(fileDir);
         re.end();
         System.out.println("\nBye.");
+    }
+
+    private void storeNodes(String fileDir, String filePath) {
+
+
+        String path = projectPath + fileDir + filePath;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (filePath.contains("upstream")) {
+                    upstreamNode.add(line.trim());
+                } else {
+                    forkAddedNode.add(line.trim());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void writeToModularityCSV(String fileDir) {
+        StringBuffer csv = new StringBuffer();
+        Iterator it = modularityMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry node = (Map.Entry) it.next();
+            csv.append(node.getKey() + "," + node.getValue() + "\n");
+        }
+        ioFunc.rewriteFile(csv.toString(), projectPath + fileDir + "/modularity.csv");
+
     }
 
     private void printOriginNodeList(HashMap<Integer, String> nodelist, String fileDir) {
@@ -94,23 +143,11 @@ public class RCommunityDetection {
         Iterator it_e = nodelist.entrySet().iterator();
         while (it_e.hasNext()) {
             Map.Entry node = (Map.Entry) it_e.next();
-            nodeList_print.append(node.getKey()+"---------"+node.getValue()+"\n");
+            nodeList_print.append(node.getKey() + "---------" + node.getValue() + "\n");
         }
         ioFunc.rewriteFile(nodeList_print.toString(), projectPath + fileDir + "/NodeList.txt");
     }
 
-    private void storeUpstreamNodes(String fileDir) {
-        try (BufferedReader br = new BufferedReader(new FileReader(projectPath + fileDir + "/upstreamNode.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                upstreamNode.add(line.trim());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private HashSet<String> findUpstreamEdges(Graph originGraph, String filePath) {
         HashSet<String> upstreamEdge = new HashSet<>();
@@ -129,17 +166,28 @@ public class RCommunityDetection {
 
             String from_nodeLabel = allNodes.get(from);
             String to_nodeLabel = allNodes.get(to);
-            if (upstreamNode.contains(from_nodeLabel) && upstreamNode.contains(to_nodeLabel)) {
-                upstreamEdge.add((String) edge.getValue());
-                print.append(edge.getValue() + ": " + allNodes.get(from) + "->" + allNodes.get(to) + "\n");
-
+            if (upstreamNode.size() > 0) {
+                if (upstreamNode.contains(from_nodeLabel) && upstreamNode.contains(to_nodeLabel)) {
+                    upstreamEdge.add((String) edge.getValue());
+                    print.append(edge.getValue() + ": " + allNodes.get(from) + "->" + allNodes.get(to) + "\n");
+                }
+            } else if (forkAddedNode.size() > 0) {
+                if (!forkAddedNode.contains(from_nodeLabel) && !forkAddedNode.contains(to_nodeLabel)) {
+                    upstreamEdge.add((String) edge.getValue());
+                    print.append(edge.getValue() + ": " + allNodes.get(from) + "->" + allNodes.get(to) + "\n");
+                }
             }
         }
         ioFunc.rewriteFile(print.toString(), projectPath + filePath + "/cluster.txt");
+//      System.out.print("upstreaEDGE"+upstreamEdge.size());
         return upstreamEdge;
 
     }
 
+
+    int pre_numberOfCommunities = 0;
+    int current_numberOfCommunities = 0;
+    double modularity = 0;
 
     public void calculateEachGraph(Rengine re, String filePath, int cutNum) {
         //get graph's edgeList and nodeList
@@ -156,27 +204,39 @@ public class RCommunityDetection {
         REXP membership_R = re.eval("cl<-clusters(g)$membership");
         double[] membership = membership_R.asDoubleArray();
 
-        printMemebershipOfCurrentGraph(membership, filePath);
+        System.out.print(current_numberOfCommunities + "!!!\n");
+        Graph currentGraph;
 
+        HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath);
+        current_numberOfCommunities = clusters.keySet().size();
+//
+        REXP modularity_R = re.eval("modularity(originalg,cl)");
+//        REXP modularity_R = re.eval("max(cluster_fast_greedy(g)$mod)");
 
-        REXP modularity_R = re.eval("modularity(g,cl)");
         double modularity = modularity_R.asDoubleArray()[0];
 
-        Graph currentGraph = new Graph(nodelist, edgelist, betweenness, modularity);
-        modularityArray.add(modularity);
+        currentGraph = new Graph(nodelist, edgelist, betweenness, modularity);
 
         minimizeUpstreamEdgeBetweenness(currentGraph);
 
         //modularity find removableEdge
         int removableEdgeID = findRemovableEdge(currentGraph);
+        if (pre_numberOfCommunities != current_numberOfCommunities) {
+            printGraph(currentGraph, filePath, cutNum);
+            printMemebershipOfCurrentGraph(clusters, filePath);
+        }
+        modularityMap.put(cutNum, modularity);
+        modularityArray.add(modularity);
+
         //remove edge
         re.eval("g<-g-edge(\"" + removableEdgeID + "\")");
+        pre_numberOfCommunities = current_numberOfCommunities;
 
-        //TODO  print membership
-        printGraph(currentGraph, filePath, cutNum);
+
     }
 
-    private void printMemebershipOfCurrentGraph(double[] membership, String fileDir) {
+
+    private HashMap<Integer, ArrayList<Integer>> getCurrentClusters(double[] membership, String fileDir) {
         HashMap<Integer, ArrayList<Integer>> clusters = new HashMap<>();
 
         for (int i = 0; i < membership.length; i++) {
@@ -187,10 +247,15 @@ public class RCommunityDetection {
             member.add(i + 1);
             clusters.put((int) membership[i], member);
         }
+        return clusters;
+    }
+
+    private void printMemebershipOfCurrentGraph(HashMap<Integer, ArrayList<Integer>> clusters, String fileDir) {
+
 
         //print
         StringBuffer membership_print = new StringBuffer();
-        membership_print.append("\n---"+clusters.entrySet().size()+" communities\n");
+        membership_print.append("\n---" + clusters.entrySet().size() + " communities\n");
         Iterator it = clusters.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry cluster = (Map.Entry) it.next();
@@ -203,6 +268,7 @@ public class RCommunityDetection {
         }
         //print old edge
         ioFunc.writeTofile(membership_print.toString(), projectPath + fileDir + "/cluster.txt");
+
 
     }
 
@@ -265,16 +331,13 @@ public class RCommunityDetection {
                 loc = counter;
             }
         }
+
         return loc;
     }
 
 
     public void printGraph(Graph g, String filePath, int cutNum) {
         StringBuffer print = new StringBuffer();
-
-        if (cutNum == 215) {
-            System.out.print("GRAPH" + cutNum + "---------\n");
-        }
         print.append("\n--------Graph" + cutNum + "-------\n");
 
 
@@ -292,12 +355,14 @@ public class RCommunityDetection {
 
     }
 
-    public String findBestClusterResult(Graph g, ArrayList<Integer> cutSequence) {
+    public String findBestClusterResult(Graph g, ArrayList<Integer> cutSequence, String filePath) {
         StringBuffer result = new StringBuffer();
         int bestCut = findMaxNumberLocation(modularityArray);
         for (int i = 0; i < bestCut; i++) {
             result.append(cutSequence.get(i) + ",");
         }
+        ioFunc.writeTofile("\nbestcut:" + (bestCut + 1) + "\n", projectPath + filePath + "/cluster.txt");
+
         return result.toString();
     }
 

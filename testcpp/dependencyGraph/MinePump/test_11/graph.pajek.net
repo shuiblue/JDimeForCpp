@@ -1,0 +1,244 @@
+*Vertices 101
+41 "featureselectC-12"
+21 "EnvironmentC-44"
+87 "MinePumpC-75"
+20 "EnvironmentC-43"
+18 "EnvironmentC-40"
+19 "EnvironmentC-41"
+88 "MinePumpC-76"
+100 "MinePumpH-10"
+15 "EnvironmentC-37"
+90 "MinePumpC-82"
+17 "EnvironmentC-39"
+89 "MinePumpC-80"
+16 "EnvironmentC-38"
+53 "MinePumpC-9"
+43 "featureselectC-21"
+51 "MinePumpC-6"
+44 "featureselectC-22"
+50 "MinePumpC-5"
+52 "MinePumpC-8"
+14 "EnvironmentC-33"
+82 "MinePumpC-64"
+13 "EnvironmentC-32"
+81 "MinePumpC-63"
+80 "MinePumpC-61"
+84 "MinePumpC-66"
+83 "MinePumpC-65"
+11 "EnvironmentC-26"
+86 "MinePumpC-71"
+10 "EnvironmentC-25"
+85 "MinePumpC-70"
+12 "EnvironmentC-28"
+42 "featureselectC-17"
+59 "MinePumpC-17"
+58 "MinePumpC-16"
+57 "MinePumpC-14"
+28 "EnvironmentC-62"
+56 "MinePumpC-12"
+55 "MinePumpC-11"
+29 "EnvironmentC-63"
+54 "MinePumpC-10"
+27 "EnvironmentC-58"
+97 "MinePumpH-5"
+96 "MinePumpH-4"
+98 "MinePumpH-6"
+95 "MinePumpH-3"
+25 "EnvironmentC-55"
+92 "MinePumpC-86"
+91 "MinePumpC-85"
+26 "EnvironmentC-56"
+101 "MinePumpH-12"
+49 "featureselectH-10"
+99 "MinePumpH-8"
+24 "EnvironmentC-52"
+93 "MinePumpC-87"
+23 "EnvironmentC-48"
+22 "EnvironmentC-47"
+94 "MinePumpC-90"
+36 "EnvironmentH-11"
+37 "EnvironmentH-14"
+65 "MinePumpC-31"
+66 "MinePumpC-33"
+47 "featureselectH-8"
+30 "EnvironmentH-3"
+46 "featureselectH-7"
+48 "featureselectH-9"
+33 "EnvironmentH-6"
+34 "EnvironmentH-7"
+31 "EnvironmentH-4"
+32 "EnvironmentH-5"
+63 "MinePumpC-25"
+64 "MinePumpC-29"
+60 "MinePumpC-20"
+38 "featureselectC-7"
+35 "EnvironmentH-9"
+40 "featureselectC-9"
+62 "MinePumpC-24"
+39 "featureselectC-8"
+61 "MinePumpC-21"
+78 "MinePumpC-59"
+77 "MinePumpC-58"
+73 "MinePumpC-53"
+9 "EnvironmentC-24"
+72 "MinePumpC-50"
+76 "MinePumpC-56"
+8 "EnvironmentC-20"
+75 "MinePumpC-55"
+74 "MinePumpC-54"
+7 "EnvironmentC-19"
+6 "EnvironmentC-18"
+1 "EnvironmentC-8"
+79 "MinePumpC-60"
+5 "EnvironmentC-14"
+71 "MinePumpC-49"
+68 "MinePumpC-42"
+2 "EnvironmentC-10"
+67 "MinePumpC-41"
+4 "EnvironmentC-13"
+45 "featureselectH-2"
+3 "EnvironmentC-12"
+70 "MinePumpC-46"
+69 "MinePumpC-45"
+*arcs 
+86 36 2
+24 36 2
+28 37 2
+88 37 2
+66 65 1
+66 65 1
+60 87 2
+88 87 1
+20 18 1
+19 18 1
+19 18 1
+20 18 1
+41 47 2
+54 30 2
+3 30 2
+38 46 2
+89 100 2
+42 48 2
+21 15 1
+16 15 1
+18 15 1
+17 15 1
+83 15 2
+13 33 2
+70 33 2
+22 34 2
+6 31 2
+90 89 1
+9 32 2
+54 53 1
+54 53 1
+44 43 1
+55 51 2
+94 51 2
+75 51 2
+90 51 2
+72 50 2
+60 50 2
+68 50 2
+53 50 2
+66 50 2
+79 50 2
+92 50 2
+58 50 2
+62 50 2
+53 52 1
+55 52 1
+65 64 1
+59 64 2
+61 60 1
+61 60 1
+70 13 2
+14 13 1
+40 38 1
+15 35 2
+83 35 2
+63 62 1
+63 62 1
+40 39 2
+11 10 1
+12 10 1
+12 10 1
+11 10 1
+86 85 1
+58 85 2
+59 58 1
+59 58 1
+58 57 1
+62 57 1
+56 57 2
+60 57 1
+84 73 1
+78 73 1
+74 73 1
+83 73 1
+75 73 1
+82 73 1
+79 73 1
+10 9 1
+88 28 2
+29 28 1
+56 55 1
+56 55 1
+76 75 1
+76 75 1
+77 75 1
+77 75 1
+8 7 1
+8 7 1
+7 6 1
+5 1 2
+16 1 2
+7 1 2
+25 1 2
+23 1 2
+29 1 2
+8 1 2
+4 1 2
+80 79 1
+81 79 1
+81 79 1
+80 79 1
+93 97 2
+67 97 2
+61 97 2
+63 97 2
+72 71 1
+59 96 2
+64 96 2
+71 98 2
+52 95 2
+26 25 1
+27 25 1
+26 25 1
+27 25 1
+93 92 1
+93 92 1
+11 2 2
+18 2 2
+12 2 2
+14 2 2
+10 2 2
+68 67 1
+61 67 2
+63 67 2
+93 67 2
+92 91 1
+94 91 1
+5 4 1
+5 4 1
+54 3 2
+4 3 1
+91 101 2
+43 49 2
+62 69 2
+70 69 1
+65 69 2
+73 99 2
+86 24 2
+25 24 1
+23 22 1
