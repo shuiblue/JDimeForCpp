@@ -199,31 +199,37 @@ public class DependencyGraph {
 
         for (int i = 0; i < elements.size(); i++) {
             Element ele = elements.get(i);
-//            if (ele.getLocalName().equals("ifdef") && ele.getNamespacePrefix().equals("cpp")) {
-//                String macroName = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
-//                String line = ele.getAttribute(0).getValue();
-//                Symbol ifdef = new Symbol(macroName, "", line, "ifdef", fileName, scope);
-//                lonelySymbolSet.add(ifdef);
-//                storeIntoNodeList(fileName + "-" + line);
-//            } else
+            if (ele.getLocalName().equals("ifdef") && ele.getNamespacePrefix().equals("cpp")) {
+                String macroName = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
+                String line = ele.getAttribute(0).getValue();
+                Symbol ifdef = new Symbol(macroName, "", line, "ifdef", fileName, scope);
+                lonelySymbolSet.add(ifdef);
+                storeIntoNodeList(fileName + "-" + line);
+            } else if (ele.getLocalName().equals("define")) {
+                Element macroEle = (Element) ele.getChildElements().get(1);
 
-//            if (ele.getLocalName().equals("define")) {
-//                String macroName = ele.getChildElements().get(1).getValue();
-//                String line = ele.getAttribute(0).getValue();
-//                Symbol macro = new Symbol(macroName, "", line, "macro", fileName, scope);
-//                storeIntoNodeList(fileName + "-" + line);
-//                symbolTable.add(macro);
-//
-//            }
-//            else if (ele.getLocalName().equals("if") && ele.getNamespacePrefix().equals("cpp")) {
-//                Element expr = ele.getFirstChildElement("expr", NAMESPACEURI);
-//                if (expr != null) {
-//                    tmpStmtList.add(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
-//                }
-//            }
+                Element paramEle = macroEle.getFirstChildElement("parameter_list",NAMESPACEURI);
+                String tag;
+                if (paramEle == null) {
+                    tag = "macro";
 
-//            else
-            if (ele.getLocalName().equals("function") || ele.getLocalName().equals("constructor")) {
+                } else {
+                    tag = "function_decl";
+                }
+                Element nameEle= macroEle.getFirstChildElement("name", NAMESPACEURI);
+                String macroName =nameEle.getValue();
+                String line = nameEle.getAttribute(0).getValue();
+                Symbol macro = new Symbol(macroName, "", line, tag, fileName, scope);
+                storeIntoNodeList(fileName + "-" + line);
+                symbolTable.add(macro);
+
+
+            } else if (ele.getLocalName().equals("if") && ele.getNamespacePrefix().equals("cpp")) {
+                Element expr = ele.getFirstChildElement("expr", NAMESPACEURI);
+                if (expr != null) {
+                    tmpStmtList.add(handleVarInExpr(ele, "", fileName, scope, parentLocation, false));
+                }
+            } else if (ele.getLocalName().equals("function") || ele.getLocalName().equals("constructor")) {
                 parseFunctionNode(ele, fileName, scope);
             } else if (ele.getLocalName().equals("if") && !ele.getNamespacePrefix().equals("cpp")) {
                 tmpStmtList.addAll(parseIfStmt(ele, fileName, scope, parentLocation));
@@ -243,12 +249,12 @@ public class DependencyGraph {
                 // <macro><label><expr_stmt>  represent a field
                 Symbol declSymbol = addDeclarationSymbol(ele, "decl_stmt", fileName, scope, parentLocation, "");
                 tmpStmtList.add(fileName + "-" + declSymbol.getLineNumber());
-            } else if (ele.getLocalName().equals("struct")||ele.getLocalName().equals("class")) {
-                if(ele.getLocalName().equals("struct")) {
+            } else if (ele.getLocalName().equals("struct") || ele.getLocalName().equals("class")) {
+                if (ele.getLocalName().equals("struct")) {
 
-                    parseStructOrClass(ele, fileName, scope, parentLocation, "","struct");
-                }else {
-                    parseStructOrClass(ele, fileName, scope, parentLocation, "","class");
+                    parseStructOrClass(ele, fileName, scope, parentLocation, "", "struct");
+                } else {
+                    parseStructOrClass(ele, fileName, scope, parentLocation, "", "class");
                 }
             } else if (ele.getLocalName().equals("typedef")) {
                 //typedef struct
@@ -265,7 +271,7 @@ public class DependencyGraph {
 
 
                             String alias = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
-                            parseStructOrClass(structChild, fileName, scope, parentLocation, alias,"struct");
+                            parseStructOrClass(structChild, fileName, scope, parentLocation, alias, "struct");
                         }
                     } else if (structDecl) {
                         String alias = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
@@ -298,13 +304,27 @@ public class DependencyGraph {
 
                 case_tmpStmtList.addAll(parseDependencyForSubTree(ele, fileName, scope + 1, caseLocation));
 
-                if(CONTROL_FLOW&&case_tmpStmtList.size()>0){
+                if (CONTROL_FLOW && case_tmpStmtList.size() > 0) {
                     addControlFlowDependency(caseLocation, case_tmpStmtList, fileName);
                 }
 
                 tmpStmtList.addAll(case_tmpStmtList);
             } else if (ele.getLocalName().equals("enum")) {
                 parseEnum(ele, fileName, scope);
+
+            } else if(ele.getLocalName().equals("macro")){
+                Element nameEle= ele.getFirstChildElement("name", NAMESPACEURI);
+                String macroName =nameEle.getValue();
+                String line = nameEle.getAttribute(0).getValue();
+                Symbol macro = new Symbol(macroName, "", line, "macro", fileName, scope);
+                storeIntoNodeList(fileName + "-" + line);
+                symbolTable.add(macro);
+
+
+                Element argumentListEle = ele.getFirstChildElement("argument_list",NAMESPACEURI);
+                if(argumentListEle!=null){
+                    handleArgumentList(argumentListEle.getChildElements(),line,fileName,scope,parentLocation);
+                }
 
             }
             //remove symbol, whose scope >1
@@ -314,7 +334,6 @@ public class DependencyGraph {
         }
         return tmpStmtList;
     }
-
 
 
     /**
@@ -362,14 +381,13 @@ public class DependencyGraph {
     }
 
 
-    private void parseStructOrClass(Element ele, String fileName, int scope, String parentLocation, String alias,String tag ) {
-        String edgeLabel ;
-                if(tag.equals("struct")){
-                    edgeLabel= "<belongToStruct>";
-                }else
-                {
-                    edgeLabel= "<belongToClass>";
-                }
+    private void parseStructOrClass(Element ele, String fileName, int scope, String parentLocation, String alias, String tag) {
+        String edgeLabel;
+        if (tag.equals("struct")) {
+            edgeLabel = "<belongToStruct>";
+        } else {
+            edgeLabel = "<belongToClass>";
+        }
 
         //struct
         Symbol parent = addDeclarationSymbol(ele, tag, fileName, scope, parentLocation, alias);
@@ -504,7 +522,7 @@ public class DependencyGraph {
 
         Elements elements = block.getChildElements();
         for (int i = 0; i < elements.size(); i++) {
-            Element decl = elements.get(i).getFirstChildElement("name",NAMESPACEURI);
+            Element decl = elements.get(i).getFirstChildElement("name", NAMESPACEURI);
             String declLineNumber = decl.getAttribute(0).getValue();
             Symbol declSymbol = new Symbol(decl.getValue(), "", declLineNumber, "decl", fileName, scope);
             newsymbol.add(declSymbol);
