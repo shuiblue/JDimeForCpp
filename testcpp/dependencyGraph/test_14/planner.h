@@ -1,7 +1,6 @@
+#ifdef BABYSTEPPING
 
-struct partitionTable {
-    uint8_t  bootSectorSig1;
-  unsigned beginSector : 6;
-        
-} PACKED;
 
+void babystep(const uint8_t axis,const bool direction)
+{
+}

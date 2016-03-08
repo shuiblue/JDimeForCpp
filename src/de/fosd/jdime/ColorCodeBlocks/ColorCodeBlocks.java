@@ -179,16 +179,15 @@ public class ColorCodeBlocks {
             String[] elementList = clusters.get(i).trim().split(",");
             for (int j = 0; j < elementList.length; j++) {
 //                String current_color = colorList.get(i);
-                String current_color = "";
-
-//            creating ramdom color
                 Random rand = new Random();
                 float r = (float) (rand.nextFloat() / 2f + 0.5);
                 float g = (float) (rand.nextFloat() / 2f + 0.5);
                 float b = (float) (rand.nextFloat() / 2f + 0.5);
                 Color randomColor = new Color(r, g, b);
-                current_color = Integer.toHexString(randomColor.getRGB() & 0x00ffffff);
+                String    current_color = Integer.toHexString(randomColor.getRGB() & 0x00ffffff);
 
+
+//            creating ramdom color
 
                 System.out.println("elementList[j]:" + elementList[j]);
                 int nodeID = Integer.parseInt(elementList[j].trim());
