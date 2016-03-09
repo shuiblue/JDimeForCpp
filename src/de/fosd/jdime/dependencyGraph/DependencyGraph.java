@@ -154,7 +154,7 @@ public class DependencyGraph {
         }
 
         for (Symbol s : symbolTable) {
-            ioFunctionSet.writeTofile(s.getName()+": "+s.getFileName()+"-"+s.lineNumber+"\n", testDirPath + "symbolList.txt");
+            ioFunctionSet.writeTofile(s.getName() + ": " + s.getFileName() + "-" + s.lineNumber + "\n", testDirPath + "symbolList.txt");
         }
     }
 
@@ -202,14 +202,14 @@ public class DependencyGraph {
         Elements elements = subTreeRoot.getChildElements();
 
         for (int i = 0; i < elements.size(); i++) {
-            String line="";
+            String line = "";
             Element ele = elements.get(i);
             if (ele.getLocalName().equals("ifdef") && ele.getNamespacePrefix().equals("cpp")) {
                 String macroName = ele.getFirstChildElement("name", NAMESPACEURI).getValue();
-                 line = ele.getAttribute(0).getValue();
+                line = ele.getAttribute(0).getValue();
                 Symbol ifdef = new Symbol(macroName, "", line, "ifdef", fileName, scope);
                 symbolTable.add(ifdef);
-                ioFunctionSet.writeTofile(fileName+" "+line+"\n",testDirPath+"parsedLines.txt");
+                ioFunctionSet.writeTofile(fileName + " " + line + "\n", testDirPath + "parsedLines.txt");
 
                 lonelySymbolSet.add(ifdef);
                 storeIntoNodeList(fileName + "-" + line);
@@ -226,18 +226,18 @@ public class DependencyGraph {
                 }
                 Element nameEle = macroEle.getFirstChildElement("name", NAMESPACEURI);
                 String macroName = nameEle.getValue();
-                 line = nameEle.getAttribute(0).getValue();
+                line = nameEle.getAttribute(0).getValue();
                 Symbol macro = new Symbol(macroName, "", line, tag, fileName, scope);
                 storeIntoNodeList(fileName + "-" + line);
                 symbolTable.add(macro);
-                ioFunctionSet.writeTofile(fileName+" "+line+"\n",testDirPath+"parsedLines.txt");
+                ioFunctionSet.writeTofile(fileName + " " + line + "\n", testDirPath + "parsedLines.txt");
 
 
             } else if (ele.getLocalName().equals("if") && ele.getNamespacePrefix().equals("cpp")) {
                 Element expr = ele.getFirstChildElement("expr", NAMESPACEURI);
                 if (expr != null) {
-                    String loc =handleVarInExpr(ele, "", fileName, scope, parentLocation, false);
-                    if(!loc.equals("")) {
+                    String loc = handleVarInExpr(ele, "", fileName, scope, parentLocation, false);
+                    if (!loc.equals("")) {
                         tmpStmtList.add(loc);
                     }
                 }
@@ -327,11 +327,11 @@ public class DependencyGraph {
             } else if (ele.getLocalName().equals("macro")) {
                 Element nameEle = ele.getFirstChildElement("name", NAMESPACEURI);
                 String macroName = nameEle.getValue();
-                 line = nameEle.getAttribute(0).getValue();
+                line = nameEle.getAttribute(0).getValue();
                 Symbol macro = new Symbol(macroName, "", line, "macro", fileName, scope);
                 storeIntoNodeList(fileName + "-" + line);
                 symbolTable.add(macro);
-                ioFunctionSet.writeTofile(fileName+" "+line+"\n",testDirPath+"parsedLines.txt");
+                ioFunctionSet.writeTofile(fileName + " " + line + "\n", testDirPath + "parsedLines.txt");
 
 
                 Element argumentListEle = ele.getFirstChildElement("argument_list", NAMESPACEURI);
@@ -352,9 +352,31 @@ public class DependencyGraph {
                     }
                 }
 
-            }else if(ele.getLocalName().equals("block")){
-                tmpStmtList.addAll( parseDependencyForSubTree(ele,fileName,scope+1,parentLocation));
+            } else if (ele.getLocalName().equals("block")) {
+
+                tmpStmtList.addAll(parseDependencyForSubTree(ele, fileName, scope + 1, parentLocation));
+            } else if (ele.getLocalName().equals("do")) {
+
+                parentLocation = fileName + "-" + ele.getAttribute(0).getValue();
+                storeIntoNodeList(parentLocation);
+                ArrayList<String> blockStmtList = new ArrayList<>();
+
+                blockStmtList.addAll(parseDependencyForSubTree(ele, fileName, scope + 1, parentLocation));
+
+                if(CONTROL_FLOW){
+                    addControlFlowDependency(parentLocation,blockStmtList,fileName);
+                }
+                tmpStmtList.addAll(blockStmtList);
+                //while <condition>
+                Element conditionEle = ele.getFirstChildElement("condition", NAMESPACEURI);
+                line = conditionEle.getAttribute(0).getValue();
+
+
+                handleVarInExpr(conditionEle, line, fileName, scope + 1, parentLocation, false);
+
+                //
             }
+
 
             //remove symbol, whose scope >1
             if (((Element) ele.getParent()).getLocalName().equals("unit")) {
@@ -748,9 +770,9 @@ public class DependencyGraph {
             handleVarInExpr(initNode, lineNumber, fileName, scope, parentLocation, true);
         }
 
-        System.out.println(fileName+" "+lineNumber);
+        System.out.println(fileName + " " + lineNumber);
 
-        ioFunctionSet.writeTofile(fileName+" "+lineNumber+"\n",testDirPath+"parsedLines.txt");
+        ioFunctionSet.writeTofile(fileName + " " + lineNumber + "\n", testDirPath + "parsedLines.txt");
 
         return symbol;
     }
@@ -849,9 +871,9 @@ public class DependencyGraph {
                 linkChildToParent(exprLocation, parentLocation);
             }
         }
-        System.out.println( exprLocation);
+        System.out.println(exprLocation);
 
-        ioFunctionSet.writeTofile(exprLocation+"\n",testDirPath+"parsedLines.txt");
+        ioFunctionSet.writeTofile(exprLocation + "\n", testDirPath + "parsedLines.txt");
         return exprLocation;
     }
 

@@ -83,10 +83,7 @@ public class IOFunctionSet {
             writeTofile(nodeList.get(nodeId) + " \"" + nodeId + "\"\n", filepath + pajek);
 
             writeTofile(nodeList.get(nodeId) + ",\"" + nodeId + "\"\n", filepath + "node.csv");
-
-
         }
-
 
         // Getting a Set of Key-value pairs
         Set entrySet = dependencyGraph.entrySet();
