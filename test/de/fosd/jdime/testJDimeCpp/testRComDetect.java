@@ -21,10 +21,10 @@ public class testRComDetect {
         boolean printPath=false;
 //        String filePath = "EmailSystem/test_18";
 //        String filePath = "MinePump/test_11";
-//        String filePath = "Marlin";
-        String filePath = "test_14";
+        String filePath = "Marlin";
+//        String filePath = "test_14";
 
-        nodes = dependencyGraph.getDependencyGraph(filePath);
+//        nodes = dependencyGraph.getDependencyGraph(filePath);
         new RCommunityDetection(filePath);
 //        ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
 //        colorCodeBlocks.visualizeGraph(printPath,filePath);
