@@ -16,23 +16,35 @@ import java.util.*;
 public class DependencyGraph {
 
     static IOFunctionSet ioFunctionSet = new IOFunctionSet();
-    static HashSet<Symbol> symbolTable;
-    static HashSet<Symbol> lonelySymbolSet;
 
-    static HashMap<String, HashSet<Symbol>> sameNameMap;
+    //symbol Table stores all the declaration nodes.
+    static HashSet<Symbol> symbolTable = new HashSet<>();
+
+    // lonelySymbolSet stores all the nodes that haven't find any node that could be point to.
+    static HashSet<Symbol> lonelySymbolSet = new HashSet<>();
+
+    // this map stores the same name node, used for search for finding dependencies effectively.
+    static HashMap<String, HashSet<Symbol>> sameNameMap = new HashMap<>();
 
     static File edgeListTxt;
     static int id;
-    static HashMap<String, Integer> nodeList;
-    static HashMap<String, HashSet<String[]>> dependencyGraph;
-    static HashSet<String> edgeList;
+
+    //node list stores  the id for the node, used for create graph file. HashMap<String, Integer>
+    static HashMap<String, Integer> nodeList = new HashMap<>();
+
+    // this is the dependency Graph HashMap<String, HashSet<String[]>> ;
+    // key: node label
+    static HashMap<String, HashSet<String[]>> dependencyGraph = new HashMap<>();
+
+    //edge list stores all the edges, used for testing
+    static HashSet<String> edgeList = new HashSet<>();
     static final public String NAMESPACEURI = "http://www.sdml.info/srcML/src";
     static final public String CONTROLFLOW_LABEL = "<Control-Flow>";
 
     static public boolean HIERACHICAL = true;
     static final public boolean CONTROL_FLOW = true;
 
-    String dirPath;
+    String dirPath = "testcpp/dependencyGraph/";
     String testDirPath;
 
 
@@ -44,7 +56,6 @@ public class DependencyGraph {
      * @return edgeList for testing directory
      */
     public HashSet<String> createDependencyGraph(String testDir) {
-        dirPath = "testcpp/dependencyGraph/";
         testDirPath = dirPath + testDir + "/";
 
         //create graph file
@@ -54,28 +65,7 @@ public class DependencyGraph {
         File dir = new File(testDirPath);
         String[] names = dir.list();
 
-        //symbol Table stores all the declaration nodes.
-        symbolTable = new HashSet<>();
-
-        // lonelySymbolSet stores all the nodes that haven't find any node that could be point to.
-        lonelySymbolSet = new HashSet<>();
-
-        // this map stores the same name node, used for search for finding dependencies effectively.
-        sameNameMap = new HashMap<>();
-
-        //node list stores  the id for the node, used for create graph file. HashMap<String, Integer>
-        nodeList = new HashMap<>();
         id = 0;
-
-        //edge list stores all the edges, used for testing
-        edgeList = new HashSet<>();
-
-        // this is the dependency Graph HashMap<String, HashSet<String[]>> ;
-        // key: node label
-        //
-        dependencyGraph = new HashMap<>();
-
-
         for (String fileName : names) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
                 String filePath = testDirPath + fileName;
@@ -783,14 +773,22 @@ public class DependencyGraph {
             type = "";
         }
 
-        Symbol symbol = null;
+        Symbol symbol;
         Element nameElement = element.getFirstChildElement("name", NAMESPACEURI);
 
-        String name = "";
+        String name;
 
 
-        if (nameElement != null && alias == "") {
-            name = nameElement.getValue();
+        if (nameElement != null && alias.equals("")) {
+            //for the case of array , e.g. a[3]  <name><name>a</name><index>3</index><name>
+
+            Element subnameEle = nameElement.getFirstChildElement("name", NAMESPACEURI);
+            if (subnameEle != null) {
+                name = subnameEle.getValue();
+            } else {
+
+                name = nameElement.getValue();
+            }
             if (name.contains("::")) {
                 name = name.split("::")[1];
             }
@@ -947,7 +945,7 @@ public class DependencyGraph {
                 storeIntoNodeList(parentLocation);
                 ArrayList<String> tmpStmtList = parseDependencyForSubTree(exprBlockEle, fileName, scope + 1, parentLocation);
 
-                linkChildToParent(tmpStmtList, parentLocation, "init");
+                linkChildToParent(tmpStmtList, parentLocation, "<init>");
             }
 
             //macro node  (hard code wrong output from src2srcml)
@@ -967,7 +965,7 @@ public class DependencyGraph {
             }
 //        System.out.println(exprLocation);
 
-        ioFunctionSet.writeTofile(exprLocation + "\n", testDirPath + "parsedLines.txt");
+            ioFunctionSet.writeTofile(exprLocation + "\n", testDirPath + "parsedLines.txt");
         }
         return exprLocation;
     }

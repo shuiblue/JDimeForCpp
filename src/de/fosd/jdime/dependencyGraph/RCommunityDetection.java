@@ -22,8 +22,11 @@ public class RCommunityDetection {
     public ArrayList<Integer> cutSequence;
     IOFunctionSet ioFunc = new IOFunctionSet();
     HashMap<Integer, Double> modularityMap;
+    static int bestCut;
 
-    public RCommunityDetection(String fileDir) {
+
+
+    public int detectingCommunitiesWithIgraph(String fileDir) {
         modularityArray = new ArrayList<>();
         checkedEdges = new HashMap<>();
         cutSequence = new ArrayList<>();
@@ -40,7 +43,7 @@ public class RCommunityDetection {
         // ready
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
-            return;
+            return -1;
         }
         //start to input R cmd
         re.eval("library(igraph)");
@@ -73,7 +76,7 @@ public class RCommunityDetection {
 
         upstreamEdge = findUpstreamEdges(originGraph, fileDir);
         //print old edge
-        ioFunc.writeTofile("", projectPath + fileDir + "/cluster.txt");
+        ioFunc.rewriteFile("", projectPath + fileDir + "/cluster.txt");
 
 
         //initialize removedEdge Map, all the edges have not been removed, so the values are all false
@@ -101,6 +104,7 @@ public class RCommunityDetection {
         writeToModularityCSV(fileDir);
         re.end();
         System.out.println("\nBye.");
+        return  bestCut;
     }
 
     private void storeNodes(String fileDir, String filePath) {
@@ -178,7 +182,7 @@ public class RCommunityDetection {
                 }
             }
         }
-        ioFunc.rewriteFile(print.toString(), projectPath + filePath + "/cluster.txt");
+        ioFunc.rewriteFile(print.toString(), projectPath + filePath + "/upstreamEdge.txt");
 //      System.out.print("upstreaEDGE"+upstreamEdge.size());
         return upstreamEdge;
 
@@ -187,7 +191,6 @@ public class RCommunityDetection {
 
     int pre_numberOfCommunities = 0;
     int current_numberOfCommunities = 0;
-    double modularity = 0;
 
     public void calculateEachGraph(Rengine re, String filePath, int cutNum) {
         //get graph's edgeList and nodeList
@@ -209,9 +212,7 @@ public class RCommunityDetection {
 
         HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath);
         current_numberOfCommunities = clusters.keySet().size();
-//
         REXP modularity_R = re.eval("modularity(originalg,cl)");
-//        REXP modularity_R = re.eval("max(cluster_fast_greedy(g)$mod)");
 
         double modularity = modularity_R.asDoubleArray()[0];
 
@@ -338,7 +339,8 @@ public class RCommunityDetection {
 
     public void printGraph(Graph g, String filePath, int cutNum) {
         StringBuffer print = new StringBuffer();
-        print.append("\n--------Graph" + cutNum + "-------\n");
+        print.append("\n--------Graph-------\n");
+        print.append("** "+ cutNum +"edges has been removed **\n");
 
 
         String removableEdge = g.getRemovableEdgeLable();
@@ -357,7 +359,7 @@ public class RCommunityDetection {
 
     public String findBestClusterResult(Graph g, ArrayList<Integer> cutSequence, String filePath) {
         StringBuffer result = new StringBuffer();
-        int bestCut = findMaxNumberLocation(modularityArray);
+         bestCut = findMaxNumberLocation(modularityArray);
         for (int i = 0; i < bestCut; i++) {
             result.append(cutSequence.get(i) + ",");
         }

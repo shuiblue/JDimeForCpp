@@ -15,18 +15,19 @@ public class IOFunctionSet {
 
 
     public String printNodeWithoutHeadandEnd(String s, int head) {
-        String blockString = "";
+        StringBuffer blockString = new StringBuffer();
+
         if (s.endsWith(":")) {
             for (int i = head; i < s.split("\n").length - 2; i++) {
-                blockString += s.split("\n")[i] + "\n";
+                blockString.append(s.split("\n")[i] + "\n");
             }
-            blockString += ":";
+            blockString.append(":");
         } else {
             for (int i = head; i < s.split("\n").length - 1; i++) {
-                blockString += s.split("\n")[i] + "\n";
+                blockString.append(s.split("\n")[i] + "\n");
             }
         }
-        return blockString;
+        return blockString.toString();
     }
 
 
@@ -108,13 +109,17 @@ public class IOFunctionSet {
 //                writeTofile( nodeList.get(dn[0])+" ", filepath + pajek);
 
                 String weight = "";
-                if (dn[1].contains("belongToStruct") || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
+                if (dn[1].contains("belongToStruct") || dn[1].contains("belongToClass") ||
+                        dn[1].contains("belongToNamespace") || dn[1].contains("belongToUnion")
+                        || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
                     weight = 2 + "";
                 } else if (dn[1].contains("Call")) {
-                    weight =2 + "";
-                } else if (dn[1].contains("child")) {
-                    weight = 1 + "";
-                } else if (dn[1].contains("Control-Flow")) {
+                    weight = 2 + "";
+//                } else if (dn[1].contains("child")) {
+//                    weight = 1 + "";
+//                } else if (dn[1].contains("Control-Flow")) {
+//                    weight = 1 + "";
+                } else {
                     weight = 1 + "";
                 }
                 writeTofile(nodeList.get(dn[0]) + " " + to + " " + weight + "\n", filepath + pajek);
@@ -136,7 +141,7 @@ public class IOFunctionSet {
      */
     public String precisePrettyprint(String res, String blockCondition) {
 
-        String newResult = "";
+        StringBuffer newResult = new StringBuffer();
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
         for (int j = 0; j < elements.length; j++) {
@@ -147,27 +152,27 @@ public class IOFunctionSet {
                 if (conditionStack.size() > 0) {
                     String lastCon = conditionStack.lastElement();
                     if (lastCon.equals(tmp[0])) {
-                        newResult += printNodeWithoutHeadandEnd(e, 1);
+                        newResult.append(printNodeWithoutHeadandEnd(e, 1));
                         continue;
                     } else {
                         conditionStack.pop();
                         if (tmp[0].equals(blockCondition.replace("\n", ""))) {
-                            newResult += "#endif\n";
+                            newResult.append("#endif\n");
                             if (tmp.length > 3) {
                                 for (int i = 1; i < tmp.length - 1; i++) {
-                                    newResult += tmp[i] + "\n";
+                                    newResult.append(tmp[i] + "\n");
                                 }
                             } else {
-                                newResult += tmp[1] + "\n";
+                                newResult.append(tmp[1] + "\n");
                             }
                             continue;
                         } else {
-                            newResult += "#endif\n";
+                            newResult.append("#endif\n");
 
                             if (!tmp[0].startsWith("#if defined")) {
-                                newResult += e;
+                                newResult.append(e);
                             } else {
-                                newResult += printNodeWithoutHeadandEnd(e, 0);
+                                newResult.append(printNodeWithoutHeadandEnd(e, 0));
                                 conditionStack.push(tmp[0]);
                             }
                         }
@@ -176,14 +181,14 @@ public class IOFunctionSet {
                     if (tmp[0].startsWith("#if defined")) {
                         if (!tmp[0].equals(blockCondition.replace("\n", ""))) {
                             conditionStack.push(tmp[0]);
-                            newResult += printNodeWithoutHeadandEnd(e, 0);
+                            newResult.append(printNodeWithoutHeadandEnd(e, 0));
                         } else {
-                            newResult += printNodeWithoutHeadandEnd(e, 1);
+                            newResult.append(printNodeWithoutHeadandEnd(e, 1));
                         }
                     } else {
-                        newResult += e;
+                        newResult.append(e);
                         if (!e.endsWith("\n")) {
-                            newResult += "\n";
+                            newResult.append("\n");
                         }
                     }
                 }
@@ -191,10 +196,10 @@ public class IOFunctionSet {
         }
         if (conditionStack.size() > 0) {
             conditionStack.pop();
-            newResult += "#endif\n";
+            newResult.append("#endif\n");
         }
 
-        return newResult;
+        return newResult.toString();
     }
 
 
@@ -205,7 +210,7 @@ public class IOFunctionSet {
             res = res.replace("#endif+-+-+-", "#endif");
 
         }
-        String newResult = "";
+        StringBuffer newResult = new StringBuffer();
         Stack<String> conditionStack = new Stack<>();
         String[] elements = res.split("\\+-\\+-\\+-\n");
         for (String e : elements) {
@@ -215,24 +220,24 @@ public class IOFunctionSet {
                     if (conditionStack.size() > 0) {
                         String lastCon = conditionStack.lastElement();
                         if (lastCon.equals(tmp[0])) {
-                            String x = "";
+                            StringBuffer x = new StringBuffer();
                             for (int i = 1; i < tmp.length - 1; i++) {
-                                x += tmp[i] + "\n";
+                                x.append( tmp[i] + "\n");
                             }
-                            newResult += x;
+                            newResult.append( x);
                             continue;
                         } else {
                             conditionStack.pop();
                             conditionStack.push(tmp[0]);
-                            newResult += "#endif";
+                            newResult.append( "#endif");
                             if (uniqueIFDEF == true) {
-                                newResult += "(IFDEF)";
+                                newResult.append( "(IFDEF)");
                                 uniqueIFDEF = false;
                             }
 
                             //-----------
 //                        newResult += "\n+-+-+-\n";
-                            newResult += "\n";
+                            newResult.append("\n");
                             //-----------
 
 
@@ -241,7 +246,7 @@ public class IOFunctionSet {
 
                     conditionStack.push(tmp[0]);
 
-                    newResult += printNodeWithoutHeadandEnd(e, 0);
+                    newResult.append(printNodeWithoutHeadandEnd(e, 0));
                     if (e.contains("IFDEF")) {
                         uniqueIFDEF = true;
                     }
@@ -250,12 +255,12 @@ public class IOFunctionSet {
                 } else {
                     if (conditionStack.size() > 0) {
                         conditionStack.pop();
-                        newResult += "#endif\n";
+                        newResult.append("#endif\n");
 
                     }
-                    newResult += e;
+                    newResult.append( e);
                     if (e.contains("###")) {
-                        newResult += "+-+-+-\n";
+                        newResult.append("+-+-+-\n");
                     }
 
                 }
@@ -263,12 +268,12 @@ public class IOFunctionSet {
         }
 
         //----------
-        newResult += "#endif";
+        newResult.append( "#endif");
         if (uniqueIFDEF == true) {
-            newResult += "(IFDEF)";
+            newResult.append("(IFDEF)");
         }
 
-        return newResult;
+        return newResult.toString();
         //-----------
 //        return newResult + "#endif\n";
     }
@@ -307,7 +312,7 @@ public class IOFunctionSet {
     }
 
 
-    public static String readCertainLine(int lineNum,String filePath) {
+    public static String readCertainLine(int lineNum, String filePath) {
 
         String content = "";
         try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
@@ -331,9 +336,9 @@ public class IOFunctionSet {
             outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("testcpp", "") + ".xml";
 
             String[] paths = inputFile.replace("testcpp", "").split("/");
-            String dir_suffix = "";
+            StringBuffer dir_suffix = new StringBuffer();
             for (int i = 1; i < paths.length - 1; i++) {
-                dir_suffix += "/" + paths[i];
+                dir_suffix.append("/" + paths[i]);
             }
 
             if (!new File(outXmlFile).exists()) {
