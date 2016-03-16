@@ -97,9 +97,7 @@ public class RCommunityDetection {
         StringBuffer cutResult = new StringBuffer();
         String detectResult = findBestClusterResult(originGraph, cutSequence, fileDir);
 
-        cutResult.append("\n\nCut Sequence(" + cutSequence.size() + " steps): ");
-        cutResult.append(detectResult);
-        ioFunc.writeTofile(cutResult.toString(), projectPath + fileDir + "/cluster.txt");
+
 
         writeToModularityCSV(fileDir);
         re.end();
@@ -359,11 +357,16 @@ public class RCommunityDetection {
 
     public String findBestClusterResult(Graph g, ArrayList<Integer> cutSequence, String filePath) {
         StringBuffer result = new StringBuffer();
-         bestCut = findMaxNumberLocation(modularityArray);
+         bestCut = findMaxNumberLocation(modularityArray)+1;
         for (int i = 0; i < bestCut; i++) {
             result.append(cutSequence.get(i) + ",");
         }
-        ioFunc.writeTofile("\nbestcut:" + (bestCut + 1) + "\n", projectPath + filePath + "/cluster.txt");
+        result.append("\nbestcut:" + (bestCut) + "\n");
+
+
+        result.append("\n\nCut Sequence(" + cutSequence.size() + " steps): ");
+
+        ioFunc.rewriteFile(result.toString(), projectPath + filePath + "/cutSequence.txt");
 
         return result.toString();
     }

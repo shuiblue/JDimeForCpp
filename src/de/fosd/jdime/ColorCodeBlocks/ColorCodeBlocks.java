@@ -34,6 +34,7 @@ public class ColorCodeBlocks {
     static String pathListScript = "/pathscript.txt";
     static String addPathFunctionStmtTxt = "/addPathFunc.txt";
     static HashMap<Integer, String> nodeMap;
+    static ArrayList<String> colorList = new ArrayList<>();
 
     public void createSourceFileHtml() throws IOException {
         File dir = new File(testDirPath);
@@ -133,56 +134,67 @@ public class ColorCodeBlocks {
             expectNodeMap.put(nodeCluster[i].split(" ")[0], Integer.valueOf(nodeCluster[i].split(" ")[1]));
         }
 
-//        List<String> colorList = bgcolor.getColorList();
-        List<String> colorList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         sb.append("#expectIMG{\n\tposition:fixed;\n\ttop:100px;\n\tright:50px;\n" +
                 "}\n#resultIMG{\n\tposition:fixed;\n\ttop:500px;\n\tright:50px;\n}");
         sb.append("#svgContainer{\n\tposition:absolute;\n}\n");
         for (int i = 0; i < clusters.size(); i++) {
             if (clusters.get(i).length() > 0) {
-                Random rand = new Random();
-                float r = (float) (rand.nextFloat() / 2f + 0.5);
-                float g = (float) (rand.nextFloat() / 2f + 0.5);
-                float b = (float) (rand.nextFloat() / 2f + 0.5);
-                Color randomColor = new Color(r, g, b);
-                String current_color = Integer.toHexString(randomColor.getRGB() & 0x00ffffff);
+                String current_color;
+                if (colorList.size() > i - 1) {
+                    current_color = colorList.get(i - 1);
+                } else {
+                    current_color = randomColor();
 
+                    colorList.add(current_color);
+                }
                 String[] elementList = clusters.get(i).trim().split(",");
                 for (int j = 0; j < elementList.length; j++) {
 
 
                     String nodeIdStr = elementList[j].trim().replace("[", "").replace("]", "");
-                    if (nodeIdStr.length() > 0){
-                        System.out.println(nodeIdStr + "~~~~~~~~~");
-                    int nodeID = Integer.parseInt(nodeIdStr);
-                    String nodeLabel = nodeMap.get(nodeID);
-
-                    sb.append("#" + nodeLabel + "{\n\tbackground-color:" + current_color + ";\n");
-
-                    String sidebarColor = "";
-                    if (expectNodeMap.get(nodeLabel) != null) {
-                        sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
-                    }
-                    if (!upstreamNode.equals("")) {
-                        if (upstreamNode.contains(nodeLabel)) {
-                            sidebarColor = "Gray";
+                    if (nodeIdStr.length() > 0) {
+                        int nodeID = Integer.parseInt(nodeIdStr);
+                        String nodeLabel = nodeMap.get(nodeID);
+                        sb.append("#" + nodeLabel + "{\n\tbackground-color:" + current_color + ";\n");
+                        String sidebarColor = "";
+                        if (expectNodeMap.get(nodeLabel) != null) {
+                            sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
                         }
-                    } else if (!forkAddedNode.equals("")) {
-                        if (!forkAddedNode.contains(nodeLabel)) {
-                            sidebarColor = "Gray";
+                        if (!upstreamNode.equals("")) {
+                            if (upstreamNode.contains(nodeLabel)) {
+                                sidebarColor = "Gray";
+                            }
+                        } else if (!forkAddedNode.equals("")) {
+                            if (!forkAddedNode.contains(nodeLabel)) {
+                                sidebarColor = "Gray";
+                            }
                         }
+                        sb.append("\tborder-style: solid;\n\tborder-width: thin thick;\n\tborder-color: white white white "
+                                + sidebarColor + ";\n" + "}\n");
+
                     }
-
-                    sb.append("\tborder-style: solid;\n\tborder-width: thin thick;\n\tborder-color: white white white "
-                            + sidebarColor + ";\n" + "}\n");
-
                 }
-            }
             }
         }
 
         iofunc.rewriteFile(sb.toString(), testDirPath + "/" + numberOfClusters + CSS);
+    }
+
+    private String randomColor() {
+        Random rand = new Random();
+        float r = (float) (rand.nextFloat() / 2f + 0.5);
+        float g = (float) (rand.nextFloat() / 2f + 0.5);
+        float b = (float) (rand.nextFloat() / 2f + 0.5);
+        Color randomColor = new Color(r, g, b);
+        String color = Integer.toHexString(randomColor.getRGB() & 0x00ffffff);
+
+        if (!colorList.contains(color)) {
+            return color;
+        } else {
+            return randomColor();
+        }
+
     }
 
     public void createEdges(boolean printPath) {
@@ -247,7 +259,7 @@ public class ColorCodeBlocks {
         String html = "/" + numberOfClusters + ".html";
         try {
             //write code.html
-            iofunc.rewriteFile(iofunc.readResult(htmlfilePath + headtxt), testDirPath + html);
+            iofunc.rewriteFile(iofunc.readResult(htmlfilePath + headtxt).replace("style.css", numberOfClusters + ".css"), testDirPath + html);
             iofunc.writeTofile(iofunc.readResult(testDirPath + pathListScript), testDirPath + html);
             iofunc.writeTofile(iofunc.readResult(testDirPath + sourceCodeTxt), testDirPath + html);
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + endtxt), testDirPath + html);
@@ -261,25 +273,6 @@ public class ColorCodeBlocks {
 
 
     }
-
-
-//    public void visualizeGraph(boolean printEdges, String filePath, int bestCut) {
-//        testDir = "/" + filePath + "/";
-//        testDirPath = dir + dgPath + testDir;
-//
-//        try {
-//            createSourceFileHtml();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        parseEachUsefulClusteringResult(bestCut);
-//
-//        ArrayList<String> clusters = getClusters();
-//        writeClusterToCSS(clusters);
-//        createEdges(printEdges);
-//        combineFiles();
-//    }
 
     /**
      * This function parse the cluster.txt file, to analyze each clustering result after removing a bridge
@@ -295,26 +288,50 @@ public class ColorCodeBlocks {
             e.printStackTrace();
         }
         String[] resultArray = clusterResultListString.split("--------Graph-------");
-        for (int i = 0; i <= bestcut; i++) {
+        for (int i = 0; i < resultArray.length; i++) {
             String result = resultArray[i];
             if (result.contains("communities")) {
-                int numberOfCommunities = getCommunityNumer(result.split("communities")[0]);
-                result = result.split("communities")[1];
-                String[] clusterArray = result.split("\n");
+                int[] clusterInfo = getClusterInfo(result.split("communities")[0]);
+                int numberOfCommunities = clusterInfo[0];
+                int numOfCutEdge = clusterInfo[1];
+                if (numOfCutEdge <= bestcut) {
+                    result = result.split("communities")[1];
+                    String[] clusterArray = result.split("\n");
 
-                ArrayList<String> clusters = new ArrayList(Arrays.asList(clusterArray));
-                System.out.println(numberOfCommunities + "~~~");
-                writeClusterToCSS(clusters, numberOfCommunities);
-                createEdges(printEdges);
-                combineFiles(numberOfCommunities);
+                    ArrayList<String> clusters = new ArrayList(Arrays.asList(clusterArray));
+                    writeClusterToCSS(clusters, numberOfCommunities);
+                    createEdges(printEdges);
+                    combineFiles(numberOfCommunities);
+                } else {
+                    break;
+                }
             }
         }
     }
 
-    private int getCommunityNumer(String s) {
+    /**
+     * This function get the number of communities and how many edges have been removed in current cluster result
+     *
+     * @param s cluster information
+     * @return int array [0] --> num of communities
+     * array[1] --> number of cut edges
+     */
+
+    private int[] getClusterInfo(String s) {
+        int[] clusterInfo = new int[2];
+
+        //get community number
         int start = s.indexOf("---");
         String number = s.substring(start + 3);
-        return Integer.valueOf(number.trim());
+        clusterInfo[0] = Integer.valueOf(number.trim());
+
+        // get number of cut edge
+        int i = s.indexOf("**");
+        int j = s.indexOf("edges");
+        String numOfCutEdges = s.substring(i + 3, j);
+        clusterInfo[1] = Integer.valueOf(numOfCutEdges.trim());
+
+        return clusterInfo;
     }
 
 
