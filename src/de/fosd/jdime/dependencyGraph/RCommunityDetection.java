@@ -5,6 +5,7 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class RCommunityDetection {
@@ -89,7 +90,10 @@ public class RCommunityDetection {
 
         while (checkedEdges.values().contains(false)) {
             //count betweenness for current graph
+            System.out.println("loop start:"+LocalDateTime.now().getMinute());
             calculateEachGraph(re, fileDir, cutNum);
+
+            System.out.println("loop end:"+LocalDateTime.now().getMinute());
             cutNum++;
         }
 

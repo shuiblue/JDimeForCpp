@@ -21,7 +21,6 @@ public class ColorCodeBlocks {
     static String dir = "/Users/shuruiz/Work/JDIME/NWayJDime/jdime";
     static String dgPath = "/testcpp/dependencyGraph";
     static String testDirPath;
-    static final String TXT = ".txt";
     static final String CSS = ".css";
     static String clusterstxt = "/maxModularityCluster.txt";
     static String expectTxt = "/expectCluster.txt";
@@ -33,9 +32,12 @@ public class ColorCodeBlocks {
     static String edgeListTxt = "/edgeList.txt";
     static String pathListScript = "/pathscript.txt";
     static String addPathFunctionStmtTxt = "/addPathFunc.txt";
+    static String jsFileHeader = "/jshead.txt";
     static HashMap<Integer, String> nodeMap;
     static ArrayList<String> colorList = new ArrayList<>();
-
+    static StringBuffer jsContent = new StringBuffer();
+    static String forkAddedNode = "";
+    boolean writeToggle = true;
     public void createSourceFileHtml() throws IOException {
         File dir = new File(testDirPath);
         String[] names = dir.list();
@@ -43,13 +45,16 @@ public class ColorCodeBlocks {
         for (String fileName : names) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
                 System.out.print(fileName + "\n");
-
-                sb.append("<h1>" + fileName + "</h1>\n<pre  class=\"prettyprint linenums\">");
-
-                //Rewrite the file name for html purpose
+                String newFileName;
                 String suffix = fileName.split("\\.")[1];
-                String newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
+                newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
 
+                sb.append("<h1 id=\"" + newFileName + "title\" >" + fileName + "</h1>\n<pre id=\"" + newFileName + "\"  class=\"prettyprint linenums\">");
+
+                if (writeToggle&&!forkAddedNode.contains(newFileName)) {
+                   jsContent.append( "$(\"#" + newFileName + "\").toggle()\n");
+                   jsContent.append( "$(\"#" + newFileName + "title\").toggle()\n");
+                }
 
                 BufferedReader result_br = null;
                 int lineNumber = 1;
@@ -59,10 +64,14 @@ public class ColorCodeBlocks {
                     String line;
                     while ((line = result_br.readLine()) != null) {
 
-                        sb.append("<front id=\"" + newFileName + "-" + lineNumber + "\">");
+                        String lable = newFileName + "-" + lineNumber;
+                        sb.append("<front id=\"" +lable  + "\">");
                         sb.append(line.replace("<", "&lt;").replace(">", "&gt;"));
                         sb.append("</front>\n");
-                        System.out.print("");
+                        if (writeToggle&&forkAddedNode.contains(newFileName)&&!forkAddedNode.contains(lable)) {
+                            jsContent.append( "$(\"#" + lable + "\").toggle()\n");
+                        }
+
                         lineNumber++;
                     }
                 } catch (FileNotFoundException e) {
@@ -77,6 +86,7 @@ public class ColorCodeBlocks {
             }
 
         }
+        writeToggle=false;
         iofunc.rewriteFile(sb.toString(), testDirPath + sourceCodeTxt);
         System.out.print("");
     }
@@ -111,16 +121,7 @@ public class ColorCodeBlocks {
                 e.printStackTrace();
             }
         }
-        //get fork added node
-        String forkAddedNode = "";
-        File forkAddedFile = new File(testDirPath + forkAddedNodeTxt);
-        if (forkAddedFile.exists()) {
-            try {
-                forkAddedNode = iofunc.readResult(testDirPath + forkAddedNodeTxt);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
 
         String expectNode = "";
         try {
@@ -256,6 +257,7 @@ public class ColorCodeBlocks {
         String endtxt = "end.txt";
         String jsPretxt = "svgDrawPre.txt";
         String jsPath = "/svgDraw.js";
+        String togglejsPath = "/toggle.js";
         String html = "/" + numberOfClusters + ".html";
         try {
             //write code.html
@@ -267,6 +269,12 @@ public class ColorCodeBlocks {
             //write js file
             iofunc.rewriteFile(iofunc.readResult(htmlfilePath + jsPretxt), testDirPath + jsPath);
             iofunc.writeTofile(iofunc.readResult(testDirPath + addPathFunctionStmtTxt), testDirPath + jsPath);
+           //toggle js
+            iofunc.rewriteFile(iofunc.readResult(htmlfilePath + jsFileHeader), testDirPath + togglejsPath);
+            iofunc.writeTofile(jsContent.toString()+"\n});", testDirPath + togglejsPath);
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -282,14 +290,30 @@ public class ColorCodeBlocks {
         testDirPath = dir + dgPath + testDir;
         String clusterFilePath = testDirPath + "/cluster.txt";
         String clusterResultListString = "";
-        try {
-            clusterResultListString = iofunc.readResult(clusterFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        //get fork added node
+
+        File forkAddedFile = new File(testDirPath + forkAddedNodeTxt);
+        if (forkAddedFile.exists()) {
+            try {
+                forkAddedNode = iofunc.readResult(testDirPath + forkAddedNodeTxt);
+                clusterResultListString=iofunc.readResult(clusterFilePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+
         String[] resultArray = clusterResultListString.split("--------Graph-------");
         for (int i = 0; i < resultArray.length; i++) {
             String result = resultArray[i];
+
+            try {
+                createSourceFileHtml();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             if (result.contains("communities")) {
                 int[] clusterInfo = getClusterInfo(result.split("communities")[0]);
                 int numberOfCommunities = clusterInfo[0];

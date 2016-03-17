@@ -623,11 +623,13 @@ public class DependencyGraph {
         Elements elements = block.getChildElements();
         for (int i = 0; i < elements.size(); i++) {
             Element decl = elements.get(i).getFirstChildElement("name", NAMESPACEURI);
-            String declLineNumber = decl.getAttribute(0).getValue();
-            Symbol declSymbol = new Symbol(decl.getValue(), "", declLineNumber, "decl", fileName, scope);
-            newsymbol.add(declSymbol);
-            storeIntoNodeList(fileName + "-" + declLineNumber);
-            linkChildToParent(fileName + "-" + declLineNumber, fileName + "-" + enum_lineNumber);
+            if (decl != null) {
+                String declLineNumber = decl.getAttribute(0).getValue();
+                Symbol declSymbol = new Symbol(decl.getValue(), "", declLineNumber, "decl", fileName, scope);
+                newsymbol.add(declSymbol);
+                storeIntoNodeList(fileName + "-" + declLineNumber);
+                linkChildToParent(fileName + "-" + declLineNumber, fileName + "-" + enum_lineNumber);
+            }
         }
         storeSymbols(newsymbol);
 

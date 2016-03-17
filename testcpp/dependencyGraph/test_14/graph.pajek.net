@@ -1,31 +1,31 @@
-*Vertices 10
-4 "testCPP-9"
-8 "testCPP-17"
-2 "testCPP-4"
-3 "testCPP-7"
-9 "testCPP-19"
-10 "testCPP-20"
-1 "testCPP-2"
-6 "testCPP-13"
-7 "testCPP-14"
-5 "testCPP-11"
+*Vertices 16
+15 "testCPP-17"
+16 "testCPP-18"
+9 "testCPP-9"
+8 "testCPP-8"
+5 "testCPP-5"
+4 "testCPP-4"
+7 "testCPP-7"
+6 "testCPP-6"
+1 "testCPP-1"
+10 "testCPP-10"
+3 "testCPP-3"
+2 "testCPP-2"
+13 "testCPP-13"
+14 "testCPP-14"
+11 "testCPP-11"
+12 "testCPP-12"
 *arcs 
-5 4 2
-8 4 2
-9 8 1
-10 8 1
-9 8 1
-5 3 1
-6 3 2
-9 3 2
-4 3 1
-10 9 1
-4 1 2
-10 1 2
-7 1 2
-7 6 1
-8 5 1
-6 5 1
-6 5 1
-7 5 1
-8 5 1
+5 1 1
+2 1 1
+7 1 1
+4 1 1
+11 1 1
+13 1 1
+14 1 1
+9 1 1
+10 1 1
+12 1 1
+3 1 1
+8 1 1
+6 1 1
