@@ -69,9 +69,6 @@ public class IOFunctionSet {
     public void writeToPajekFile(HashMap<String, HashSet<String[]>> dependencyGraph, HashMap<String, Integer> nodeList, String filepath) {
         String pajek = "/graph.pajek.net";
         rewriteFile("*Vertices " + nodeList.size() + "\n", filepath + pajek);
-//        rewriteFile("", filepath + "/node.csv");
-
-
         // Getting a Set of Key-value pairs
         Set nodeSet = nodeList.entrySet();
         // Obtaining an iterator for the entry set
@@ -83,14 +80,12 @@ public class IOFunctionSet {
             String nodeId = (String) node.getKey();
             writeTofile(nodeList.get(nodeId) + " \"" + nodeId + "\"\n", filepath + pajek);
 
-//            writeTofile(nodeList.get(nodeId) + ",\"" + nodeId + "\"\n", filepath + "node.csv");
         }
 
         // Getting a Set of Key-value pairs
         Set entrySet = dependencyGraph.entrySet();
 
         writeTofile("*arcs \n", filepath + pajek);
-//        writeTofile("*Arcslist \n", filepath + pajek);
 
         // Obtaining an iterator for the entry set
         Iterator it_edge = entrySet.iterator();
@@ -104,25 +99,7 @@ public class IOFunctionSet {
 
             String to = nodeList.get(currentNode).toString();
             HashSet<String[]> dependencyNodes = (HashSet<String[]>) node.getValue();
-//            writeTofile(from+" ", filepath + pajek);
             for (String[] dn : dependencyNodes) {
-//                writeTofile( nodeList.get(dn[0])+" ", filepath + pajek);
-
-                String weight = "";
-//                if (dn[1].contains("belongToStruct") || dn[1].contains("belongToClass") ||
-//                        dn[1].contains("belongToNamespace") || dn[1].contains("belongToUnion")
-//                        || dn[1].contains("Def-Use") || dn[1].contains("func_decl")) {
-//                    weight = 1 + "";
-//                } else if (dn[1].contains("Call")) {
-//                    weight = 1 + "";
-////                } else if (dn[1].contains("child")) {
-////                    weight = 1 + "";
-////                } else if (dn[1].contains("Control-Flow")) {
-////                    weight = 1 + "";
-//                } else {
-//                    weight = 1 + "";
-//                }
-
 
                 writeTofile(nodeList.get(dn[0]) + " " + to + " " + dn[2] + "\n", filepath + pajek);
 
@@ -224,16 +201,16 @@ public class IOFunctionSet {
                         if (lastCon.equals(tmp[0])) {
                             StringBuffer x = new StringBuffer();
                             for (int i = 1; i < tmp.length - 1; i++) {
-                                x.append( tmp[i] + "\n");
+                                x.append(tmp[i] + "\n");
                             }
-                            newResult.append( x);
+                            newResult.append(x);
                             continue;
                         } else {
                             conditionStack.pop();
                             conditionStack.push(tmp[0]);
-                            newResult.append( "#endif");
+                            newResult.append("#endif");
                             if (uniqueIFDEF == true) {
-                                newResult.append( "(IFDEF)");
+                                newResult.append("(IFDEF)");
                                 uniqueIFDEF = false;
                             }
 
@@ -260,7 +237,7 @@ public class IOFunctionSet {
                         newResult.append("#endif\n");
 
                     }
-                    newResult.append( e);
+                    newResult.append(e);
                     if (e.contains("###")) {
                         newResult.append("+-+-+-\n");
                     }
@@ -270,7 +247,7 @@ public class IOFunctionSet {
         }
 
         //----------
-        newResult.append( "#endif");
+        newResult.append("#endif");
         if (uniqueIFDEF == true) {
             newResult.append("(IFDEF)");
         }
@@ -281,7 +258,7 @@ public class IOFunctionSet {
     }
 
 
-    public  String clearBlank(String s) {
+    public String clearBlank(String s) {
         return s.replace("\n", "").replace(" ", "").replace("\t", "");
     }
 
@@ -292,7 +269,7 @@ public class IOFunctionSet {
      * @return content of the file
      * @throws IOException e
      */
-    public  String readResult(String filePath) throws IOException {
+    public String readResult(String filePath) throws IOException {
         BufferedReader result_br = new BufferedReader(new FileReader(filePath));
         String result = "";
         try {
@@ -333,23 +310,7 @@ public class IOFunctionSet {
     public static String getXmlFile(String inputFile) {
         // create dir for store xml files
 
-        String outXmlFile;
-        if (!inputFile.contains(".h.")) {
-//        if (!inputFile.contains(".h.")&&!inputFile.contains(".pde.")) {
-            outXmlFile = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("/Users/shuruiz/Work","")+ ".xml";
-
-            String[] paths = inputFile.replace("testcpp", "").split("/");
-            StringBuffer dir_suffix = new StringBuffer();
-            for (int i = 1; i < paths.length - 1; i++) {
-                dir_suffix.append("/" + paths[i]);
-            }
-
-            if (!new File(outXmlFile).exists()) {
-                new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix.toString().replace("/Users/shuruiz/Work/","")).mkdirs();
-            }
-        } else {
-            outXmlFile = inputFile + ".xml";
-        }
+        String outXmlFile = inputFile + ".xml";
         //run srcML
         if (new File(inputFile).isFile()) {
             try {
@@ -405,28 +366,42 @@ public class IOFunctionSet {
     }
 
 
-    public static void preprocessFile(String inputFile){
+    public static String preprocessFile(String inputFile) {
         IOFunctionSet io = new IOFunctionSet();
         StringBuffer sb = new StringBuffer();
-            try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+        String newInputFilePath;
+        newInputFilePath = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("/Users/shuruiz/Work", "");
 
-                String line;
-                while ((line = br.readLine()) != null) {
-                    if(line.contains("typedef")&&!line.contains("struct")){
-                        line = line.replace("typedef","");
-                    }
-                    if(line.trim().endsWith("\\")){
-                        line=line.replace("\\","");
-                    }
+        String[] paths = inputFile.replace("testcpp", "").split("/");
+        StringBuffer dir_suffix = new StringBuffer();
+        for (int i = 1; i < paths.length - 1; i++) {
+            dir_suffix.append("/" + paths[i]);
+        }
 
-                    sb.append(line.replace("inline _attribute_((always_inline))","")+"\n");
+        if (!new File(inputFile).exists()) {
+            new File("/Users/shuruiz/Work/tmpXMLFile/" + dir_suffix.toString().replace("/Users/shuruiz/Work/", "")).mkdirs();
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.contains("typedef") && !line.contains("struct")) {
+                    line = line.replace("typedef", "");
+                }
+                if (line.trim().endsWith("\\")) {
+                    line = line.replace("\\", "");
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                sb.append(line.replace("inline _attribute_((always_inline))", "") + "\n");
             }
-           io.rewriteFile(sb.toString(),inputFile);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        io.rewriteFile(sb.toString(), newInputFilePath);
+
+        return newInputFilePath;
     }
 
 }

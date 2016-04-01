@@ -89,10 +89,10 @@ public class DependencyGraph {
                 }
 
                 //preprocess file in case the misinterpretation of srcml
-                ioFunctionSet.preprocessFile(filePath);
+               String newFilePath= ioFunctionSet.preprocessFile(filePath);
 
                 // get xml file using src2srcml
-                String xmlFilePath = ioFunctionSet.getXmlFile(filePath);
+                String xmlFilePath = ioFunctionSet.getXmlFile(newFilePath);
                 System.out.print(fileName + "\n");
 
                 //parse dependency graph in each file

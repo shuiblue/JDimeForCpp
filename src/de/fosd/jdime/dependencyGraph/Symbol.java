@@ -1,8 +1,5 @@
 package de.fosd.jdime.dependencyGraph;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 /**
  * Created by shuruiz on 12/10/15.
  */
