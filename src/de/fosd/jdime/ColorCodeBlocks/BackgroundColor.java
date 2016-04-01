@@ -7,10 +7,18 @@ import java.util.List;
  * Created by shuruiz on 2/19/16.
  */
 public class BackgroundColor {
-    List<String> colorList = new ArrayList<>();
+    static List<String> colorList = new ArrayList<>();
 
-    public List<String> getColorList() {
 
+    public static List<String> getExpectColorList(){
+        colorList=new ArrayList<>();
+        colorList.add("Red");
+        colorList.add("Yellow");
+        colorList.add("RoyalBlue");
+        colorList.add("Cyan");
+        colorList.add("DeepPink");
+        colorList.add("Orange");
+        colorList.add("Olive");
         colorList.add("Pink");
         colorList.add("LightGreen");
         colorList.add("MediumPurple ");
@@ -29,23 +37,7 @@ public class BackgroundColor {
         colorList.add("PeachPuff");
         colorList.add("Salmon");
         colorList.add("Sienna");
-        colorList.add("DeepPink");
-        colorList.add("Orange");
-        colorList.add("DarkGoldenRod");
-        colorList.add("Olive");
-        colorList.add("Yellow");
-        colorList.add("RoyalBlue");
-        colorList.add("Cyan");
-        return colorList;
-    }
 
-
-    public List<String> getExpectColorList(){
-        colorList=new ArrayList<>();
-        colorList.add("Red");
-        colorList.add("Yellow");
-        colorList.add("RoyalBlue");
-        colorList.add("Cyan");
         return colorList;
     }
 }

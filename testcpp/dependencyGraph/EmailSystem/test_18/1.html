@@ -3,24 +3,64 @@
 	<title></title>
 <link rel="stylesheet" type="text/css" href="1.css">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<table style="float: right;width:300px;height:250px;">
+    <tr>
+        <td>
+            <span id="result">Result</span>
+            <hr/>
+            <span id="expect">Expected</span>
+        </td>
+        <td bgcolor="#bddfa5"></td>
+        <td  bgcolor="#c9f3f8"></td>
+    </tr>
+    <tr>
+        <td bgcolor="red">
+           red
+        </td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td bgcolor="yellow">
+           yellow
+        </td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+</table>
+
 </head>
 <body ginger_software_stylesheet="true" ginger_software_doc="true">
-	  <IMG id= "expectIMG"SRC="expect.png" style="float: right;width:300px;height:250px;" />
-        <IMG id= "resultIMG"SRC="result.png" style="float: right;width:300px;height:250px;" />
+	
     <style>
-        .prettyprint ol.linenums > li { list-style-type: decimal; }
+        ol.linenums{
+    counter-reset:linenumber;
+}
+ol.linenums li{
+    list-style-type:none;
+    counter-increment:linenumber;
+}
+ol.linenums li:before{
+    content: counter(linenumber);
+    float:left;
+    margin-left:-4em;
+    text-align:right;
+    width:3em;
+}
     </style>   
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
-<button>toggle the div</button>
+
+
+
+
+<button>Hide code from upstream</button>
 <script src="mm.js"></script>
 
 <h1>Client.c</h1>
-<pre id="ClientC" class="prettyprint linenums"><front id="ClientC-1">#include &lt;stdlib.h&gt;</front>
+<pre id="ClientC" class="prettyprint linenums "><front id="ClientC-1">#include &lt;stdlib.h&gt;</front>
 <front id="ClientC-2">#include &lt;stdio.h&gt;</front>
 <front id="ClientC-3">#include &lt;string.h&gt;</front>
 <front id="ClientC-4">#include "Client.h"</front>

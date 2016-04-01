@@ -1,16 +1,25 @@
+td {
+    width: 50px;
+    border:1px solid black;
+    text-align:center;
+}
 
-#expectIMG{
+hr {
+     -moz-transform: rotate(45deg);  
+       -o-transform: rotate(45deg);  
+  -webkit-transform: rotate(45deg);  
+      -ms-transform: rotate(45deg);  
+          transform: rotate(45deg);  
+             width:150%;
+    margin-left:-15px;
+}
+
+table{
 	position:fixed;
 	top:100px;
 	right:50px;
 }
-#resultIMG{
-	position:fixed;
-	top:500px;
-	right:50px;
-}#svgContainer{
-	position:absolute;
-}
+
 #ClientC-8{
 	background-color:c39d85;
 	border-style: solid;

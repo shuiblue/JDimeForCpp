@@ -15,7 +15,6 @@ public class RCommunityDetection {
     HashSet<String> upstreamEdge;
     HashMap<Integer, Boolean> checkedEdges;
     Graph originGraph;
-    String projectPath = "/Users/shuruiz/Work/JDIME/NWayJDime/jdime/testcpp/dependencyGraph/";
 
     static String upstreamNodeTxt = "/upstreamNode.txt";
     static String forkAddedNodeTxt = "/forkAddedNode.txt";
@@ -24,7 +23,6 @@ public class RCommunityDetection {
     IOFunctionSet ioFunc = new IOFunctionSet();
     HashMap<Integer, Double> modularityMap;
     static int bestCut;
-
 
 
     public int detectingCommunitiesWithIgraph(String fileDir) {
@@ -37,8 +35,15 @@ public class RCommunityDetection {
         //start import R library
         System.out.println("Creating Rengine (with arguments)");
         //If not started with --vanilla, funny things may happen in this R shell.
+
         String[] Rargs = {"--vanilla"};
         Rengine re = new Rengine(Rargs, false, null);
+//        Rengine re = Rengine.getMainEngine();
+//        if (re == null) {
+//            re = new Rengine(new String[]{"--vanilla"}, false, null);
+//        }
+
+
         System.out.println("Rengine created, waiting for R");
         // the engine creates R is a new thread, so we should wait until it's
         // ready
@@ -48,7 +53,7 @@ public class RCommunityDetection {
         }
         //start to input R cmd
         re.eval("library(igraph)");
-        re.eval("oldg<-read.graph(\"" + projectPath + fileDir + "/graph.pajek.net\", format=\"pajek\")\n");
+        re.eval("oldg<-read.graph(\"" + fileDir + "/graph.pajek.net\", format=\"pajek\")\n");
         // removes the loop and/or multiple edges from a graph.
         re.eval("g<-simplify(oldg)");
         re.eval("g<-as.undirected(g)");
@@ -63,13 +68,13 @@ public class RCommunityDetection {
 
         printOriginNodeList(originGraph.getNodelist(), fileDir);
 
-        File upstreamNodeFile = new File(projectPath + fileDir + upstreamNodeTxt);
+        File upstreamNodeFile = new File(fileDir + upstreamNodeTxt);
         if (upstreamNodeFile.exists()) {
             //get nodes/edges belong to upstream
             storeNodes(fileDir, upstreamNodeTxt);
         }
         //get fork added node
-        File forkAddedFile = new File(projectPath + fileDir + forkAddedNodeTxt);
+        File forkAddedFile = new File(fileDir + forkAddedNodeTxt);
         if (forkAddedFile.exists()) {
             storeNodes(fileDir, forkAddedNodeTxt);
         }
@@ -77,7 +82,7 @@ public class RCommunityDetection {
 
         upstreamEdge = findUpstreamEdges(originGraph, fileDir);
         //print old edge
-        ioFunc.rewriteFile("", projectPath + fileDir + "/cluster.txt");
+        ioFunc.rewriteFile("", fileDir + "/clusterTMP.txt");
 
 
         //initialize removedEdge Map, all the edges have not been removed, so the values are all false
@@ -90,10 +95,10 @@ public class RCommunityDetection {
 
         while (checkedEdges.values().contains(false)) {
             //count betweenness for current graph
-            System.out.println("loop start:"+LocalDateTime.now().getMinute());
+            System.out.println("loop start:" + LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute()+":"+LocalDateTime.now().getSecond());
             calculateEachGraph(re, fileDir, cutNum);
 
-            System.out.println("loop end:"+LocalDateTime.now().getMinute());
+            System.out.println("loop end:"+ LocalDateTime.now().getHour()+":" + LocalDateTime.now().getMinute()+":"+LocalDateTime.now().getSecond());
             cutNum++;
         }
 
@@ -102,17 +107,16 @@ public class RCommunityDetection {
         String detectResult = findBestClusterResult(originGraph, cutSequence, fileDir);
 
 
-
         writeToModularityCSV(fileDir);
         re.end();
         System.out.println("\nBye.");
-        return  bestCut;
+        return bestCut;
     }
 
     private void storeNodes(String fileDir, String filePath) {
 
 
-        String path = projectPath + fileDir + filePath;
+        String path = fileDir + filePath;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -139,7 +143,7 @@ public class RCommunityDetection {
             Map.Entry node = (Map.Entry) it.next();
             csv.append(node.getKey() + "," + node.getValue() + "\n");
         }
-        ioFunc.rewriteFile(csv.toString(), projectPath + fileDir + "/modularity.csv");
+        ioFunc.rewriteFile(csv.toString(), fileDir + "/modularity.csv");
 
     }
 
@@ -151,7 +155,7 @@ public class RCommunityDetection {
             Map.Entry node = (Map.Entry) it_e.next();
             nodeList_print.append(node.getKey() + "---------" + node.getValue() + "\n");
         }
-        ioFunc.rewriteFile(nodeList_print.toString(), projectPath + fileDir + "/NodeList.txt");
+        ioFunc.rewriteFile(nodeList_print.toString(), fileDir + "/NodeList.txt");
     }
 
 
@@ -184,7 +188,7 @@ public class RCommunityDetection {
                 }
             }
         }
-        ioFunc.rewriteFile(print.toString(), projectPath + filePath + "/upstreamEdge.txt");
+        ioFunc.rewriteFile(print.toString(), filePath + "/upstreamEdge.txt");
 //      System.out.print("upstreaEDGE"+upstreamEdge.size());
         return upstreamEdge;
 
@@ -270,7 +274,7 @@ public class RCommunityDetection {
             membership_print.append("]\n");
         }
         //print old edge
-        ioFunc.writeTofile(membership_print.toString(), projectPath + fileDir + "/cluster.txt");
+        ioFunc.writeTofile(membership_print.toString(), fileDir + "/clusterTMP.txt");
 
 
     }
@@ -342,7 +346,7 @@ public class RCommunityDetection {
     public void printGraph(Graph g, String filePath, int cutNum) {
         StringBuffer print = new StringBuffer();
         print.append("\n--------Graph-------\n");
-        print.append("** "+ cutNum +"edges has been removed **\n");
+        print.append("** " + cutNum + "edges has been removed **\n");
 
 
         String removableEdge = g.getRemovableEdgeLable();
@@ -355,13 +359,13 @@ public class RCommunityDetection {
 
         double modularity = g.getModularity();
         print.append("\nModularity: " + modularity);
-        ioFunc.writeTofile(print.toString(), projectPath + filePath + "/cluster.txt");
+        ioFunc.writeTofile(print.toString(), filePath + "/clusterTMP.txt");
 
     }
 
     public String findBestClusterResult(Graph g, ArrayList<Integer> cutSequence, String filePath) {
         StringBuffer result = new StringBuffer();
-         bestCut = findMaxNumberLocation(modularityArray)+1;
+        bestCut = findMaxNumberLocation(modularityArray) + 1;
         for (int i = 0; i < bestCut; i++) {
             result.append(cutSequence.get(i) + ",");
         }
@@ -370,7 +374,7 @@ public class RCommunityDetection {
 
         result.append("\n\nCut Sequence(" + cutSequence.size() + " steps): ");
 
-        ioFunc.rewriteFile(result.toString(), projectPath + filePath + "/cutSequence.txt");
+        ioFunc.rewriteFile(result.toString(), filePath + "/cutSequence.txt");
 
         return result.toString();
     }
