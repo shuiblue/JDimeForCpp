@@ -199,8 +199,7 @@ public class ColorCodeBlocks {
                             if(print) {
                                 sidebarColor = "Black";
                             }else{
-//                            sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
-                            sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) );
+                            sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
                             }
                             System.out.println(nodeLabel);
 

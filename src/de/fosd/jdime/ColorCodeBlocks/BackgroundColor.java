@@ -18,7 +18,7 @@ public class BackgroundColor {
         colorList.add("Cyan");
         colorList.add("DeepPink");
         colorList.add("Orange");
-        colorList.add("Olive");
+        colorList.add("Green");
         colorList.add("Pink");
         colorList.add("LightGreen");
         colorList.add("MediumPurple ");

@@ -146,7 +146,7 @@ public class testRComDetect {
 //    }
 
     // independent features
-//@Ignore
+    @Ignore
     @Test
     public void test22() {
         String repo = "test22";
@@ -157,22 +157,30 @@ public class testRComDetect {
         macroList.add("HAS_BUZZER");
         macroList.add("PREVENT_DANGEROUS_EXTRUDE");
         commitList = new ArrayList<>();
-        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList);
+        int numOfIteration = 1;
+        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfIteration);
     }
 
 
     // nested last 2
-    @Ignore
+//    @Ignore
     @Test
     public void test23() {
-        String repo = "test23";
+        String repo = "test22";
         ArrayList<String> macroList = new ArrayList<>();
         macroList.add("FILAMENT_SENSOR");
         macroList.add("MESH_BED_LEVELING");
         macroList.add("ADVANCE");
-        macroList.add("HAS_Z_MIN_PROBE");
-        macroList.add("HAS_SERVO_ENDSTOPS");
+        macroList.add("PREVENT_DANGEROUS_EXTRUDE");
+        macroList.add("PREVENT_LENGTHY_EXTRUDE");
+//        macroList.add("A");
+//        macroList.add("B");
+//        macroList.add("C");
+//        macroList.add("D");
+//        macroList.add("E");
+
         commitList = new ArrayList<>();
-        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList);
+        int numOfIteration = 2;
+        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfIteration);
     }
 }

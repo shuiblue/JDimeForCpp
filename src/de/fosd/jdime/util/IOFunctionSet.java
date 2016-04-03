@@ -404,4 +404,11 @@ public class IOFunctionSet {
         return newInputFilePath;
     }
 
+    public String changeFileName(String fileName) {
+        String suffix = fileName.split("\\.")[1];
+
+
+        return fileName.replace("." + suffix, suffix.toUpperCase());
+    }
+
 }

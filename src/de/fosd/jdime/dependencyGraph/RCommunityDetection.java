@@ -25,7 +25,7 @@ public class RCommunityDetection {
     static int bestCut;
 
 
-    public int detectingCommunitiesWithIgraph(String fileDir) {
+    public int detectingCommunitiesWithIgraph(String fileDir, int numOfIteration) {
         modularityArray = new ArrayList<>();
         checkedEdges = new HashMap<>();
         cutSequence = new ArrayList<>();
@@ -92,14 +92,23 @@ public class RCommunityDetection {
 
         int cutNum = 1;
 
+        int currentIteration = 1;
 
         while (checkedEdges.values().contains(false)) {
-            //count betweenness for current graph
-            System.out.println("loop start:" + LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute()+":"+LocalDateTime.now().getSecond());
-            calculateEachGraph(re, fileDir, cutNum);
+//            if (currentIteration <= numOfIteration) {
+            if(pre_numberOfCommunities<10260){
+                //count betweenness for current graph
+                System.out.println("loop start:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
+                calculateEachGraph(re, fileDir, cutNum);
 
-            System.out.println("loop end:"+ LocalDateTime.now().getHour()+":" + LocalDateTime.now().getMinute()+":"+LocalDateTime.now().getSecond());
-            cutNum++;
+                System.out.println("loop end:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
+                cutNum++;
+                currentIteration++;
+            } else {
+                break;
+            }
+
+
         }
 
 
@@ -108,6 +117,7 @@ public class RCommunityDetection {
 
 
         writeToModularityCSV(fileDir);
+
         re.end();
         System.out.println("\nBye.");
         return bestCut;
@@ -199,6 +209,7 @@ public class RCommunityDetection {
     int current_numberOfCommunities = 0;
 
     public void calculateEachGraph(Rengine re, String filePath, int cutNum) {
+
         //get graph's edgeList and nodeList
         REXP edgelist_R = re.eval("get.edgelist(g)", true);
         REXP nodelist_R = re.eval("get.vertex.attribute(g)$id", true);
@@ -238,7 +249,6 @@ public class RCommunityDetection {
         //remove edge
         re.eval("g<-g-edge(\"" + removableEdgeID + "\")");
         pre_numberOfCommunities = current_numberOfCommunities;
-
 
     }
 

@@ -89,7 +89,7 @@ public class DependencyGraph {
                 }
 
                 //preprocess file in case the misinterpretation of srcml
-               String newFilePath= ioFunctionSet.preprocessFile(filePath);
+                String newFilePath = ioFunctionSet.preprocessFile(filePath);
 
                 // get xml file using src2srcml
                 String xmlFilePath = ioFunctionSet.getXmlFile(newFilePath);
@@ -150,40 +150,41 @@ public class DependencyGraph {
         int preLineNum = -1;
         int diff = 1;
         for (String s : forkaddedNodeList) {
-            String[] node = s.trim().split("-");
-            String fileName = node[0];
+            if (!s.trim().equals("")) {
+                String[] node = s.trim().split("-");
+                String fileName = node[0];
 
-            int lineNum = Integer.valueOf(node[1].trim());
+                int lineNum = Integer.valueOf(node[1].trim());
 
-            if (fileName.equals(currentFile)) {
-                if (lineNum == preLineNum + diff) {
-                    if (dependencyGraph.get(s.trim()) != null && dependencyGraph.get(fileName + "-" + preLineNum) != null) {
-                        System.out.println(s.trim() + "," + fileName + "-" + preLineNum + "," + "<neighbor>");
-                        addEdgesToFile(s.trim(), fileName + "-" + preLineNum, "<neighbor>");
-                        diff=1;
+                if (fileName.equals(currentFile)) {
+                    if (lineNum == preLineNum + diff) {
+                        if (dependencyGraph.get(s.trim()) != null && dependencyGraph.get(fileName + "-" + preLineNum) != null) {
+                            System.out.println(s.trim() + "," + fileName + "-" + preLineNum + "," + "<neighbor>");
+                            addEdgesToFile(s.trim(), fileName + "-" + preLineNum, "<neighbor>");
+                            diff = 1;
+                            preLineNum = lineNum;
+                        } else if (dependencyGraph.get(fileName + "-" + preLineNum) == null && dependencyGraph.get(s.trim()) != null) {
+                            preLineNum = lineNum;
+                        } else if (dependencyGraph.get(fileName + "-" + preLineNum) != null && dependencyGraph.get(s.trim()) == null) {
+                            diff++;
+                        } else {
+                            preLineNum = lineNum + 1;
+                        }
+                    } else {
                         preLineNum = lineNum;
-                    } else if (dependencyGraph.get(fileName + "-" + preLineNum) == null && dependencyGraph.get(s.trim()) != null) {
-                        preLineNum = lineNum;
-                    } else if (dependencyGraph.get(fileName + "-" + preLineNum) != null && dependencyGraph.get(s.trim()) == null) {
-                        diff++;
-                    }else {
-                        preLineNum = lineNum+1;
+                        diff = 1;
                     }
-                }else {
+                } else {
+                    diff = 1;
                     preLineNum = lineNum;
-                    diff=1;
                 }
-            }else {
-                diff=1;
-                preLineNum = lineNum;
-            }
-            if (preLineNum == -1) {
-                preLineNum = lineNum;
-            }
+                if (preLineNum == -1) {
+                    preLineNum = lineNum;
+                }
 
-            currentFile = fileName;
+                currentFile = fileName;
+            }
         }
-
 
     }
 
@@ -962,7 +963,7 @@ public class DependencyGraph {
                         }
                     } else {
                         var = name_Elements.get(i).getValue();
-                        if (!var.equals("void")) {
+                        if (!var.equals("void") && !var.equals("float")) {
                             if (stmtLineNumber.equals("")) {
                                 stmtLineNumber = name_Elements.get(i).getAttribute(0).getValue();
                             }
@@ -1027,7 +1028,10 @@ public class DependencyGraph {
 
             if (exprBlockEle != null) {
                 if (parentLocation.equals("") && !((Element) exprNode.getParent()).getLocalName().equals("unit")) {
-                    if (((Element) exprBlockEle.getParent()).getAttributeCount() > 0) {
+
+                    if (exprBlockEle.getAttributeCount() > 0) {
+                        parentLocation = fileName + "-" + exprBlockEle.getAttribute(0).getValue();
+                    } else if (((Element) exprBlockEle.getParent()).getAttributeCount() > 0) {
                         parentLocation = fileName + "-" + ((Element) exprBlockEle.getParent()).getAttribute(0).getValue();
                     } else {
                         parentLocation = fileName + "-" + ((Element) exprBlockEle.getParent().getParent()).getAttribute(0).getValue();

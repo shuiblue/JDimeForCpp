@@ -99,48 +99,62 @@ public class IdentifyChangedCode {
         iof.rewriteFile("", analysisDir + forkAddedNodeTxt);
         iof.rewriteFile("", analysisDir + expectTxt);
         ArrayList<String> macroStack = new ArrayList<>();
-
+        StringBuffer forkAddedNodeString = new StringBuffer();
+        StringBuffer expectedClusterString = new StringBuffer();
 
         for (String fileName : names) {
 //            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
-                int lineNum = 1;
+
                 int startLine = 0;
                 boolean withinIfdef = false;
                 String newFileName = "";
 
-                try {
-                    BufferedReader result = new BufferedReader(new FileReader(sourcecodeDir + fileName));
-                    String line;
-                    String macro = "";
-                    int currentCommunityNum=-1;
-                    while ((line = result.readLine()) != null) {
+                for (String targetMacro : macroList) {
+                    System.out.println(targetMacro + "!");
+                    try {
+                        BufferedReader result = new BufferedReader(new FileReader(sourcecodeDir + fileName));
+                        String line;
+                        int lineNum = 1;
+                        String macro = "";
+                        int currentCommunityNum = -1;
+                        while ((line = result.readLine()) != null) {
+                            System.out.println(fileName + "-" + lineNum);
+                            if (line.contains("#if") || line.contains("#elif")) {
+                                if (line.contains("ENABLED(")) {
 
-                        if (line.contains("#if")) {
-                            if (line.contains("#if ENABLED")) {
-//                        if (line.contains("#ifdef")) {
-                                // this condition only consider the isolated ifdefs, ignores the nested one.
-//                                if (macroStack.size() == 0) {
 
-                                int leftPare = line.indexOf("(");
-                                int rightPare = line.indexOf(")");
-                                macro = line.substring(leftPare + 1, rightPare).trim();
-//                                System.out.println(macro);
-                                if (macroList.contains(macro)) {
+                                        if (macroStack.size() > 0 && line.contains("elif")) {
+                                            macroStack.remove(macroStack.size() - 1);
+                                            if (macroStack.size() == 0) {
+                                                withinIfdef = false;
+                                            }
+                                        }
+                                    String[] conditions = line.split("\\|\\|");
+                                    for (String c : conditions) {
+                                        int leftPare = c.indexOf("(");
+                                        int rightPare = c.indexOf(")");
+                                        macro = c.substring(leftPare + 1, rightPare).trim();
+                                        if (targetMacro.equals(macro)){
+                                            break;
+                                        }
+                                    }
+
+                                } else if (line.contains("#ifdef")) {
+                                    macro = line.trim().substring(7);
+                                }
+
+
+                                if (targetMacro.equals(macro)) {
                                     withinIfdef = true;
                                     startLine = lineNum + 1;
                                     macroStack.add(macro);
-                                    currentCommunityNum=macroList.indexOf(macro) + 1;
+                                    currentCommunityNum = macroList.indexOf(macro) + 1;
                                     //Rewrite the file name for html purpose
-                                    String suffix = fileName.split("\\.")[1];
-                                    newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
-                                }else if(macroStack.size()>0){
-                                    macroStack.add(line);
+                                    newFileName = iof.changeFileName(fileName);
                                 }
-//                                }
-
-
-                            } else if (line.contains("#if HAS_BUZZER")) {
+                            /* for test 22
+                            else if (line.contains("#if HAS_BUZZER")) {
                                 withinIfdef = true;
                                 startLine = lineNum + 1;
                                 macro = "HAS_BUZZER";
@@ -150,47 +164,48 @@ public class IdentifyChangedCode {
                                 String suffix = fileName.split("\\.")[1];
                                 newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
 
-                            } else if(macroStack.size()>0){
-                                macroStack.add(line);
                             }
+                            */
+                                else if (macroStack.size() > 0) {
+                                    macroStack.add(line);
+                                }
 
-                        } else if (macroStack.size() > 0 && (line.contains("#endif"))) {
-                            macroStack.remove(macroStack.size() - 1);
-                            if (macroStack.size() == 0) {
-                                withinIfdef = false;
-                            }
-                        }else if( line.contains("#elif")){
-                            boolean useful = false;
-                            for(String s: macroList){
-                                if(line.contains(s)){
-
-                                    useful=true;
-                                    break;
+                            } else if (macroStack.size() > 0 && (line.contains("#endif"))) {
+                                macroStack.remove(macroStack.size() - 1);
+                                if (macroStack.size() == 0) {
+                                    withinIfdef = false;
+                                }
+                            } else if (macroStack.size() == 1 && (line.contains("#else"))) {
+                                macroStack.remove(macroStack.size() - 1);
+                                if (macroStack.size() == 0) {
+                                    withinIfdef = false;
                                 }
                             }
-                            if(useful) {
-                                System.out.print("alert: "+fileName+"-"+lineNum);
+
+                            if (startLine <= lineNum && withinIfdef) {
+                                String nodeId = newFileName + "-" + lineNum + " ";
+
+                                if (!forkAddedNodeString.toString().contains(nodeId)) {
+                                    forkAddedNodeString.append(nodeId + "\n");
+                                }
+                                expectedClusterString.append(nodeId + currentCommunityNum + "\n");
+
+
                             }
-                        }else if (macroStack.size() ==1 && (line.contains("#else"))) {
-                            macroStack.remove(macroStack.size() - 1);
-                            if (macroStack.size() == 0) {
-                                withinIfdef = false;
-                            }
+                            lineNum++;
                         }
-
-                        if (startLine <= lineNum && withinIfdef) {
-                            iof.writeTofile(newFileName + "-" + lineNum + " \n", analysisDir + forkAddedNodeTxt);
-                            iof.writeTofile(newFileName + "-" + lineNum + " " +currentCommunityNum  + "\n", analysisDir + expectTxt);
-
-
-                        }
-                        lineNum++;
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+
                 }
             }
         }
         System.out.print("");
+        iof.writeTofile(forkAddedNodeString.toString(), analysisDir + forkAddedNodeTxt);
+        iof.writeTofile(expectedClusterString.toString(), analysisDir + expectTxt);
+
     }
+
+
 }
