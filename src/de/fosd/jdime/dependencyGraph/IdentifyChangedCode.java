@@ -71,7 +71,7 @@ public class IdentifyChangedCode {
             String cleanCode = code.trim();
             if (!cleanCode.equals("")) {
                 if (!cleanCode.startsWith("//") && !comments) {
-                    System.out.println(newFileName + "-" + lineNum);
+//                    System.out.println(newFileName + "-" + lineNum);
                     iof.writeTofile(newFileName + "-" + lineNum + " \n", analysisDir + forkAddedNodeTxt);
                     if (!cleanCode.startsWith("#")) {
                         iof.writeTofile(newFileName + "-" + lineNum + " 1\n", analysisDir + expectTxt);
@@ -111,7 +111,7 @@ public class IdentifyChangedCode {
                 String newFileName = "";
 
                 for (String targetMacro : macroList) {
-                    System.out.println(targetMacro + "!");
+//                    System.out.println(targetMacro + "!");
                     try {
                         BufferedReader result = new BufferedReader(new FileReader(sourcecodeDir + fileName));
                         String line;
@@ -119,24 +119,27 @@ public class IdentifyChangedCode {
                         String macro = "";
                         int currentCommunityNum = -1;
                         while ((line = result.readLine()) != null) {
-                            System.out.println(fileName + "-" + lineNum);
+//                            System.out.println(fileName + "-" + lineNum);
                             if (line.contains("#if") || line.contains("#elif")) {
-                                if (line.contains("ENABLED(")) {
+                                if (line.contains("if ENABLED(")) {
 
 
-                                        if (macroStack.size() > 0 && line.contains("elif")) {
-                                            macroStack.remove(macroStack.size() - 1);
-                                            if (macroStack.size() == 0) {
-                                                withinIfdef = false;
-                                            }
+                                    if (macroStack.size() > 0 && line.contains("elif")) {
+                                        macroStack.remove(macroStack.size() - 1);
+                                        if (macroStack.size() == 0) {
+                                            withinIfdef = false;
                                         }
+                                    }
                                     String[] conditions = line.split("\\|\\|");
                                     for (String c : conditions) {
-                                        int leftPare = c.indexOf("(");
-                                        int rightPare = c.indexOf(")");
-                                        macro = c.substring(leftPare + 1, rightPare).trim();
-                                        if (targetMacro.equals(macro)){
-                                            break;
+                                        if (c.contains("ENABLED(")) {
+
+                                            int leftPare = c.indexOf("(");
+                                            int rightPare = c.indexOf(")");
+                                            macro = c.substring(leftPare + 1, rightPare).trim();
+                                            if (targetMacro.equals(macro)) {
+                                                break;
+                                            }
                                         }
                                     }
 
@@ -187,8 +190,14 @@ public class IdentifyChangedCode {
 
                                 if (!forkAddedNodeString.toString().contains(nodeId)) {
                                     forkAddedNodeString.append(nodeId + "\n");
+                                    expectedClusterString.append(nodeId + currentCommunityNum + "\n");
+                                } else {
+
+                                    String tmp = expectedClusterString.toString();
+                                    expectedClusterString = new StringBuffer();
+                                    expectedClusterString.append(tmp.replace(nodeId, nodeId  + currentCommunityNum + "/"));
+
                                 }
-                                expectedClusterString.append(nodeId + currentCommunityNum + "\n");
 
 
                             }
@@ -201,7 +210,6 @@ public class IdentifyChangedCode {
                 }
             }
         }
-        System.out.print("");
         iof.writeTofile(forkAddedNodeString.toString(), analysisDir + forkAddedNodeTxt);
         iof.writeTofile(expectedClusterString.toString(), analysisDir + expectTxt);
 

@@ -180,7 +180,7 @@ public class testRComDetect {
 //        macroList.add("E");
 
         commitList = new ArrayList<>();
-        int numOfIteration = 2;
-        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfIteration);
+        int numOfcut = 3;
+        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfcut);
     }
 }

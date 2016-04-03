@@ -25,7 +25,7 @@ public class RCommunityDetection {
     static int bestCut;
 
 
-    public int detectingCommunitiesWithIgraph(String fileDir, int numOfIteration) {
+    public int detectingCommunitiesWithIgraph(String fileDir, int numOfcut) {
         modularityArray = new ArrayList<>();
         checkedEdges = new HashMap<>();
         cutSequence = new ArrayList<>();
@@ -96,7 +96,7 @@ public class RCommunityDetection {
 
         while (checkedEdges.values().contains(false)) {
 //            if (currentIteration <= numOfIteration) {
-            if(pre_numberOfCommunities<10260){
+            if(listOfNumberOfCommunities.size()<=numOfcut){
                 //count betweenness for current graph
                 System.out.println("loop start:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
                 calculateEachGraph(re, fileDir, cutNum);
@@ -207,6 +207,7 @@ public class RCommunityDetection {
 
     int pre_numberOfCommunities = 0;
     int current_numberOfCommunities = 0;
+    ArrayList<Integer> listOfNumberOfCommunities = new ArrayList<>();
 
     public void calculateEachGraph(Rengine re, String filePath, int cutNum) {
 
@@ -229,6 +230,10 @@ public class RCommunityDetection {
 
         HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath);
         current_numberOfCommunities = clusters.keySet().size();
+        if(!listOfNumberOfCommunities.contains(current_numberOfCommunities)) {
+            listOfNumberOfCommunities.add(current_numberOfCommunities);
+
+        }
         REXP modularity_R = re.eval("modularity(originalg,cl)");
 
         double modularity = modularity_R.asDoubleArray()[0];

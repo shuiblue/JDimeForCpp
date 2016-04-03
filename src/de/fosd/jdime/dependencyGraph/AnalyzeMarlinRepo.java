@@ -27,18 +27,18 @@ public class AnalyzeMarlinRepo {
         for (String fileName : names) {
             if (fileName.startsWith("Marlin")) {
                 filePath += "/" + fileName;
-                IdentifyChangedCode icc = new IdentifyChangedCode();
-                if (SHA) {
-                    icc.identifyChangedCodeBySHA(filePath, commitList);
-                } else if (IFDEF) {
-                    icc.identifyIfdefs(filePath, macroList);
-                }
+//                IdentifyChangedCode icc = new IdentifyChangedCode();
+//                if (SHA) {
+//                    icc.identifyChangedCodeBySHA(filePath, commitList);
+//                } else if (IFDEF) {
+//                    icc.identifyIfdefs(filePath, macroList);
+//                }
 //                dependencyGraph.getDependencyGraph(filePath);
-                RCommunityDetection rCommunityDetection = new RCommunityDetection();
-//                filePath += "/";
+//                RCommunityDetection rCommunityDetection = new RCommunityDetection();
+                filePath += "/";
 //                int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir, numOfIteration);
-//                ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
-//                colorCodeBlocks.parseEachUsefulClusteringResult(filePath, 3, macroList.size());
+                ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
+                colorCodeBlocks.parseEachUsefulClusteringResult(filePath, 1, macroList.size());
                 break;
             }
         }

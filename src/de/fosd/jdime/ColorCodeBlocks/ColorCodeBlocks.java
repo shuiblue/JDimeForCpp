@@ -126,10 +126,12 @@ public class ColorCodeBlocks {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        HashMap<String, Integer> expectNodeMap = new HashMap<>();
+//        HashMap<String, Integer> expectNodeMap = new HashMap<>();
+        HashMap<String, String> expectNodeMap = new HashMap<>();
         String[] nodeCluster = expectNode.split("\n");
         for (int i = 0; i < nodeCluster.length; i++) {
-            expectNodeMap.put(nodeCluster[i].split(" ")[0], Integer.valueOf(nodeCluster[i].split(" ")[1]));
+            expectNodeMap.put(nodeCluster[i].split(" ")[0], nodeCluster[i].split(" ")[1]);
+//            expectNodeMap.put(nodeCluster[i].split(" ")[0], Integer.valueOf(nodeCluster[i].split(" ")[1]));
         }
 
         StringBuilder sb = new StringBuilder();
@@ -185,6 +187,10 @@ public class ColorCodeBlocks {
                             }
                         }
 
+                        if (nodeLabel.equals("Marlin_mainCPP-6765")) {
+                            System.out.print("");
+                        }
+
                         /*for printing purpose*/
                         if (print) {
                             sb.append("#" + nodeLabel + "{\n\tbackground-color:;\n");
@@ -192,14 +198,30 @@ public class ColorCodeBlocks {
                             sb.append("#" + nodeLabel + "{\n\tbackground-color:#" + current_color + ";\n");
                         }
 
-                        String sidebarColor = "";
+                        String leftSidebarColor = "";
+                        String rightSidebarColor = "";
                         if (expectNodeMap.get(nodeLabel) != null) {
 
                             /*for print*/
-                            if(print) {
-                                sidebarColor = "Black";
-                            }else{
-                            sidebarColor = bgcolor.getExpectColorList().get(expectNodeMap.get(nodeLabel) - 1);
+                            if (print) {
+                                leftSidebarColor = "Black";
+                            } else {
+
+                                String expectCommunity = expectNodeMap.get(nodeLabel);
+                                if (expectCommunity.contains("/")) {
+                                    String[] each = expectCommunity.split("/");
+//                                    for(String e:each){
+                                        leftSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[0]) - 1);
+                                        rightSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[1]) - 1);
+//                                    }
+
+
+                                } else {
+                                    leftSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(expectCommunity) - 1);
+                                    rightSidebarColor = "White";
+
+                                }
+
                             }
                             System.out.println(nodeLabel);
 
@@ -207,10 +229,10 @@ public class ColorCodeBlocks {
                         if (!upstreamNode.equals("")) {
                             if (upstreamNode.contains(nodeLabel)) {
                                    /*for print */
-                                if(print) {
-                                    sidebarColor = "White";
-                                }else{
-                                    sidebarColor = "Gray";
+                                if (print) {
+                                    leftSidebarColor = "White";
+                                } else {
+                                    leftSidebarColor = "Gray";
                                 }
 
                             }
@@ -218,21 +240,25 @@ public class ColorCodeBlocks {
                             if (!forkAddedNode.contains(nodeLabel)) {
 //                                sidebarColor = "Gray";
                                    /*for print */
-                                if(print) {
-                                    sidebarColor = "White";
-                                }else{
-                                    sidebarColor = "Gray";
+                                if (print) {
+                                    leftSidebarColor = "White";
+                                } else {
+                                    leftSidebarColor = "Gray";
                                 }
 
                             }
                         }
-                        sb.append("\tborder-style: solid;\n\tborder-width: thin thick;\n\tborder-color: white white white "
-                                + sidebarColor + ";\n" + "}\n");
+                        sb.append("\tborder-style: solid;\n\tborder-width:thick thin thick thin;\n\tborder-color: white "+rightSidebarColor+" White "+
+                                leftSidebarColor + ";\n" + "}\n");
 
 
                         //write to file for calculate color table
                         if (expectNode.contains(nodeLabel + " ")) {
-                            colorTable.append(nodeLabel + "," + current_color + "," + sidebarColor + "\n");
+                            colorTable.append(nodeLabel + "," + current_color + "," + leftSidebarColor + "\n");
+                            if(!rightSidebarColor.equals("White")){
+
+                                colorTable.append(nodeLabel + "," + current_color + "," + rightSidebarColor + "\n");
+                            }
 
                         }
                     }
