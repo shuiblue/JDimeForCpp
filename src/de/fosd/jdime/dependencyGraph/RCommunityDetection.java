@@ -225,13 +225,15 @@ public class RCommunityDetection {
         Graph currentGraph;
 
         HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath, nodeIdList);
-        calculateDistanceBetweenCommunities(clusters);
 
         current_numberOfCommunities = clusters.keySet().size();
         if (!listOfNumberOfCommunities.contains(current_numberOfCommunities)) {
             listOfNumberOfCommunities.add(current_numberOfCommunities);
 
         }
+        calculateDistanceBetweenCommunities(clusters, filePath,current_numberOfCommunities);
+
+
         REXP modularity_R = re.eval("modularity(originalg,cl)");
 
         double modularity = modularity_R.asDoubleArray()[0];
@@ -255,10 +257,61 @@ public class RCommunityDetection {
 
     }
 
-    private void calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters) {
+    private void calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters, String filePath,int numOfClusters) {
+        ArrayList<ArrayList<Integer>> combination = getPairsOfCommunities(clusters);
+        HashMap<ArrayList<Integer>, Integer> distanceMatrix = new HashMap<>();
+        StringBuffer sb = new StringBuffer();
+        for (ArrayList<Integer> pair : combination) {
+            ArrayList<Integer> cluster_1 = clusters.get(pair.get(0));
+            ArrayList<Integer> cluster_2 = clusters.get(pair.get(1));
+            double shortestPath = 999999;
+            for (Integer c1 : cluster_1) {
+                for (Integer c2 : cluster_2) {
+                    if (shortestPath > shortestPathMatrix[c1][c2]) {
+                        shortestPath = shortestPathMatrix[c1][c2];
+                    }
+                }
+            }
+            distanceMatrix.put(pair, (int) shortestPath);
+        }
+
+        //print cluster
+        sb.append("clusters:\n");
+        for (Integer index : clusters.keySet()) {
+            ArrayList<Integer> nodelist = clusters.get(index);
+            sb.append("  ["+index+"]: \n");
+            for (Integer i : nodelist) {
+                sb.append(i + ",");
+            }
+            sb.append("\n");
+        }
+
+        //print distance
+        sb.append("distance:\n");
+        for (ArrayList<Integer> s : distanceMatrix.keySet()) {
+
+            for (Integer i : s) {
+                sb.append(i + ",");
+            }
+            sb.append(distanceMatrix.get(s) + "\n");
+        }
 
 
-        ArrayList<HashSet<Integer>> combination = new ArrayList<>();
+        ioFunc.rewriteFile(sb.toString(), filePath + "/"+numOfClusters+"_distanceBetweenCommunityies.txt");
+        System.out.print("");
+
+    }
+
+    /**
+     * This function get pairs of communities, in order to calculate distance
+     *
+     * @param clusters
+     * @return
+     */
+    private ArrayList<ArrayList<Integer>> getPairsOfCommunities(HashMap<Integer, ArrayList<Integer>> clusters) {
+
+        ArrayList<HashSet<Integer>> combination_Set = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> combination_List = new ArrayList<>();
         Set<Integer> keyset = clusters.keySet();
         for (Integer s : keyset) {
             for (Integer c : keyset) {
@@ -266,17 +319,18 @@ public class RCommunityDetection {
                 if (!s.equals(c)) {
                     pair.add(s);
                     pair.add(c);
-                   if(!combination.contains(pair)) {
-                       combination.add(pair);
-                   }
+                    if (!combination_Set.contains(pair)) {
+                        ArrayList<Integer> pairList = new ArrayList<>();
+                        pairList.addAll(pair);
+                        combination_Set.add(pair);
+                        combination_List.add(pairList);
+                    }
                 }
 
             }
         }
-        System.out.print("");
-
+        return combination_List;
     }
-
 
     private HashMap<Integer, ArrayList<Integer>> getCurrentClusters(double[] membership, String fileDir, ArrayList<Integer> nodeIdList) {
         HashMap<Integer, ArrayList<Integer>> clusters = new HashMap<>();
