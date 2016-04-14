@@ -255,24 +255,27 @@ public class RCommunityDetection {
 
     }
 
-//    private Set<Set<Integer>> calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters) {
-//
-//
-//        Set<Set<Integer>> combination = new HashSet<Set<Integer>>();
-//        combination.add(new HashSet());
-//
-//        for (Integer s : clusters.keySet()) {
-//            Set<Set<Integer>> newconmbination = new HashSet<Set<Integer>>();
-//            for (Set<Integer> c : combination) {
-//                HashSet<Integer> newC = new HashSet<Integer>(c);
-//                newC.add(s);
-//newconmbination.add(newC);
-//
-//            }
-//            }
-//        }
+    private void calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters) {
 
 
+        ArrayList<HashSet<Integer>> combination = new ArrayList<>();
+        Set<Integer> keyset = clusters.keySet();
+        for (Integer s : keyset) {
+            for (Integer c : keyset) {
+                HashSet<Integer> pair = new HashSet<>();
+                if (!s.equals(c)) {
+                    pair.add(s);
+                    pair.add(c);
+                   if(!combination.contains(pair)) {
+                       combination.add(pair);
+                   }
+                }
+
+            }
+        }
+        System.out.print("");
+
+    }
 
 
     private HashMap<Integer, ArrayList<Integer>> getCurrentClusters(double[] membership, String fileDir, ArrayList<Integer> nodeIdList) {
