@@ -14,8 +14,11 @@ public class IdentifyChangedCode {
     String sourcecodeDir, analysisDir;
     ArrayList<String> commitSHAList;
     IOFunctionSet iof = new IOFunctionSet();
+    StringBuffer forkAddedNodeString = new StringBuffer();
+    StringBuffer expectedClusterString = new StringBuffer();
 
-    public void identifyChangedCodeBySHA(String testDir, ArrayList<String> commitSHAList) {
+    public void identifyChangedCodeBySHA(String projectPath, String repo, ArrayList<String> commitSHAList) {
+        String testDir = projectPath + repo;
         this.commitSHAList = commitSHAList;
         sourcecodeDir = testDir + "/Marlin/";
         analysisDir = testDir + "/DPGraph/";
@@ -50,7 +53,7 @@ public class IdentifyChangedCode {
 
     private void checkSHA(String line, String fileName) {
         String suffix = fileName.split("\\.")[1];
-        String newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
+        String newFileName = fileName.replace("." + suffix, suffix.toUpperCase()).replace("-", "~");;
 
         String blameLines[] = line.split(" ");
         String sha = blameLines[0];
@@ -89,45 +92,32 @@ public class IdentifyChangedCode {
 
     }
 
-    public void identifyIfdefs(String testDir, ArrayList<String> macroList) {
-        sourcecodeDir = testDir + "/Marlin/";
-        analysisDir = testDir + "/DPGraph/";
-        File dir1 = new File(sourcecodeDir);
-        File dir2 = new File(analysisDir);
-        dir2.mkdir();
-        String[] names = dir1.list();
-        iof.rewriteFile("", analysisDir + forkAddedNodeTxt);
-        iof.rewriteFile("", analysisDir + expectTxt);
+    public void identifyChangedCodeFromFile(String fileName, ArrayList<String> macroList) {
         ArrayList<String> macroStack = new ArrayList<>();
-        StringBuffer forkAddedNodeString = new StringBuffer();
-        StringBuffer expectedClusterString = new StringBuffer();
 
-        for (String fileName : names) {
-//            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
+        int startLine = 0;
+        boolean withinIfdef = false;
+        String newFileName = "";
+        File currentFile = new File(sourcecodeDir + "/" + fileName);
+        if (currentFile.isFile()) {
             if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
 
-                int startLine = 0;
-                boolean withinIfdef = false;
-                String newFileName = "";
-
                 for (String targetMacro : macroList) {
-//                    System.out.println(targetMacro + "!");
                     try {
-                        BufferedReader result = new BufferedReader(new FileReader(sourcecodeDir + fileName));
+                        BufferedReader result = new BufferedReader(new FileReader(sourcecodeDir + "/" + fileName));
                         String line;
                         int lineNum = 1;
                         String macro = "";
                         int currentCommunityNum = -1;
                         while ((line = result.readLine()) != null) {
-//                            System.out.println(fileName + "-" + lineNum);
+                            System.out.println(fileName + "-" + lineNum);
                             if (line.contains("#if") || line.contains("#elif")) {
-                                if (line.contains("if ENABLED(")) {
-
-
+                                if (line.contains("if ENABLED(") || line.contains("elif")) {
                                     if (macroStack.size() > 0 && line.contains("elif")) {
                                         macroStack.remove(macroStack.size() - 1);
                                         if (macroStack.size() == 0) {
                                             withinIfdef = false;
+                                            macro = "";
                                         }
                                     }
                                     String[] conditions = line.split("\\|\\|");
@@ -146,30 +136,16 @@ public class IdentifyChangedCode {
                                 } else if (line.contains("#ifdef")) {
                                     macro = line.trim().substring(7);
                                 }
-
-
                                 if (targetMacro.equals(macro)) {
                                     withinIfdef = true;
                                     startLine = lineNum + 1;
                                     macroStack.add(macro);
+
+
                                     currentCommunityNum = macroList.indexOf(macro) + 1;
                                     //Rewrite the file name for html purpose
                                     newFileName = iof.changeFileName(fileName);
-                                }
-                            /* for test 22
-                            else if (line.contains("#if HAS_BUZZER")) {
-                                withinIfdef = true;
-                                startLine = lineNum + 1;
-                                macro = "HAS_BUZZER";
-                                currentCommunityNum=macroList.indexOf(macro) + 1;
-                                macroStack.add(macro);
-                                //Rewrite the file name for html purpose
-                                String suffix = fileName.split("\\.")[1];
-                                newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
-
-                            }
-                            */
-                                else if (macroStack.size() > 0) {
+                                } else if (macroStack.size() > 0) {
                                     macroStack.add(line);
                                 }
 
@@ -177,15 +153,17 @@ public class IdentifyChangedCode {
                                 macroStack.remove(macroStack.size() - 1);
                                 if (macroStack.size() == 0) {
                                     withinIfdef = false;
+                                    macro = "";
                                 }
                             } else if (macroStack.size() == 1 && (line.contains("#else"))) {
                                 macroStack.remove(macroStack.size() - 1);
                                 if (macroStack.size() == 0) {
                                     withinIfdef = false;
+                                    macro = "";
                                 }
                             }
 
-                            if (startLine <= lineNum && withinIfdef) {
+                            if (startLine <= lineNum && withinIfdef && currentCommunityNum != -1) {
                                 String nodeId = newFileName + "-" + lineNum + " ";
 
                                 if (!forkAddedNodeString.toString().contains(nodeId)) {
@@ -195,7 +173,7 @@ public class IdentifyChangedCode {
 
                                     String tmp = expectedClusterString.toString();
                                     expectedClusterString = new StringBuffer();
-                                    expectedClusterString.append(tmp.replace(nodeId, nodeId  + currentCommunityNum + "/"));
+                                    expectedClusterString.append(tmp.replace(nodeId, nodeId + currentCommunityNum + "/"));
 
                                 }
 
@@ -209,6 +187,27 @@ public class IdentifyChangedCode {
 
                 }
             }
+        } else if (currentFile.isDirectory()) {
+            String[] subNames = currentFile.list();
+            for (String f : subNames) {
+                identifyChangedCodeFromFile(fileName+"/"+f, macroList);
+            }
+        }
+    }
+
+    public void identifyIfdefs(String projectPath, String repo, int dirNum, ArrayList<String> macroList) {
+        String testDir = projectPath + repo;
+        sourcecodeDir = testDir + "/" + repo;
+        analysisDir = testDir + "/DPGraph/" + dirNum + "/";
+        File dir1 = new File(sourcecodeDir);
+        File dir2 = new File(analysisDir);
+        dir2.mkdirs();
+        String[] names = dir1.list();
+        iof.rewriteFile("", analysisDir + forkAddedNodeTxt);
+        iof.rewriteFile("", analysisDir + expectTxt);
+
+        for (String fileName : names) {
+            identifyChangedCodeFromFile(fileName, macroList);
         }
         iof.writeTofile(forkAddedNodeString.toString(), analysisDir + forkAddedNodeTxt);
         iof.writeTofile(expectedClusterString.toString(), analysisDir + expectTxt);

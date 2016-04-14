@@ -25,7 +25,7 @@ public class AnalyzeCDResult {
         }
 
 
-        String filePath = analysisDir + "/" + numberOfCommunities + "_colorTable.txt";
+        String filePath = analysisDir + numberOfCommunities + "_colorTable.txt";
         try {
             String cssString = ioFunctionSet.readResult(filePath);
             String[] colorArray = cssString.split("\n");
@@ -105,6 +105,6 @@ public class AnalyzeCDResult {
             sb.append("</tr>");
         }
         sb.append("</table>");
-        ioFunctionSet.rewriteFile(sb.toString(), analysisDir + "/" + numberOfCommunities + ".color");
+        ioFunctionSet.rewriteFile(sb.toString(), analysisDir+ numberOfCommunities + ".color");
     }
 }

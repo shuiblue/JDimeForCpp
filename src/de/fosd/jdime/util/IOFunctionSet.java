@@ -4,8 +4,11 @@ import nu.xom.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -67,8 +70,8 @@ public class IOFunctionSet {
 
 
     public void writeToPajekFile(HashMap<String, HashSet<String[]>> dependencyGraph, HashMap<String, Integer> nodeList, String filepath) {
-        String pajek = "/graph.pajek.net";
-        rewriteFile("*Vertices " + nodeList.size() + "\n", filepath + pajek);
+//        String pajek = "/graph.pajek.net";
+        rewriteFile("*Vertices " + nodeList.size() + "\n", filepath);
         // Getting a Set of Key-value pairs
         Set nodeSet = nodeList.entrySet();
         // Obtaining an iterator for the entry set
@@ -78,14 +81,14 @@ public class IOFunctionSet {
             Map.Entry node = (Map.Entry) it_node.next();
 
             String nodeId = (String) node.getKey();
-            writeTofile(nodeList.get(nodeId) + " \"" + nodeId + "\"\n", filepath + pajek);
+            writeTofile(nodeList.get(nodeId) + " \"" + nodeId + "\"\n", filepath );
 
         }
 
         // Getting a Set of Key-value pairs
         Set entrySet = dependencyGraph.entrySet();
 
-        writeTofile("*arcs \n", filepath + pajek);
+        writeTofile("*arcs \n", filepath );
 
         // Obtaining an iterator for the entry set
         Iterator it_edge = entrySet.iterator();
@@ -101,7 +104,7 @@ public class IOFunctionSet {
             HashSet<String[]> dependencyNodes = (HashSet<String[]>) node.getValue();
             for (String[] dn : dependencyNodes) {
 
-                writeTofile(nodeList.get(dn[0]) + " " + to + " " + dn[2] + "\n", filepath + pajek);
+                writeTofile(nodeList.get(dn[0]) + " " + to + " " + dn[2] + "\n", filepath);
 
             }
 
@@ -290,18 +293,6 @@ public class IOFunctionSet {
         return result;
     }
 
-
-    public static String readCertainLine(int lineNum, String filePath) {
-
-        String content = "";
-        try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
-            content = lines.skip(lineNum - 1).findFirst().get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return content;
-    }
-
     /**
      * @param inputFile file that need to be parsed by srcML
      * @return path of XML file
@@ -366,13 +357,25 @@ public class IOFunctionSet {
     }
 
 
-    public static String preprocessFile(String inputFile) {
+    public static void preprocessFile(String inputFile) {
         IOFunctionSet io = new IOFunctionSet();
         StringBuffer sb = new StringBuffer();
-        String newInputFilePath;
-        newInputFilePath = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("/Users/shuruiz/Work", "");
+//        String newInputFilePath;
+//        newInputFilePath = "/Users/shuruiz/Work/tmpXMLFile" + inputFile.replace("/Users/shuruiz/Work", "");
+        if (!new File(inputFile).exists()) {
+            Path pathToFile = Paths.get(inputFile);
+            try {
+                Files.createDirectories(pathToFile.getParent());
 
-        String[] paths = inputFile.replace("testcpp", "").split("/");
+                Files.createFile(pathToFile);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        String[] paths = inputFile.split("/");
         StringBuffer dir_suffix = new StringBuffer();
         for (int i = 1; i < paths.length - 1; i++) {
             dir_suffix.append("/" + paths[i]);
@@ -389,26 +392,60 @@ public class IOFunctionSet {
                 if (line.contains("typedef") && !line.contains("struct")) {
                     line = line.replace("typedef", "");
                 }
-                if (line.trim().endsWith("\\")) {
-                    line = line.replace("\\", "");
+//                if (line.trim().endsWith("\\")) {
+//                    line = line.replace("\\", "");
+//                }
+                if (line.trim().endsWith("\\\n")) {
+                    line = line.replace("\\\n", "");
                 }
 
-                sb.append(line.replace("inline _attribute_((always_inline))", "") + "\n");
+                if (line.contains("_ ##")) {
+                    line = line.replace("_ ## ", "");
+                }
+                if (line.contains("(void *)")) {
+                    line = line.replace("(void *)", "");
+                }
+                if (line.contains("(size_t)")) {
+                    line = line.replace("(size_t)", "");
+                }
+                if (line.contains("inline _attribute_((always_inline))")) {
+                    line = line.replace("inline _attribute_((always_inline))", "");
+                }
+
+                if (line.contains("__attribute__")&&line.contains("((packed))")) {
+                    line = line.replace("__attribute__", "").replace("((packed))", "");
+                }
+                if (line.contains("off_t")) {
+                    line = line.replace("off_t", "");
+                }
+                if (line.contains("unsigned")) {
+                    line = line.replace("unsigned", "unknowntype");
+                }
+
+
+                Pattern p1 = Pattern.compile("([x](\\d|[a-zA-Z])(\\d|[a-zA-Z]))*");
+                Pattern p2 = Pattern.compile("\\\\[x](\\d|[a-zA-Z])(\\d|[a-zA-Z])");
+                Matcher m1= p1.matcher(line);
+                Matcher m2= p2.matcher(line);
+                if (m1.find()&&!m2.find()&&!line.contains("extern")) {
+                    line = m1.replaceFirst("");
+                }
+
+
+                sb.append(line + "\n");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        io.rewriteFile(sb.toString(), newInputFilePath);
+        io.rewriteFile(sb.toString(), inputFile);
 
-        return newInputFilePath;
+//        return newInputFilePath;
     }
 
     public String changeFileName(String fileName) {
         String suffix = fileName.split("\\.")[1];
-
-
-        return fileName.replace("." + suffix, suffix.toUpperCase());
+        return fileName.replace("." + suffix, suffix.toUpperCase()).replace("-", "~");
     }
 
 }

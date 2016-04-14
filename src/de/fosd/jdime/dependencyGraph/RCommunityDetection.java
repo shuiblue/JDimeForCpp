@@ -4,9 +4,12 @@ import de.fosd.jdime.util.IOFunctionSet;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
+import javax.swing.text.html.HTMLDocument;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class RCommunityDetection {
     ArrayList<Double> modularityArray;
@@ -23,37 +26,24 @@ public class RCommunityDetection {
     IOFunctionSet ioFunc = new IOFunctionSet();
     HashMap<Integer, Double> modularityMap;
     static int bestCut;
+    double[][] shortestPathMatrix;
 
-
-    public int detectingCommunitiesWithIgraph(String fileDir, int numOfcut) {
+    public int detectingCommunitiesWithIgraph(String fileDir, int numOfcut, Rengine re) {
         modularityArray = new ArrayList<>();
         checkedEdges = new HashMap<>();
         cutSequence = new ArrayList<>();
         upstreamNode = new HashSet<>();
         forkAddedNode = new HashSet<>();
         modularityMap = new HashMap<>();
-        //start import R library
-        System.out.println("Creating Rengine (with arguments)");
-        //If not started with --vanilla, funny things may happen in this R shell.
 
-        String[] Rargs = {"--vanilla"};
-        Rengine re = new Rengine(Rargs, false, null);
-//        Rengine re = Rengine.getMainEngine();
-//        if (re == null) {
-//            re = new Rengine(new String[]{"--vanilla"}, false, null);
-//        }
-
-
-        System.out.println("Rengine created, waiting for R");
-        // the engine creates R is a new thread, so we should wait until it's
-        // ready
-        if (!re.waitForR()) {
-            System.out.println("Cannot load R");
-            return -1;
-        }
         //start to input R cmd
         re.eval("library(igraph)");
-        re.eval("oldg<-read.graph(\"" + fileDir + "/graph.pajek.net\", format=\"pajek\")\n");
+
+        re.eval("completeGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")\n");
+        REXP shortestPath_R = re.eval("distMatrix <- shortest.paths(completeGraph, v=V(completeGraph), to=V(completeGraph))\n");
+        shortestPathMatrix = shortestPath_R.asMatrix();
+
+        re.eval("oldg<-read.graph(\"" + fileDir + "/changedCode.pajek.net\", format=\"pajek\")\n");
         // removes the loop and/or multiple edges from a graph.
         re.eval("g<-simplify(oldg)");
         re.eval("g<-as.undirected(g)");
@@ -92,18 +82,16 @@ public class RCommunityDetection {
 
         int cutNum = 1;
 
-        int currentIteration = 1;
 
         while (checkedEdges.values().contains(false)) {
 //            if (currentIteration <= numOfIteration) {
-            if(listOfNumberOfCommunities.size()<=numOfcut){
+            if (listOfNumberOfCommunities.size() <= numOfcut) {
                 //count betweenness for current graph
                 System.out.println("loop start:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
                 calculateEachGraph(re, fileDir, cutNum);
 
                 System.out.println("loop end:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
                 cutNum++;
-                currentIteration++;
             } else {
                 break;
             }
@@ -216,6 +204,13 @@ public class RCommunityDetection {
         REXP nodelist_R = re.eval("get.vertex.attribute(g)$id", true);
         double[][] edgelist = edgelist_R.asMatrix();
         String[] nodelist = (String[]) nodelist_R.getContent();
+        ArrayList<Integer> nodeIdList = new ArrayList<>();
+        for (int i = 0; i < nodelist.length; i++) {
+            if (forkAddedNode.contains(nodelist[i])) {
+                nodeIdList.add(i + 1);
+            }
+        }
+
 
         //get betweenness for current graph
         REXP betweenness_R = re.eval("edge.betweenness(g)", true);
@@ -225,12 +220,15 @@ public class RCommunityDetection {
         REXP membership_R = re.eval("cl<-clusters(g)$membership");
         double[] membership = membership_R.asDoubleArray();
 
+
         System.out.print(current_numberOfCommunities + "!!!\n");
         Graph currentGraph;
 
-        HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath);
+        HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath, nodeIdList);
+        calculateDistanceBetweenCommunities(clusters);
+
         current_numberOfCommunities = clusters.keySet().size();
-        if(!listOfNumberOfCommunities.contains(current_numberOfCommunities)) {
+        if (!listOfNumberOfCommunities.contains(current_numberOfCommunities)) {
             listOfNumberOfCommunities.add(current_numberOfCommunities);
 
         }
@@ -244,10 +242,10 @@ public class RCommunityDetection {
 
         //modularity find removableEdge
         int removableEdgeID = findRemovableEdge(currentGraph);
-        if (pre_numberOfCommunities != current_numberOfCommunities) {
-            printGraph(currentGraph, filePath, cutNum);
-            printMemebershipOfCurrentGraph(clusters, filePath);
-        }
+//        if (pre_numberOfCommunities != current_numberOfCommunities) {
+        printGraph(currentGraph, filePath, cutNum);
+        printMemebershipOfCurrentGraph(clusters, filePath);
+//        }
         modularityMap.put(cutNum, modularity);
         modularityArray.add(modularity);
 
@@ -257,17 +255,38 @@ public class RCommunityDetection {
 
     }
 
+//    private Set<Set<Integer>> calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters) {
+//
+//
+//        Set<Set<Integer>> combination = new HashSet<Set<Integer>>();
+//        combination.add(new HashSet());
+//
+//        for (Integer s : clusters.keySet()) {
+//            Set<Set<Integer>> newconmbination = new HashSet<Set<Integer>>();
+//            for (Set<Integer> c : combination) {
+//                HashSet<Integer> newC = new HashSet<Integer>(c);
+//                newC.add(s);
+//newconmbination.add(newC);
+//
+//            }
+//            }
+//        }
 
-    private HashMap<Integer, ArrayList<Integer>> getCurrentClusters(double[] membership, String fileDir) {
+
+
+
+    private HashMap<Integer, ArrayList<Integer>> getCurrentClusters(double[] membership, String fileDir, ArrayList<Integer> nodeIdList) {
         HashMap<Integer, ArrayList<Integer>> clusters = new HashMap<>();
 
         for (int i = 0; i < membership.length; i++) {
-            ArrayList<Integer> member = clusters.get((int) membership[i]);
-            if (member == null) {
-                member = new ArrayList<>();
+            if (nodeIdList.contains(i + 1)) {
+                ArrayList<Integer> member = clusters.get((int) membership[i]);
+                if (member == null) {
+                    member = new ArrayList<>();
+                }
+                member.add(i + 1);
+                clusters.put((int) membership[i], member);
             }
-            member.add(i + 1);
-            clusters.put((int) membership[i], member);
         }
         return clusters;
     }

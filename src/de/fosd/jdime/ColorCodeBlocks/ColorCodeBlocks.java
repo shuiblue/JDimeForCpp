@@ -30,30 +30,28 @@ public class ColorCodeBlocks {
     String sourcecodeDir;
     String analysisDir;
     boolean print = false;
+    StringBuilder sb = new StringBuilder();
 
-    public void createSourceFileHtml() throws IOException {
-        File dir = new File(sourcecodeDir);
-        String[] names = dir.list();
-        StringBuilder sb = new StringBuilder();
-        for (String fileName : names) {
-//            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
-            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
-                System.out.print(fileName + "\n");
-                String newFileName;
-                String suffix = fileName.split("\\.")[1];
-                newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
-                if (forkAddedNode.contains(newFileName)) {
-                    sb.append("<h1 id=\"" + newFileName + "title\" >" + fileName + "</h1>\n<pre id=\"" + newFileName + "\"  class=\"prettyprint linenums\">");
-                    BufferedReader result_br = null;
-                    int lineNumber = 1;
-                    try {
-                        result_br = new BufferedReader(new FileReader(sourcecodeDir + "/" + fileName));
+    public void parseSourceCodeFromFile(String fileName){
+        File currentFile = new File(sourcecodeDir + "/" + fileName);
+        //            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
+        if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
+            System.out.print(fileName + "\n");
+            String newFileName;
+            String suffix = fileName.split("\\.")[1];
+            newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
+            if (forkAddedNode.contains(newFileName)) {
+                sb.append("<h1 id=\"" + newFileName + "title\" >" + fileName + "</h1>\n<pre id=\"" + newFileName + "\"  class=\"prettyprint linenums\">");
+                BufferedReader result_br = null;
+                int lineNumber = 1;
+                try {
+                    result_br = new BufferedReader(new FileReader(sourcecodeDir + "/" + fileName));
 
-                        String line;
-                        while ((line = result_br.readLine()) != null) {
+                    String line;
+                    while ((line = result_br.readLine()) != null) {
 
-                            String lable = newFileName + "-" + lineNumber;
-                            sb.append("<front id=\"" + lable + "\">");
+                        String lable = newFileName + "-" + lineNumber;
+                        sb.append("<front id=\"" + lable + "\">");
 
                             /* for print
                             if(line.trim().startsWith("#if")) {
@@ -63,32 +61,49 @@ public class ColorCodeBlocks {
 
                             }
 */
-                            sb.append(line.replace("<", "&lt;").replace(">", "&gt;"));
-                            sb.append("</front>\n");
-                            if (!forkAddedNode.contains(lable + " ")) {
-                                jsContent.append("$(\"#" + lable + "\").toggle()\n");
-                            }
-
-                            lineNumber++;
+                        sb.append(line.replace("<", "&lt;").replace(">", "&gt;"));
+                        sb.append("</front>\n");
+                        if (!forkAddedNode.contains(lable + " ")) {
+                            jsContent.append("$(\"#" + lable + "\").toggle()\n");
                         }
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+
+                        lineNumber++;
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        result_br.close();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } finally {
-                        result_br.close();
                     }
-                    sb.append(" </pre>\n");
                 }
+                sb.append(" </pre>\n");
+//                }
 
             }
 
 
-        }
+        }if (currentFile.isDirectory()) {
+            String[] subNames = currentFile.list();
+            for (String f : subNames) {
+                parseSourceCodeFromFile(fileName+"/"+f);
+            }
 
-        iofunc.rewriteFile(sb.toString(), analysisDir + sourceCodeTxt);
+        }
     }
 
+    public void createSourceFileHtml() throws IOException {
+        File dir = new File(sourcecodeDir);
+        String[] names = dir.list();
+
+        for (String fileName : names) {
+            parseSourceCodeFromFile(fileName);
+            iofunc.rewriteFile(sb.toString(), analysisDir + sourceCodeTxt);
+        }
+    }
     public void writeClusterToCSS(ArrayList<String> clusters, int numberOfClusters) {
         BufferedReader br;
         String line;
@@ -187,19 +202,20 @@ public class ColorCodeBlocks {
                             }
                         }
 
-                        if (nodeLabel.equals("Marlin_mainCPP-6765")) {
-                            System.out.print("");
-                        }
-
                         /*for printing purpose*/
                         if (print) {
                             sb.append("#" + nodeLabel + "{\n\tbackground-color:;\n");
                         } else {
-                            sb.append("#" + nodeLabel + "{\n\tbackground-color:#" + current_color + ";\n");
+                            if (forkAddedNode.contains(nodeLabel)) {
+                                sb.append("#" + nodeLabel + "{\n\tbackground-color:#" + current_color + ";\n");
+                            }else {
+                                sb.append("#" + nodeLabel + "{\n\tbackground-color:White;\n");
+                            }
+
                         }
 
                         String leftSidebarColor = "";
-                        String rightSidebarColor = "";
+                        String rightSidebarColor = "white";
                         if (expectNodeMap.get(nodeLabel) != null) {
 
                             /*for print*/
@@ -211,8 +227,8 @@ public class ColorCodeBlocks {
                                 if (expectCommunity.contains("/")) {
                                     String[] each = expectCommunity.split("/");
 //                                    for(String e:each){
-                                        leftSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[0]) - 1);
-                                        rightSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[1]) - 1);
+                                    leftSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[0]) - 1);
+                                    rightSidebarColor = bgcolor.getExpectColorList().get(Integer.valueOf(each[1]) - 1);
 //                                    }
 
 
@@ -248,14 +264,14 @@ public class ColorCodeBlocks {
 
                             }
                         }
-                        sb.append("\tborder-style: solid;\n\tborder-width:thick thin thick thin;\n\tborder-color: white "+rightSidebarColor+" White "+
-                                leftSidebarColor + ";\n" + "}\n");
+                        sb.append("\tborder-style: solid;\n\tborder-width: thin thick thin thick;" +
+                                "\n\tborder-color: white " + rightSidebarColor + " white " + leftSidebarColor + ";\n" + "}\n");
 
 
                         //write to file for calculate color table
                         if (expectNode.contains(nodeLabel + " ")) {
                             colorTable.append(nodeLabel + "," + current_color + "," + leftSidebarColor + "\n");
-                            if(!rightSidebarColor.equals("White")){
+                            if (!rightSidebarColor.equals("White")) {
 
                                 colorTable.append(nodeLabel + "," + current_color + "," + rightSidebarColor + "\n");
                             }
@@ -293,7 +309,7 @@ public class ColorCodeBlocks {
         String bodyPreTxt = "body_pre.txt";
         String endtxt = "end.txt";
         String togglejsPath = "/toggle.js";
-        String html = "/" + numberOfClusters + ".html";
+        String html = numberOfClusters + ".html";
         try {
             //write code.html
             iofunc.rewriteFile(iofunc.readResult(htmlfilePath + headtxt).replace("style.css", numberOfClusters + ".css"), analysisDir + html);
@@ -301,6 +317,8 @@ public class ColorCodeBlocks {
 
             iofunc.writeTofile(iofunc.readResult(analysisDir + "/" + numberOfClusters + ".color"), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + bodyPreTxt), analysisDir + html);
+            iofunc.writeTofile(iofunc.readResult(analysisDir + "testedMacros.txt"), analysisDir + html);
+
             iofunc.writeTofile(iofunc.readResult(analysisDir + sourceCodeTxt), analysisDir + html);
 
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + endtxt), analysisDir + html);
@@ -320,9 +338,10 @@ public class ColorCodeBlocks {
     /**
      * This function parse the cluster.txt file, to analyze each clustering result after removing a bridge
      */
-    public void parseEachUsefulClusteringResult(String filePath, int bestcut, int expectClustersNum) {
-        sourcecodeDir = filePath + "Marlin";
-        analysisDir = filePath + "DPGraph";
+    public void parseEachUsefulClusteringResult(String projectPath, String repo, int dirNum, int expectClustersNum) {
+        String filePath = projectPath + repo;
+        sourcecodeDir = filePath + "/"+repo;
+        analysisDir = filePath + "/DPGraph/" + dirNum + "/";
         this.expectClustersNum = expectClustersNum;
         String clusterFilePath = analysisDir + "/clusterTMP.txt";
         String clusterResultListString = "";
@@ -355,21 +374,21 @@ public class ColorCodeBlocks {
             if (result.contains("communities")) {
                 int[] clusterInfo = getClusterInfo(result.split("communities")[0]);
                 int numberOfCommunities = clusterInfo[0];
-                int numOfCutEdge = clusterInfo[1];
-                if (numOfCutEdge <= bestcut) {
-                    result = result.split("communities")[1];
-                    String[] clusterArray = result.split("\n");
+//                int numOfCutEdge = clusterInfo[1];
+//                if (numOfCutEdge <= bestcut) {
+                result = result.split("communities")[1];
+                String[] clusterArray = result.split("\n");
 
-                    ArrayList<String> clusters = new ArrayList(Arrays.asList(clusterArray));
-                    writeClusterToCSS(clusters, numberOfCommunities);
+                ArrayList<String> clusters = new ArrayList(Arrays.asList(clusterArray));
+                writeClusterToCSS(clusters, numberOfCommunities);
 
-                    AnalyzeCDResult analyzeCDResult = new AnalyzeCDResult();
-                    analyzeCDResult.generatingClusteringTable(analysisDir, numberOfCommunities, expectClustersNum);
+                AnalyzeCDResult analyzeCDResult = new AnalyzeCDResult();
+                analyzeCDResult.generatingClusteringTable(analysisDir, numberOfCommunities, expectClustersNum);
 
-                    combineFiles(numberOfCommunities);
-                } else {
-                    break;
-                }
+                combineFiles(numberOfCommunities);
+//                } else {
+//                    break;
+//                }
             }
         }
     }

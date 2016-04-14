@@ -1,46 +1,34 @@
 package de.fosd.jdime.dependencyGraph;
 
 import de.fosd.jdime.ColorCodeBlocks.ColorCodeBlocks;
+import org.rosuda.JRI.Rengine;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
-import static de.fosd.jdime.dependencyGraph.DependencyGraph.dependencyGraph;
 
 /**
  * Created by shuruiz on 3/22/16.
  */
 public class AnalyzeMarlinRepo {
 
-    //    public void analyzeMarlinRepo(String repo, String projectPath, ArrayList<String> commitList, int expectClusterNum, ArrayList<String> macroList) {
-    public void analyzeMarlinRepo(String repo, String projectPath, ArrayList<String> commitList, ArrayList<String> macroList, int numOfIteration) {
-        String DPGraphDir = "DPGraph";
+    public void analyzeRepository(String repo, int dirNum, String projectPath, ArrayList<String> commitList, ArrayList<String> macroList, int numOfIteration, Rengine re) {
+        String DPGraphDir = "/DPGraph/";
         String filePath = projectPath + repo;
-        File dir = new File(filePath);
-        String[] names = dir.list();
         DependencyGraph dependencyGraph = new DependencyGraph();
         boolean SHA = false;
         boolean IFDEF = true;
-
-        for (String fileName : names) {
-            if (fileName.startsWith("Marlin")) {
-                filePath += "/" + fileName;
 //                IdentifyChangedCode icc = new IdentifyChangedCode();
 //                if (SHA) {
-//                    icc.identifyChangedCodeBySHA(filePath, commitList);
+//                    icc.identifyChangedCodeBySHA(projectPath ,repo, commitList);
 //                } else if (IFDEF) {
-//                    icc.identifyIfdefs(filePath, macroList);
+//                    icc.identifyIfdefs(projectPath ,repo, dirNum,macroList);
 //                }
-//                dependencyGraph.getDependencyGraph(filePath);
-//                RCommunityDetection rCommunityDetection = new RCommunityDetection();
-                filePath += "/";
-//                int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir, numOfIteration);
-                ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
-                colorCodeBlocks.parseEachUsefulClusteringResult(filePath, 1, macroList.size());
-                break;
-            }
-        }
+        dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
+        RCommunityDetection rCommunityDetection = new RCommunityDetection();
+        int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
+        ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
+//                colorCodeBlocks.parseEachUsefulClusteringResult(projectPath ,repo, dirNum,macroList.size());
+        colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, 3);
     }
 }

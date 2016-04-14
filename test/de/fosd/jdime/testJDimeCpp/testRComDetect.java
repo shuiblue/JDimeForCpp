@@ -145,42 +145,4 @@ public class testRComDetect {
 //        amr.analyzeMarlinRepo(repo, projectPath, commitList, expectClusterNum);
 //    }
 
-    // independent features
-    @Ignore
-    @Test
-    public void test22() {
-        String repo = "test22";
-        ArrayList<String> macroList = new ArrayList<>();
-        macroList.add("FILAMENT_SENSOR");
-        macroList.add("MESH_BED_LEVELING");
-        macroList.add("ADVANCE");
-        macroList.add("HAS_BUZZER");
-        macroList.add("PREVENT_DANGEROUS_EXTRUDE");
-        commitList = new ArrayList<>();
-        int numOfIteration = 1;
-        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfIteration);
-    }
-
-
-    // nested last 2
-//    @Ignore
-    @Test
-    public void test23() {
-        String repo = "test22";
-        ArrayList<String> macroList = new ArrayList<>();
-        macroList.add("FILAMENT_SENSOR");
-        macroList.add("MESH_BED_LEVELING");
-        macroList.add("ADVANCE");
-        macroList.add("PREVENT_DANGEROUS_EXTRUDE");
-        macroList.add("PREVENT_LENGTHY_EXTRUDE");
-//        macroList.add("A");
-//        macroList.add("B");
-//        macroList.add("C");
-//        macroList.add("D");
-//        macroList.add("E");
-
-        commitList = new ArrayList<>();
-        int numOfcut = 3;
-        amr.analyzeMarlinRepo(repo, projectPath, commitList, macroList, numOfcut);
-    }
 }
