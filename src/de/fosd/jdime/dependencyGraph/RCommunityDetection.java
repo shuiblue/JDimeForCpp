@@ -267,28 +267,18 @@ public class RCommunityDetection {
             double shortestPath = 999999;
             for (Integer cl1 : cluster_1) {
                 int c1 = cl1 - 1;
+
+                re.eval("comGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
+                re.eval("scomGraph<- simplify(comGraph)");
+                re.eval("completeGraph<-as.undirected(scomGraph)");
+                re.eval("E(completeGraph)$weight <- 1");
+                String c1_array_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=V(completeGraph))";
+                REXP shortestPath_R_c1 = re.eval(c1_array_cmd);
+                double[] c1_array = shortestPath_R_c1.asDoubleArray();
                 for (Integer cl2 : cluster_2) {
                     int c2 = cl2 - 1;
-
-                    re.eval("comGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
-                    re.eval("scomGraph<- simplify(comGraph)");
-                    re.eval("completeGraph<-as.undirected(scomGraph)");
-                    re.eval("E(completeGraph)$weight <- 1");
-
-//                    String cmd_c1 ="distMatrixc1 <- shortest.paths(completeGraph, v=\'"+c1+"\', to=V(completeGraph))";
-//                    String cmd_c2 ="distMatrixc2 <- shortest.paths(completeGraph, v=\'"+c2+"\', to=V(completeGraph))";
-                    String c1_c2_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=\"" + c2 + "\")";
-//                    String c2_c1_cmd = "distMatrixc2 <- shortest.paths(completeGraph, v=\"" + c2 + "\", to=\"" + c1 + "\")";
-                    REXP shortestPath_R_c1 = re.eval(c1_c2_cmd);
-//                    REXP shortestPath_R_c2 = re.eval(c2_c1_cmd);
-
-                    double c1_c2 = shortestPath_R_c1.asDouble();
-//                    double c2_c1 = shortestPath_R_c2.asDouble();
+                    double c1_c2 = c1_array[c2];
                     System.out.println("c1 c2:" + c1_c2);
-//                    System.out.println("c2 c1:" + c2_c1);
-                    System.out.println("");
-//                    double tmp =c1_array[c2] < c2_array[c1] ? c1_array[c2] : c2_array[c1];
-//                    double tmp = c1_c2 < c2_c1 ? c1_c2 : c2_c1;
                     if (shortestPath > c1_c2) {
                         shortestPath = c1_c2;
                     }

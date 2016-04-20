@@ -162,8 +162,8 @@ public class mainForTestIfdef {
 
 
         ArrayList<String> repoList = new ArrayList<>();
-        repoList.add("Marlin");
-//        repoList.add("Clamav");
+//        repoList.add("Marlin");
+        repoList.add("Clamav");
 //        repoList.add("Apache");
 //        repoList.add("Cherokee");
 //        repoList.add("Email");

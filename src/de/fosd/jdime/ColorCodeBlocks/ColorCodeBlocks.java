@@ -38,8 +38,7 @@ public class ColorCodeBlocks {
         if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
 //            System.out.print(fileName + "\n");
             String newFileName;
-            String suffix = fileName.split("\\.")[1];
-            newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
+            newFileName = iofunc.changeFileName(fileName);
             if (forkAddedNode.contains(newFileName)) {
                 sb.append("<h1 id=\"" + newFileName + "title\" >" + fileName + "</h1>\n<pre id=\"" + newFileName + "\"  class=\"prettyprint linenums\">");
                 BufferedReader result_br = null;
@@ -338,27 +337,19 @@ public class ColorCodeBlocks {
         try {
             //write code.html
             iofunc.rewriteFile(iofunc.readResult(htmlfilePath + headtxt).replace("style.css", numberOfClusters + ".css"), analysisDir + html);
-
-
             iofunc.writeTofile(iofunc.readResult(analysisDir + "/" + numberOfClusters + ".color"), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(analysisDir + "/" + numberOfClusters + ".distanceTable"), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + bodyPreTxt), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(analysisDir + "testedMacros.txt"), analysisDir + html);
-
             iofunc.writeTofile(iofunc.readResult(analysisDir + sourceCodeTxt), analysisDir + html);
-
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + endtxt), analysisDir + html);
 
             //toggle js
             iofunc.rewriteFile(iofunc.readResult(htmlfilePath + jsFileHeader), analysisDir + togglejsPath);
             iofunc.writeTofile(jsContent.toString() + "\n});", analysisDir + togglejsPath);
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     /**
