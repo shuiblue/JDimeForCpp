@@ -110,7 +110,7 @@ public class IdentifyChangedCode {
                         String macro = "";
                         int currentCommunityNum = -1;
                         while ((line = result.readLine()) != null) {
-                            System.out.println(fileName + "-" + lineNum);
+//                            System.out.println(fileName + "-" + lineNum);
                             if (line.contains("#if") || line.contains("#elif")) {
                                 if (line.contains("if ENABLED(") || line.contains("elif")) {
                                     if (macroStack.size() > 0 && line.contains("elif")) {
@@ -135,6 +135,8 @@ public class IdentifyChangedCode {
 
                                 } else if (line.contains("#ifdef")) {
                                     macro = line.trim().substring(7);
+                                } else{
+                                    macro = line.trim();
                                 }
                                 if (targetMacro.equals(macro)) {
                                     withinIfdef = true;

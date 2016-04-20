@@ -16,12 +16,12 @@ public class AnalyzeCDResult {
     String analysisDir;
     List<String> bgcolorList = BackgroundColor.getExpectColorList();
 
-    public void generatingClusteringTable(String analysisDir, int numberOfCommunities, int expectClustersNum) {
+    public void generatingClusteringTable(String analysisDir, int numberOfCommunities, ArrayList<String> macroList) {
         this.analysisDir = analysisDir;
         HashMap<String, HashMap<String, Integer>> resultTable = new HashMap<>();
 
-        for(int i =0;i<expectClustersNum;i++){
-            resultTable.put(bgcolorList.get(i),new HashMap<String, Integer>());
+        for (int i = 0; i < macroList.size(); i++) {
+            resultTable.put(bgcolorList.get(i), new HashMap<>());
         }
 
 
@@ -38,7 +38,6 @@ public class AnalyzeCDResult {
                     String id = nodeInfo[0];
                     String bgColor = nodeInfo[1];
                     String expectColor = nodeInfo[2];
-                    System.out.println(id + "-" + bgColor + "-" + expectColor);
                     if (!communityColorList.contains(bgColor)) {
                         communityColorList.add(bgColor);
                     }
@@ -60,20 +59,98 @@ public class AnalyzeCDResult {
                 }
             }
 
-            printResultTable(resultTable, communityColorList, numberOfCommunities, expectClustersNum);
+            printResultTable(resultTable, communityColorList, numberOfCommunities, macroList);
+
+            printClusterDistanceTable(numberOfCommunities);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void printResultTable(HashMap<String, HashMap<String, Integer>> resultTable, ArrayList<String> communityColorList, int numberOfCommunities, int expectClustersNum) {
+    private void printClusterDistanceTable(int numberOfCommunities) {
+        StringBuffer sb = new StringBuffer();
+        HashMap<String, String[]> distanceTable = new HashMap<>();
+
+        ArrayList<String> clusterIDList=new ArrayList<>();
+        String[] colorList;
+        String[] distanceList;
+        try {
+            String[] tmp = ioFunctionSet.readResult(analysisDir + numberOfCommunities + "_clusterIdList.txt").split(",");
+            for (String s : tmp) {
+                if (!s.equals("\n")) {
+                    clusterIDList.add(s);
+                }
+
+            }
+            for (String s : clusterIDList) {
+                if (!s.equals("\n")) {
+                    distanceTable.put(s, new String[clusterIDList.size()]);
+                }
+            }
+
+            // TODO: table color
+            colorList = ioFunctionSet.readResult(analysisDir + numberOfCommunities + "_clusterColor.txt").split("\n");
+            HashMap<String,String> colorTable = new HashMap();
+            for (String c : colorList) {
+                //[0] id  [1] current color  [2] expect color
+                String[] content = c.split(",");
+                String id = content[0];
+                String current_color = content[1];
+                String expect_color = content[2];
+
+                colorTable.put(id,current_color);
+            }
+
+
+            distanceList = ioFunctionSet.readResult(analysisDir + numberOfCommunities + "_distanceBetweenCommunityies.txt").split("\n");
+            for (String d : distanceList) {
+                String[] content = d.split(",");
+                String[] array = distanceTable.get(content[0]);
+                array[Integer.valueOf(clusterIDList.indexOf(content[1]))] = content[2];
+                distanceTable.put(content[0], array);
+            }
+
+            sb.append("<table id=\"distance\"> <tr> <td> </td>\n");
+            for (String id : clusterIDList) {
+                sb.append("<td bgcolor=\"#"+colorTable.get(id)+"\">" + id + "</td>\n");
+
+            }
+            sb.append("</tr>\n");
+
+            for (String id : clusterIDList) {
+                sb.append("<tr><td bgcolor=\"#"+colorTable.get(id)+"\">"+id + "</td>\n");
+
+                for (String s : distanceTable.get(id)) {
+                    sb.append("<td>" + s + "</td>\n");
+                }
+                sb.append("</tr>\n");
+            }
+
+
+            sb.append("</table>\n");
+
+
+            ioFunctionSet.rewriteFile(sb.toString(), analysisDir + numberOfCommunities + ".distanceTable");
+
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void printResultTable(HashMap<String, HashMap<String, Integer>> resultTable, ArrayList<String> communityColorList, int numberOfCommunities,ArrayList<String> macroList) {
         StringBuffer sb = new StringBuffer();
         Iterator it = resultTable.keySet().iterator();
 
 
         //print 1st line
-        sb.append("<table>\n" +
+        sb.append("<table id=\"cluster\">\n" +
                 "    <tr>\n" +
                 "        <td>\n" +
                 "            <span>Result</span>\n" +
@@ -86,13 +163,13 @@ public class AnalyzeCDResult {
         }
         sb.append("</tr>\n");
 
-        for (int i = 0; i < expectClustersNum; i++) {
+        for (int i = 0; i < macroList.size(); i++) {
             String expectColor = bgcolorList.get(i);
             //print rest lines
             sb.append("  <tr>\n" +
                     "        <td bgcolor=\"" + expectColor + "\">\n" +
-                    expectColor +
-                    "\n        </td>");
+                    macroList.get(i) +
+                    "\n        </td>\n");
 
             HashMap<String, Integer> distributedMap = resultTable.get(expectColor);
 
@@ -100,11 +177,10 @@ public class AnalyzeCDResult {
             for (String s : communityColorList) {
                 sb.append("<td>" + distributedMap.get(s) + "</td>\n");
 
-                System.out.println(distributedMap.get(s));
             }
-            sb.append("</tr>");
+            sb.append("</tr>\n");
         }
         sb.append("</table>");
-        ioFunctionSet.rewriteFile(sb.toString(), analysisDir+ numberOfCommunities + ".color");
+        ioFunctionSet.rewriteFile(sb.toString(), analysisDir + numberOfCommunities + ".color");
     }
 }

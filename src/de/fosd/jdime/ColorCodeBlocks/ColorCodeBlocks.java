@@ -32,11 +32,11 @@ public class ColorCodeBlocks {
     boolean print = false;
     StringBuilder sb = new StringBuilder();
 
-    public void parseSourceCodeFromFile(String fileName){
+    public void parseSourceCodeFromFile(String fileName) {
         File currentFile = new File(sourcecodeDir + "/" + fileName);
         //            if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c")) {
         if (fileName.endsWith(".cpp") || fileName.endsWith(".h") || fileName.endsWith(".c") || fileName.endsWith(".pde")) {
-            System.out.print(fileName + "\n");
+//            System.out.print(fileName + "\n");
             String newFileName;
             String suffix = fileName.split("\\.")[1];
             newFileName = fileName.replace("." + suffix, suffix.toUpperCase());
@@ -86,10 +86,11 @@ public class ColorCodeBlocks {
             }
 
 
-        }if (currentFile.isDirectory()) {
+        }
+        if (currentFile.isDirectory()) {
             String[] subNames = currentFile.list();
             for (String f : subNames) {
-                parseSourceCodeFromFile(fileName+"/"+f);
+                parseSourceCodeFromFile(fileName + "/" + f);
             }
 
         }
@@ -104,6 +105,7 @@ public class ColorCodeBlocks {
             iofunc.rewriteFile(sb.toString(), analysisDir + sourceCodeTxt);
         }
     }
+
     public void writeClusterToCSS(ArrayList<String> clusters, int numberOfClusters) {
         BufferedReader br;
         String line;
@@ -167,11 +169,20 @@ public class ColorCodeBlocks {
                 "    margin-left:-15px;\n" +
                 "}\n" +
                 "\n" +
-                "table{\n" +
+                "#distance{\n" +
                 "\tposition:fixed;\n" +
-                "\ttop:100px;\n" +
+                "\ttop:250px;\n" +
                 "\tright:50px;\n" +
-                "}\n");
+                "}\n" +
+                "#cluster{\n" +
+                "\tposition:fixed;\n" +
+                "\ttop:50px;\n" +
+                "\tright:50px;\n" +
+                "}\n"
+
+        );
+        //record cluster id and  colors
+        StringBuffer clusterSB = new StringBuffer();
         for (int i = 0; i < clusters.size(); i++) {
 
             if (clusters.get(i).length() > 0) {
@@ -183,10 +194,19 @@ public class ColorCodeBlocks {
 //                    colorList.add(current_color);
 //
 //                }
+
+
+                String clusterID = clusters.get(i).substring(0, clusters.get(i).trim().indexOf(")"));
+                clusterSB.append(clusterID);
+
+
                 String[] elementList = clusters.get(i).trim().split(",");
                 int length = elementList.length;
+                String previous_Color = "";
                 for (int j = 0; j < length; j++) {
-                    String nodeIdStr = elementList[j].trim().replace("[", "").replace("]", "");
+                    String nodeIdStr = elementList[j].replace("[", "").replace("]", "").replace(clusterID + ")", "").trim();
+
+
                     if (nodeIdStr.length() > 0) {
                         int nodeID = Integer.parseInt(nodeIdStr);
                         String nodeLabel = nodeMap.get(nodeID);
@@ -208,7 +228,7 @@ public class ColorCodeBlocks {
                         } else {
                             if (forkAddedNode.contains(nodeLabel)) {
                                 sb.append("#" + nodeLabel + "{\n\tbackground-color:#" + current_color + ";\n");
-                            }else {
+                            } else {
                                 sb.append("#" + nodeLabel + "{\n\tbackground-color:White;\n");
                             }
 
@@ -239,7 +259,7 @@ public class ColorCodeBlocks {
                                 }
 
                             }
-                            System.out.println(nodeLabel);
+//                            System.out.println(nodeLabel);
 
                         }
                         if (!upstreamNode.equals("")) {
@@ -272,11 +292,16 @@ public class ColorCodeBlocks {
                         if (expectNode.contains(nodeLabel + " ")) {
                             colorTable.append(nodeLabel + "," + current_color + "," + leftSidebarColor + "\n");
                             if (!rightSidebarColor.equals("White")) {
-
                                 colorTable.append(nodeLabel + "," + current_color + "," + rightSidebarColor + "\n");
                             }
 
                         }
+
+                        if (!previous_Color.equals(current_color)) {
+                            clusterSB.append("," + current_color + "," + leftSidebarColor + "\n");
+                        }
+                        previous_Color = current_color;
+
                     }
                 }
             }
@@ -284,6 +309,7 @@ public class ColorCodeBlocks {
 
         iofunc.rewriteFile(sb.toString(), analysisDir + "/" + numberOfClusters + CSS);
         iofunc.rewriteFile(colorTable.toString(), analysisDir + "/" + numberOfClusters + "_colorTable.txt");
+        iofunc.rewriteFile(clusterSB.toString(), analysisDir + "/" + numberOfClusters + "_clusterColor.txt");
     }
 
     private String randomColor() {
@@ -302,7 +328,6 @@ public class ColorCodeBlocks {
 
     }
 
-
     public void combineFiles(int numberOfClusters) {
         String htmlfilePath = "/Users/shuruiz/Work/MarlinRepo/visualizeHtml/";
         String headtxt = "head.txt";
@@ -316,6 +341,7 @@ public class ColorCodeBlocks {
 
 
             iofunc.writeTofile(iofunc.readResult(analysisDir + "/" + numberOfClusters + ".color"), analysisDir + html);
+            iofunc.writeTofile(iofunc.readResult(analysisDir + "/" + numberOfClusters + ".distanceTable"), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(htmlfilePath + bodyPreTxt), analysisDir + html);
             iofunc.writeTofile(iofunc.readResult(analysisDir + "testedMacros.txt"), analysisDir + html);
 
@@ -338,11 +364,11 @@ public class ColorCodeBlocks {
     /**
      * This function parse the cluster.txt file, to analyze each clustering result after removing a bridge
      */
-    public void parseEachUsefulClusteringResult(String projectPath, String repo, int dirNum, int expectClustersNum) {
+    public void parseEachUsefulClusteringResult(String projectPath, String repo, int dirNum, ArrayList<String> macroList) {
         String filePath = projectPath + repo;
-        sourcecodeDir = filePath + "/"+repo;
+        sourcecodeDir = filePath + "/" + repo;
         analysisDir = filePath + "/DPGraph/" + dirNum + "/";
-        this.expectClustersNum = expectClustersNum;
+        this.expectClustersNum = macroList.size();
         String clusterFilePath = analysisDir + "/clusterTMP.txt";
         String clusterResultListString = "";
 
@@ -383,7 +409,7 @@ public class ColorCodeBlocks {
                 writeClusterToCSS(clusters, numberOfCommunities);
 
                 AnalyzeCDResult analyzeCDResult = new AnalyzeCDResult();
-                analyzeCDResult.generatingClusteringTable(analysisDir, numberOfCommunities, expectClustersNum);
+                analyzeCDResult.generatingClusteringTable(analysisDir, numberOfCommunities, macroList);
 
                 combineFiles(numberOfCommunities);
 //                } else {

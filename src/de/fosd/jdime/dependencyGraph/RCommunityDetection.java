@@ -26,7 +26,8 @@ public class RCommunityDetection {
     IOFunctionSet ioFunc = new IOFunctionSet();
     HashMap<Integer, Double> modularityMap;
     static int bestCut;
-    double[][] shortestPathMatrix;
+    Rengine re = null;
+//    double[][] shortestPathMatrix;
 
     public int detectingCommunitiesWithIgraph(String fileDir, int numOfcut, Rengine re) {
         modularityArray = new ArrayList<>();
@@ -35,15 +36,18 @@ public class RCommunityDetection {
         upstreamNode = new HashSet<>();
         forkAddedNode = new HashSet<>();
         modularityMap = new HashMap<>();
-
+        this.re = re;
         //start to input R cmd
         re.eval("library(igraph)");
+//
+//        re.eval("completeGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
+//        re.eval("completeGraph<- simplify(comGraph)");
+////        re.eval("completeGraph<-as.undirected(completeGraph)\n");
+//        re.eval("E(completeGraph)$weight <- 1");
+//        REXP shortestPath_R = re.eval("distMatrix <- shortest.paths(completeGraph, v=V(completeGraph), to=V(completeGraph))");
+//        shortestPathMatrix = shortestPath_R.asMatrix();
 
-        re.eval("completeGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")\n");
-        REXP shortestPath_R = re.eval("distMatrix <- shortest.paths(completeGraph, v=V(completeGraph), to=V(completeGraph))\n");
-        shortestPathMatrix = shortestPath_R.asMatrix();
-
-        re.eval("oldg<-read.graph(\"" + fileDir + "/changedCode.pajek.net\", format=\"pajek\")\n");
+        re.eval("oldg<-read.graph(\"" + fileDir + "/changedCode.pajek.net\", format=\"pajek\")");
         // removes the loop and/or multiple edges from a graph.
         re.eval("g<-simplify(oldg)");
         re.eval("g<-as.undirected(g)");
@@ -87,10 +91,7 @@ public class RCommunityDetection {
 //            if (currentIteration <= numOfIteration) {
             if (listOfNumberOfCommunities.size() <= numOfcut) {
                 //count betweenness for current graph
-                System.out.println("loop start:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
                 calculateEachGraph(re, fileDir, cutNum);
-
-                System.out.println("loop end:" + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":" + LocalDateTime.now().getSecond());
                 cutNum++;
             } else {
                 break;
@@ -221,7 +222,6 @@ public class RCommunityDetection {
         double[] membership = membership_R.asDoubleArray();
 
 
-        System.out.print(current_numberOfCommunities + "!!!\n");
         Graph currentGraph;
 
         HashMap<Integer, ArrayList<Integer>> clusters = getCurrentClusters(membership, filePath, nodeIdList);
@@ -231,7 +231,7 @@ public class RCommunityDetection {
             listOfNumberOfCommunities.add(current_numberOfCommunities);
 
         }
-        calculateDistanceBetweenCommunities(clusters, filePath,current_numberOfCommunities);
+        calculateDistanceBetweenCommunities(clusters, filePath, current_numberOfCommunities);
 
 
         REXP modularity_R = re.eval("modularity(originalg,cl)");
@@ -257,7 +257,7 @@ public class RCommunityDetection {
 
     }
 
-    private void calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters, String filePath,int numOfClusters) {
+    private void calculateDistanceBetweenCommunities(HashMap<Integer, ArrayList<Integer>> clusters, String fileDir, int numOfClusters) {
         ArrayList<ArrayList<Integer>> combination = getPairsOfCommunities(clusters);
         HashMap<ArrayList<Integer>, Integer> distanceMatrix = new HashMap<>();
         StringBuffer sb = new StringBuffer();
@@ -265,29 +265,46 @@ public class RCommunityDetection {
             ArrayList<Integer> cluster_1 = clusters.get(pair.get(0));
             ArrayList<Integer> cluster_2 = clusters.get(pair.get(1));
             double shortestPath = 999999;
-            for (Integer c1 : cluster_1) {
-                for (Integer c2 : cluster_2) {
-                    if (shortestPath > shortestPathMatrix[c1][c2]) {
-                        shortestPath = shortestPathMatrix[c1][c2];
+            for (Integer cl1 : cluster_1) {
+                int c1 = cl1 - 1;
+                for (Integer cl2 : cluster_2) {
+                    int c2 = cl2 - 1;
+
+                    re.eval("comGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
+                    re.eval("scomGraph<- simplify(comGraph)");
+                    re.eval("completeGraph<-as.undirected(scomGraph)");
+                    re.eval("E(completeGraph)$weight <- 1");
+
+//                    String cmd_c1 ="distMatrixc1 <- shortest.paths(completeGraph, v=\'"+c1+"\', to=V(completeGraph))";
+//                    String cmd_c2 ="distMatrixc2 <- shortest.paths(completeGraph, v=\'"+c2+"\', to=V(completeGraph))";
+                    String c1_c2_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=\"" + c2 + "\")";
+//                    String c2_c1_cmd = "distMatrixc2 <- shortest.paths(completeGraph, v=\"" + c2 + "\", to=\"" + c1 + "\")";
+                    REXP shortestPath_R_c1 = re.eval(c1_c2_cmd);
+//                    REXP shortestPath_R_c2 = re.eval(c2_c1_cmd);
+
+                    double c1_c2 = shortestPath_R_c1.asDouble();
+//                    double c2_c1 = shortestPath_R_c2.asDouble();
+                    System.out.println("c1 c2:" + c1_c2);
+//                    System.out.println("c2 c1:" + c2_c1);
+                    System.out.println("");
+//                    double tmp =c1_array[c2] < c2_array[c1] ? c1_array[c2] : c2_array[c1];
+//                    double tmp = c1_c2 < c2_c1 ? c1_c2 : c2_c1;
+                    if (shortestPath > c1_c2) {
+                        shortestPath = c1_c2;
                     }
                 }
             }
             distanceMatrix.put(pair, (int) shortestPath);
         }
 
-        //print cluster
-        sb.append("clusters:\n");
+        StringBuffer clusterIDList = new StringBuffer();
+
         for (Integer index : clusters.keySet()) {
             ArrayList<Integer> nodelist = clusters.get(index);
-            sb.append("  ["+index+"]: \n");
-            for (Integer i : nodelist) {
-                sb.append(i + ",");
-            }
-            sb.append("\n");
+            clusterIDList.append(index + ",");
         }
 
         //print distance
-        sb.append("distance:\n");
         for (ArrayList<Integer> s : distanceMatrix.keySet()) {
 
             for (Integer i : s) {
@@ -297,8 +314,8 @@ public class RCommunityDetection {
         }
 
 
-        ioFunc.rewriteFile(sb.toString(), filePath + "/"+numOfClusters+"_distanceBetweenCommunityies.txt");
-        System.out.print("");
+        ioFunc.rewriteFile(sb.toString(), fileDir + "/" + numOfClusters + "_distanceBetweenCommunityies.txt");
+        ioFunc.rewriteFile(clusterIDList.toString(), fileDir + "/" + numOfClusters + "_clusterIdList.txt");
 
     }
 
@@ -345,12 +362,11 @@ public class RCommunityDetection {
                 clusters.put((int) membership[i], member);
             }
         }
+
         return clusters;
     }
 
     private void printMemebershipOfCurrentGraph(HashMap<Integer, ArrayList<Integer>> clusters, String fileDir) {
-
-
         //print
         StringBuffer membership_print = new StringBuffer();
         membership_print.append("\n---" + clusters.entrySet().size() + " communities\n");
@@ -358,6 +374,7 @@ public class RCommunityDetection {
         while (it.hasNext()) {
             Map.Entry cluster = (Map.Entry) it.next();
             ArrayList<Integer> mem = (ArrayList<Integer>) cluster.getValue();
+            membership_print.append(cluster.getKey() + ") ");
             membership_print.append("[");
             for (Integer m : mem) {
                 membership_print.append(m + " , ");

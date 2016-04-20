@@ -1,10 +1,12 @@
 package de.fosd.jdime.testJDimeCpp;
 
 import de.fosd.jdime.dependencyGraph.AnalyzeMarlinRepo;
+import de.fosd.jdime.util.IOFunctionSet;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.rosuda.JRI.Rengine;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -34,13 +36,25 @@ public class testGroundTruthByIfdef {
             return;
         }
 
-        int dirNum = 887;
+        int dirNum = 888;
         ArrayList<String> macroList = new ArrayList<>();
         macroList.add("FILAMENT_SENSOR");
         macroList.add("MESH_BED_LEVELING");
         macroList.add("ADVANCE");
-        macroList.add("HAS_BUZZER");
+//        macroList.add("HAS_BUZZER");
         macroList.add("PREVENT_DANGEROUS_EXTRUDE");
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = 1; i <= macroList.size(); i++) {
+            sb.append("<h3>" + i + ") " + macroList.get(i - 1) + "</h3>\n");
+        }
+
+       String analysisDir = projectPath + repo + "/DPGraph/";
+        new File(analysisDir + dirNum).mkdir();
+        IOFunctionSet iof=new IOFunctionSet();
+        iof.rewriteFile(sb.toString(), analysisDir + dirNum + "/testedMacros.txt");
+
+
         commitList = new ArrayList<>();
         int numOfIteration = 5;
         amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfIteration, re);
@@ -81,7 +95,7 @@ public class testGroundTruthByIfdef {
 
 
     //marlin
-    @Ignore
+//    @Ignore
     @Test
     public void test12() {
         String repo= "Marlin";
@@ -99,21 +113,24 @@ public class testGroundTruthByIfdef {
             return;
         }
 
-        int dirNum = 333;
+        int dirNum = 332;
         ArrayList<String> macroList = new ArrayList<>();
         macroList.add("Z_PROBE_ALLEN_KEY");
-        macroList.add("SD_DETECT_INVERTED");
-        macroList.add("LCD_USE_I2C_BUZZER");
-        macroList.add("THERMAL_PROTECTION_HOTENDS");
-        macroList.add("ULTRA_LCD");
-//        macroList.add("Z_PROBE_ALLEN_KEY");
 //        macroList.add("SD_DETECT_INVERTED");
 //        macroList.add("LCD_USE_I2C_BUZZER");
-//        macroList.add("LCD_I2C_SAINSMART_YWROBOT");
-//        macroList.add("ULTRA_LCD");
+//        macroList.add("THERMAL_PROTECTION_HOTENDS");
+        macroList.add("ULTRA_LCD");
+        StringBuffer sb = new StringBuffer();
+        for (int i = 1; i <= macroList.size(); i++) {
+            sb.append("<h3>" + i + ") " + macroList.get(i - 1) + "</h3>\n");
+        }
+        String analysisDir = projectPath + repo + "/DPGraph/";
+        new File(analysisDir + dirNum).mkdir();
+        IOFunctionSet iof=new IOFunctionSet();
+        iof.rewriteFile(sb.toString(), analysisDir + dirNum + "/testedMacros.txt");
 
         commitList = new ArrayList<>();
-        int numOfcut = 100;
+        int numOfcut = 6;
         amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfcut, re);
     }
 
@@ -146,7 +163,7 @@ public class testGroundTruthByIfdef {
         amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfcut, re);
     }
 
-    //        @Ignore
+            @Ignore
     //Apache
     @Test
     public void test14() {

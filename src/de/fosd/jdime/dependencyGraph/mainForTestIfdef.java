@@ -54,11 +54,11 @@ public class mainForTestIfdef {
                             } else if (line.contains("#ifdef")) {
                                 macro = line.trim().substring(7);
                             } else if (line.contains("#ifndef")) {
-                                if(fileName.trim().endsWith(".h")) {
+                                if (fileName.trim().endsWith(".h")) {
                                     String name = line.trim().substring(8);
-                                    String[] tmp=fileName.split("/");
+                                    String[] tmp = fileName.split("/");
 
-                                    String file = tmp[tmp.length-1].trim();
+                                    String file = tmp[tmp.length - 1].trim();
                                     file = file.split("\\.")[0].toUpperCase() + "_" + file.split("\\.")[1].toUpperCase();
                                     if (name.equals(file)) {
                                         headerguard = true;
@@ -128,32 +128,24 @@ public class mainForTestIfdef {
         ArrayList<Integer> indexList = new ArrayList<>();
         while (indexList.size() < 5) {
             Random random = new Random();
-            int index = random.ints(0, (macroList.size() + 1)).findFirst().getAsInt();
+            int index = random.ints(0, (macroList.size() - 1)).findFirst().getAsInt();
             if (!indexList.contains(index)) {
+
                 indexList.add(index);
+                System.out.println("macroList.size()"+macroList.size());
+                System.out.println("index"+index);
                 targetMacros.add(macroList.get(index));
             }
         }
+
+// targetMacros.add("E3_IS_L6470");
+// targetMacros.add("Z_PROBE_ALLEN_KEY");
+
         return targetMacros;
 
     }
 
     public static void main(String[] args) {
-//        String repo = "Marlin";
-//        String repo = "Apache";
-//        String repo = "Cherokee";
-//        String repo = "Clamav";
-        String repo = "Email";
-        sourcecodeDir = projectPath + repo + "/" + repo;
-        analysisDir = projectPath + repo + "/DPGraph/";
-        createMacroList();
-
-        StringBuffer macroListSB = new StringBuffer();
-        for(String s : macroList){
-            macroListSB.append(s+"\n");
-        }
-        iof.rewriteFile(macroListSB.toString(),analysisDir+"macroList.txt");
-
         //start import R library
         System.out.println("Creating Rengine (with arguments)");
         //If not started with --vanilla, funny things may happen in this R shell.
@@ -168,17 +160,49 @@ public class mainForTestIfdef {
             return;
         }
 
-        for (int dirNum = 1; dirNum < 100; dirNum++) {
-//            ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
-//            StringBuffer sb = new StringBuffer();
-//            for (int i = 1; i <= macroList.size(); i++) {
-//                sb.append("<h3>" + i + ") " + macroList.get(i - 1) + "</h3>\n");
+
+        ArrayList<String> repoList = new ArrayList<>();
+        repoList.add("Marlin");
+//        repoList.add("Clamav");
+//        repoList.add("Apache");
+//        repoList.add("Cherokee");
+//        repoList.add("Email");
+
+
+        for (String repo : repoList) {
+            sourcecodeDir = projectPath + repo + "/" + repo;
+            analysisDir = projectPath + repo + "/DPGraph/";
+
+//            createMacroList();
+//            StringBuffer macroListSB = new StringBuffer();
+//            for (String s : macroList) {
+//                macroListSB.append(s + "\n");
 //            }
-//            new File(analysisDir + dirNum).mkdir();
-//            iof.rewriteFile(sb.toString(), analysisDir + dirNum + "/testedMacros.txt");
-            commitList = new ArrayList<>();
-            int numOfcut = 2;
-            amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfcut, re);
+//            iof.rewriteFile(macroListSB.toString(), analysisDir + "macroList.txt");
+
+
+
+            for (int dirNum = 1; dirNum < 20; dirNum++) {
+//                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
+
+                ArrayList<String> macroList = new ArrayList<>();
+                macroList.add("SO_ERROR");
+                macroList.add("LIBXML_XINCLUDE_ENABLED");
+                macroList.add("DUMP_BL_TREE");
+                macroList.add("FRESHCLAM_DNS_FIX");
+                macroList.add("AI_ADDRCONFIG");
+
+
+                StringBuffer sb = new StringBuffer();
+                for (int i = 1; i <= macroList.size(); i++) {
+                    sb.append("<h3>" + i + ") " + macroList.get(i - 1) + "</h3>\n");
+                }
+                new File(analysisDir + dirNum).mkdir();
+                iof.rewriteFile(sb.toString(), analysisDir + dirNum + "/testedMacros.txt");
+                commitList = new ArrayList<>();
+                int numOfcut = 4;
+                amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfcut, re);
+            }
         }
     }
 }

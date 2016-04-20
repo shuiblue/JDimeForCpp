@@ -605,7 +605,7 @@ public class DependencyGraph {
                             HIERACHICAL = tmpHierarchy;
                         }
                     }
-                }
+
             } else {
                 //get children
                 ArrayList<String> children = parseDependencyForSubTree(block, fileName, scope, parentLocation);
@@ -620,7 +620,7 @@ public class DependencyGraph {
                     HIERACHICAL = tmpHierarchy;
                 }
             }
-        }
+        }}
     }
 
     /**
@@ -1135,7 +1135,7 @@ public class DependencyGraph {
                 dependencyGraph.put(exprLocation, new HashSet<>());
             }
             completeGraph.put(exprLocation, new HashSet<>());
-            System.out.println(exprLocation);
+//            System.out.println(exprLocation);
             //write into graph file .gv
 //            ioFunctionSet.writeTofile(id + " [label = \"" + exprLocation + "\"];\n", graph.getPath());
         }

@@ -444,7 +444,9 @@ public class IOFunctionSet {
     }
 
     public String changeFileName(String fileName) {
-        String suffix = fileName.split("\\.")[1];
+
+        String [] nameArray =  fileName.split("\\.");
+        String suffix =nameArray[nameArray.length-1];
         return fileName.replace("." + suffix, suffix.toUpperCase()).replace("-", "~");
     }
 
