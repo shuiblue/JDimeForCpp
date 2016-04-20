@@ -261,24 +261,36 @@ public class RCommunityDetection {
         ArrayList<ArrayList<Integer>> combination = getPairsOfCommunities(clusters);
         HashMap<ArrayList<Integer>, Integer> distanceMatrix = new HashMap<>();
         StringBuffer sb = new StringBuffer();
+        HashMap<Integer,double[]> shortestDistanceOfNodes = new HashMap<>();
+
+        re.eval("comGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
+        re.eval("scomGraph<- simplify(comGraph)");
+        re.eval("completeGraph<-as.undirected(scomGraph)");
+        re.eval("E(completeGraph)$weight <- 1");
         for (ArrayList<Integer> pair : combination) {
+//        for (ArrayList<Integer> pair : combination) {
             ArrayList<Integer> cluster_1 = clusters.get(pair.get(0));
             ArrayList<Integer> cluster_2 = clusters.get(pair.get(1));
             double shortestPath = 999999;
             for (Integer cl1 : cluster_1) {
                 int c1 = cl1 - 1;
+                double[] c1_array;
+                if(shortestDistanceOfNodes.get(c1)==null) {
 
-                re.eval("comGraph<-read.graph(\"" + fileDir + "/complete.pajek.net\", format=\"pajek\")");
-                re.eval("scomGraph<- simplify(comGraph)");
-                re.eval("completeGraph<-as.undirected(scomGraph)");
-                re.eval("E(completeGraph)$weight <- 1");
-                String c1_array_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=V(completeGraph))";
-                REXP shortestPath_R_c1 = re.eval(c1_array_cmd);
-                double[] c1_array = shortestPath_R_c1.asDoubleArray();
+                    String c1_array_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=V(completeGraph))";
+                    REXP shortestPath_R_c1 = re.eval(c1_array_cmd);
+                    c1_array = shortestPath_R_c1.asDoubleArray();
+                    shortestDistanceOfNodes.put(c1, c1_array);
+                }  else{
+                    c1_array=shortestDistanceOfNodes.get(c1);
+                    System.out.println("exist");
+                }
+
                 for (Integer cl2 : cluster_2) {
                     int c2 = cl2 - 1;
                     double c1_c2 = c1_array[c2];
-                    System.out.println("c1 c2:" + c1_c2);
+                    System.out.println(c1+"+"+c2+" " + c1_c2);
+
                     if (shortestPath > c1_c2) {
                         shortestPath = c1_c2;
                     }
@@ -333,7 +345,6 @@ public class RCommunityDetection {
                         combination_List.add(pairList);
                     }
                 }
-
             }
         }
         return combination_List;

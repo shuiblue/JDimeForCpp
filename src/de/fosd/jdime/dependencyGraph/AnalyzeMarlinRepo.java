@@ -25,8 +25,8 @@ public class AnalyzeMarlinRepo {
 //            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
 //        }
 //        dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
-//        RCommunityDetection rCommunityDetection = new RCommunityDetection();
-//        int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
+        RCommunityDetection rCommunityDetection = new RCommunityDetection();
+        int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
         ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
         colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, macroList);
 
