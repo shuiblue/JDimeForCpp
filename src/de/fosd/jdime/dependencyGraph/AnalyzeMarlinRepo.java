@@ -19,12 +19,12 @@ public class AnalyzeMarlinRepo {
         boolean SHA = false;
         boolean IFDEF = true;
         IdentifyChangedCode icc = new IdentifyChangedCode();
-//        if (SHA) {
-//            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
-//        } else if (IFDEF) {
-//            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
-//        }
-//        dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
+        if (SHA) {
+            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
+        } else if (IFDEF) {
+            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
+        }
+        dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
         RCommunityDetection rCommunityDetection = new RCommunityDetection();
         int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
         ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();

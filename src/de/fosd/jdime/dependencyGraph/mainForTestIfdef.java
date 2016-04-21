@@ -162,10 +162,12 @@ public class mainForTestIfdef {
 
 
         ArrayList<String> repoList = new ArrayList<>();
-//        repoList.add("Marlin");
+        repoList.add("Marlin");
         repoList.add("Clamav");
-//        repoList.add("Apache");
-//        repoList.add("Cherokee");
+        repoList.add("Apache");
+        repoList.add("Cherokee");
+        repoList.add("dia");
+        repoList.add("BerkleyDB");
 //        repoList.add("Email");
 
 
@@ -173,25 +175,17 @@ public class mainForTestIfdef {
             sourcecodeDir = projectPath + repo + "/" + repo;
             analysisDir = projectPath + repo + "/DPGraph/";
 
-//            createMacroList();
-//            StringBuffer macroListSB = new StringBuffer();
-//            for (String s : macroList) {
-//                macroListSB.append(s + "\n");
-//            }
-//            iof.rewriteFile(macroListSB.toString(), analysisDir + "macroList.txt");
+            createMacroList();
+            StringBuffer macroListSB = new StringBuffer();
+            for (String s : macroList) {
+                macroListSB.append(s + "\n");
+            }
+            iof.rewriteFile(macroListSB.toString(), analysisDir + "macroList.txt");
 
 
 
             for (int dirNum = 1; dirNum < 20; dirNum++) {
-//                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
-
-                ArrayList<String> macroList = new ArrayList<>();
-                macroList.add("SO_ERROR");
-                macroList.add("LIBXML_XINCLUDE_ENABLED");
-                macroList.add("DUMP_BL_TREE");
-                macroList.add("FRESHCLAM_DNS_FIX");
-                macroList.add("AI_ADDRCONFIG");
-
+                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
 
                 StringBuffer sb = new StringBuffer();
                 for (int i = 1; i <= macroList.size(); i++) {

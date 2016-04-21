@@ -62,7 +62,7 @@ public class ColorCodeBlocks {
 */
                         sb.append(line.replace("<", "&lt;").replace(">", "&gt;"));
                         sb.append("</front>\n");
-                        if (!forkAddedNode.contains(lable + " ")) {
+                        if (!forkAddedNode.contains(lable + " ")&&!line.trim().startsWith("#")&&!line.trim().startsWith("//")&&!line.trim().startsWith("*")&&!line.trim().startsWith("/*")) {
                             jsContent.append("$(\"#" + lable + "\").toggle()\n");
                         }
 

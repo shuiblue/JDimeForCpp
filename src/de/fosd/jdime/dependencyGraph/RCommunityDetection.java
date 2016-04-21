@@ -278,18 +278,19 @@ public class RCommunityDetection {
                 if(shortestDistanceOfNodes.get(c1)==null) {
 
                     String c1_array_cmd = "distMatrixc1 <- shortest.paths(completeGraph, v=\"" + c1 + "\", to=V(completeGraph))";
+                    ioFunc.sleep();
                     REXP shortestPath_R_c1 = re.eval(c1_array_cmd);
                     c1_array = shortestPath_R_c1.asDoubleArray();
                     shortestDistanceOfNodes.put(c1, c1_array);
                 }  else{
                     c1_array=shortestDistanceOfNodes.get(c1);
-                    System.out.println("exist");
+//                    System.out.println("exist");
                 }
 
                 for (Integer cl2 : cluster_2) {
                     int c2 = cl2 - 1;
                     double c1_c2 = c1_array[c2];
-                    System.out.println(c1+"+"+c2+" " + c1_c2);
+//                    System.out.println(c1+"+"+c2+" " + c1_c2);
 
                     if (shortestPath > c1_c2) {
                         shortestPath = c1_c2;
