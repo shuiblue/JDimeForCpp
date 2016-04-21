@@ -183,8 +183,10 @@ public class IdentifyChangedCode {
                             }
                             lineNum++;
                         }
+                        result.close();
                     } catch (IOException e) {
                         e.printStackTrace();
+
                     }
 
                 }

@@ -272,8 +272,7 @@ public class RCommunityDetection {
             ArrayList<Integer> cluster_1 = clusters.get(pair.get(0));
             ArrayList<Integer> cluster_2 = clusters.get(pair.get(1));
             double shortestPath = 999999;
-            for (Integer cl1 : cluster_1) {
-                int c1 = cl1 - 1;
+            for (Integer c1 : cluster_1) {
                 double[] c1_array;
                 if(shortestDistanceOfNodes.get(c1)==null) {
 

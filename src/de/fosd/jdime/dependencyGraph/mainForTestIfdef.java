@@ -138,9 +138,6 @@ public class mainForTestIfdef {
             }
         }
 
-// targetMacros.add("E3_IS_L6470");
-// targetMacros.add("Z_PROBE_ALLEN_KEY");
-
         return targetMacros;
 
     }
@@ -162,8 +159,8 @@ public class mainForTestIfdef {
 
 
         ArrayList<String> repoList = new ArrayList<>();
-        repoList.add("Marlin");
         repoList.add("Clamav");
+        repoList.add("Marlin");
         repoList.add("Apache");
         repoList.add("Cherokee");
         repoList.add("dia");
@@ -184,8 +181,15 @@ public class mainForTestIfdef {
 
 
 
-            for (int dirNum = 1; dirNum < 20; dirNum++) {
-                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
+            for (int dirNum = 2; dirNum < 3; dirNum++) {
+//                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
+                ArrayList<String> macroList = new ArrayList<>();
+
+                macroList.add("CL_DEBUG");
+                macroList.add("__cplusplus");
+                macroList.add("IN_LIBXML");
+                macroList.add("LT_DEBUG_LOADERS");
+                macroList.add("HAVE_RINTF");
 
                 StringBuffer sb = new StringBuffer();
                 for (int i = 1; i <= macroList.size(); i++) {
