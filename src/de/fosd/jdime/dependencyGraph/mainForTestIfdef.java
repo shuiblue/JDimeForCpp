@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -132,8 +133,8 @@ public class mainForTestIfdef {
             if (!indexList.contains(index)) {
 
                 indexList.add(index);
-                System.out.println("macroList.size()"+macroList.size());
-                System.out.println("index"+index);
+                System.out.println("macroList.size()" + macroList.size());
+                System.out.println("index" + index);
                 targetMacros.add(macroList.get(index));
             }
         }
@@ -159,12 +160,13 @@ public class mainForTestIfdef {
 
 
         ArrayList<String> repoList = new ArrayList<>();
-        repoList.add("Clamav");
-        repoList.add("Marlin");
+//        repoList.add("Clamav");
+////        repoList.add("Marlin");
         repoList.add("Apache");
-        repoList.add("Cherokee");
-        repoList.add("dia");
-        repoList.add("BerkleyDB");
+//        repoList.add("Cherokee");
+//        repoList.add("dia");
+//        repoList.add("BerkleyDB");
+//        repoList.add("freebsd");
 //        repoList.add("Email");
 
 
@@ -172,24 +174,26 @@ public class mainForTestIfdef {
             sourcecodeDir = projectPath + repo + "/" + repo;
             analysisDir = projectPath + repo + "/DPGraph/";
 
-            createMacroList();
-            StringBuffer macroListSB = new StringBuffer();
-            for (String s : macroList) {
-                macroListSB.append(s + "\n");
-            }
-            iof.rewriteFile(macroListSB.toString(), analysisDir + "macroList.txt");
+//            createMacroList();
+//            StringBuffer macroListSB = new StringBuffer();
+//            for (String s : macroList) {
+//                macroListSB.append(s + "\n");
+//            }
+//            iof.rewriteFile(macroListSB.toString(), analysisDir + "macroList.txt");
 
 
-
-            for (int dirNum = 2; dirNum < 3; dirNum++) {
+            for (int dirNum = 11; dirNum < 20; dirNum++) {
 //                ArrayList<String> macroList = selectTargetMacros(numOfTargetMacro);
-                ArrayList<String> macroList = new ArrayList<>();
+                ArrayList<String> macroList = selectApacheMacros(numOfTargetMacro);
 
-                macroList.add("CL_DEBUG");
-                macroList.add("__cplusplus");
-                macroList.add("IN_LIBXML");
-                macroList.add("LT_DEBUG_LOADERS");
-                macroList.add("HAVE_RINTF");
+
+//                ArrayList<String> macroList = new ArrayList<>();
+//
+//                macroList.add("CL_DEBUG");
+//                macroList.add("__cplusplus");
+//                macroList.add("IN_LIBXML");
+//                macroList.add("LT_DEBUG_LOADERS");
+//                macroList.add("HAVE_RINTF");
 
                 StringBuffer sb = new StringBuffer();
                 for (int i = 1; i <= macroList.size(); i++) {
@@ -198,9 +202,37 @@ public class mainForTestIfdef {
                 new File(analysisDir + dirNum).mkdir();
                 iof.rewriteFile(sb.toString(), analysisDir + dirNum + "/testedMacros.txt");
                 commitList = new ArrayList<>();
-                int numOfcut = 4;
+                int numOfcut = 3;
                 amr.analyzeRepository(repo, dirNum, projectPath, commitList, macroList, numOfcut, re);
             }
         }
+    }
+
+    private static ArrayList<String> selectApacheMacros(int number) {
+        ArrayList<String> targetMacros = new ArrayList<>();
+        ArrayList<Integer> indexList = new ArrayList<>();
+
+
+        try {
+            String[] featureArray = iof.readResult(analysisDir + "macroList.txt").split("\n");
+            macroList = new ArrayList(Arrays.asList(featureArray));
+            while (indexList.size() < 5) {
+                Random random = new Random();
+                int index = random.ints(0, (macroList.size() - 1)).findFirst().getAsInt();
+                if (!indexList.contains(index)) {
+
+                    indexList.add(index);
+                    System.out.println("macroList.size()" + macroList.size());
+                    System.out.println("index" + index);
+                    targetMacros.add(macroList.get(index));
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return targetMacros;
     }
 }

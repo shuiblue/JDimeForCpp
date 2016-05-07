@@ -638,7 +638,7 @@ public class DependencyGraph {
         String parentLocation = fileName + "-" + functionSymbol.getLineNumber();
         //check parameters
         Element parameter_list = element.getFirstChildElement("parameter_list", NAMESPACEURI);
-        if (parameter_list.getChildElements() != null) {
+        if (parameter_list!=null&&parameter_list.getChildElements() != null) {
             for (int i = 0; i < parameter_list.getChildElements("param", NAMESPACEURI).size(); i++) {
                 Element paramNode = parameter_list.getChildElements("param", NAMESPACEURI).get(i);
                 //add Parameter to symbol table
@@ -653,7 +653,6 @@ public class DependencyGraph {
         if (block != null) {
             parseDependencyForSubTree(block, fileName, scope + 1, parentLocation);
         }
-
     }
 
     /**

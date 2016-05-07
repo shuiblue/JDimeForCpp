@@ -95,7 +95,7 @@ public class testGroundTruthByIfdef {
 
 
     //marlin
-//    @Ignore
+    @Ignore
     @Test
     public void test12() {
         String repo= "Marlin";
@@ -135,7 +135,7 @@ public class testGroundTruthByIfdef {
     }
 
 
-            @Ignore
+//            @Ignore
     //email system
     @Test
     public void test13() {
