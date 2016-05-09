@@ -39,6 +39,12 @@ public class DependencyGraph {
     HashMap<String, HashSet<String[]>> dependencyGraph = new HashMap<>();
     HashMap<String, HashSet<String[]>> completeGraph = new HashMap<>();
 
+    //used for similarity calculation, LD algorithm
+//    HashMap<Integer, String> candidateStrings = new HashMap<>();
+    ArrayList<String> candidateStrings = new ArrayList<>();
+    //map nodeID in graph -> stringID in candidateString list
+    HashMap<Integer, Integer> idMap = new HashMap<>();
+
     //edge list stores all the edges, used for testing
     HashSet<String> edgeList = new HashSet<>();
     // used for srcml
@@ -65,7 +71,7 @@ public class DependencyGraph {
      * @return dependency graph, no edge label stored.
      */
 
-    public  HashMap<String, Integer>  getDependencyGraphForProject(String projectPath, String repo, int dirNum) {
+    public ArrayList<String> getDependencyGraphForProject(String projectPath, String repo, int dirNum) {
         String testDir = projectPath + repo;
         sourcecodeDir = testDir + "/" + repo;
         analysisDir = testDir + "/DPGraph/" + dirNum + "/";
@@ -101,8 +107,21 @@ public class DependencyGraph {
 
         ioFunctionSet.writeToPajekFile(dependencyGraph, nodeList, analysisDir + "/changedCode.pajek.net");
         ioFunctionSet.writeToPajekFile(completeGraph, nodeList, analysisDir + "/complete.pajek.net");
-        return nodeList;
+
+        writeStringsToFile(candidateStrings);
+        return candidateStrings;
+//        return nodeList;
 //        return dependencyGraph;
+    }
+
+    //    private void writeStringsToFile(HashMap<Integer, String> candidateStrings) {
+    private void writeStringsToFile(ArrayList<String> candidateStrings) {
+        StringBuffer sb = new StringBuffer();
+        for (String str : candidateStrings) {
+            sb.append("\"" + str + "\",");
+        }
+
+        ioFunctionSet.rewriteFile(sb.toString(), analysisDir + "/StringList.txt");
     }
 
     /**
@@ -322,21 +341,41 @@ public class DependencyGraph {
                 }
             } else
 */
-            if (ele.getLocalName().equals("function") || ele.getLocalName().equals("constructor")) {
+            if (ele.getLocalName().equals("function") || ele.getLocalName().equals("constructor") || ele.getLocalName().equals("function_decl")) {
                 parseFunctionNode(ele, fileName, scope);
-            } else if (ele.getLocalName().equals("if") && !ele.getNamespacePrefix().equals("cpp")) {
+
+            }
+//            else if (ele.getLocalName().equals("function_decl")) {
+//                addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation, "");
+//                parseFunctionNode(ele, fileName, scope);
+//
+//
+//            }
+
+            else if (ele.getLocalName().equals("if") && !ele.getNamespacePrefix().equals("cpp")) {
                 tmpStmtList.addAll(parseIfStmt(ele, fileName, scope, parentLocation));
             } else if (ele.getLocalName().equals("expr_stmt")) {
                 String exprLocation = handleVarInExpr(ele, "", fileName, scope, parentLocation, false);
                 if (!exprLocation.equals("")) {
                     tmpStmtList.add(exprLocation);
                 }
+                //store string for comparing
+                String lineNumber = getLineNumOfElement(ele);
+                storeStrings(fileName + "-" + lineNumber, ele.getValue());
+
             } else if (ele.getLocalName().equals("decl_stmt")) {
+
+
                 Element decl = ele.getFirstChildElement("decl", NAMESPACEURI);
                 Symbol declSymbol = addDeclarationSymbol(decl, "decl_stmt", fileName, scope, parentLocation, "");
                 if (declSymbol != null) {
                     tmpStmtList.add(fileName + "-" + declSymbol.getLineNumber());
                 }
+                //store string for comparing
+                String lineNumber = getLineNumOfElement(ele);
+                storeStrings(fileName + "-" + lineNumber, ele.getValue());
+
+
             } else if (ele.getLocalName().equals("label") && (((Element) ele.getParent().getParent()).getLocalName().equals("block"))) {
                 // this is spicifically for struct definition include bitfiles for certain fields
                 //e.g.   unsigned short icon : 8;
@@ -346,9 +385,6 @@ public class DependencyGraph {
                 tmpStmtList.add(fileName + "-" + declSymbol.getLineNumber());
             } else if (ele.getLocalName().equals("typedef")) {
                 parseTypedef(ele, fileName, scope, parentLocation);
-            } else if (ele.getLocalName().equals("function_decl")) {
-                addDeclarationSymbol(ele, "function_decl", fileName, scope, parentLocation, "");
-
             } else if (ele.getLocalName().equals("return")) {
                 Element returnContent = ele.getFirstChildElement("expr", NAMESPACEURI);
                 if (returnContent != null) {
@@ -606,21 +642,22 @@ public class DependencyGraph {
                         }
                     }
 
-            } else {
-                //get children
-                ArrayList<String> children = parseDependencyForSubTree(block, fileName, scope, parentLocation);
-                boolean tmpHierarchy = true;
-                if (!HIERACHICAL) {
-                    tmpHierarchy = HIERACHICAL;
-                    HIERACHICAL = true;
-                }
-                //link children -> parent
-                linkChildToParent(children, parentLocation, edgeLabel);
-                if (!tmpHierarchy) {
-                    HIERACHICAL = tmpHierarchy;
+                } else {
+                    //get children
+                    ArrayList<String> children = parseDependencyForSubTree(block, fileName, scope, parentLocation);
+                    boolean tmpHierarchy = true;
+                    if (!HIERACHICAL) {
+                        tmpHierarchy = HIERACHICAL;
+                        HIERACHICAL = true;
+                    }
+                    //link children -> parent
+                    linkChildToParent(children, parentLocation, edgeLabel);
+                    if (!tmpHierarchy) {
+                        HIERACHICAL = tmpHierarchy;
+                    }
                 }
             }
-        }}
+        }
     }
 
     /**
@@ -633,12 +670,19 @@ public class DependencyGraph {
      * @param scope    function's scope is 1, symbol in block is 2
      */
     private void parseFunctionNode(Element element, String fileName, int scope) {
+        String tag = "";
+        if (element.getLocalName().equals("function") || element.getLocalName().equals("constructor")) {
+            tag = "function";
+        } else {
+            tag = "function_decl";
+        }
+
         //add function to symbol table
-        Symbol functionSymbol = addDeclarationSymbol(element, "function", fileName, scope, "", "");
+        Symbol functionSymbol = addDeclarationSymbol(element, tag, fileName, scope, "", "");
         String parentLocation = fileName + "-" + functionSymbol.getLineNumber();
         //check parameters
         Element parameter_list = element.getFirstChildElement("parameter_list", NAMESPACEURI);
-        if (parameter_list!=null&&parameter_list.getChildElements() != null) {
+        if (parameter_list != null && parameter_list.getChildElements() != null) {
             for (int i = 0; i < parameter_list.getChildElements("param", NAMESPACEURI).size(); i++) {
                 Element paramNode = parameter_list.getChildElements("param", NAMESPACEURI).get(i);
                 //add Parameter to symbol table
@@ -646,6 +690,9 @@ public class DependencyGraph {
                     addDeclarationSymbol((Element) paramNode.getChild(0), "param", fileName, scope + 1, parentLocation, "");
                 }
             }
+            //store string for comparing
+            String lineNumber = getLineNumOfElement(parameter_list);
+            storeStrings(fileName + "-" + lineNumber, functionSymbol.getType()+" "+functionSymbol.getName()+" "+parameter_list.getValue());
         }
 
         //check block
@@ -669,6 +716,10 @@ public class DependencyGraph {
 
         ArrayList<String> stmtList = new ArrayList<>();
         String ifStmtLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
+
+        //store string
+        storeStrings(ifStmtLocation,condition.getValue());
+
         stmtList.add(ifStmtLocation);
         //control flow analysis dependency
         if (!CONTROL_FLOW) {
@@ -773,6 +824,10 @@ public class DependencyGraph {
         ArrayList<String> stmtList = new ArrayList<>();
         String whileLocation = handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
 
+        //store string
+        storeStrings(whileLocation,condition.getValue());
+
+
         if (whileLocation.equals("")) {
             whileLocation = fileName + "-" + getLineNumOfElement(condition);
             //save into nodeList
@@ -843,22 +898,9 @@ public class DependencyGraph {
 
             if (cond_exprNode != null) {
                 handleVarInExpr(condition, "", fileName, scope, parentLocation, false);
-//            stmtList.add(ifStmtLocation);
-
-//            init=  ele.getFirstChildElement("init", NAMESPACEURI).getFirstChildElement("expr", NAMESPACEURI);
-//            Elements name_Elements = init.getChildElements("name", NAMESPACEURI);
-//            String name = name_Elements.get(0).getValue();
-//            initVarSymbol = new Symbol(name, "", lineNumber, "for", fileName, scope);
-//            ArrayList<Symbol> newsymbol = new ArrayList<>();
-//            newsymbol.add(initVarSymbol);
-//            storeSymbols(newsymbol);
-
-                //save into nodeList
-
             }
 
         }
-//        String nodeLabel = fileName + "-" + lineNumber;
         storeIntoNodeList(forLocation);
 
         Element block = ele.getFirstChildElement("block", NAMESPACEURI);
@@ -939,6 +981,17 @@ public class DependencyGraph {
         String nodeLabel = fileName + "-" + lineNumber;
         storeIntoNodeList(nodeLabel);
 
+        //store string for comparing
+        if (element.getLocalName().equals("decl")) {
+            if ((!((Element) (element.getParent().getParent())).getLocalName().equals("parameter_list"))
+                    && (!((Element) (element.getParent())).getLocalName().equals("decl_stmt"))) {
+                storeStrings(fileName + "-" + lineNumber, type + " " + name);
+            }
+        } else if(!element.getLocalName().equals("function")
+                &&!element.getLocalName().equals("function_decl")
+                &&!element.getLocalName().equals("constructor")){
+            storeStrings(fileName + "-" + lineNumber, type + " " + name);
+        }
 
         //index is optional
         if (nameElement != null) {
@@ -961,6 +1014,29 @@ public class DependencyGraph {
         ioFunctionSet.writeTofile(fileName + " " + lineNumber + "\n", analysisDir + "parsedLines.txt");
 
         return symbol;
+    }
+
+
+    int stringID = 0;
+
+    private void storeStrings(String location, String content) {
+        if (forkaddedNodeList.contains(location + " ")) {
+
+            String strList="";
+            if (idMap.get(location) != null) {
+//              strList.add(content);
+                int strID= idMap.get(location);
+                strList=  candidateStrings.get(strID);
+                strList += " " + content;
+                candidateStrings.set(strID,strList);
+            } else {
+                strList = " " + content;
+                idMap.put(nodeList.get(location), stringID);
+                stringID++;
+            }
+
+            candidateStrings.add(strList.replace("\\n", " ").replace("\n", "").replace("%i", "").replaceAll("[^a-zA-Z ]", " ").replaceAll("\\s+", " "));
+        }
     }
 
     /**
@@ -1130,7 +1206,7 @@ public class DependencyGraph {
             id++;
             nodeList.put(exprLocation, id);
 
-            if (forkaddedNodeList.contains(exprLocation+" ")) {
+            if (forkaddedNodeList.contains(exprLocation + " ")) {
                 dependencyGraph.put(exprLocation, new HashSet<>());
             }
             completeGraph.put(exprLocation, new HashSet<>());

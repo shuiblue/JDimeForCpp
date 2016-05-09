@@ -1,6 +1,7 @@
 package de.fosd.jdime.dependencyGraph;
 
 import de.fosd.jdime.ColorCodeBlocks.ColorCodeBlocks;
+import de.fosd.jdime.Similarity.StringSimilarity;
 import org.rosuda.JRI.Rengine;
 
 import java.util.ArrayList;
@@ -18,13 +19,17 @@ public class AnalyzeMarlinRepo {
         DependencyGraph dependencyGraph = new DependencyGraph();
         boolean SHA = false;
         boolean IFDEF = true;
-        IdentifyChangedCode icc = new IdentifyChangedCode();
-        if (SHA) {
-            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
-        } else if (IFDEF) {
-            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
-        }
+//        IdentifyChangedCode icc = new IdentifyChangedCode();
+//        if (SHA) {
+//            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
+//        } else if (IFDEF) {
+//            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
+//        }
         dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
+        StringSimilarity strSim = new StringSimilarity();
+        strSim.calculateStringSimilarity(projectPath, repo, dirNum,re);
+
+
         RCommunityDetection rCommunityDetection = new RCommunityDetection();
         int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
         ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
@@ -34,4 +39,6 @@ public class AnalyzeMarlinRepo {
 //        colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, 3);
 
     }
+
+
 }
