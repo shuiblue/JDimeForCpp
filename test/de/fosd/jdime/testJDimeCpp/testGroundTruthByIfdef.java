@@ -62,7 +62,7 @@ public class testGroundTruthByIfdef {
 
 
     //marlin
-    @Ignore
+//    @Ignore
     @Test
     public void test11() {
         String repo= "Marlin";
@@ -80,12 +80,12 @@ public class testGroundTruthByIfdef {
             return;
         }
 
-        int dirNum = 999;
+        int dirNum = 777;
         ArrayList<String> macroList = new ArrayList<>();
         macroList.add("FILAMENT_SENSOR");
         macroList.add("MESH_BED_LEVELING");
         macroList.add("ADVANCE");
-        macroList.add("HAS_Z_MIN_PROBE");
+//        macroList.add("HAS_Z_MIN_PROBE");
         macroList.add("HAS_SERVO_ENDSTOPS");
 
         commitList = new ArrayList<>();
@@ -135,7 +135,7 @@ public class testGroundTruthByIfdef {
     }
 
 
-//            @Ignore
+            @Ignore
     //email system
     @Test
     public void test13() {

@@ -19,12 +19,12 @@ public class AnalyzeMarlinRepo {
         DependencyGraph dependencyGraph = new DependencyGraph();
         boolean SHA = false;
         boolean IFDEF = true;
-//        IdentifyChangedCode icc = new IdentifyChangedCode();
-//        if (SHA) {
-//            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
-//        } else if (IFDEF) {
-//            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
-//        }
+        IdentifyChangedCode icc = new IdentifyChangedCode();
+        if (SHA) {
+            icc.identifyChangedCodeBySHA(projectPath, repo, commitList);
+        } else if (IFDEF) {
+            icc.identifyIfdefs(projectPath, repo, dirNum, macroList);
+        }
         dependencyGraph.getDependencyGraphForProject(projectPath, repo, dirNum);
         StringSimilarity strSim = new StringSimilarity();
         strSim.calculateStringSimilarity(projectPath, repo, dirNum,re);
@@ -33,7 +33,7 @@ public class AnalyzeMarlinRepo {
         RCommunityDetection rCommunityDetection = new RCommunityDetection();
         int bestCut = rCommunityDetection.detectingCommunitiesWithIgraph(filePath + DPGraphDir + dirNum, numOfIteration, re);
         ColorCodeBlocks colorCodeBlocks = new ColorCodeBlocks();
-//        colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, macroList);
+        colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, macroList);
 
         /* FOR EMAIL SYSTEM*/
 //        colorCodeBlocks.parseEachUsefulClusteringResult(projectPath, repo, dirNum, 3);

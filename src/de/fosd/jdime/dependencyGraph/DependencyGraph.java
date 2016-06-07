@@ -42,7 +42,7 @@ public class DependencyGraph {
     //used for similarity calculation, LD algorithm
 //    HashMap<Integer, String> candidateStrings = new HashMap<>();
     ArrayList<String> candidateStrings = new ArrayList<>();
-    //map nodeID in graph -> stringID in candidateString list
+    //map nodeID in graph -f
     HashMap<Integer, Integer> idMap = new HashMap<>();
 
     //edge list stores all the edges, used for testing
@@ -52,6 +52,7 @@ public class DependencyGraph {
 
     //hierachical and control flow edges are optional
     public boolean HIERACHICAL = true;
+    public boolean CONSECUTIVE = true;
     static final public boolean CONTROL_FLOW = false;
     static final public String CONTROLFLOW_LABEL = "<Control-Flow>";
 
@@ -103,7 +104,9 @@ public class DependencyGraph {
         addEdgesCrossFiles();
 
         //generate edge about consecutive lines
-        createNeighborEdges();
+        if(CONSECUTIVE) {
+            createNeighborEdges();
+        }
 
         ioFunctionSet.writeToPajekFile(dependencyGraph, nodeList, analysisDir + "/changedCode.pajek.net");
         ioFunctionSet.writeToPajekFile(completeGraph, nodeList, analysisDir + "/complete.pajek.net");
